@@ -5,7 +5,7 @@
 # Copyright: This module has been placed in the public domain.
 
 # New language mappings are welcome.  Before doing a new translation, please
-# read <http://docutils.sf.net/spec/howto/i18n.html>.  Two files must be
+# read <http://docutils.sf.net/docs/howto/i18n.html>.  Two files must be
 # translated for each language: one in docutils/languages, the other in
 # docutils/parsers/rst/languages.
 
@@ -40,10 +40,12 @@ directives = {
       u'elstara\u0135oj': 'highlights',
       u'ekstera-citajxo': 'pull-quote',
       u'ekstera-cita\u0135o': 'pull-quote',
-      u'tabelo': 'table',
       #'questions': 'questions',
       #'qa': 'questions',
       #'faq': 'questions',
+      u'tabelo': 'table',
+      u'tabelo-vdk': 'csv-table', # "valoroj disigitaj per komoj"
+      u'tabelo-csv': 'csv-table',
       u'meta': 'meta',
       #'imagemap': 'imagemap',
       u'bildo': 'image',
@@ -54,6 +56,7 @@ directives = {
       u'anstata\u016di': 'replace',
       u'unicode': 'unicode',
       u'klaso': 'class',
+      u'rolo': 'role',
       u'enhavo': 'contents',
       u'seknum': 'sectnum',
       u'sekcia-numerado': 'sectnum',

@@ -5,7 +5,7 @@
 # Copyright: This module has been placed in the public domain.
 
 # New language mappings are welcome.  Before doing a new translation, please
-# read <http://docutils.sf.net/spec/howto/i18n.html>.  Two files must be
+# read <http://docutils.sf.net/docs/howto/i18n.html>.  Two files must be
 # translated for each language: one in docutils/languages, the other in
 # docutils/parsers/rst/languages.
 
@@ -35,11 +35,12 @@ directives = {
       u'epigraph (translation required)': 'epigraph',
       u'highlights (translation required)': 'highlights',
       u'pull-quote (translation required)': 'pull-quote',
-      u'table (translation required)': 'table',
       # u'fr\u00e5gor': 'questions',
       # NOTE: A bit long, but recommended by http://www.nada.kth.se/dataterm/:
       # u'fr\u00e5gor-och-svar': 'questions',
       # u'vanliga-fr\u00e5gor': 'questions',  
+      u'table (translation required)': 'table',
+      u'csv-table (translation required)': 'csv-table',
       u'meta': 'meta',
       # u'bildkarta': 'imagemap',   # FIXME: Translation might be too literal.
       u'bild': 'image',
@@ -49,6 +50,7 @@ directives = {
       u'ers\u00e4tt': 'replace', 
       u'unicode': 'unicode',
       u'class (translation required)': 'class',
+      u'role (translation required)': 'role',
       u'inneh\u00e5ll': 'contents',
       u'sektionsnumrering': 'sectnum',
       u'target-notes (translation required)': 'target-notes',

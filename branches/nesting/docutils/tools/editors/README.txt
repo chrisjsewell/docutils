@@ -9,4 +9,11 @@ editing for the following editors:
 
 * `Emacs <emacs>`__
 
+External links:
+
+* `reStructuredText syntax highlighting mode for vim
+  <http://www.vim.org/scripts/script.php?script_id=973>`__
+
+Additions are welcome.
+
 .. _reStructuredText: http://docutils.sf.net/rst.html

@@ -1,11 +1,13 @@
 # Author: David Goodger
-# Contact: goodger@users.sourceforge.net
+# Contact: goodger@python.org
 # Revision: $Revision$
 # Date: $Date$
 # Copyright: This module has been placed in the public domain.
 
 """
 Directives for additional body elements.
+
+See `docutils.parsers.rst.directives` for API details.
 """
 
 __docformat__ = 'reStructuredText'
@@ -15,7 +17,7 @@ import sys
 from docutils import nodes
 from docutils.parsers.rst import directives
 
-
+              
 def topic(name, arguments, options, content, lineno,
           content_offset, block_text, state, state_machine,
           node_class=nodes.topic):
@@ -34,6 +36,7 @@ def topic(name, arguments, options, content, lineno,
     title_text = arguments[0]
     textnodes, messages = state.inline_text(title_text, lineno)
     titles = [nodes.title(title_text, '', *textnodes)]
+    # sidebar uses this code
     if options.has_key('subtitle'):
         textnodes, more_messages = state.inline_text(options['subtitle'],
                                                      lineno)
@@ -73,6 +76,7 @@ def line_block(name, arguments, options, content, lineno,
     text = '\n'.join(content)
     text_nodes, messages = state.inline_text(text, lineno)
     node = node_class(text, '', *text_nodes, **options)
+    node.line = content_offset + 1
     return [node] + messages
 
 line_block.options = {'class': directives.class_option}
@@ -120,38 +124,3 @@ def pull_quote(name, arguments, options, content, lineno,
     return [block_quote] + messages
 
 pull_quote.content = 1
-
-def table(name, arguments, options, content, lineno,
-          content_offset, block_text, state, state_machine):
-    if not content:
-        warning = state_machine.reporter.warning(
-            'Content block expected for the "%s" directive; none found.'
-            % name, nodes.literal_block(block_text, block_text),
-            line=lineno)
-        return [warning]
-    if arguments:
-        title_text = arguments[0]
-        text_nodes, messages = state.inline_text(title_text, lineno)
-        title = nodes.title(title_text, '', *text_nodes)
-    else:
-        title = None
-    node = nodes.Element()          # anonymous container for parsing
-    text = '\n'.join(content)
-    state.nested_parse(content, content_offset, node)
-    if len(node) != 1 or not isinstance(node[0], nodes.table):
-        error = state_machine.reporter.error(
-            'Error parsing content block for the "%s" directive: '
-            'exactly one table expected.'
-            % name, nodes.literal_block(block_text, block_text),
-            line=lineno)
-        return [error]
-    table_node = node[0]
-    if options.has_key('class'):
-        table_node.set_class(options['class'])
-    if title:
-        table_node.insert(0, title)
-    return [table_node]
-
-table.arguments = (0, 1, 1)
-table.options = {'class': directives.class_option}
-table.content = 1

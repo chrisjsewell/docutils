@@ -13,6 +13,7 @@ Tests for docutils.transforms.references.Hyperlinks.
 from __init__ import DocutilsTestSupport
 from docutils.transforms.references import ChainedTargets, \
      AnonymousHyperlinks, IndirectHyperlinks, ExternalTargets, InternalTargets
+from docutils.transforms.universal import FinalChecks
 from docutils.parsers.rst import Parser
 
 
@@ -29,7 +30,7 @@ totest = {}
 # plus embedded URIs.
 totest['exhaustive_hyperlinks'] = ((ChainedTargets, AnonymousHyperlinks,
                                     IndirectHyperlinks, ExternalTargets,
-                                    InternalTargets,), [
+                                    InternalTargets, FinalChecks), [
 ["""\
 direct_ external
 
@@ -38,7 +39,7 @@ direct_ external
 """\
 <document source="test data">
     <paragraph>
-        <reference refuri="http://direct">
+        <reference name="direct" refuri="http://direct">
             direct
          external
     <target id="direct" name="direct" refuri="http://direct">
@@ -52,7 +53,7 @@ indirect_ external
 """\
 <document source="test data">
     <paragraph>
-        <reference refuri="http://indirect">
+        <reference name="indirect" refuri="http://indirect">
             indirect
          external
     <target id="indirect" name="indirect" refuri="http://indirect">
@@ -67,7 +68,7 @@ direct_ internal
 <document source="test data">
     <target id="direct" name="direct">
     <paragraph>
-        <reference refid="direct">
+        <reference name="direct" refid="direct">
             direct
          internal
 """],
@@ -83,7 +84,7 @@ indirect_ internal
 <document source="test data">
     <target id="ztarget" name="ztarget">
     <paragraph>
-        <reference refid="ztarget">
+        <reference name="indirect" refid="ztarget">
             indirect
          internal
     <target id="indirect2" name="indirect2" refid="ztarget">
@@ -103,7 +104,7 @@ indirect_ internal
         <title>
             Implicit
         <paragraph>
-            <reference refid="implicit">
+            <reference name="indirect" refid="implicit">
                 indirect
              internal
         <target id="indirect" name="indirect" refid="implicit">
@@ -123,7 +124,7 @@ Implicit
         <title>
             Implicit
         <paragraph>
-            <reference refid="implicit">
+            <reference name="multiply-indirect" refid="implicit">
                 multiply-indirect
              internal
         <target id="multiply-indirect" name="multiply-indirect" refid="implicit">
@@ -160,6 +161,8 @@ Implicit
 indirect_ internal
 
 .. _indirect: implicit_
+
+Direct internal reference: Implicit_
 """,
 """\
 <document source="test data">
@@ -179,9 +182,16 @@ indirect_ internal
                 indirect_
              internal
         <target id="indirect" name="indirect" refname="implicit">
+        <paragraph>
+            Direct internal reference: 
+            <problematic id="id5" refid="id4">
+                Implicit_
     <system_message backrefs="id3" id="id2" level="3" line="11" source="test data" type="ERROR">
         <paragraph>
-            Indirect hyperlink target "indirect" (id="indirect") refers to target "implicit", which does not exist.
+            Indirect hyperlink target "indirect" (id="indirect") refers to target "implicit", which is a duplicate, and cannot be used as a unique reference.
+    <system_message backrefs="id5" id="id4" level="3" line="13" source="test data" type="ERROR">
+        <paragraph>
+            Duplicate target name, cannot be used as a unique reference: "implicit".
 """],
 ["""\
 `direct external`__
@@ -191,7 +201,7 @@ __ http://direct
 """\
 <document source="test data">
     <paragraph>
-        <reference anonymous="1" refuri="http://direct">
+        <reference anonymous="1" name="direct external" refuri="http://direct">
             direct external
     <target anonymous="1" id="id1" refuri="http://direct">
 """],
@@ -204,7 +214,7 @@ __ xtarget_
 """\
 <document source="test data">
     <paragraph>
-        <reference anonymous="1" refuri="http://indirect">
+        <reference anonymous="1" name="indirect external" refuri="http://indirect">
             indirect external
     <target anonymous="1" id="id1" refuri="http://indirect">
     <target id="xtarget" name="xtarget" refuri="http://indirect">
@@ -218,7 +228,7 @@ __
 <document source="test data">
     <target anonymous="1" id="id1">
     <paragraph>
-        <reference anonymous="1" refid="id1">
+        <reference anonymous="1" name="direct internal" refid="id1">
             direct internal
 """],
 ["""\
@@ -232,7 +242,7 @@ __ ztarget_
 <document source="test data">
     <target id="ztarget" name="ztarget">
     <paragraph>
-        <reference anonymous="1" refid="ztarget">
+        <reference anonymous="1" name="indirect internal" refid="ztarget">
             indirect internal
     <target anonymous="1" id="id1" refid="ztarget">
 """],
@@ -266,7 +276,7 @@ __ ztarget_
     <target anonymous="1" id="id2" refname="ztarget">
     <system_message backrefs="id4" id="id3" level="3" line="11" source="test data" type="ERROR">
         <paragraph>
-            Indirect hyperlink target (id="id2") refers to target "ztarget", which does not exist.
+            Indirect hyperlink target (id="id2") refers to target "ztarget", which is a duplicate, and cannot be used as a unique reference.
 """],
 ["""\
 An `embedded uri <http://direct>`_.
@@ -277,13 +287,13 @@ Another reference to the same `embedded URI`_.
 <document source="test data">
     <paragraph>
         An \n\
-        <reference refuri="http://direct">
+        <reference name="embedded uri" refuri="http://direct">
             embedded uri
         <target id="embedded-uri" name="embedded uri" refuri="http://direct">
         .
     <paragraph>
         Another reference to the same \n\
-        <reference refuri="http://direct">
+        <reference name="embedded URI" refuri="http://direct">
             embedded URI
         .
 """],
@@ -294,15 +304,15 @@ An `anonymous embedded uri <http://direct>`__.
 <document source="test data">
     <paragraph>
         An \n\
-        <reference refuri="http://direct">
+        <reference name="anonymous embedded uri" refuri="http://direct">
             anonymous embedded uri
         .
 """],
 ])
 
 totest['hyperlinks'] = ((ChainedTargets, AnonymousHyperlinks,
-                                    IndirectHyperlinks, ExternalTargets,
-                                    InternalTargets,), [
+                         IndirectHyperlinks, ExternalTargets,
+                         InternalTargets,), [
 ["""\
 .. _internal hyperlink:
 
@@ -317,7 +327,7 @@ By this `internal hyperlink`_ referemce.
         This paragraph referenced.
     <paragraph>
         By this \n\
-        <reference refid="internal-hyperlink">
+        <reference name="internal hyperlink" refid="internal-hyperlink">
             internal hyperlink
          referemce.
 """],
@@ -340,11 +350,11 @@ The results of the transform are not visible at the XML level.
         This paragraph referenced.
     <paragraph>
         By this \n\
-        <reference refid="internal-hyperlink">
+        <reference name="internal hyperlink" refid="internal-hyperlink">
             internal hyperlink
          referemce
         as well as by this \n\
-        <reference refid="chained">
+        <reference name="chained" refid="chained">
             chained
          reference.
     <paragraph>
@@ -359,7 +369,7 @@ The results of the transform are not visible at the XML level.
 <document source="test data">
     <target id="external-hyperlink" name="external hyperlink" refuri="http://uri">
     <paragraph>
-        <reference refuri="http://uri">
+        <reference name="External hyperlink" refuri="http://uri">
             External hyperlink
          reference.
 """],
@@ -387,11 +397,11 @@ and a chained_ reference too.
     <target id="chained" name="chained" refuri="http://uri">
     <target id="external-hyperlink" name="external hyperlink" refuri="http://uri">
     <paragraph>
-        <reference refuri="http://uri">
+        <reference name="External hyperlink" refuri="http://uri">
             External hyperlink
          reference
         and a \n\
-        <reference refuri="http://uri">
+        <reference name="chained" refuri="http://uri">
             chained
          reference too.
 """],
@@ -406,7 +416,7 @@ and a chained_ reference too.
     <target id="external-hyperlink" name="external hyperlink" refuri="http://uri">
     <target id="indirect-hyperlink" name="indirect hyperlink" refuri="http://uri">
     <paragraph>
-        <reference refuri="http://uri">
+        <reference name="Indirect hyperlink" refuri="http://uri">
             Indirect hyperlink
          reference.
 """],
@@ -423,10 +433,10 @@ Chained_ `indirect hyperlink`_ reference.
     <target id="chained" name="chained" refuri="http://uri">
     <target id="indirect-hyperlink" name="indirect hyperlink" refuri="http://uri">
     <paragraph>
-        <reference refuri="http://uri">
+        <reference name="Chained" refuri="http://uri">
             Chained
          \n\
-        <reference refuri="http://uri">
+        <reference name="indirect hyperlink" refuri="http://uri">
             indirect hyperlink
          reference.
 """],
@@ -453,19 +463,19 @@ __
     <target anonymous="1" id="id4" refuri="http://indirect.external">
     <target anonymous="1" id="id5">
     <paragraph>
-        <reference anonymous="1" refuri="http://full">
+        <reference anonymous="1" name="Full syntax anonymous external hyperlink reference" refuri="http://full">
             Full syntax anonymous external hyperlink reference
         ,
-        <reference anonymous="1" refuri="http://simplified">
+        <reference anonymous="1" name="chained anonymous external reference" refuri="http://simplified">
             chained anonymous external reference
         ,
-        <reference anonymous="1" refuri="http://simplified">
+        <reference anonymous="1" name="simplified syntax anonymous external hyperlink reference" refuri="http://simplified">
             simplified syntax anonymous external hyperlink reference
         ,
-        <reference anonymous="1" refuri="http://indirect.external">
+        <reference anonymous="1" name="indirect anonymous hyperlink reference" refuri="http://indirect.external">
             indirect anonymous hyperlink reference
         ,
-        <reference anonymous="1" refid="id5">
+        <reference anonymous="1" name="internal anonymous hyperlink reference" refid="id5">
             internal anonymous hyperlink reference
         .
 """],
@@ -480,7 +490,7 @@ Duplicate external target_'s (different URIs):
 <document source="test data">
     <paragraph>
         Duplicate external \n\
-        <reference refname="target">
+        <reference name="target" refname="target">
             target
         's (different URIs):
     <target dupname="target" id="target" refuri="first">
@@ -531,13 +541,57 @@ __ http://example.org
     <target id="external" name="external" refuri="http://uri">
     <target id="indirect" name="indirect" refuri="http://uri">
     <target id="internal" name="internal">
-    <reference refuri="http://uri">
+    <reference name="external_" refuri="http://uri">
         <image uri="picture.png">
-    <reference refuri="http://uri">
+    <reference name="indirect_" refuri="http://uri">
         <image uri="picture.png">
-    <reference refid="internal">
+    <reference name="internal_" refid="internal">
         <image uri="picture.png">
 """],
+["""\
+.. contents:: Table of Contents
+.. _indirect reference to the table of contents: `table of contents`_
+
+Section
+=======
+
+Testing an `indirect reference to the table of contents`_.
+""",
+"""\
+<document source="test data">
+    <topic class="contents" id="table-of-contents" name="table of contents">
+        <title>
+            Table of Contents
+        <bullet_list>
+            <list_item>
+                <paragraph>
+                    <reference id="id1" refid="section">
+                        Section
+    <target id="indirect-reference-to-the-table-of-contents" name="indirect reference to the table of contents" refid="table-of-contents">
+    <section id="section" name="section">
+        <title refid="id1">
+            Section
+        <paragraph>
+            Testing an 
+            <reference name="indirect reference to the table of contents" refid="table-of-contents">
+                indirect reference to the table of contents
+            .
+"""],
+# ["""\
+# Title
+# -----
+
+# Duplicate implicit targets.
+
+# Title
+# -----
+
+# indirect_ internal
+
+# .. _indirect: implicit_
+# """,
+# """\
+# """],
 ])
 
 

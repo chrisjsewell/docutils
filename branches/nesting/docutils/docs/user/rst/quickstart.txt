@@ -16,7 +16,7 @@ quick reference`_ document.
 __
 .. _Quick reStructuredText: quickref.html
 .. _master quick reference:
-   http://docutils.sourceforge.net/docs/rst/quickref.html
+   http://docutils.sourceforge.net/docs/user/rst/quickref.html
 
 
 Structure
@@ -248,7 +248,7 @@ __ quickref.html#section-structure
 
 To break longer text up into sections, you use **section headers**.
 These are a single line of text (one or more words) with adornment: an
-underline alone, or an overline and an overline together, in dashes
+underline alone, or an underline and an overline together, in dashes
 "``-----``", equals "``======``", tildes "``~~~~~~``" or any of the
 non-alphanumeric characters ``= - ` : ' " ~ ^ _ * + # < >`` that you
 feel comfortable with.  An underline-only adornment is distinct from
@@ -302,10 +302,18 @@ their name.  To link to the Lists_ heading, I write "``Lists_``".  If
 the heading has a space in it like `text styles`_, we need to quote
 the heading "```text styles`_``".
 
-To indicate the document title, use a unique adornment style at the
-beginning of the document.  To indicate the document subtitle, use
-another unique adornment style immediately after the document title. 
-For example::
+
+Document Title / Subtitle
+`````````````````````````
+
+The title of the whole document is distinct from section titles and
+may be formatted somewhat differently (e.g. the HTML writer by default
+shows it as a centered heading).
+
+To indicate the document title in reStructuredText, use a unique adornment
+style at the beginning of the document.  To indicate the document subtitle,
+use another unique adornment style immediately after the document title.  For
+example::
 
     ================
      Document Title
@@ -319,8 +327,8 @@ For example::
 
     ...
 
-Note that "Document Title" and "Section Title" both use equals signs,
-but are distict and unrelated styles.  The text of
+Note that "Document Title" and "Section Title" above both use equals
+signs, but are distict and unrelated styles.  The text of
 overline-and-underlined titles (but not underlined-only) may be inset
 for aesthetics.
 
@@ -352,10 +360,10 @@ you wish to supply additional information, you may::
      :scale: 50
      :alt: alternate text
 
-See the full image directive documentation__ for more info.
+See the full `image directive documentation`__ for more info.
 
-__ ../../spec/rst/directives.html
-__ ../../spec/rst/directives.html#images
+__ ../../ref/rst/directives.html
+__ ../../ref/rst/directives.html#images
 
 
 What Next?
@@ -372,10 +380,10 @@ mailing list`_.  The `Docutils project web site`_ has more
 information.
 
 .. [#] If that relative link doesn't work, try the master document:
-   http://docutils.sourceforge.net/spec/rst/reStructuredText.html.
+   http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html.
 
 .. _reStructuredText Markup Specification:
-   ../../spec/rst/reStructuredText.html
+   ../../ref/rst/restructuredtext.html
 .. _post a message: mailto:docutils-users@lists.sourceforge.net
 .. _Docutils-Users mailing list:
    http://lists.sourceforge.net/lists/listinfo/docutils-users

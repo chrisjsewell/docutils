@@ -27,7 +27,7 @@ complete details.
 
        http://www.python.org/
 
-   Python 2.2 or later [#py21]_ is required; Python 2.2.2 or later is
+   Python 2.2 or later [1]_ is required; Python 2.2.2 or later is
    recommended.
 
 2. Use the latest Docutils code.  Get the code from CVS or from the
@@ -38,7 +38,7 @@ complete details.
    See `Releases & Snapshots`_ below for details.
 
 3. Unpack the tarball in a temporary directory (**not** directly in
-   Python's ``site-packages``) and install with the standard ::
+   Python's ``site-packages``) and install with the standard::
 
        python setup.py install
 
@@ -48,7 +48,8 @@ complete details.
    directory as in step 3.  For example::
 
        cd tools
-       html.py test.txt test.html
+       ./rst2html.py ../FAQ.txt ../FAQ.html        (Unix)
+       python rst2html.py ..\FAQ.txt ..\FAQ.html   (Windows)
 
    See Usage_ below for details.
 
@@ -92,8 +93,8 @@ snapshots always contain the latest code and documentation, usually
 updated within an hour of changes being committed to the repository,
 and usually bug-free:
 
-* Snapshot of Docutils code, front-end tools, tests, documentation,
-  and specifications: http://docutils.sf.net/docutils-snapshot.tgz
+* Snapshot of Docutils code, documentation, front-end tools, and
+  tests: http://docutils.sf.net/docutils-snapshot.tgz
 
 * Snapshot of the Sandbox (experimental, contributed code):
   http://docutils.sf.net/docutils-sandbox-snapshot.tgz
@@ -104,20 +105,31 @@ and usually bug-free:
 To keep up to date on the latest developments, download fresh copies
 of the snapshots regularly.  New functionality is being added weekly,
 sometimes daily.  (There's also the CVS repository, and a mailing list
-for CVS messages.  See the web site [address above] or spec/notes.txt
-for details.)
+for CVS messages.  See the web site [address above] or
+docs/dev/policies.txt for details.)
 
 
 Requirements
 ============
 
-To run the code, Python 2.2 or later [#py21]_ must already be
-installed.  The latest release is recommended (2.2.2 as of this
-writing).  Python is available from http://www.python.org/.
+To run the code, Python 2.2 or later [1]_ must already be installed.
+The latest release is recommended.  Python is available from
+http://www.python.org/.
 
-.. [#py21] Python 2.1 may be used providing the compiler package is
+The `Python Imaging Library`, or PIL, is used for some image
+manipulation operations if it is installed.
+
+Docutils uses Greg Ward's Optik_/optparse option processing package.
+It is included in the Docutils distribution.  Python 2.3 and later
+come with optparse in the standard library; in this case, the Docutils
+copy is not installed.
+
+.. [1] Python 2.1 may be used providing the compiler package is
    installed.  The compiler package can be found in the Tools/
    directory of Python 2.1's source distribution.
+
+.. _Python Imaging Library: http://www.pythonware.com/products/pil/
+.. _Optik: http://optik.sourceforge.net/
 
 
 Project Files & Directories
@@ -135,7 +147,8 @@ Project Files & Directories
 
 * setup.py: Installation script.  See "Installation" below.
 
-* install.py: Quick & dirty installation script.  Just run it.
+* install.py: Quick & dirty installation script.  Just run it.  For
+  any kind of customization or help though, setup.py must be used.
 
 * docutils: The project source directory, installed as a Python
   package.
@@ -143,25 +156,26 @@ Project Files & Directories
 * extras: Directory for third-party modules that Docutils depends on.
   These are only installed if they're not already present.
 
-* docs: The project user documentation directory.  Contains the
-  following documents:
+* docs: The project documentation directory.  Read ``docs/index.txt``
+  for an overview, which is especially interesting for developers.
 
-  - docs/tools.txt: Docutils Front-End Tools
-  - docs/latex.txt: Docutils LaTeX Writer
-  - docs/rst/quickstart.txt: A ReStructuredText Primer
-  - docs/rst/quickref.html: Quick reStructuredText (HTML only)
+* docs/user: The project user documentation directory.  Contains the
+  following documents, among others:
+
+  - docs/user/tools.txt: Docutils Front-End Tools
+  - docs/user/latex.txt: Docutils LaTeX Writer
+  - docs/user/rst/quickstart.txt: A ReStructuredText Primer
+  - docs/user/rst/quickref.html: Quick reStructuredText (HTML only)
+
+* docs/ref: The project reference directory.
+  ``docs/ref/rst/restructuredtext.txt`` is the reStructuredText
+  reference.
 
 * licenses: Directory containing copies of license files for
   non-public-domain files.
 
-* spec: The project specification directory.  Contains PEPs (Python
-  Enhancement Proposals), XML DTDs (document type definitions), and
-  other documents.  The ``spec/rst`` directory contains the
-  reStructuredText specification.  The ``spec/howto`` directory
-  contains How-To documents for developers.
-
-* tools: Directory for Docutils front-end tools.  See docs/tools.txt
-  for documentation.
+* tools: Directory for Docutils front-end tools.  See
+  ``docs/user/tools.txt`` for documentation.
 
 * test: Unit tests.  Not required to use the software, but very useful
   if you're planning to modify it.  See `Running the Test Suite`_
@@ -245,34 +259,38 @@ After unpacking and installing the Docutils package, the following
 shell commands will generate HTML for all included documentation::
 
     cd <archive_directory_path>/tools
-    buildhtml.py ../
+    ./buildhtml.py ../
+
+On Windows systems, type::
+
+    cd <archive_directory_path>\tools
+    python buildhtml.py ..
 
 The final directory name of the ``<archive_directory_path>`` is
 "docutils" for snapshots.  For official releases, the directory may be
-called "docutils-X.Y", where "X.Y" is the release version.
+called "docutils-X.Y.Z", where "X.Y.Z" is the release version.
 Alternatively::
 
     cd <archive_directory_path>
-    tools/buildhtml.py --config=tools/docutils.conf
+    tools/buildhtml.py --config=tools/docutils.conf          (Unix)
+    python tools\buildhtml.py --config=tools\docutils.conf   (Windows)
 
 Some files may generate system messages (warnings and errors).  The
-``tools/test.txt`` file (under the archive directory) contains 5
-intentional errors.  (They test the error reporting mechanism!)
+``docs/user/rst/demo.txt`` file (under the archive directory) contains
+5 intentional errors.  (They test the error reporting mechanism!)
 
 There are many front-end tools in the unpacked "tools" subdirectory.
-You may want to begin with the "html.py" front-end tool.  Most tools
-take up to two arguments, the source path and destination path, with
-STDIN and STDOUT being the defaults.  Use the "--help" option to the
-front-end tools for details on options and arguments.  See `Docutils
-Front-End Tools`_ (``docs/tools.txt``) for full documentation.
+You may want to begin with the "rst2html.py" front-end tool.  Most
+tools take up to two arguments, the source path and destination path,
+with STDIN and STDOUT being the defaults.  Use the "--help" option to
+the front-end tools for details on options and arguments.  See
+Docutils Front-End Tools (``docs/user/tools.txt``) for full documentation.
 
 The package modules are continually growing and evolving.  The
 ``docutils.statemachine`` module is usable independently.  It contains
 extensive inline documentation (in reStructuredText format of course).
 
 Contributions are welcome!
-
-.. _Docutils Front-End Tools: docs/tools.html
 
 
 Running the Test Suite
@@ -283,6 +301,11 @@ the following commands::
 
     cd <archive_directory_path>/test
     ./alltests.py
+
+Under Windows, type::
+
+    cd <archive_directory_path>\test
+    python alltests.py
 
 You should see a long line of periods, one for each test, and then a
 summary like this::
@@ -297,13 +320,18 @@ depend on the computer running the tests.  The difference between the
 two times represents the time required to set up the tests (import
 modules, create data structures, etc.).
 
-If any of the tests fail, please `open a bug report`_ or `send
-email`_.  Please include all relevant output, information about your
+If any of the tests fail, please `open a bug report`_ or `send email`_
+[2]_.  Please include all relevant output, information about your
 operating system, Python version, and Docutils version.  To see the
-Docutils version, use these commands::
+Docutils version, use these commands in the shell::
 
     cd ../tools
     ./quicktest.py --version
+
+Windows users type these commands::
+
+    cd ..\tools
+    python quicktest.py --version
 
 .. _open a bug report:
    http://sourceforge.net/tracker/?group_id=38414&atid=422030
@@ -316,7 +344,17 @@ Getting Help
 
 If you have questions or need assistance with Docutils or
 reStructuredText, please `post a message`_ to the `Docutils-Users
-mailing list`_.
+mailing list`_ [2]_.
+
+.. [2] Due to overwhelming amounts of spam, the
+   docutils-users@lists.sourceforge.net mailing list has been set up
+   for subscriber posting only.  Non-subscribers who post to
+   docutils-users will receive a message with "Subject: Your message
+   to Docutils-users awaits moderator approval".  Legitimate messages
+   are accepted and posted as soon as possible (a list administrator
+   must verify the message manually).  If you'd like to subscribe to
+   docutils-users, please visit
+   <http://lists.sourceforge.net/lists/listinfo/docutils-users>.
 
 .. _post a message: mailto:docutils-users@lists.sourceforge.net
 .. _Docutils-Users mailing list:

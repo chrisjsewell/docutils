@@ -13,14 +13,16 @@ Tests for latex2e writer.
 from __init__ import DocutilsTestSupport
 
 def suite():
-    s = DocutilsTestSupport.LatexPublishTestSuite()
+    s = DocutilsTestSupport.PublishTestSuite('latex')
     s.generateTests(totest)
     return s
 
 
 latex_head = """\
-\\documentclass[10pt,english]{article}
+\\documentclass[10pt,a4paper,english]{article}
 \\usepackage{babel}
+\\usepackage{ae}
+\\usepackage{aeguill}
 \\usepackage{shortvrb}
 \\usepackage[latin1]{inputenc}
 \\usepackage{tabularx}
@@ -30,8 +32,9 @@ latex_head = """\
 \\usepackage{graphicx}
 \\usepackage{color}
 \\usepackage{multirow}
+\\usepackage{ifthen}
 \\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
-\\usepackage[a4paper,margin=2cm,nohead]{geometry}
+\\usepackage[DIV12]{typearea}
 %% generator Docutils: http://docutils.sourceforge.net/
 \\newlength{\\admonitionwidth}
 \\setlength{\\admonitionwidth}{0.9\\textwidth}
@@ -61,6 +64,7 @@ latex_head = """\
 % end floats for footnotes
 % some commands, that could be overwritten in the style file.
 \\newcommand{\\rubric}[1]{\\subsection*{~\\hfill {\\it #1} \\hfill ~}}
+\\newcommand{\\titlereference}[1]{\\textsl{#1}}
 % end of "some commands"
 """
 
@@ -79,27 +83,34 @@ Title 2
 -------
 Paragraph 2.
 """,
-# expected output
+## # expected output
 latex_head + """\
-\\title{Title 1}
+\\title{}
 \\author{}
 \\date{}
-\\hypersetup{\npdftitle={Title 1}
-}
 \\raggedbottom
 \\begin{document}
-\\maketitle
-
 
 \\setlength{\\locallinewidth}{\\linewidth}
 \\hypertarget{table-of-contents}{}
 \\pdfbookmark[0]{Table of Contents}{table-of-contents}
-\\subsection*{~\\hfill Table of Contents\\hfill ~}
+\\subsubsection*{~\\hfill Table of Contents\\hfill ~}
+\\begin{list}{}{}
+\\item {} \\href{\\#title-1}{Title 1}
 \\begin{list}{}{}
 \\item {} \\href{\#title-2}{Title 2}
 
 \\end{list}
 
+\\end{list}
+
+
+
+%___________________________________________________________________________
+
+\\hypertarget{title-1}{}
+\\pdfbookmark[0]{Title 1}{title-1}
+\\section*{Title 1}
 
 Paragraph 1.
 
@@ -107,8 +118,8 @@ Paragraph 1.
 %___________________________________________________________________________
 
 \\hypertarget{title-2}{}
-\\pdfbookmark[0]{Title 2}{title-2}
-\\section*{Title 2}
+\\pdfbookmark[1]{Title 2}{title-2}
+\\subsection*{Title 2}
 
 Paragraph 2.
 
@@ -139,8 +150,6 @@ latex_head + """\
 \\date{}
 \\raggedbottom
 \\begin{document}
-\\maketitle
-
 
 \\setlength{\\locallinewidth}{\\linewidth}
 \\newcounter{listcnt1}
@@ -231,8 +240,6 @@ latex_head + """\
 \\date{}
 \\raggedbottom
 \\begin{document}
-\\maketitle
-
 
 \\setlength{\\locallinewidth}{\\linewidth}
 
@@ -242,16 +249,81 @@ Expecting ``en'' here.
 Inside literal blocks quotes should be left untouched
 (use only two quotes in test code makes life easier for
 the python interpreter running the test):
-\\begin{ttfamily}\\begin{flushleft}
-\\mbox{""}\\\\
-\\mbox{This~is~left~"untouched"~also~*this*.}\\\\
-\\mbox{""}
-\\end{flushleft}\\end{ttfamily}
-\\begin{ttfamily}\\begin{flushleft}
-\\mbox{should~get~"quotes"~and~\\emph{italics}.}
-\\end{flushleft}\\end{ttfamily}
+\\begin{quote}{\\ttfamily \\raggedright \\noindent
+"{}"~\\\\
+This~is~left~"untouched"~also~*this*.~\\\\
+"{}"
+}\\end{quote}
+\\begin{quote}{\\ttfamily \\raggedright \\noindent
+should~get~"quotes"~and~\\emph{italics}.
+}\\end{quote}
 
 Inline \\texttt{literal "quotes"} should be kept.
+
+\\end{document}
+"""],
+]
+
+totest['table_caption'] = [
+# input
+["""\
+.. table:: Foo
+
+   +-----+-----+
+   |     |     |
+   +-----+-----+
+   |     |     |
+   +-----+-----+
+""",
+latex_head + """\
+\\title{}
+\\author{}
+\\date{}
+\\raggedbottom
+\\begin{document}
+
+\\setlength{\\locallinewidth}{\\linewidth}
+
+\\begin{longtable}[c]{|p{0.07\locallinewidth}|p{0.07\locallinewidth}|}
+\\caption{Foo}\\\\
+\\hline
+ &  \\\\
+\hline
+ &  \\\\
+\hline
+\\end{longtable}
+
+\\end{document}
+"""],
+]
+
+# In "\\\n[" the "[" needs to be protected (otherwise it will be seen as an option to "\\").
+totest['brackett_protection'] = [
+# input
+["""\
+::
+
+  something before to get a end of line.
+  [
+
+  the empty line gets tested too
+  ]
+""",
+latex_head + """\
+\\title{}
+\\author{}
+\\date{}
+\\raggedbottom
+\\begin{document}
+
+\\setlength{\\locallinewidth}{\\linewidth}
+\\begin{quote}{\\ttfamily \\raggedright \\noindent
+something~before~to~get~a~end~of~line.~\\\\
+{[}~\\\\
+~\\\\
+the~empty~line~gets~tested~too~\\\\
+]
+}\\end{quote}
 
 \\end{document}
 """],

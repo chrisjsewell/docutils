@@ -204,21 +204,20 @@ _`error_encoding`
     Default: "ascii".  Options: ``--error-encoding, -e``.
 
 _`error_encoding_error_handler`
-    The encoding error handler for unencodable characters in error
-    output.  Acceptable values are the same as for the "error"
-    parameter of Python's ``encode`` string method.
+    The error handler for unencodable characters in error output.  See
+    output_encoding_error_handler_ for acceptable values.
 
     Default: "backslashreplace" for Python 2.3 and later; "replace"
     otherwise.  Options: ``--error-encoding-error-handler,
     --error-encoding, -e``.
 
-_`exit_level`
+_`exit_status_level`
     A system message level threshold; non-halting system messages at
     or above this level will produce a non-zero exit status at normal
     exit.  Exit status is the maximum system message level plus 10 (11
     for INFO, etc.).
 
-    Default: disabled (5).  Options: ``--exit``.
+    Default: disabled (5).  Options: ``--exit-status``.
 
 _`expose_internals`
     List of internal attribues to expose as external attributes (with
@@ -245,7 +244,8 @@ _`generator`
 
 _`halt_level`
     The threshold at or above which system messages are converted to
-    exceptions, halting execution immediately.
+    exceptions, halting execution immediately.  If `traceback`_ is
+    set, the exception will propagate; otherwise, Docutils will exit.
 
     Default: severe (4).  Options: ``--halt, --strict``.
 
@@ -266,9 +266,26 @@ _`output_encoding`
     Default: "UTF-8".  Options: ``--output-encoding, -o``.
 
 _`output_encoding_error_handler`
-    The encoding error handler for unencodable characters in output.
+    The error handler for unencodable characters in the output.
+    Acceptable values include:
+
+    strict
+        Raise an exception in case of an encoding error.
+    replace
+        Replace malformed data with a suitable replacement marker,
+        such as "?".
+    ignore
+        Ignore malformed data and continue without further notice.
+    xmlcharrefreplace
+        Replace with the appropriate XML character reference, such as
+        "``&#8224;``".
+    backslashreplace
+        (Python 2.3+)  Replace with backslashed escape sequences, such
+        as "``\u2020``".
+
     Acceptable values are the same as for the "error" parameter of
-    Python's ``encode`` string method.
+    Python's ``encode`` string method; other values may be defined in
+    applications or in future versions of Python.
 
     Default: "strict".  Options: ``--output-encoding-error-handler,
     --output-encoding, -o``.
@@ -279,6 +296,12 @@ _`report_level`
 
     Default: warning (2).  Options: ``--report, -r, --verbose, -v,
     --quiet, -q``.
+
+_`sectnum_xform`
+    Enable or disable the section numbering transform
+    (docutils.transforms.parts.SectNum).
+
+    Default: enabled (1).  Options: ``--no-section-numbering``.
 
 _`source_link`
     Include a "View document source" link in the document footer.  URL
@@ -301,7 +324,10 @@ _`toc_backlinks`
     --toc-top-backlinks, --no-toc-backlinks``.
 
 _`traceback`
-    Enable Python tracebacks when an error occurs.
+    Enable Python tracebacks when halt-level system messages and other
+    exceptions occur.  Useful for debugging, and essential for issue
+    reports.  Exceptions are allowed to propagate, instead of being
+    caught and reported (in a user-friendly way) by Docutils.
 
     Default: disabled (None).  Options: ``--traceback,
     --no-traceback``.
@@ -323,23 +349,34 @@ Docutils currently supports only one parser, for reStructuredText.
 `````````````````````````
 
 _`pep_references`
-    Recognize and link to PEP references (like "PEP 258").
+    Recognize and link to standalone PEP references (like "PEP 258").
 
     Default: disabled (None); enabled (1) in PEP Reader.  Options:
     ``--pep-references``.
 
+_`pep_base_url`
+    Base URL for PEP references.  
+
+    Default: "http://www.python.org/peps/".  Option:
+    ``--pep-base-url``.
+
 _`rfc_references`
-    Recognize and link to RFC references (like "RFC 822").
+    Recognize and link to standalone RFC references (like "RFC 822").
 
     Default: disabled (None); enabled (1) in PEP Reader.  Options:
     ``--rfc-references``.
+
+_`rfc_base_url`
+    Base URL for RFC references.  
+
+    Default: "http://www.faqs.org/rfcs/".  Option: ``--rfc-base-url``.
 
 _`tab_width`
     Number of spaces for hard tab expansion.
 
     Default: 8.  Options: ``--tab-width``.
 
-_`trim-footnote-reference-space`
+_`trim_footnote_reference_space`
     Remove spaces before footnote references.
 
     Default: don't (None).  Options:
@@ -364,7 +401,7 @@ _`doctitle_xform`
     to document title (and subsequent section title to document
     subtitle promotion; docutils.transforms.frontmatter.DocTitle).
 
-    Default: enabled ().  Options: ``--no-doc-title``.
+    Default: enabled (1).  Options: ``--no-doc-title``.
 
 
 [pep reader]
@@ -440,9 +477,7 @@ _`compact_lists`
 
 _`embed_stylesheet`
     Embed the stylesheet in the output HTML file.  The stylesheet file
-    must be accessible during processing.  The stylesheet is embedded
-    inside a comment, so it must not contain the text "``--``" (two
-    hyphens).
+    must be accessible during processing.
 
     Default: link, don't embed (None).  Options: ``--embed-stylesheet,
     --link-stylesheet``.
@@ -458,23 +493,41 @@ footnote_references
 
     __ `footnote_references [latex2e writer]`_
 
+_`initial_header_level`
+    The initial level for header elements.  This does not affect the
+    document title & subtitle; see doctitle_xform_.
+
+    Default: 1 (for "<h1>").  Option: ``--initial-header-level``.
+
 .. _stylesheet [html4css1 writer]:
 
 stylesheet
-    CSS stylesheet URL, used verbatim.  Overridden by
-    "stylesheet_path" URL option (``--stylesheet-path``).  Also
-    defined for the `LaTeX Writer`__.
+    CSS stylesheet URL, used verbatim.  Overridden by the
+    "stylesheet_path" setting (``--stylesheet-path``).  However, an
+    earlier file's "stylesheet-path" setting can be overriden by a
+    later config file's "stylesheet" by nullifying "stylesheet-path"
+    in the later file::
+
+        stylesheet-path=
+
+    On the command line, use ``--stylesheet-path=''``.
 
     Default: "default.css".  Options: ``--stylesheet``.
 
+    (Setting also defined for the `LaTeX Writer`__.)
+
     __ `stylesheet [latex2e writer]`_
 
-_`stylesheet_path`
-    Path to CSS stylesheet [#pwd]_.  Overrides "stylesheet" URL option
-    (``--stylesheet``).  Path is adjusted relative to the output HTML
-    file.
+.. _stylesheet_path [html4css1 writer]:
 
-    Default: None.  Options: ``--stylesheet``.
+stylesheet_path
+    Path to CSS stylesheet [#pwd]_.  Overrides "stylesheet" URL
+    setting (``--stylesheet``).  Path is adjusted relative to the
+    output HTML file.  Also defined for the `LaTeX Writer`__.
+
+    Default: None.  Options: ``--stylesheet-path``.
+
+    __ `stylesheet_path [latex2e writer]`_
 
 .. _xml_declaration [html4css1 writer]:
 
@@ -532,32 +585,35 @@ _`use_latex_toc`
     *Note:* LaTeX will number the sections, which might be a bug in
     this case.
 
-    Default: off.  Options: ``--use-latex-toc``.
+    Default: off.  Option: ``--use-latex-toc``.
+
+.. XXX Missing: use_latex_docinfo
 
 _`use_latex_footnotes`
     Use LaTeX-footnotes not a figure simulation. This might give no
-    Hyperrefs on /to footnotes, but should be able to handle an unlimited
-    number of footnotes.
+    Hyperrefs on /to footnotes, but should be able to handle an
+    unlimited number of footnotes.
 
-    Default: off.  Options: ``--use-latex-footnotes``.
+    Default: off.  Option: ``--use-latex-footnotes``.
 
 _`hyperlink_color`
-    Color of any hyperlinks embedded in text. Use "0" to disable coloring
-    of links.
+    Color of any hyperlinks embedded in text. Use "0" to disable
+    coloring of links.
 
-    Default: "blue", use "0" to disable.  Options
+    Default: "blue", use "0" to disable.  Option:
+    ``--hyperlink-color``.
 
 _`documentclass`
     Specify latex documentclass, *but* beaware that books have chapters
     articles not.
 
-    Default: "article".
+    Default: "article".  Option: ``--documentclass``.
 
 _`documentoptions`
     Specify document options.  Multiple options can be given, separated by
     commas.
 
-    Default is "10pt".
+    Default is "10pt".  Option: ``--documentoptions``.
 
 .. _stylesheet [latex2e writer]:
 
@@ -566,9 +622,22 @@ stylesheet
     the document header. If this is set to "" disables generation of
     input latex command.  Also defined for the `HTML Writer`__.
 
-    Default: no stylesheet ("").
+    Default: no stylesheet ("").  Option: ``--stylesheet``.
 
     __ `stylesheet [html4css1 writer]`_
+
+.. _stylesheet_path [latex2e writer]:
+
+stylesheet_path
+    Path to stylesheet [#pwd]_.  Overrides "stylesheet" setting
+    (``--stylesheet``).  XXX LaTeX semantics?  Also defined for the
+    `HTML Writer`__.
+
+    Default: None.  Option: ``--stylesheet-path``.
+
+    __ `stylesheet_path [html4css1 writer]`_
+
+.. XXX Missing: embed_stylesheet
 
 .. _footnote_references [latex2e writer]:
 
@@ -576,7 +645,7 @@ footnote_references
     Format for footnote references: one of "superscript" or
     "brackets".  Also defined for the `HTML Writer`__.
 
-    Default is "brackets".
+    Default is "brackets".  Option: ``--footnote-references``.
 
     __ `footnote_references [html4css1 writer]`_
 
@@ -588,10 +657,47 @@ attribution
     "parentheses"/"parens" or "none".  Also defined for the `HTML
     Writer`__.
 
-    Default: "dash".
+    Default: "dash".  Option: ``--attribution``.
 
     __ `attribution [html4css1 writer]`_
 
+_`compound_enumerators`
+    Enable or disable compound enumerators for nested enumerated lists
+    (e.g. "1.2.a.ii").
+
+    Default: disabled (None).  Options: ``--compound-enumerators``,
+    ``--no-compound-enumerators``.
+
+_`section_prefix_for_enumerators`
+    Enable or disable section ("." subsection ...) prefixes for
+    compound enumerators.  This has no effect unless
+    `compound_enumerators`_ are enabled.
+    
+    Default: disabled (None).  Options:
+    ``--section-prefix-for-enumerators``,
+    ``--no-section-prefix-for-enumerators``.
+
+_`section_enumerator_separator`
+    The separator between section number prefix and enumerator for
+    compound enumerated lists (see `compound_enumerators`_).
+
+    Generally it isn't recommended to use both sub-sections and nested
+    enumerated lists with compound enumerators.  This setting avoids
+    ambiguity in the situation where a section "1" has a list item
+    enumerated "1.1", and subsection "1.1" has list item "1".  With a
+    separator of ".", these both would translate into a final compound
+    enumerator of "1.1.1".  With a separator of "-", we get the
+    unambiguous "1-1.1" and "1.1-1".
+
+    Default: "-".  Option: ``--section-enumerator-separator``.
+
+table_style
+    Specify the drawing of separation lines.
+
+    - "standard" lines around and between cells.
+    - "booktabs" a line above and below the table and one after the
+      head.
+    - "nolines".
 
 [pseudoxml writer]
 ``````````````````

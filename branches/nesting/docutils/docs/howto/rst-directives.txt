@@ -18,9 +18,18 @@ The syntax of directives is detailed in the `reStructuredText Markup
 Specification`_, and standard directives are described in
 `reStructuredText Directives`_.
 
+Directives are a reStructuredText markup/parser concept.  There is no
+"directive" element, no single element that corresponds exactly to the
+concept of directives.  Instead, choose the most appropriate elements
+from the existing Docutils elements.  Directives build structures
+using the existing building blocks.  See `The Docutils Document Tree`_
+and the ``docutils.nodes`` module for more about the building blocks
+of Docutils documents.
+
 .. _reStructuredText Markup Specification:
-   ../rst/reStructuredText.html#directives
-.. _reStructuredText Directives: ../rst/directives.html
+   ../ref/rst/restructuredtext.html#directives
+.. _reStructuredText Directives: ../ref/rst/directives.html
+.. _The Docutils Document Tree: ../ref/doctree.html
 
 
 .. contents:: Table of Contents
@@ -79,19 +88,27 @@ are as follows:
 
 Directive functions return a list of nodes which will be inserted into
 the document tree at the point where the directive was encountered.
-This can be an empty list if there is nothing to insert.  Directives
-have no corresponding element; choose the most appropriate elements
-from the existing Docutils elements.  See `The Docutils Document
-Tree`_ and the ``docutils.nodes`` module.
+This can be an empty list if there is nothing to insert.  For ordinary
+directives, the list must contain body elements or structural
+elements.  Some directives are intended specifically for substitution
+definitions, and must return a list of ``Text`` nodes and/or inline
+elements (suitable for inline insertion, in place of the substitution
+reference).  Such directives must verify substitution definition
+context, typically using code like this::
 
-.. _The Docutils Document Tree: ../doctree.html
+    if not isinstance(state, states.SubstitutionDef):
+        error = state_machine.reporter.error(
+            'Invalid context: the "%s" directive can only be used '
+            'within a substitution definition.' % (name),
+            nodes.literal_block(block_text, block_text), line=lineno)
+        return [error]
 
 
 Specify Directive Arguments, Options, and Content
 =================================================
 
-Function attributes are interpreted by the directive parser (the
-``docutils.parsers.rst.states.Body.parse_directive()`` method).  If
+Function attributes are interpreted by the directive parser (from the
+``docutils.parsers.rst.states.Body.run_directive()`` method).  If
 unspecified, directive function attributes are assumed to have the
 value ``None``.  Three directive function attributes are recognized:
 
@@ -168,25 +185,36 @@ value ``None``.  Three directive function attributes are recognized:
   functions must handle the case where content is required but not
   present in the input text (an empty content list will be supplied).
 
-The final step of the ``parse_directive()`` method is to call the
+The final step of the ``run_directive()`` method is to call the
 directive function itself.
 
 
 Register the Directive
 ======================
 
-Register the new directive in
-``docutils/parsers/rst/directives/__init__.py``, in the
-``_directive_registry`` dictionary.  This allows the reStructuredText
-parser to find and use the directive.
+If the directive is a general-use addition to the Docutils core, it
+must be registered with the parser and language mappings added:
 
-Add an entry to ``docutils/parsers/rst/languages/en.py`` for the
-directive, mapping the English name to the canonical name (both
-lowercase).  Usually the English name and the canonical name are the
-same.
+1. Register the new directive using its canonical name in
+   ``docutils/parsers/rst/directives/__init__.py``, in the
+   ``_directive_registry`` dictionary.  This allows the
+   reStructuredText parser to find and use the directive.
 
-Please check for and update any other language modules for languages
-in which you are proficient.
+2. Add an entry to the ``directives`` dictionary in
+   ``docutils/parsers/rst/languages/en.py`` for the directive, mapping
+   the English name to the canonical name (both lowercase).  Usually
+   the English name and the canonical name are the same.
+
+3. Update all the other language modules as well.  For languages in
+   which you are proficient, please add translations.  For other
+   languages, add the English directive name plus "(translation
+   required)".
+
+If the directive is application-specific, use the
+``register_directive`` function::
+
+    from docutils.parsers.rst import directives
+    directives.register_directive(directive_name, directive_function)
 
 
 Examples
@@ -216,7 +244,8 @@ function simply hands off control to a generic directive function::
 Note that the only thing distinguishing the various admonition
 directives is the element (node class) generated.  In the code above,
 the node class is passed as the first argument to the generic
-directive function, where the actual processing takes place::
+directive function (early version), where the actual processing takes
+place::
 
    def admonition(node_class, name, arguments, options, content, lineno,
                   content_offset, block_text, state, state_machine):
@@ -254,8 +283,8 @@ Three things are noteworthy in the function above:
 
 The "image" directive is used to insert a picture into a document.
 This directive has one argument, the path to the image file, and
-supports several options.  There is no directive content.  Here's the
-image directive function::
+supports several options.  There is no directive content.  Here's an
+early version of the image directive function::
 
     def image(name, arguments, options, content, lineno,
               content_offset, block_text, state, state_machine):
@@ -307,8 +336,8 @@ Several things are noteworthy in the code above:
 The "contents" directive is used to insert an auto-generated table of
 contents (TOC) into a document.  It takes one optional argument, a
 title for the TOC.  If no title is specified, a default title is used
-instead.  The directive also handles several options.  Here's the
-code::
+instead.  The directive also handles several options.  Here's an early
+version of the code::
 
     def contents(name, arguments, options, content, lineno,
                  content_offset, block_text, state, state_machine):

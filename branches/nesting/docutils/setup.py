@@ -25,11 +25,11 @@ package_data = {
     'description': 'Docutils -- Python Documentation Utilities',
     'long_description': """\
 Docutils is a modular system for processing documentation
-into useful formats, such as HTML, XML, and TeX.  For input
-Docutils supports reStructuredText, an easy-to-read,
+into useful formats, such as HTML, XML, and LaTeX.  For
+input Docutils supports reStructuredText, an easy-to-read,
 what-you-see-is-what-you-get plaintext markup syntax.""", # wrap at col 60
     'url': 'http://docutils.sourceforge.net/',
-    'version': '0.3+',
+    'version': '0.3.6',
     'author': 'David Goodger',
     'author_email': 'goodger@users.sourceforge.net',
     'license': 'public domain, Python, BSD, GPL (see COPYING.txt)',
@@ -42,7 +42,7 @@ what-you-see-is-what-you-get plaintext markup syntax.""", # wrap at col 60
                  'docutils.readers', 'docutils.readers.python',
                  'docutils.transforms',
                  'docutils.writers',],
-    'scripts' : ['tools/rst2html.py',],}
+    'scripts' : ['tools/rst2html.py','tools/rst2latex.py'],}
 """Distutils setup parameters."""
 
 classifiers = [
