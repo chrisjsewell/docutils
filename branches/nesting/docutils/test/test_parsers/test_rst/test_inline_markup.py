@@ -56,8 +56,7 @@ across lines*
 """],
 ["""\
 '*emphasis*' and 1/*emphasis*/2 and 3-*emphasis*-4 and 5:*emphasis*:6
-but not '*' or '"*"' or  x*2* or 2*x* or \\*args or *
-or *the\\* *stars\\\\\\* *inside*
+but not '*' or '"*"' or  x*2* or 2*x* or \\*args or * .
 
 (however, '*args' will trigger a warning and may be problematic)
 
@@ -79,16 +78,13 @@ what about *this**?
         <emphasis>
             emphasis
         :6
-        but not '*' or '"*"' or  x*2* or 2*x* or *args or *
-        or \n\
-        <emphasis>
-            the* *stars\* *inside
+        but not '*' or '"*"' or  x*2* or 2*x* or *args or * .
     <paragraph>
         (however, '
         <problematic id="id2" refid="id1">
             *
         args' will trigger a warning and may be problematic)
-    <system_message backrefs="id2" id="id1" level="2" line="5" source="test data" type="WARNING">
+    <system_message backrefs="id2" id="id1" level="2" line="4" source="test data" type="WARNING">
         <paragraph>
             Inline emphasis start-string without end-string.
     <paragraph>
@@ -147,9 +143,9 @@ totest['strong'] = [
             Inline strong start-string without end-string.
 """],
 ["""\
-Strong asterisk: *****
+Strong asterisk: **\***
 
-Strong double asterisk: ******
+Strong double asterisk: **\*\***
 """,
 """\
 <document source="test data">
@@ -505,18 +501,30 @@ See `HTML Anchors: \\<a>`_.
 <document source="test data">
     <paragraph>
         <reference anonymous="1">
-            embedded URI with too much whitespace < http://example.com/
+            embedded URI with too much whitespace < 
+            <reference refuri="http://example.com/">
+                http://example.com/
+            \n\
             long/path /and  /whitespace >
     <paragraph>
         <reference anonymous="1">
-            embedded URI with too much whitespace at end <http://example.com/
+            embedded URI with too much whitespace at end <
+            <reference refuri="http://example.com/">
+                http://example.com/
+            \n\
             long/path /and  /whitespace >
     <paragraph>
         <reference anonymous="1">
-            embedded URI with no preceding whitespace<http://example.com>
+            embedded URI with no preceding whitespace<
+            <reference refuri="http://example.com">
+                http://example.com
+            >
     <paragraph>
         <reference anonymous="1">
-            escaped URI <http://example.com>
+            escaped URI <
+            <reference refuri="http://example.com">
+                http://example.com
+            >
     <paragraph>
         See \n\
         <reference refname="html anchors: <a>">
