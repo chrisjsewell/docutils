@@ -25,7 +25,7 @@ totest['contents'] = [
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="contents" name="contents">
+    <topic class="contents" ids="contents" name="contents">
         <title>
             Contents
         <pending>
@@ -38,7 +38,7 @@ totest['contents'] = [
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="table-of-contents" name="table of contents">
+    <topic class="contents" ids="table-of-contents" name="table of contents">
         <title>
             Table of Contents
         <pending>
@@ -52,7 +52,7 @@ totest['contents'] = [
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="table-of-contents" name="table of contents">
+    <topic class="contents" ids="table-of-contents" name="table of contents">
         <title>
             Table of Contents
         <pending>
@@ -67,7 +67,7 @@ totest['contents'] = [
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="table-of-contents" name="table of contents">
+    <topic class="contents" ids="table-of-contents" name="table of contents">
         <title>
             Table
             of
@@ -82,7 +82,7 @@ totest['contents'] = [
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="table-of-contents" name="table of contents">
+    <topic class="contents" ids="table-of-contents" name="table of contents">
         <title>
             <emphasis>
                 Table
@@ -101,7 +101,7 @@ totest['contents'] = [
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="contents" name="contents">
+    <topic class="contents" ids="contents" name="contents">
         <pending>
             .. internal attributes:
                  .transform: docutils.transforms.parts.Contents
@@ -132,7 +132,7 @@ totest['contents'] = [
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="table-of-contents" name="table of contents">
+    <topic class="contents" ids="table-of-contents" name="table of contents">
         <title>
             Table of Contents
         <pending>

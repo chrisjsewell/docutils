@@ -91,7 +91,8 @@ class Contents(Transform):
         else:
             startnode = self.document
 
-        self.toc_id = self.startnode.parent['id']
+        assert len(self.startnode.parent['ids'])
+        self.toc_id = self.startnode.parent['ids'][0]
         if details.has_key('backlinks'):
             self.backlinks = details['backlinks']
         else:
@@ -117,7 +118,7 @@ class Contents(Transform):
             title = section[0]
             auto = title.get('auto')    # May be set by SectNum.
             entrytext = self.copy_and_filter(title)
-            reference = nodes.reference('', '', refid=section['id'],
+            reference = nodes.reference('', '', refid=section['ids'][0],
                                         *entrytext)
             ref_id = self.document.set_id(reference)
             entry = nodes.paragraph('', '', reference)

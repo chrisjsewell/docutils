@@ -85,7 +85,7 @@ I recommend you try |Python|_.
         <emphasis>
             the
          best language around
-    <target id="python" name="python" refuri="http://www.python.org/">
+    <target ids="python" name="python" refuri="http://www.python.org/">
     <paragraph>
         I recommend you try 
         <reference refname="python">
@@ -98,13 +98,13 @@ I recommend you try |Python|_.
 """,
 """\
 <document source="test data">
-    <system_message id="id1" level="2" line="1" source="test data" type="WARNING">
+    <system_message ids="id1" level="2" line="1" source="test data" type="WARNING">
         <paragraph>
             Inline emphasis start-string without end-string.
-    <system_message id="id3" level="2" line="1" source="test data" type="WARNING">
+    <system_message ids="id3" level="2" line="1" source="test data" type="WARNING">
         <paragraph>
             Inline strong start-string without end-string.
-    <system_message id="id5" level="2" line="1" source="test data" type="WARNING">
+    <system_message ids="id5" level="2" line="1" source="test data" type="WARNING">
         <paragraph>
             Inline literal start-string without end-string.
     <system_message level="3" line="1" source="test data" type="ERROR">

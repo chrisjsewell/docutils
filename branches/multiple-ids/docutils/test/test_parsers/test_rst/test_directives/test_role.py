@@ -64,14 +64,14 @@ Now that it's defined, :custom:`interpreted` works.
 <document source="test data">
     <paragraph>
         Must define 
-        <problematic id="id2" refid="id1">
+        <problematic ids="id2" refid="id1">
             :custom:`interpreted`
          before using it.
     <system_message level="1" line="1" source="test data" type="INFO">
         <paragraph>
             No role entry for "custom" in module "docutils.parsers.rst.languages.en".
             Trying "custom" as canonical role name.
-    <system_message backrefs="id2" id="id1" level="3" line="1" source="test data" type="ERROR">
+    <system_message backrefs="id2" ids="id1" level="3" line="1" source="test data" type="ERROR">
         <paragraph>
             Unknown interpreted text role "custom".
     <paragraph>
@@ -166,7 +166,7 @@ Testing a :fileref:`role` in a nested parse.
 """,
 """\
 <document source="test data">
-    <section id="test" name="test">
+    <section ids="test" name="test">
         <title>
             Test
         <paragraph>
@@ -213,10 +213,10 @@ Can't use the :raw:`role` directly.
 <document source="test data">
     <paragraph>
         Can't use the \n\
-        <problematic id="id2" refid="id1">
+        <problematic ids="id2" refid="id1">
             :raw:`role`
          directly.
-    <system_message backrefs="id2" id="id1" level="3" line="1" source="test data" type="ERROR">
+    <system_message backrefs="id2" ids="id1" level="3" line="1" source="test data" type="ERROR">
         <paragraph>
             No format (Writer name) is associated with this role: "raw".
             The "raw" role cannot be used directly.

@@ -37,7 +37,7 @@ document by the test framework.)
 <document source="test data">
     <paragraph>
         This \n\
-        <problematic id="id2" refid="id1">
+        <problematic ids="id2" refid="id1">
             |unknown substitution|
          will generate a system message, thanks to
         the \n\
@@ -54,7 +54,7 @@ document by the test framework.)
     <section class="system-messages">
         <title>
             Docutils System Messages
-        <system_message backrefs="id2" id="id1" level="3" line="1" source="test data" type="ERROR">
+        <system_message backrefs="id2" ids="id1" level="3" line="1" source="test data" type="ERROR">
             <paragraph>
                 Undefined substitution referenced: "unknown substitution".
 """],

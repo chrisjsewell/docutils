@@ -23,6 +23,8 @@ hierarchy.
 
 __docformat__ = 'reStructuredText'
 
+__metaclass__ = type
+
 import sys
 import os
 import re
@@ -238,7 +240,7 @@ class Node:
         except IndexError:
             return None
 
-class Text(Node, UserString):
+class Text(UserString, Node):
 
     """
     Instances are terminal nodes (leaves) containing text only; no child
@@ -289,6 +291,55 @@ class Text(Node, UserString):
         return ''.join(result)
 
 
+class AttributeDict(dict):
+
+    """
+    Dictionary with error checking and default values.
+    """
+
+    def __init__(self, defaults):
+        dict.__init__(self)
+        # The defaults parameter is usually taken from some
+        # attr_defaults member variable and maps attribute names to
+        # types which are called to create the default value.
+        self.defaults = defaults
+
+    def has_key(self, key):
+        if key == 'id' or self.defaults.has_key(key):
+            raise KeyError, key
+        return dict.has_key(self, key)
+
+    __contains__ = has_key
+
+    def __getitem__(self, key):
+        if key == 'id':
+            raise KeyError, key
+        try:
+            return dict.__getitem__(self, key)
+        except KeyError:
+            default = self.defaults[key]()
+            self[key] = default
+            return default
+
+    def __setitem__(self, key, value):
+        expected_type = self.defaults.get(key, (str, unicode, int, long))
+        assert isinstance(value, expected_type), \
+               'can only set %r to an instance of %s' % (key, expected_type)
+        if key == 'id':
+            raise KeyError, key
+        dict.__setitem__(self, key, value)
+
+    def __delitem__(self, key):
+        assert key not in ['id'] + self.defaults.keys()
+        dict.__delitem__(self, key)
+
+    def is_not_default(self, key):
+        """
+        Return true if the key is not set to its default value.
+        """
+        return key not in self.defaults or self[key] != self.defaults[key]()
+
+
 class Element(Node):
 
     """
@@ -326,6 +377,10 @@ class Element(Node):
     This is equivalent to ``element.extend([node1, node2])``.
     """
 
+    attr_defaults = {'ids': list, 'classes': list, 'names': list}
+    """Dictionary mapping attribute keys to types instances of which
+    provide default values."""
+
     tagname = None
     """The element generic identifier. If None, it is set as an instance
     attribute to the name of the class."""
@@ -342,7 +397,7 @@ class Element(Node):
 
         self.extend(children)           # maintain parent info
 
-        self.attributes = {}
+        self.attributes = AttributeDict(self.attr_defaults)
         """Dictionary of attribute {name: value}."""
 
         for att, value in attributes.items():
@@ -353,7 +408,7 @@ class Element(Node):
 
     def _dom_node(self, domroot):
         element = domroot.createElement(self.tagname)
-        for attribute, value in self.attributes.items():
+        for attribute, value in self.attlist():
             if isinstance(value, ListType):
                 value = ' '.join(['%s' % v for v in value])
             element.setAttribute(attribute, '%s' % value)
@@ -422,7 +477,10 @@ class Element(Node):
             return self.children[key]
         elif isinstance(key, SliceType):
             assert key.step in (None, 1), 'cannot handle slice with stride'
-            return self.children[key.start:key.stop]
+            stop = key.stop
+            if stop is None:  # Py22 compatibility
+                stop = sys.maxint
+            return self.children[key.start or 0:stop]
         else:
             raise TypeError, ('element index must be an integer, a slice, or '
                               'an attribute name string')
@@ -437,7 +495,10 @@ class Element(Node):
             assert key.step in (None, 1), 'cannot handle slice with stride'
             for node in item:
                 self.setup_child(node)
-            self.children[key.start:key.stop] = item
+            stop = key.stop
+            if stop is None:  # Py22 compatibility
+                stop = sys.maxint
+            self.children[key.start or 0:stop] = item
         else:
             raise TypeError, ('element index must be an integer, a slice, or '
                               'an attribute name string')
@@ -449,7 +510,10 @@ class Element(Node):
             del self.children[key]
         elif isinstance(key, SliceType):
             assert key.step in (None, 1), 'cannot handle slice with stride'
-            del self.children[key.start:key.stop]
+            stop = key.stop
+            if stop is None:  # Py22 compatibility
+                stop = sys.maxint
+            del self.children[key.start or 0:stop]
         else:
             raise TypeError, ('element index must be an integer, a simple '
                               'slice, or an attribute name string')
@@ -473,7 +537,8 @@ class Element(Node):
               [child.astext() for child in self.children])
 
     def attlist(self):
-        attlist = self.attributes.items()
+        attlist = [(key, value) for key, value in self.attributes.items()
+                   if self.attributes.is_not_default(key)]
         attlist.sort()
         return attlist
 
@@ -491,6 +556,7 @@ class Element(Node):
         return self.attributes.setdefault(key, failobj)
 
     has_key = hasattr
+    __contains__ = has_key
 
     def append(self, item):
         self.setup_child(item)
@@ -628,10 +694,13 @@ class Resolvable:
     resolved = 0
 
 
-class BackLinkable:
+class BackLinkable(Element):
+
+    attr_defaults = Element.attr_defaults.copy()
+    attr_defaults['backrefs'] = list
 
     def add_backref(self, refid):
-        self.setdefault('backrefs', []).append(refid)
+        self['backrefs'].append(refid)
 
 
 # ====================
@@ -800,13 +869,12 @@ class document(Root, Structural, Element):
         return domroot
 
     def set_id(self, node, msgnode=None):
-        if node.has_key('id'):
-            id = node['id']
+        for id in node['ids']:
             if self.ids.has_key(id) and self.ids[id] is not node:
                 msg = self.reporter.severe('Duplicate ID: "%s".' % id)
                 if msgnode != None:
                     msgnode += msg
-        else:
+        if not node['ids']:
             if node.has_key('name'):
                 id = make_id(node['name'])
             else:
@@ -814,7 +882,7 @@ class document(Root, Structural, Element):
             while not id or self.ids.has_key(id):
                 id = 'id%s' % self.id_start
                 self.id_start += 1
-            node['id'] = id
+            node['ids'].append(id)
         self.ids[id] = node
         return id
 
@@ -1155,8 +1223,8 @@ class admonition(Admonition, Element): pass
 class comment(Special, Invisible, FixedTextElement): pass
 class substitution_definition(Special, Invisible, TextElement): pass
 class target(Special, Invisible, Inline, TextElement, Targetable): pass
-class footnote(General, Element, Labeled, BackLinkable): pass
-class citation(General, Element, Labeled, BackLinkable): pass
+class footnote(General, BackLinkable, Element, Labeled): pass
+class citation(General, BackLinkable, Element, Labeled): pass
 class label(Part, TextElement): pass
 class figure(General, Element): pass
 class caption(Part, TextElement): pass
@@ -1170,7 +1238,7 @@ class row(Part, Element): pass
 class entry(Part, Element): pass
 
 
-class system_message(Special, PreBibliographic, Element, BackLinkable):
+class system_message(Special, BackLinkable, PreBibliographic, Element):
 
     def __init__(self, message=None, *children, **attributes):
         if message:

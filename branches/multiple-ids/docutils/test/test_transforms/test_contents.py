@@ -46,50 +46,50 @@ Paragraph 4.
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="contents" name="contents">
+    <topic class="contents" ids="contents" name="contents">
         <title>
             Contents
         <bullet_list>
             <list_item>
                 <paragraph>
-                    <reference id="id1" refid="title-1">
+                    <reference ids="id1" refid="title-1">
                         Title 1
                 <bullet_list>
                     <list_item>
                         <paragraph>
-                            <reference id="id2" refid="title-2">
+                            <reference ids="id2" refid="title-2">
                                 Title
                                  2
                         <bullet_list>
                             <list_item>
                                 <paragraph>
-                                    <reference id="id3" refid="title-3">
+                                    <reference ids="id3" refid="title-3">
                                         Title
                                          3
                     <list_item>
                         <paragraph>
-                            <reference id="id4" refid="title-4">
+                            <reference ids="id4" refid="title-4">
                                 Title 4
-    <section id="title-1" name="title 1">
+    <section ids="title-1" name="title 1">
         <title refid="id1">
             Title 1
         <paragraph>
             Paragraph 1.
-        <section id="title-2" name="title 2">
+        <section ids="title-2" name="title 2">
             <title>
                 <reference name="Title" refname="title">
                     Title
                  2
             <paragraph>
                 Paragraph 2.
-            <section id="title-3" name="title 3">
+            <section ids="title-3" name="title 3">
                 <title refid="id3">
-                    <target id="title" name="title">
+                    <target ids="title" name="title">
                         Title
                      3
                 <paragraph>
                     Paragraph 3.
-        <section id="title-4" name="title 4">
+        <section ids="title-4" name="title 4">
             <title refid="id4">
                 Title 4
             <paragraph>
@@ -108,25 +108,25 @@ Paragraph 2.
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="table-of-contents" name="table of contents">
+    <topic class="contents" ids="table-of-contents" name="table of contents">
         <title>
             Table of Contents
         <bullet_list>
             <list_item>
                 <paragraph>
-                    <reference id="id1" refid="title-1">
+                    <reference ids="id1" refid="title-1">
                         Title 1
                 <bullet_list>
                     <list_item>
                         <paragraph>
-                            <reference id="id2" refid="title-2">
+                            <reference ids="id2" refid="title-2">
                                 Title 2
-    <section id="title-1" name="title 1">
+    <section ids="title-1" name="title 1">
         <title refid="id1">
             Title 1
         <paragraph>
             Paragraph 1.
-        <section id="title-2" name="title 2">
+        <section ids="title-2" name="title 2">
             <title refid="id2">
                 Title 2
             <paragraph>
@@ -147,24 +147,24 @@ Paragraph 2.
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="there-s-an-image-in-title-2" name="there's an image in title 2">
+    <topic class="contents" ids="there-s-an-image-in-title-2" name="there's an image in title 2">
         <title>
             There's an image in Title 2
         <bullet_list>
             <list_item>
                 <paragraph>
-                    <reference id="id1" refid="title-1">
+                    <reference ids="id1" refid="title-1">
                         Title 1
             <list_item>
                 <paragraph>
-                    <reference id="id2" refid="title-2">
+                    <reference ids="id2" refid="title-2">
                         Title 2
-    <section id="title-1" name="title 1">
+    <section ids="title-1" name="title 1">
         <title refid="id1">
             Title 1
         <paragraph>
             Paragraph 1.
-    <section id="title-2" name="title 2">
+    <section ids="title-2" name="title 2">
         <title refid="id2">
             <image alt="Title 2" uri="title2.png">
         <paragraph>
@@ -194,39 +194,39 @@ Paragraph 4.
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="contents" name="contents">
+    <topic class="contents" ids="contents" name="contents">
         <title>
             Contents
         <bullet_list>
             <list_item>
                 <paragraph>
-                    <reference id="id1" refid="title-1">
+                    <reference ids="id1" refid="title-1">
                         Title 1
                 <bullet_list>
                     <list_item>
                         <paragraph>
-                            <reference id="id2" refid="title-2">
+                            <reference ids="id2" refid="title-2">
                                 Title 2
                     <list_item>
                         <paragraph>
-                            <reference id="id3" refid="title-4">
+                            <reference ids="id3" refid="title-4">
                                 Title 4
-    <section id="title-1" name="title 1">
+    <section ids="title-1" name="title 1">
         <title refid="id1">
             Title 1
         <paragraph>
             Paragraph 1.
-        <section id="title-2" name="title 2">
+        <section ids="title-2" name="title 2">
             <title refid="id2">
                 Title 2
             <paragraph>
                 Paragraph 2.
-            <section id="title-3" name="title 3">
+            <section ids="title-3" name="title 3">
                 <title>
                     Title 3
                 <paragraph>
                     Paragraph 3.
-        <section id="title-4" name="title 4">
+        <section ids="title-4" name="title 4">
             <title refid="id3">
                 Title 4
             <paragraph>
@@ -255,37 +255,37 @@ Paragraph 4.
 """,
 """\
 <document source="test data">
-    <section id="title-1" name="title 1">
+    <section ids="title-1" name="title 1">
         <title>
             Title 1
-        <topic class="contents" id="contents" name="contents">
+        <topic class="contents" ids="contents" name="contents">
             <bullet_list>
                 <list_item>
                     <paragraph>
-                        <reference id="id1" refid="title-2">
+                        <reference ids="id1" refid="title-2">
                             Title 2
                     <bullet_list>
                         <list_item>
                             <paragraph>
-                                <reference id="id2" refid="title-3">
+                                <reference ids="id2" refid="title-3">
                                     Title 3
                 <list_item>
                     <paragraph>
-                        <reference id="id3" refid="title-4">
+                        <reference ids="id3" refid="title-4">
                             Title 4
         <paragraph>
             Paragraph 1.
-        <section id="title-2" name="title 2">
+        <section ids="title-2" name="title 2">
             <title refid="id1">
                 Title 2
             <paragraph>
                 Paragraph 2.
-            <section id="title-3" name="title 3">
+            <section ids="title-3" name="title 3">
                 <title refid="id2">
                     Title 3
                 <paragraph>
                     Paragraph 3.
-        <section id="title-4" name="title 4">
+        <section ids="title-4" name="title 4">
             <title refid="id3">
                 Title 4
             <paragraph>
@@ -303,15 +303,15 @@ Paragraph.
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="contents" name="contents">
+    <topic class="contents" ids="contents" name="contents">
         <bullet_list>
             <list_item>
                 <paragraph>
-                    <reference id="id1" refid="section">
+                    <reference ids="id1" refid="section">
                         Section
     <paragraph>
         Test duplicate name "Contents".
-    <section id="section" name="section">
+    <section ids="section" name="section">
         <title refid="id1">
             Section
         <paragraph>
@@ -327,15 +327,15 @@ Paragraph.
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="contents" name="contents">
+    <topic class="contents" ids="contents" name="contents">
         <title>
             Contents
         <bullet_list>
             <list_item>
                 <paragraph>
-                    <reference id="id1" refid="section">
+                    <reference ids="id1" refid="section">
                         Section
-    <section id="section" name="section">
+    <section ids="section" name="section">
         <title refid="contents">
             Section
         <paragraph>
@@ -351,15 +351,15 @@ Paragraph.
 """,
 """\
 <document source="test data">
-    <topic class="contents" id="contents" name="contents">
+    <topic class="contents" ids="contents" name="contents">
         <title>
             Contents
         <bullet_list>
             <list_item>
                 <paragraph>
-                    <reference id="id1" refid="section">
+                    <reference ids="id1" refid="section">
                         Section
-    <section id="section" name="section">
+    <section ids="section" name="section">
         <title>
             Section
         <paragraph>

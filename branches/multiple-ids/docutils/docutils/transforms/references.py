@@ -174,7 +174,8 @@ class AnonymousHyperlinks(Transform):
                 ref['refuri'] = target['refuri']
                 ref.resolved = 1
             else:
-                ref['refid'] = target['id']
+                assert len(target['ids']) == 1
+                ref['refid'] = target['ids'][0]
                 self.document.note_refid(ref)
             target.referenced = 1
 
@@ -270,10 +271,11 @@ class IndirectHyperlinks(Transform):
             target['refid'] = reftarget['refid']
             self.document.note_refid(target)
         else:
-            try:
-                target['refid'] = reftarget['id']
+            assert len(reftarget['ids']) <= 1
+            if len(reftarget['ids']):
+                target['refid'] = reftarget['ids'][0]
                 self.document.note_refid(target)
-            except KeyError:
+            else:
                 self.nonexistent_indirect_target(target)
                 return
         del target['refname']
@@ -292,12 +294,13 @@ class IndirectHyperlinks(Transform):
 
     def indirect_target_error(self, target, explanation):
         naming = ''
+        assert len(target['ids']) == 1
         if target.hasattr('name'):
             naming = '"%s" ' % target['name']
             reflist = self.document.refnames.get(target['name'], [])
         else:
-            reflist = self.document.refids.get(target['id'], [])
-        naming += '(id="%s")' % target['id']
+            reflist = self.document.refids.get(target['ids'][0], [])
+        naming += '(id="%s")' % target['ids'][0]
         msg = self.document.reporter.error(
               'Indirect hyperlink target %s refers to target "%s", %s.'
               % (naming, target['refname'], explanation),
@@ -337,7 +340,8 @@ class IndirectHyperlinks(Transform):
                 return
             delatt = 'refname'
         else:
-            id = target['id']
+            assert len(target['ids']) == 1
+            id = target['ids'][0]
             try:
                 reflist = self.document.refids[id]
             except KeyError, instance:
@@ -436,7 +440,8 @@ class InternalTargets(Transform):
               or not target.hasattr('name'):
             return
         name = target['name']
-        refid = target['id']
+        assert len(target['ids']) == 1
+        refid = target['ids'][0]
         try:
             reflist = self.document.refnames[name]
         except KeyError, instance:
@@ -568,8 +573,9 @@ class Footnotes(Transform):
                 for ref in self.document.footnote_refs.get(name, []):
                     ref += nodes.Text(label)
                     ref.delattr('refname')
-                    ref['refid'] = footnote['id']
-                    footnote.add_backref(ref['id'])
+                    assert len(footnote['ids']) == len(ref['ids']) == 1
+                    ref['refid'] = footnote['ids'][0]
+                    footnote.add_backref(ref['ids'][0])
                     self.document.note_refid(ref)
                     ref.resolved = 1
             else:
@@ -606,7 +612,8 @@ class Footnotes(Transform):
             footnote = self.document.ids[id]
             ref['refid'] = id
             self.document.note_refid(ref)
-            footnote.add_backref(ref['id'])
+            assert len(ref['ids']) == 1
+            footnote.add_backref(ref['ids'][0])
             ref.resolved = 1
             i += 1
 
@@ -641,9 +648,10 @@ class Footnotes(Transform):
                     ref.parent.replace(ref, prb)
                 break
             footnote = self.document.symbol_footnotes[i]
-            ref['refid'] = footnote['id']
+            assert len(footnote['ids']) == 1
+            ref['refid'] = footnote['ids'][0]
             self.document.note_refid(ref)
-            footnote.add_backref(ref['id'])
+            footnote.add_backref(ref['ids'][0])
             i += 1
 
     def resolve_footnotes_and_citations(self):
@@ -665,13 +673,15 @@ class Footnotes(Transform):
                     self.resolve_references(citation, reflist)
 
     def resolve_references(self, note, reflist):
-        id = note['id']
+        assert len(note['ids']) == 1
+        id = note['ids'][0]
         for ref in reflist:
             if ref.resolved:
                 continue
             ref.delattr('refname')
             ref['refid'] = id
-            note.add_backref(ref['id'])
+            assert len(ref['ids']) == 1
+            note.add_backref(ref['ids'][0])
             ref.resolved = 1
         note.resolved = 1
 

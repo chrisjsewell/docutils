@@ -45,10 +45,10 @@ Here's an |unknown| substitution.
 <document source="test data">
     <paragraph>
         Here's an \n\
-        <problematic id="id2" refid="id1">
+        <problematic ids="id2" refid="id1">
             |unknown|
          substitution.
-    <system_message backrefs="id2" id="id1" level="3" line="1" source="test data" type="ERROR">
+    <system_message backrefs="id2" ids="id1" level="3" line="1" source="test data" type="ERROR">
         <paragraph>
             Undefined substitution referenced: "unknown".
 """],
