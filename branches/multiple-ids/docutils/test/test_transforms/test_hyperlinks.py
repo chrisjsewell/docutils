@@ -314,7 +314,7 @@ An `anonymous embedded uri <http://direct>`__.
 ["""\
 .. _target:
 
-.. [1] Footnote; [1]_\ target_
+.. [1] Footnote; target_
 """,
 """\
 <document source="test data">
@@ -324,15 +324,13 @@ An `anonymous embedded uri <http://direct>`__.
             1
         <paragraph>
             Footnote; \n\
-            <footnote_reference ids="id2" refid="id1">
-                1
             <reference name="target" refid="target">
                 target
 """],
 ["""\
 .. _target:
 
-.. [cit] Citation; [cit]_\ target_
+.. [cit] Citation; target_
 """,
 """\
 <document source="test data">
@@ -342,8 +340,6 @@ An `anonymous embedded uri <http://direct>`__.
             cit
         <paragraph>
             Citation; \n\
-            <citation_reference ids="id1" refid="cit">
-                cit
             <reference name="target" refid="target">
                 target
 """],

@@ -743,9 +743,8 @@ class TargetNotes(Transform):
             footnote = nodes.footnote()
             footnote_id = self.document.set_id(footnote)
             # Use uppercase letters; they can't be produced inside
-            # names by the parser.  XXX CHANGE ME AFTER MULTIPLE-IDS
-            # REFACTORING.  Don't break tests now.
-            footnote_name = 'target_note: ' + footnote_id
+            # names by the parser.
+            footnote_name = 'TARGET_NOTE: ' + footnote_id
             footnote['auto'] = 1
             footnote['names'] = [footnote_name]
             footnote_paragraph = nodes.paragraph()
