@@ -385,11 +385,8 @@ class InternalTargets(Transform):
               or not target['names']:
             return
         for name in target['names']:
-            try:
-                # Reference's refid attribute.
-                refid = self.document.nameids[name]
-            except KeyError:
-                continue   #XXX can this happen?
+            # Reference's refid attribute.
+            refid = self.document.nameids[name]
             reflist = self.document.refnames.get(name, [])
             if reflist:
                 target.note_referenced_by(name=name)

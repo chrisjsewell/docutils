@@ -844,8 +844,8 @@ class document(Root, Structural, Element):
                 if msgnode != None:
                     msgnode += msg
         if not node['ids']:
-            for i in range(len(node['names'])):   #XXX MULTIPLE-IDS simplify
-                id = make_id(node['names'][i])
+            for name in node['names']:
+                id = make_id(name)
                 if id and not self.ids.has_key(id):
                     break
             else:
