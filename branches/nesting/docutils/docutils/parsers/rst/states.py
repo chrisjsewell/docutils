@@ -469,13 +469,15 @@ def build_regexp(definition, compile=1):
         return regexp
 
 def _split_match(match, group):
-    return (
-        match.string[:match.start(group)],
-        match.group(group),
-        match.string[match.end(group):]
-        )
+    """
+    Return a 3-tuple: text before the match, match text, text after the match.
+    """
+    return (match.string[:match.start(group)],
+            match.group(group),
+            match.string[match.end(group):])
 
-class Inliner(object):
+
+class Inliner:
 
     """
     Parse inline markup; call the `parse()` method.
@@ -521,8 +523,9 @@ class Inliner(object):
     Used by the `generic_interpreted_role` method for simple, straightforward
     roles (simple wrapping; no extra processing)."""
 
-    _debug = None  # set to 1 to enable debug output
+    _debug = None  # set to 1 to enable debug output !!! 2Bcut
     
+    # !!! for debugging; 2Bcut
     def __imod__(self, stuff):
         if self._debug:
             print self.indent,
@@ -553,6 +556,7 @@ class Inliner(object):
                 self.interpreted_roles[canonical] = None
         self.interpreted_roles.update(roles or {})
 
+        # !!! for debugging; 2Bcut
         self.indent = ''
 
     def init_customizations(self, settings):
@@ -582,78 +586,59 @@ class Inliner(object):
         self.document = memo.document
         self.language = memo.language
         self.parent = parent
-        pattern_search = self.patterns.initial.search
-        dispatch = self.dispatch
         remaining = escape2null(text)
-        
         nodes, messages, notoken = self.inner_parse(
             remaining, lineno, self.patterns.initial.search)
         return nodes, messages
 
-    def inner_parse(self, remaining, lineno, find_token):
-        """
-        The guts of the parse method
-
-        
-        """
+    def inner_parse(self, remaining, lineno, token_search):
+        """The guts of the parse method"""
         nodes = []    # Buffer for result nodes 
         messages = [] # Buffer for error messages
-        
         prefixes = [] # Buffer for un-marked text preceding first
                       # recognized explicit inline markup
-
-                
         self.indent += '  '
-        token = None
+        match = None
         while remaining:
+            # !!! all "self %=" lines for debugging; 2Bcut
             self %= 'inner_parse of: %r' % remaining
-            token = find_token(remaining)
-            if not token:
+            match = token_search(remaining)
+            if not match:
                 break
-            
-            groups = token.groupdict()
-
-            # self %= 'with: %r' % token.re.pattern
+            groups = match.groupdict()
+            # self %= 'with: %r' % match.re.pattern
             self %= 'inner_parse, groupdict', groups
-            self %= 'inner_parse, groups:', token.groups()
+            self %= 'inner_parse, groups:', match.groups()
             opener = groups['start'] or groups['backquote'] \
                      or groups['refend'] or groups['fnend']
-
-            if not opener: # either the end token was found or we're done
-                self %= 'inner_parse, dropping: %r' % remaining[token.start(1):]
-                remaining = remaining[:token.start(1)]
+            if not opener: # either the end-string was found or we're done
+                self %= 'inner_parse, dropping: %r' % remaining[match.start(1):]
+                remaining = remaining[:match.start(1)]
                 break
-
             self %= 'inner_parse, opener: %r' % opener
             method = self.dispatch[opener]
-
             before, inlines, remaining, sysmessages = method(
-                self, token, lineno)
-
+                self, match, lineno)
             prefixes.append(before)
             messages += sysmessages
-
             if inlines:
                 nodes += self.implicit_inline(''.join(prefixes), lineno)
                 prefixes = []
                 nodes += inlines
-            
         remaining = ''.join(prefixes) + remaining
-        
         if remaining:
             nodes += self.implicit_inline(remaining, lineno)
-
         self.indent = self.indent[:-2]
-        return nodes, messages, token
+        return nodes, messages, match
         
     openers = '\'"([{<'
     closers = '\'")]}>'
     start_string_prefix = (r'((?<=^)|(?<=[-/: \n%s]))' % re.escape(openers))
     end_string_tmpl = (
-        r'(?=%s(?:$|[-/:.,;!? \n\x00%s]))' % ('%s',re.escape(closers))
+        r'(?=%s(?:$|[-/:.,;!? \n\x00%s]))' % ('%s', re.escape(closers))
         )
 #     end_string_tmpl = (
-#         r'((?=$)|(?=%s[-/:.,;!? \n\x00%s]))' % ('%s',re.escape(closers))
+#         r'((?=$)|(?=%s[-/:.,;!? \n\x00%s]))' % ('%s', re.escape(closers))
 #         )
     end_string_suffix = end_string_tmpl % ''
     
@@ -698,7 +683,6 @@ class Inliner(object):
                  )
                 ]
                ),
-              
               ('interpreted_or_phrase_ref',             # interpreted text or phrase reference
                '',
                non_whitespace_after,
@@ -711,9 +695,7 @@ class Inliner(object):
                )
               ]
              )
-
     initial_pattern = build_regexp(initial_parts,None)
-
     embedded_uri = (
         r'(?:[ \n]+|^)'            # spaces or beginning of line/string
         + '<'                      # open bracket
@@ -723,19 +705,14 @@ class Inliner(object):
         + '>'                      # close bracket w/o whitespace
                                    # before
         )
-
-    
-
     interpreted_or_phrase_ref_end = (
         r'(?:' + embedded_uri + ')?'
         + '`(?P<rolesuffix>:' + simplename + ':)?(?:__?)?'
         )
-
     interpreted_or_phrase_ref_end2 = (
         r'(?:' + embedded_uri + ')?'
         + '`(?:(?P<rolesuffix>:' + simplename + ':)(?:__?)?|(?:__?))'
         )
-
     _end_pattern = non_whitespace_escape_before + '(%s)' + end_string_suffix
     
     def _compile_end_pattern(endpattern, _end_pattern = _end_pattern):
@@ -3221,9 +3198,7 @@ def escape2null(text):
         start = found + 2               # skip character after escape
 
 def null2escape(text):
-    """
-    return a string with nulls replaced by backslashes
-    """
+    """Return a string with nulls replaced by backslashes."""
     return text.replace('\x00', '\\')
 
 def unescape(text, restore_backslashes=0):
