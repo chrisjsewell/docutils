@@ -600,6 +600,21 @@ class Element(Node):
         """Add a new name to the "class" attribute."""
         self['classes'].append(name.lower())
 
+    def note_referenced_by(self, name=None, id=None):
+        """Note that this Element has been referenced by its name
+        `name` or id `id`."""
+        self.referenced = 1
+        # Element.expect_referenced_by_* dictionaries map names or ids
+        # to nodes whose referenced attribute is set to true as soon
+        # as this node is referenced by the given name or id.  Needed
+        # for target propagation.
+        by_name = getattr(self, 'expect_referenced_by_name', {}).get(name)
+        by_id = getattr(self, 'expect_referenced_by_id', {}).get(id)
+        if name and by_name:
+            by_name.referenced = 1
+        if id and by_id:
+            by_id.referenced = 1
+
 
 class TextElement(Element):
 
@@ -827,7 +842,7 @@ class document(Root, Structural, Element):
                 if msgnode != None:
                     msgnode += msg
         if not node['ids']:
-            for i in range(len(node['names'])):
+            for i in range(len(node['names'])):   #XXX MULTIPLE-IDS simplify
                 id = make_id(node['names'][i])
                 if id and not self.ids.has_key(id):
                     break

@@ -11,7 +11,7 @@ Tests for docutils.transforms.references.Hyperlinks.
 """
 
 from __init__ import DocutilsTestSupport
-from docutils.transforms.references import SectionTargets, ChainedTargets, \
+from docutils.transforms.references import PropagateTargets, \
      AnonymousHyperlinks, IndirectHyperlinks, ExternalTargets, \
      InternalTargets
 
@@ -30,8 +30,8 @@ totest = {}
 # Exhaustive listing of hyperlink variations: every combination of
 # target/reference, direct/indirect, internal/external, and named/anonymous,
 # plus embedded URIs.
-totest['exhaustive_hyperlinks'] = ((SectionTargets, ChainedTargets,
-                                    AnonymousHyperlinks, IndirectHyperlinks,
+totest['exhaustive_hyperlinks'] = ((PropagateTargets, AnonymousHyperlinks,
+                                    IndirectHyperlinks,
                                     ExternalTargets, InternalTargets,
                                     FinalChecks), [
 ["""\
@@ -69,8 +69,8 @@ direct_ internal
 """,
 """\
 <document source="test data">
-    <target ids="direct" names="direct">
-    <paragraph>
+    <target refid="direct">
+    <paragraph ids="direct" names="direct">
         <reference names="direct" refid="direct">
             direct
          internal
@@ -85,8 +85,8 @@ indirect_ internal
 """,
 """\
 <document source="test data">
-    <target ids="ztarget" names="ztarget">
-    <paragraph>
+    <target refid="ztarget">
+    <paragraph ids="ztarget" names="ztarget">
         <reference names="indirect" refid="ztarget">
             indirect
          internal
@@ -142,11 +142,11 @@ circular_ indirect reference
 """\
 <document source="test data">
     <paragraph>
-        <problematic ids="id2" refid="id1">
+        <problematic ids="id3" refid="id1">
             circular_
          indirect reference
     <target ids="circular" names="circular" refid="circular">
-    <problematic ids="id3" refid="id1">
+    <problematic ids="id2" refid="id1">
         .. _indirect: circular_
     <system_message backrefs="id2 id3" ids="id1" level="3" line="3" source="test data" type="ERROR">
         <paragraph>
@@ -229,8 +229,8 @@ __
 """,
 """\
 <document source="test data">
-    <target anonymous="1" ids="id1">
-    <paragraph>
+    <target anonymous="1" refid="id1">
+    <paragraph ids="id1">
         <reference anonymous="1" names="direct internal" refid="id1">
             direct internal
 """],
@@ -243,8 +243,8 @@ __ ztarget_
 """,
 """\
 <document source="test data">
-    <target ids="ztarget" names="ztarget">
-    <paragraph>
+    <target refid="ztarget">
+    <paragraph ids="ztarget" names="ztarget">
         <reference anonymous="1" names="indirect internal" refid="ztarget">
             indirect internal
     <target anonymous="1" ids="id1" refid="ztarget">
@@ -264,14 +264,14 @@ __ ztarget_
 """,
 """\
 <document source="test data">
-    <target dupnames="ztarget" ids="ztarget">
-    <paragraph>
+    <target dupnames="ztarget" refid="ztarget">
+    <paragraph ids="ztarget">
         First
     <system_message backrefs="id1" level="2" line="5" source="test data" type="WARNING">
         <paragraph>
             Duplicate explicit target name: "ztarget".
-    <target dupnames="ztarget" ids="id1">
-    <paragraph>
+    <target dupnames="ztarget" refid="id1">
+    <paragraph ids="id1">
         Second
     <paragraph>
         <problematic ids="id4" refid="id3">
@@ -313,26 +313,26 @@ An `anonymous embedded uri <http://direct>`__.
 """],
 ])
 
-totest['hyperlinks'] = ((SectionTargets, ChainedTargets, AnonymousHyperlinks,
+totest['hyperlinks'] = ((PropagateTargets, AnonymousHyperlinks,
                          IndirectHyperlinks, ExternalTargets,
-                         InternalTargets,), [
+                         InternalTargets, FinalChecks), [
 ["""\
 .. _internal hyperlink:
 
 This paragraph referenced.
 
-By this `internal hyperlink`_ referemce.
+By this `internal hyperlink`_ reference.
 """,
 """\
 <document source="test data">
-    <target ids="internal-hyperlink" names="internal hyperlink">
-    <paragraph>
+    <target refid="internal-hyperlink">
+    <paragraph ids="internal-hyperlink" names="internal hyperlink">
         This paragraph referenced.
     <paragraph>
         By this \n\
         <reference names="internal hyperlink" refid="internal-hyperlink">
             internal hyperlink
-         referemce.
+         reference.
 """],
 ["""\
 .. _chained:
@@ -340,22 +340,22 @@ By this `internal hyperlink`_ referemce.
 
 This paragraph referenced.
 
-By this `internal hyperlink`_ referemce
+By this `internal hyperlink`_ reference
 as well as by this chained_ reference.
 
 The results of the transform are not visible at the XML level.
 """,
 """\
 <document source="test data">
-    <target ids="chained" names="chained">
-    <target ids="internal-hyperlink" names="internal hyperlink">
-    <paragraph>
+    <target refid="chained">
+    <target refid="internal-hyperlink">
+    <paragraph ids="internal-hyperlink chained" names="internal hyperlink chained">
         This paragraph referenced.
     <paragraph>
         By this \n\
         <reference names="internal hyperlink" refid="internal-hyperlink">
             internal hyperlink
-         referemce
+         reference
         as well as by this \n\
         <reference names="chained" refid="chained">
             chained
@@ -397,8 +397,8 @@ and a chained_ reference too.
 """,
 """\
 <document source="test data">
-    <target ids="chained" names="chained" refuri="http://uri">
-    <target ids="external-hyperlink" names="external hyperlink" refuri="http://uri">
+    <target refid="chained">
+    <target ids="external-hyperlink chained" names="external hyperlink chained" refuri="http://uri">
     <paragraph>
         <reference names="External hyperlink" refuri="http://uri">
             External hyperlink
@@ -433,8 +433,8 @@ Chained_ `indirect hyperlink`_ reference.
 """\
 <document source="test data">
     <target ids="external-hyperlink" names="external hyperlink" refuri="http://uri">
-    <target ids="chained" names="chained" refuri="http://uri">
-    <target ids="indirect-hyperlink" names="indirect hyperlink" refuri="http://uri">
+    <target refuri="http://uri">
+    <target ids="indirect-hyperlink chained" names="indirect hyperlink chained" refuri="http://uri">
     <paragraph>
         <reference names="Chained" refuri="http://uri">
             Chained
@@ -460,12 +460,12 @@ __
 """\
 <document source="test data">
     <target anonymous="1" ids="id1" refuri="http://full">
-    <target anonymous="1" ids="id2" refuri="http://simplified">
-    <target anonymous="1" ids="id3" refuri="http://simplified">
+    <target anonymous="1" refid="id2">
+    <target anonymous="1" ids="id3 id2" refuri="http://simplified">
     <target ids="external" names="external" refuri="http://indirect.external">
     <target anonymous="1" ids="id4" refuri="http://indirect.external">
-    <target anonymous="1" ids="id5">
-    <paragraph>
+    <target anonymous="1" refid="id5">
+    <paragraph ids="id5">
         <reference anonymous="1" names="Full syntax anonymous external hyperlink reference" refuri="http://full">
             Full syntax anonymous external hyperlink reference
         ,
@@ -493,9 +493,29 @@ Duplicate external target_'s (different URIs):
 <document source="test data">
     <paragraph>
         Duplicate external \n\
-        <reference names="target" refname="target">
-            target
+        <problematic ids="id3" refid="id2">
+            target_
         's (different URIs):
+    <target dupnames="target" ids="target" refuri="first">
+    <system_message backrefs="id1" level="2" line="5" source="test data" type="WARNING">
+        <paragraph>
+            Duplicate explicit target name: "target".
+    <target dupnames="target" ids="id1" refuri="second">
+    <system_message backrefs="id3" ids="id2" level="3" line="1" source="test data" type="ERROR">
+        <paragraph>
+            Duplicate target name, cannot be used as a unique reference: "target".
+"""],
+["""\
+Duplicate external targets (different URIs) without reference:
+
+.. _target: first
+
+.. _target: second
+""",
+"""\
+<document source="test data">
+    <paragraph>
+        Duplicate external targets (different URIs) without reference:
     <target dupnames="target" ids="target" refuri="first">
     <system_message backrefs="id1" level="2" line="5" source="test data" type="WARNING">
         <paragraph>
@@ -543,8 +563,8 @@ __ http://example.org
 <document source="test data">
     <target ids="external" names="external" refuri="http://uri">
     <target ids="indirect" names="indirect" refuri="http://uri">
-    <target ids="internal" names="internal">
-    <reference names="external_" refuri="http://uri">
+    <target refid="internal">
+    <reference ids="internal" names="external_ internal" refuri="http://uri">
         <image uri="picture.png">
     <reference names="indirect_" refuri="http://uri">
         <image uri="picture.png">
@@ -581,8 +601,6 @@ Testing an `indirect reference to the table of contents`_.
             .
 """],
 ["""\
-Target should end up inside the section title, not before the section:
-
 .. _explicit target:
 
 Title
@@ -592,11 +610,9 @@ Let's reference it (`explicit target`_) to avoid an irrelevant error.
 """,
 """\
 <document source="test data">
-    <paragraph>
-        Target should end up inside the section title, not before the section:
-    <section ids="title" names="title">
+    <target refid="explicit-target">
+    <section ids="title explicit-target" names="title explicit target">
         <title>
-            <target ids="explicit-target" names="explicit target">
             Title
         <paragraph>
             Let's reference it (
@@ -622,8 +638,8 @@ Title
         <reference names="target2" refuri="URI">
             target2
         , not the Title.
-    <target ids="target1" names="target1" refuri="URI">
-    <target ids="target2" names="target2" refuri="URI">
+    <target refid="target1">
+    <target ids="target2 target1" names="target2 target1" refuri="URI">
     <section ids="title" names="title">
         <title>
             Title
