@@ -158,6 +158,14 @@ strong`:strong: within emphasis`:emphasis:.
         <literal>
             literal *doesn't* **get** `parsed`
 """],
+["""\
+*It *is *problematic *when *there *are *many *unmatched *open *tags.
+*The *recursive *parsing *nature *of *the *current *implementation
+*means *that *there *is *a *limit *to *the *number *of *possible
+*unmatched *open *tags.
+""",
+"""\
+"""],
 ]
 
 
