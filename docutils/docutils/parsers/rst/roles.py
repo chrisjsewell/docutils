@@ -12,7 +12,7 @@ registry.
 The interface for interpreted role functions is as follows::
 
     def role_fn(name, rawtext, text, lineno, inliner,
-                options={}, content=[]):
+                options={}, content=[], children = None):
         code...
 
     # Set function attributes for customization:
@@ -28,7 +28,9 @@ Parameters:
   Return it as a ``problematic`` node linked to a system message if there is a
   problem.
 
-- ``text`` is the interpreted text content.
+- ``text`` is the interpreted text that appears between the markup delimiters
+
+- ``children``: A list of child nodes produced by parsing nested markup.
 
 - ``lineno`` is the line number where the interpreted text beings.
 
@@ -192,9 +194,9 @@ class GenericRole:
         self.name = role_name
         self.node_class = node_class
 
-    def __call__(self, role, rawtext, text, lineno, inliner,
+    def __call__(self, role, rawtext, text, children, lineno, inliner,
                  options={}, content=[]):
-        return [self.node_class(rawtext, text, **options)], []
+        return [self.node_class(rawtext, '', *children, **options)], []
 
 
 class CustomRole:
@@ -215,7 +217,7 @@ class CustomRole:
         self.supplied_options = options
         self.supplied_content = content
 
-    def __call__(self, role, rawtext, text, lineno, inliner,
+    def __call__(self, role, rawtext, text, children, lineno, inliner,
                  options={}, content=[]):
         opts = self.supplied_options.copy()
         opts.update(options)
@@ -223,16 +225,18 @@ class CustomRole:
         if cont and content:
             cont += '\n'
         cont.extend(content)
-        return self.base_role(role, rawtext, text, lineno, inliner,
+        return self.base_role(role, rawtext, text, children, lineno, inliner,
                               options=opts, content=cont)
 
 
-def generic_custom_role(role, rawtext, text, lineno, inliner,
+def generic_custom_role(role, rawtext, text, children, lineno, inliner,
                         options={}, content=[]):
     """"""
     # Once nested inline markup is implemented, this and other methods should
     # recursively call inliner.nested_parse().
-    return [nodes.inline(rawtext, text, **options)], []
+
+    # I'm not sure that the comment above is really correct -- DWA
+    return [nodes.inline(rawtext, '', *children, **options)], []
 
 generic_custom_role.options = {'class': directives.class_option}
 
@@ -250,7 +254,7 @@ register_generic_role('subscript', nodes.subscript)
 register_generic_role('superscript', nodes.superscript)
 register_generic_role('title-reference', nodes.title_reference)
 
-def pep_reference_role(role, rawtext, text, lineno, inliner,
+def pep_reference_role(role, rawtext, text, children, lineno, inliner,
                        options={}, content=[]):
     try:
         pepnum = int(text)
@@ -268,7 +272,7 @@ def pep_reference_role(role, rawtext, text, lineno, inliner,
 
 register_canonical_role('pep-reference', pep_reference_role)
 
-def rfc_reference_role(role, rawtext, text, lineno, inliner,
+def rfc_reference_role(role, rawtext, text, children, lineno, inliner,
                        options={}, content=[]):
     try:
         rfcnum = int(text)
@@ -292,7 +296,7 @@ register_canonical_role('rfc-reference', rfc_reference_role)
 # Register roles that are currently unimplemented.
 ######################################################################
 
-def unimplemented_role(role, rawtext, text, lineno, inliner, attributes={}):
+def unimplemented_role(role, rawtext, text, children, lineno, inliner, attributes={}):
     msg = inliner.reporter.error(
         'Interpreted text role "%s" not implemented.' % role, line=lineno)
     prb = inliner.problematic(rawtext, rawtext, msg)
