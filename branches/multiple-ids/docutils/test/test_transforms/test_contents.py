@@ -77,7 +77,7 @@ Paragraph 4.
             Paragraph 1.
         <section ids="title-2" names="title 2">
             <title>
-                <reference names="Title" refname="title">
+                <reference name="Title" refname="title">
                     Title
                  2
             <paragraph>

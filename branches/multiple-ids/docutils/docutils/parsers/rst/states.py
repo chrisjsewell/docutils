@@ -776,7 +776,7 @@ class Inliner:
             target = None
         refname = normalize_name(text)
         reference = nodes.reference(rawsource, text,
-                                    names=[whitespace_normalize_name(text)])
+                                    name=whitespace_normalize_name(text))
         node_list = [reference]
         if rawsource[-2:] == '__':
             if target:
@@ -896,7 +896,7 @@ class Inliner:
         refname = normalize_name(referencename)
         referencenode = nodes.reference(
             referencename + match.group('refend'), referencename,
-            names=[whitespace_normalize_name(referencename)])
+            name=whitespace_normalize_name(referencename))
         if anonymous:
             referencenode['anonymous'] = 1
             self.document.note_anonymous_ref(referencenode)

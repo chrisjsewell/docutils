@@ -44,7 +44,7 @@ A "References" section should be generated.
 <document source="test data">
     <paragraph>
         A target exists, here's the \n\
-        <reference names="reference" refname="reference">
+        <reference name="reference" refname="reference">
             reference
          \n\
         <footnote_reference auto="1" ids="id3" refname="target_note: id2">
