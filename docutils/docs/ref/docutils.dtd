@@ -14,10 +14,11 @@ Docutils project can be found at http://docutils.sourceforge.net/.
 The latest version of this DTD is available from
 http://docutils.sourceforge.net/spec/docutils.dtd.
 
-The formal public identifier for this DTD is::
+The proposed formal public identifier for this DTD is::
 
-    +//IDN docutils.sourceforge.net//DTD Docutils Generic//EN//XML
+    +//IDN python.org//DTD Docutils Generic//EN//XML
 -->
+
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25,8 +26,8 @@ The formal public identifier for this DTD is::
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Parameter entities are used to simplify the DTD (reduce duplication)
-and to allow the DTD to be customized by wrapper DTDs.  Parameter
-entities beginning with "additional" are meant to allow easy extension
+and to allow the DTD to be customized by wrapper DTDs. Parameter
+entities beginning with 'additional' are meant to allow easy extension
 by wrapper DTDs.
 -->
 
@@ -35,9 +36,6 @@ by wrapper DTDs.
 
 <!-- Boolean: no if zero(s), yes if any other value. -->
 <!ENTITY % yesorno "NMTOKEN">
-
-<!-- Emphasize that the attribute value must be a number. -->
-<!ENTITY % number  "NMTOKEN">
 
 <!ENTITY % additional.basic.atts "">
 <!--
@@ -51,10 +49,10 @@ Attributes shared by all elements in this DTD:
 -->
 <!ENTITY % basic.atts
   " id        ID        #IMPLIED
-    name      NMTOKENS  #IMPLIED
-    dupname   NMTOKENS  #IMPLIED
+    name      CDATA     #IMPLIED
+    dupname   CDATA     #IMPLIED
     source    CDATA     #IMPLIED
-    class     NMTOKENS  #IMPLIED
+    class     CDATA     #IMPLIED
     %additional.basic.atts; ">
 
 <!-- External reference to a URI/URL. -->
@@ -75,7 +73,7 @@ Internal reference to the `name` attribute of an element. On a
 resolve to either an internal or external reference.
 -->
 <!ENTITY % refname.att
-  " refname   NMTOKENS  #IMPLIED ">
+  " refname   CDATA     #IMPLIED ">
 
 <!ENTITY % additional.reference.atts "">
 <!-- Collected hyperlink reference attributes. -->
@@ -89,9 +87,9 @@ resolve to either an internal or external reference.
 <!ENTITY % anonymous.att
   " anonymous %yesorno; #IMPLIED ">
 
-<!-- Auto-numbered footnote or title. -->
+<!-- Auto-numbered footnote. -->
 <!ENTITY % auto.att
-  " auto      CDATA     #IMPLIED ">
+  " auto      %yesorno; #IMPLIED ">
 
 <!-- XML standard attribute for whitespace-preserving elements. -->
 <!ENTITY % fixedspace.att
@@ -103,51 +101,45 @@ resolve to either an internal or external reference.
 
 <!ENTITY % additional.bibliographic.elements "">
 <!ENTITY % bibliographic.elements
-  " author | authors | organization | address | contact
+  " author | authors | organization | contact
     | version | revision | status | date | copyright
-    | field
     %additional.bibliographic.elements; ">
 
-<!ENTITY % additional.section.elements "">
-<!ENTITY % section.elements
+<!ENTITY % additional.structural.elements "">
+<!ENTITY % structural.elements
   " section
-    %additional.section.elements; ">
+    %additional.structural.elements; ">
 
 <!ENTITY % additional.body.elements "">
 <!ENTITY % body.elements
-  " paragraph | literal_block | doctest_block | line_block | block_quote
-    | table | figure | image | footnote | citation | rubric
+  " paragraph | literal_block | block_quote | doctest_block| table
+    | figure | image | footnote | citation
     | bullet_list | enumerated_list | definition_list | field_list
     | option_list
     | attention | caution | danger | error | hint | important | note
-    | tip | warning | admonition
+    | tip | warning
     | target | substitution_definition | comment | pending
     | system_message | raw
     %additional.body.elements; ">
 
 <!ENTITY % additional.inline.elements "">
 <!ENTITY % inline.elements
-  " emphasis | strong | literal
+  " emphasis | strong | interpreted | literal
     | reference | footnote_reference | citation_reference
-    | substitution_reference | title_reference
-    | abbreviation | acronym | subscript | superscript
-    | inline | problematic | generated
-    | target | image | raw
+    | substitution_reference | target | image | problematic | raw
     %additional.inline.elements; ">
-
 
 <!-- Element Content Models
 ================================================================== -->
 
 <!ENTITY % structure.model
-  " ( ( (%body.elements; | topic | sidebar)+,
-        (transition, (%body.elements; | topic | sidebar)+ )*,
-        (%section.elements;)* )
-    | (%section.elements;)+ ) ">
+  " ( ( (%body.elements; | topic)+,
+        (transition, (%body.elements; | topic)+ )*,
+        (%structural.elements;)* )
+    | (%structural.elements;)+ ) ">
 
 <!ENTITY % text.model
   " (#PCDATA | %inline.elements;)* ">
-
 
 <!-- Table Model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -171,7 +163,8 @@ http://www.oasis-open.org/html/tm9901.htm).
 <!ENTITY % tbl.entry.mdl        " (%body.elements;)* ">
 <!ENTITY % tbl.entry.att
   " %basic.atts;
-    morecols  %number;  #IMPLIED ">
+    morecols  NMTOKEN   #IMPLIED ">
+
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,8 +174,9 @@ http://www.oasis-open.org/html/tm9901.htm).
 
 <!-- Optional elements may be generated by internal processing. -->
 <!ELEMENT document
-    ((title, subtitle?)?, docinfo?, decoration?, %structure.model;)>
+    ((title, subtitle?)?, docinfo?, %structure.model;)>
 <!ATTLIST document %basic.atts;>
+
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -193,11 +187,11 @@ http://www.oasis-open.org/html/tm9901.htm).
 <!ELEMENT title %text.model;>
 <!ATTLIST title
     %basic.atts;
-    %refid.att;
-    %auto.att;>
+    %refid.att;>
 
 <!ELEMENT subtitle %text.model;>
 <!ATTLIST subtitle %basic.atts;>
+
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -212,16 +206,11 @@ http://www.oasis-open.org/html/tm9901.htm).
 <!ELEMENT author %text.model;>
 <!ATTLIST author %basic.atts;>
 
-<!ELEMENT authors ((author, organization?, address?, contact?)+)>
+<!ELEMENT authors ((author, organization?, contact?)+)>
 <!ATTLIST authors %basic.atts;>
 
 <!ELEMENT organization %text.model;>
 <!ATTLIST organization %basic.atts;>
-
-<!ELEMENT address %text.model;>
-<!ATTLIST address
-    %basic.atts;
-    %fixedspace.att;>
 
 <!ELEMENT contact %text.model;>
 <!ATTLIST contact %basic.atts;>
@@ -241,20 +230,6 @@ http://www.oasis-open.org/html/tm9901.htm).
 <!ELEMENT copyright %text.model;>
 <!ATTLIST copyright %basic.atts;>
 
-<!--
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Decoration Elements
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
-
-<!ELEMENT decoration (header?, footer?)>
-<!ATTLIST decoration %basic.atts;>
-
-<!ELEMENT header (%body.elements;)+>
-<!ATTLIST header %basic.atts;>
-          
-<!ELEMENT footer (%body.elements;)+>
-<!ATTLIST footer %basic.atts;>
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -268,11 +243,9 @@ http://www.oasis-open.org/html/tm9901.htm).
 <!ELEMENT topic (title?, (%body.elements;)+)>
 <!ATTLIST topic %basic.atts;>
 
-<!ELEMENT sidebar (title, subtitle?, (%body.elements;)+)>
-<!ATTLIST sidebar %basic.atts;>
-
 <!ELEMENT transition EMPTY>
 <!ATTLIST transition %basic.atts;>
+
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -296,7 +269,7 @@ http://www.oasis-open.org/html/tm9901.htm).
                         #IMPLIED
     prefix    CDATA     #IMPLIED
     suffix    CDATA     #IMPLIED
-    start     %number;  #IMPLIED>
+    start     NUMBER    #IMPLIED>
 
 <!ELEMENT list_item (%body.elements;)+>
 <!ATTLIST list_item %basic.atts;>
@@ -319,14 +292,17 @@ http://www.oasis-open.org/html/tm9901.htm).
 <!ELEMENT field_list (field+)>
 <!ATTLIST field_list %basic.atts;>
 
-<!ELEMENT field (field_name, field_body)>
+<!ELEMENT field (field_name, field_argument*, field_body)>
 <!ATTLIST field %basic.atts;>
 
 <!ELEMENT field_name (#PCDATA)>
 <!ATTLIST field_name %basic.atts;>
 
-<!-- May be empty. -->
-<!ELEMENT field_body (%body.elements;)*>
+<!-- Support for Javadoc-style tags with arguments. -->
+<!ELEMENT field_argument (#PCDATA)>
+<!ATTLIST field_argument %basic.atts;>
+
+<!ELEMENT field_body (%body.elements;)+>
 <!ATTLIST field_body %basic.atts;>
 
 <!ELEMENT option_list (option_list_item+)>
@@ -345,10 +321,10 @@ http://www.oasis-open.org/html/tm9901.htm).
 <!ATTLIST option_string %basic.atts;>
 
 <!--
-`delimiter` contains the text preceding the `option_argument`: either
-the text separating it from the `option_string` (typically either "="
-or " ") or the text between option arguments (typically either "," or
-" ").
+`delimiter` contains the string preceding the `option_argument`:
+either the string separating it from the `option` (typically either
+"=" or " ") or the string between option arguments (typically either
+"," or " ").
 -->
 <!ELEMENT option_argument (#PCDATA)>
 <!ATTLIST option_argument
@@ -358,23 +334,15 @@ or " ") or the text between option arguments (typically either "," or
 <!ELEMENT description (%body.elements;)+>
 <!ATTLIST description %basic.atts;>
 
-<!ELEMENT literal_block %text.model;>
+<!ELEMENT literal_block (#PCDATA)>
 <!ATTLIST literal_block
     %basic.atts;
     %fixedspace.att;>
 
-<!ELEMENT line_block %text.model;>
-<!ATTLIST line_block
-    %basic.atts;
-    %fixedspace.att;>
-
-<!ELEMENT block_quote ((%body.elements;)+, attribution?)>
+<!ELEMENT block_quote (%body.elements;)+>
 <!ATTLIST block_quote %basic.atts;>
 
-<!ELEMENT attribution %text.model;>
-<!ATTLIST attribution %basic.atts;>
-
-<!ELEMENT doctest_block %text.model;>
+<!ELEMENT doctest_block (#PCDATA)>
 <!ATTLIST doctest_block
     %basic.atts;
     %fixedspace.att;>
@@ -406,9 +374,6 @@ or " ") or the text between option arguments (typically either "," or
 <!ELEMENT warning (%body.elements;)+>
 <!ATTLIST warning %basic.atts;>
 
-<!ELEMENT admonition (title, (%body.elements;)+)>
-<!ATTLIST admonition %basic.atts;>
-
 <!ELEMENT footnote (label?, (%body.elements;)+)>
 <!ATTLIST footnote
     %basic.atts;
@@ -423,17 +388,14 @@ or " ") or the text between option arguments (typically either "," or
 <!ELEMENT label (#PCDATA)>
 <!ATTLIST label %basic.atts;>
 
-<!ELEMENT rubric %text.model;>
-<!ATTLIST rubric %basic.atts;>
-
 <!-- Empty except when used as an inline element. -->
-<!ELEMENT target %text.model;>
+<!ELEMENT target (%text.model;)>
 <!ATTLIST target
     %basic.atts;
     %reference.atts;
     %anonymous.att;>
 
-<!ELEMENT substitution_definition %text.model;>
+<!ELEMENT substitution_definition (%text.model;)>
 <!ATTLIST substitution_definition %basic.atts;>
 
 <!ELEMENT comment (#PCDATA)>
@@ -444,10 +406,8 @@ or " ") or the text between option arguments (typically either "," or
 <!ELEMENT pending EMPTY>
 <!ATTLIST pending %basic.atts;>
 
-<!ELEMENT figure (image, ((caption, legend?) | legend)) >
-<!ATTLIST figure
-    %basic.atts;
-    width     %number;  #IMPLIED>
+<!ELEMENT figure (image, ((caption, legend?) | legend) >
+<!ATTLIST figure %basic.atts;>
 
 <!-- Also an inline element. -->
 <!ELEMENT image EMPTY>
@@ -455,9 +415,9 @@ or " ") or the text between option arguments (typically either "," or
     %basic.atts;
     uri       CDATA     #REQUIRED
     alt       CDATA     #IMPLIED
-    height    %number;  #IMPLIED
-    width     %number;  #IMPLIED
-    scale     %number;  #IMPLIED>
+    height    NMTOKEN   #IMPLIED
+    width     NMTOKEN   #IMPLIED
+    scale     NMTOKEN   #IMPLIED>
 
 <!ELEMENT caption %text.model;>
 <!ATTLIST caption %basic.atts;>
@@ -475,16 +435,16 @@ Table elements: table, tgroup, colspec, thead, tbody, row, entry.
 <!ATTLIST system_message
     %basic.atts;
     %backrefs.att;
-    level     %number;  #IMPLIED
-    line      %number;  #IMPLIED
-    type      NMTOKEN   #IMPLIED>
+    level     NMTOKEN   #IMPLIED
+    type      CDATA     #IMPLIED>
 
 <!-- Used to pass raw data through the system. Also inline. -->
 <!ELEMENT raw %text.model;>
 <!ATTLIST raw
     %basic.atts;
     %fixedspace.att;
-    format    NMTOKEN   #IMPLIED>
+    format    CDATA     #IMPLIED>
+
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -503,16 +463,21 @@ following caveats:
   <literal>, and <image> do not support nesting.
 -->
 
-<!ELEMENT emphasis %text.model;>
+<!ELEMENT emphasis (%text.model;)>
 <!ATTLIST emphasis %basic.atts;>
 
-<!ELEMENT strong %text.model;>
+<!ELEMENT strong (%text.model;)>
 <!ATTLIST strong %basic.atts;>
+
+<!ELEMENT interpreted (%text.model;)>
+<!ATTLIST interpreted
+    %basic.atts;
+    type      CDATA     #IMPLIED>
 
 <!ELEMENT literal (#PCDATA)>
 <!ATTLIST literal %basic.atts;>
 
-<!ELEMENT reference %text.model;>
+<!ELEMENT reference (%text.model;)>
 <!ATTLIST reference
     %basic.atts;
     %reference.atts;
@@ -521,46 +486,24 @@ following caveats:
 <!ELEMENT footnote_reference (#PCDATA)>
 <!ATTLIST footnote_reference
     %basic.atts;
-    %refid.att;
-    %refname.att;
+    %reference.atts;
     %auto.att;>
 
 <!ELEMENT citation_reference (#PCDATA)>
 <!ATTLIST citation_reference
     %basic.atts;
-    %refid.att;
-    %refname.att;>
+    %reference.atts;>
 
-<!ELEMENT substitution_reference %text.model;>
+<!ELEMENT substitution_reference (%text.model;)>
 <!ATTLIST substitution_reference
     %basic.atts;
     %refname.att;>
 
-<!ELEMENT title_reference %text.model;>
-<!ATTLIST title_reference %basic.atts;>
-
-<!ELEMENT abbreviation %text.model;>
-<!ATTLIST abbreviation %basic.atts;>
-
-<!ELEMENT acronym %text.model;>
-<!ATTLIST acronym %basic.atts;>
-
-<!ELEMENT superscript %text.model;>
-<!ATTLIST superscript %basic.atts;>
-
-<!ELEMENT subscript %text.model;>
-<!ATTLIST subscript %basic.atts;>
-
-<!ELEMENT inline %text.model;>
-<!ATTLIST inline %basic.atts;>
-
-<!ELEMENT problematic %text.model;>
+<!ELEMENT problematic (%text.model;)>
 <!ATTLIST problematic
     %basic.atts;
     %refid.att;>
 
-<!ELEMENT generated %text.model;>
-<!ATTLIST generated %basic.atts;>
 
 <!--
 Local Variables:

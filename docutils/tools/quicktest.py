@@ -1,25 +1,17 @@
 #!/usr/bin/env python
 
-# Author: Garth Kidd
-# Contact: garth@deadlybloodyserious.com
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
+"""
+:Author: Garth Kidd
+:Contact: garth@deadlybloodyserious.com
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+"""
 
-import locale
-try:
-    locale.setlocale(locale.LC_ALL, '')
-except:
-    pass
-
-import sys
-import os
-import getopt
-import docutils
-from docutils.frontend import OptionParser
-from docutils.utils import new_document
+import sys, os, getopt
+import docutils.utils
 from docutils.parsers.rst import Parser
 
 
@@ -28,11 +20,9 @@ quicktest.py: quickly test the restructuredtext parser.
 
 Usage::
 
-    quicktest.py [options] [<source> [<destination>]]
+    quicktest.py [options] [filename]
 
-``source`` is the name of the file to use as input (default is stdin).
-``destination`` is the name of the file to create as output (default is
-stdout).
+``filename`` is the name of the file to use as input (default is stdin).
 
 Options:
 """
@@ -42,15 +32,13 @@ options = [('pretty', 'p',
            ('test', 't', 'output test-ready data (input & expected output, '
             'ready to be copied to a parser test module)'),
            ('rawxml', 'r', 'output raw XML'),
-           ('styledxml=', 's', 'output raw XML with XSL style sheet '
-            'reference (filename supplied in the option argument)'),
+           ('styledxml=', 's', 'output raw XML with XSL style sheet reference '
+            '(filename supplied in the option argument)'),
            ('xml', 'x', 'output pretty XML (indented)'),
-           ('attributes', 'A', 'dump document attributes after processing'),
            ('debug', 'd', 'debug mode (lots of output)'),
-           ('version', 'V', 'show Docutils version then exit'),
-           ('help', 'h', 'show help text then exit')]
-"""See ``distutils.fancy_getopt.FancyGetopt.__init__`` for a description of
-the data structure: (long option, short option, description)."""
+           ('help', 'h', 'show help text')]
+"""See distutils.fancy_getopt.FancyGetopt.__init__ for a description of the
+data structure: (long option, short option, description)."""
 
 def usage():
     print usage_header
@@ -58,7 +46,7 @@ def usage():
         if longopt[-1:] == '=':
             opts = '-%s arg, --%sarg' % (shortopt, longopt)
         else:
-            opts = '-%s, --%s' % (shortopt, longopt)
+            opts = '-%s, --%s' % (shortopt, longopt),
         print '%-15s' % opts,
         if len(opts) > 14:
             print '%-16s' % '\n',
@@ -79,8 +67,8 @@ def _styledxml(input, document, optargs):
     docnode = document.asdom().childNodes[0]
     return '%s\n%s\n%s' % (
           '<?xml version="1.0" encoding="ISO-8859-1"?>',
-          '<?xml-stylesheet type="text/xsl" href="%s"?>'
-          % optargs['styledxml'], docnode.toxml())
+          '<?xml-stylesheet type="text/xsl" href="%s"?>' % optargs['styledxml'],
+          docnode.toxml())
 
 def _prettyxml(input, document, optargs):
     return document.asdom().toprettyxml('    ', '\n')
@@ -101,7 +89,7 @@ def _test(input, document, optargs):
 
 def escape(text):
     """
-    Return `text` in triple-double-quoted Python string form.
+    Return `text` in a form compatible with triple-double-quoted Python strings.
     """
     text = text.replace('\\', '\\\\')   # escape backslashes
     text = text.replace('"""', '""\\"') # break up triple-double-quotes
@@ -137,14 +125,10 @@ def posixGetArgs(argv):
     except getopt.GetoptError:
         usage()
         sys.exit(2)
-    optargs = {'debug': 0, 'attributes': 0}
+    optargs = {'debug': 0}
     for o, a in opts:
         if o in ['-h', '--help']:
             usage()
-            sys.exit()
-        elif o in ['-V', '--version']:
-            print >>sys.stderr, ('quicktest.py (Docutils %s)'
-                                 % docutils.__version__)
             sys.exit()
         elif o in ['-r', '--rawxml']:
             outputFormat = 'rawxml'
@@ -157,53 +141,43 @@ def posixGetArgs(argv):
             outputFormat = 'pretty'
         elif o in ['-t', '--test']:
             outputFormat = 'test'
-        elif o == '--attributes':
-            optargs['attributes'] = 1
         elif o in ['-d', '--debug']:
             optargs['debug'] = 1
         else:
             raise getopt.GetoptError, "getopt should have saved us!"
-    if len(args) > 2:
-        print 'Maximum 2 arguments allowed.'
+    if len(args) > 1:
+        print "Only one file at a time, thanks."
         usage()
         sys.exit(1)
-    inputFile = sys.stdin
-    outputFile = sys.stdout
-    if args:
-        inputFile = open(args.pop(0))
-    if args:
-        outputFile = open(args.pop(0), 'w')
-    return inputFile, outputFile, outputFormat, optargs
+    if len(args) == 1:
+        inputFile = open(args[0])
+    else:
+        inputFile = sys.stdin
+    return inputFile, outputFormat, optargs
 
 def macGetArgs():
     import EasyDialogs
     EasyDialogs.Message("""\
-Use the next dialog to build a command line:
+In the following window, please:
 
-1. Choose an output format from the [Option] list 
-2. Click [Add]
-3. Choose an input file: [Add existing file...]
-4. Save the output: [Add new file...]
-5. [OK]""")
+1. Choose an output format from the "Option" list.
+2. Click "Add" (if you don't, the default format will
+   be "pretty").
+3. Click "Add existing file..." and choose an input file.
+4. Click "OK".""")
     optionlist = [(longopt, description)
                   for (longopt, shortopt, description) in options]
-    argv = EasyDialogs.GetArgv(optionlist=optionlist, addfolder=0)
+    argv = EasyDialogs.GetArgv(optionlist=optionlist, addnewfile=0, addfolder=0)
     return posixGetArgs(argv)
 
 def main():
-    # process cmdline arguments:
-    inputFile, outputFile, outputFormat, optargs = getArgs()
-    settings = OptionParser(components=(Parser,)).get_default_values()
-    settings.debug = optargs['debug']
+    inputFile, outputFormat, optargs = getArgs() # process cmdline arguments
     parser = Parser()
     input = inputFile.read()
-    document = new_document(inputFile.name, settings)
+    document = docutils.utils.newdocument(debug=optargs['debug'])
     parser.parse(input, document)
     output = format(outputFormat, input, document, optargs)
-    outputFile.write(output)
-    if optargs['attributes']:
-        import pprint
-        pprint.pprint(document.__dict__)
+    print output,
 
 
 if __name__ == '__main__':

@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -26,22 +26,10 @@ A paragraph::
     A literal block.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         A paragraph:
-    <literal_block xml:space="preserve">
-        A literal block.
-"""],
-["""\
-A paragraph with a space after the colons:: \n\
-
-    A literal block.
-""",
-"""\
-<document source="test data">
-    <paragraph>
-        A paragraph with a space after the colons:
-    <literal_block xml:space="preserve">
+    <literal_block>
         A literal block.
 """],
 ["""\
@@ -58,14 +46,14 @@ Another paragraph::
 A final paragraph.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         A paragraph:
-    <literal_block xml:space="preserve">
+    <literal_block>
         A literal block.
     <paragraph>
         Another paragraph:
-    <literal_block xml:space="preserve">
+    <literal_block>
         Another literal block.
         With two blank lines following.
     <paragraph>
@@ -79,12 +67,12 @@ one line::
     A literal block.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         A paragraph
         on more than
         one line:
-    <literal_block xml:space="preserve">
+    <literal_block>
         A literal block.
 """],
 ["""\
@@ -95,15 +83,15 @@ one line::
     with no blank line above.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         A paragraph
         on more than
         one line:
-    <system_message level="3" line="4" source="test data" type="ERROR">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Unexpected indentation.
-    <literal_block xml:space="preserve">
+            Unexpected indentation at line 4.
+    <literal_block>
         A literal block
         with no blank line above.
 """],
@@ -114,14 +102,14 @@ A paragraph::
 no blank line
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         A paragraph:
-    <literal_block xml:space="preserve">
+    <literal_block>
         A literal block.
-    <system_message level="2" line="4" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Literal block ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 4.
     <paragraph>
         no blank line
 """],
@@ -131,10 +119,10 @@ A paragraph: ::
     A literal block.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         A paragraph:
-    <literal_block xml:space="preserve">
+    <literal_block>
         A literal block.
 """],
 ["""\
@@ -145,41 +133,10 @@ A paragraph:
     A literal block.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         A paragraph:
-    <literal_block xml:space="preserve">
-        A literal block.
-"""],
-["""\
-A paragraph:
-::
-
-    A literal block.
-""",
-"""\
-<document source="test data">
-    <system_message level="1" line="2" source="test data" type="INFO">
-        <paragraph>
-            Possible title underline, too short for the title.
-            Treating it as ordinary text because it's so short.
-    <paragraph>
-        A paragraph:
-    <literal_block xml:space="preserve">
-        A literal block.
-"""],
-["""\
-A paragraph:
-
-::
-
-    A literal block.
-""",
-"""\
-<document source="test data">
-    <paragraph>
-        A paragraph:
-    <literal_block xml:space="preserve">
+    <literal_block>
         A literal block.
 """],
 ["""\
@@ -188,12 +145,12 @@ A paragraph::
 Not a literal block.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         A paragraph:
-    <system_message level="2" line="2" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Literal block expected; none found.
+            Literal block expected at line 2; none found.
     <paragraph>
         Not a literal block.
 """],
@@ -206,10 +163,10 @@ A paragraph::
     Literal line 3.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         A paragraph:
-    <literal_block xml:space="preserve">
+    <literal_block>
           A wonky literal block.
         Literal line 2.
         \n\
@@ -219,15 +176,14 @@ A paragraph::
 EOF, even though a literal block is indicated::
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         EOF, even though a literal block is indicated:
-    <system_message level="2" line="2" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Literal block expected; none found.
+            Literal block expected at line 2; none found.
 """],
 ]
-
 
 if __name__ == '__main__':
     import unittest

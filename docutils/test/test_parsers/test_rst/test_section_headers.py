@@ -1,14 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
+"""
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
 
-"""Tests for states.py."""
+Tests for states.py.
+"""
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -25,7 +27,7 @@ Title
 Paragraph.
 """,
 """\
-<document source="test data">
+<document>
     <section id="title" name="title">
         <title>
             Title
@@ -38,7 +40,7 @@ Title
 Paragraph (no blank line).
 """,
 """\
-<document source="test data">
+<document>
     <section id="title" name="title">
         <title>
             Title
@@ -54,7 +56,7 @@ Title
 Paragraph.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Paragraph.
     <section id="title" name="title">
@@ -76,27 +78,27 @@ Test unexpected section titles.
     Paragraph.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Test unexpected section titles.
     <block_quote>
-        <system_message level="4" line="4" source="test data" type="SEVERE">
+        <system_message level="4" type="SEVERE">
             <paragraph>
-                Unexpected section title.
-            <literal_block xml:space="preserve">
+                Unexpected section title at line 4.
+            <literal_block>
                 Title
                 =====
         <paragraph>
             Paragraph.
-        <system_message level="4" line="7" source="test data" type="SEVERE">
+        <system_message level="4" type="SEVERE">
             <paragraph>
-                Unexpected section title or transition.
-            <literal_block xml:space="preserve">
+                Unexpected section title or transition at line 7.
+            <literal_block>
                 -----
-        <system_message level="4" line="9" source="test data" type="SEVERE">
+        <system_message level="4" type="SEVERE">
             <paragraph>
-                Unexpected section title.
-            <literal_block xml:space="preserve">
+                Unexpected section title at line 9.
+            <literal_block>
                 Title
                 -----
         <paragraph>
@@ -109,16 +111,16 @@ Title
 Test short underline.
 """,
 """\
-<document source="test data">
+<document>
+    <system_message level="1" type="INFO">
+        <paragraph>
+            Title underline too short at line 2.
+        <literal_block>
+            Title
+            ====
     <section id="title" name="title">
         <title>
             Title
-        <system_message level="2" line="2" source="test data" type="WARNING">
-            <paragraph>
-                Title underline too short.
-            <literal_block xml:space="preserve">
-                Title
-                ====
         <paragraph>
             Test short underline.
 """],
@@ -130,7 +132,7 @@ Title
 Test overline title.
 """,
 """\
-<document source="test data">
+<document>
     <section id="title" name="title">
         <title>
             Title
@@ -145,7 +147,7 @@ Test overline title.
 Test overline title with inset.
 """,
 """\
-<document source="test data">
+<document>
     <section id="title" name="title">
         <title>
             Title
@@ -157,11 +159,11 @@ Test overline title with inset.
  Test Missing Underline
 """,
 """\
-<document source="test data">
-    <system_message level="4" line="1" source="test data" type="SEVERE">
+<document>
+    <system_message level="4" type="SEVERE">
         <paragraph>
-            Incomplete section title.
-        <literal_block xml:space="preserve">
+            Incomplete section title at line 1.
+        <literal_block>
             ========================
              Test Missing Underline
 """],
@@ -171,11 +173,11 @@ Test overline title with inset.
 
 """,
 """\
-<document source="test data">
-    <system_message level="4" line="1" source="test data" type="SEVERE">
+<document>
+    <system_message level="4" type="SEVERE">
         <paragraph>
-            Missing matching underline for section title overline.
-        <literal_block xml:space="preserve">
+            Missing underline for overline at line 1.
+        <literal_block>
             ========================
              Test Missing Underline
 """],
@@ -186,11 +188,11 @@ Test overline title with inset.
 Test missing underline, with paragraph.
 """,
 """\
-<document source="test data">
-    <system_message level="4" line="1" source="test data" type="SEVERE">
+<document>
+    <system_message level="4" type="SEVERE">
         <paragraph>
-            Missing matching underline for section title overline.
-        <literal_block xml:space="preserve">
+            Missing underline for overline at line 1.
+        <literal_block>
             =======
              Title
     <paragraph>
@@ -204,17 +206,17 @@ Test missing underline, with paragraph.
 Test long title and space normalization.
 """,
 """\
-<document source="test data">
+<document>
+    <system_message level="1" type="INFO">
+        <paragraph>
+            Title overline too short at line 1.
+        <literal_block>
+            =======
+             Long    Title
+            =======
     <section id="long-title" name="long title">
         <title>
             Long    Title
-        <system_message level="2" line="1" source="test data" type="WARNING">
-            <paragraph>
-                Title overline too short.
-            <literal_block xml:space="preserve">
-                =======
-                 Long    Title
-                =======
         <paragraph>
             Test long title and space normalization.
 """],
@@ -226,11 +228,11 @@ Test long title and space normalization.
 Paragraph.
 """,
 """\
-<document source="test data">
-    <system_message level="4" line="1" source="test data" type="SEVERE">
+<document>
+    <system_message level="4" type="SEVERE">
         <paragraph>
-            Title overline & underline mismatch.
-        <literal_block xml:space="preserve">
+            Title overline & underline mismatch at line 1.
+        <literal_block>
             =======
              Title
             -------
@@ -249,22 +251,22 @@ Test missing titles; blank line in-between.
 ========================
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Document or section may not begin with a transition.
+            Document or section may not begin with a transition (line 1).
     <transition>
-    <system_message level="3" line="3" source="test data" type="ERROR">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            At least one body element must separate transitions; adjacent transitions not allowed.
+            At least one body element must separate transitions; adjacent transitions at line 3.
     <transition>
     <paragraph>
         Test missing titles; blank line in-between.
     <transition>
     <transition>
-    <system_message level="3" line="9" source="test data" type="ERROR">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Document or section may not end with a transition.
+            Document or section may not end with a transition (line 9).
 """],
 ["""\
 ========================
@@ -276,19 +278,19 @@ Test missing titles; nothing in-between.
 ========================
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Invalid section title or transition marker.
-        <literal_block xml:space="preserve">
+            Invalid section title or transition marker at line 1.
+        <literal_block>
             ========================
             ========================
     <paragraph>
         Test missing titles; nothing in-between.
-    <system_message level="3" line="6" source="test data" type="ERROR">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Invalid section title or transition marker.
-        <literal_block xml:space="preserve">
+            Invalid section title or transition marker at line 6.
+        <literal_block>
             ========================
             ========================
 """],
@@ -312,8 +314,8 @@ Title 4
 Paragraph 4.
 """,
 """\
-<document source="test data">
-    <comment xml:space="preserve">
+<document>
+    <comment>
         Test return to existing, highest-level section (Title 3).
     <section id="title-1" name="title 1">
         <title>
@@ -360,7 +362,7 @@ Title 4
 Paragraph 4.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Test return to existing, highest-level section (Title 3, with overlines).
     <section id="title-1" name="title 1">
@@ -404,7 +406,7 @@ Title 4
 Paragraph 4.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Test return to existing, higher-level section (Title 4).
     <section id="title-1" name="title 1">
@@ -448,7 +450,7 @@ Title 4
 Paragraph 4.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Test bad subsection order (Title 4).
     <section id="title-1" name="title 1">
@@ -466,10 +468,10 @@ Paragraph 4.
             Title 3
         <paragraph>
             Paragraph 3.
-        <system_message level="4" line="15" source="test data" type="SEVERE">
+        <system_message level="4" type="SEVERE">
             <paragraph>
-                Title level inconsistent:
-            <literal_block xml:space="preserve">
+                Title level inconsistent at line 15:
+            <literal_block>
                 Title 4
                 ```````
         <paragraph>
@@ -499,7 +501,7 @@ Title 4
 Paragraph 4.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Test bad subsection order (Title 4, with overlines).
     <section id="title-1" name="title 1">
@@ -517,10 +519,10 @@ Paragraph 4.
             Title 3
         <paragraph>
             Paragraph 3.
-        <system_message level="4" line="19" source="test data" type="SEVERE">
+        <system_message level="4" type="SEVERE">
             <paragraph>
-                Title level inconsistent:
-            <literal_block xml:space="preserve">
+                Title level inconsistent at line 19:
+            <literal_block>
                 ```````
                 Title 4
                 ```````
@@ -534,7 +536,7 @@ Title containing *inline* ``markup``
 Paragraph.
 """,
 """\
-<document source="test data">
+<document>
     <section id="title-containing-inline-markup" name="title containing inline markup">
         <title>
             Title containing \n\
@@ -546,366 +548,7 @@ Paragraph.
         <paragraph>
             Paragraph.
 """],
-["""\
-1. Numbered Title
-=================
-
-Paragraph.
-""",
-"""\
-<document source="test data">
-    <section id="numbered-title" name="1. numbered title">
-        <title>
-            1. Numbered Title
-        <paragraph>
-            Paragraph.
-"""],
-["""\
-1. Item 1.
-2. Item 2.
-3. Numbered Title
-=================
-
-Paragraph.
-""",
-"""\
-<document source="test data">
-    <enumerated_list enumtype="arabic" prefix="" suffix=".">
-        <list_item>
-            <paragraph>
-                Item 1.
-        <list_item>
-            <paragraph>
-                Item 2.
-    <system_message level="2" line="3" source="test data" type="WARNING">
-        <paragraph>
-            Enumerated list ends without a blank line; unexpected unindent.
-    <section id="numbered-title" name="3. numbered title">
-        <title>
-            3. Numbered Title
-        <paragraph>
-            Paragraph.
-"""],
-["""\
-ABC
-===
-
-Short title.
-""",
-"""\
-<document source="test data">
-    <section id="abc" name="abc">
-        <title>
-            ABC
-        <paragraph>
-            Short title.
-"""],
-["""\
-ABC
-==
-
-Underline too short.
-""",
-"""\
-<document source="test data">
-    <system_message level="1" line="2" source="test data" type="INFO">
-        <paragraph>
-            Possible title underline, too short for the title.
-            Treating it as ordinary text because it's so short.
-    <paragraph>
-        ABC
-        ==
-    <paragraph>
-        Underline too short.
-"""],
-["""\
-==
-ABC
-==
-
-Over & underline too short.
-""",
-"""\
-<document source="test data">
-    <system_message level="1" line="1" source="test data" type="INFO">
-        <paragraph>
-            Possible incomplete section title.
-            Treating the overline as ordinary text because it's so short.
-    <paragraph>
-        ==
-        ABC
-        ==
-    <paragraph>
-        Over & underline too short.
-"""],
-["""\
-==
-ABC
-
-Overline too short, no underline.
-""",
-"""\
-<document source="test data">
-    <system_message level="1" line="1" source="test data" type="INFO">
-        <paragraph>
-            Possible incomplete section title.
-            Treating the overline as ordinary text because it's so short.
-    <paragraph>
-        ==
-        ABC
-    <paragraph>
-        Overline too short, no underline.
-"""],
-["""\
-==
-ABC
-""",
-"""\
-<document source="test data">
-    <system_message level="1" line="1" source="test data" type="INFO">
-        <paragraph>
-            Possible incomplete section title.
-            Treating the overline as ordinary text because it's so short.
-    <paragraph>
-        ==
-        ABC
-"""],
-["""\
-==
-  Not a title: a definition list item.
-""",
-"""\
-<document source="test data">
-    <system_message level="1" line="1" source="test data" type="INFO">
-        <paragraph>
-            Possible incomplete section title.
-            Treating the overline as ordinary text because it's so short.
-    <definition_list>
-        <definition_list_item>
-            <term>
-                ==
-            <definition>
-                <paragraph>
-                    Not a title: a definition list item.
-"""],
-["""\
-==
-  Not a title: a definition list item.
---
-  Another definition list item.  It's in a different list,
-  but that's an acceptable limitation given that this will
-  probably never happen in real life.
-
-  The next line will trigger a warning:
-==
-""",
-"""\
-<document source="test data">
-    <system_message level="1" line="1" source="test data" type="INFO">
-        <paragraph>
-            Possible incomplete section title.
-            Treating the overline as ordinary text because it's so short.
-    <definition_list>
-        <definition_list_item>
-            <term>
-                ==
-            <definition>
-                <paragraph>
-                    Not a title: a definition list item.
-    <system_message level="2" line="3" source="test data" type="WARNING">
-        <paragraph>
-            Definition list ends without a blank line; unexpected unindent.
-    <system_message level="1" line="3" source="test data" type="INFO">
-        <paragraph>
-            Possible incomplete section title.
-            Treating the overline as ordinary text because it's so short.
-    <definition_list>
-        <definition_list_item>
-            <term>
-                --
-            <definition>
-                <paragraph>
-                    Another definition list item.  It's in a different list,
-                    but that's an acceptable limitation given that this will
-                    probably never happen in real life.
-                <paragraph>
-                    The next line will trigger a warning:
-    <system_message level="2" line="9" source="test data" type="WARNING">
-        <paragraph>
-            Definition list ends without a blank line; unexpected unindent.
-    <paragraph>
-        ==
-"""],
-["""\
-Paragraph
-
-    ==
-    ABC
-    ==
-
-    Over & underline too short.
-""",
-"""\
-<document source="test data">
-    <paragraph>
-        Paragraph
-    <block_quote>
-        <system_message level="1" line="3" source="test data" type="INFO">
-            <paragraph>
-                Unexpected possible title overline or transition.
-                Treating it as ordinary text because it's so short.
-        <paragraph>
-            ==
-            ABC
-            ==
-        <paragraph>
-            Over & underline too short.
-"""],
-["""\
-Paragraph
-
-    ABC
-    ==
-
-    Underline too short.
-""",
-"""\
-<document source="test data">
-    <paragraph>
-        Paragraph
-    <block_quote>
-        <paragraph>
-            ABC
-            ==
-        <paragraph>
-            Underline too short.
-"""],
-["""\
-...
-...
-
-...
----
-
-...
-...
-...
-""",
-"""\
-<document source="test data">
-    <system_message level="1" line="1" source="test data" type="INFO">
-        <paragraph>
-            Possible incomplete section title.
-            Treating the overline as ordinary text because it's so short.
-    <section dupname="..." id="id1">
-        <title>
-            ...
-        <system_message level="1" line="4" source="test data" type="INFO">
-            <paragraph>
-                Possible incomplete section title.
-                Treating the overline as ordinary text because it's so short.
-        <section dupname="..." id="id2">
-            <title>
-                ...
-            <system_message backrefs="id2" level="1" line="5" source="test data" type="INFO">
-                <paragraph>
-                    Duplicate implicit target name: "...".
-            <system_message level="1" line="7" source="test data" type="INFO">
-                <paragraph>
-                    Possible incomplete section title.
-                    Treating the overline as ordinary text because it's so short.
-    <system_message level="1" line="7" source="test data" type="INFO">
-        <paragraph>
-            Possible incomplete section title.
-            Treating the overline as ordinary text because it's so short.
-    <section dupname="..." id="id3">
-        <title>
-            ...
-        <system_message backrefs="id3" level="1" line="8" source="test data" type="INFO">
-            <paragraph>
-                Duplicate implicit target name: "...".
-        <paragraph>
-            ...
-"""],
-["""\
-..
-Hi
-..
-
-...
-Yo
-...
-
-Ho
-""",
-"""\
-<document source="test data">
-    <comment xml:space="preserve">
-    <system_message level="2" line="2" source="test data" type="WARNING">
-        <paragraph>
-            Explicit markup ends without a blank line; unexpected unindent.
-    <section id="hi" name="hi">
-        <title>
-            Hi
-        <section id="yo" name="yo">
-            <title>
-                Yo
-            <paragraph>
-                Ho
-"""],
-["""\
-Empty Section
-=============
-""",
-"""\
-<document source="test data">
-    <section id="empty-section" name="empty section">
-        <title>
-            Empty Section
-        <system_message level="3" line="2" source="test data" type="ERROR">
-            <paragraph>
-                Section empty; must have contents.
-"""],
-["""\
-===
-One
-===
-
-The bubble-up parser strategy conflicts with short titles
-(<= 3 char-long over- & underlines).
-
-===
-Two
-===
-
-The parser currently contains a work-around kludge.
-Without it, the parser ends up in an infinite loop.
-""",
-"""\
-<document source="test data">
-    <section id="one" name="one">
-        <title>
-            One
-        <paragraph>
-            The bubble-up parser strategy conflicts with short titles
-            (<= 3 char-long over- & underlines).
-    <section id="two" name="two">
-        <title>
-            Two
-        <paragraph>
-            The parser currently contains a work-around kludge.
-            Without it, the parser ends up in an infinite loop.
-"""],
-["""\
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="0" source="test data" type="ERROR">
-        <paragraph>
-            Document empty; must have contents.
-"""],
 ]
-
 
 if __name__ == '__main__':
     import unittest

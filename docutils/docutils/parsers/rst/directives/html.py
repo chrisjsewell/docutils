@@ -1,46 +1,47 @@
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
+#! /usr/bin/env python
 
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Directives for typically HTML-specific constructs.
 """
 
 __docformat__ = 'reStructuredText'
 
-import sys
+
 from docutils import nodes, utils
 from docutils.parsers.rst import states
-from docutils.transforms import components
 
 
-def meta(name, arguments, options, content, lineno,
-         content_offset, block_text, state, state_machine):
+def meta(match, typename, data, state, statemachine, attributes):
+    lineoffset = statemachine.lineoffset
+    block, indent, offset, blankfinish = \
+          statemachine.getfirstknownindented(match.end(), uptoblank=1)
     node = nodes.Element()
-    if content:
-        new_line_offset, blank_finish = state.nested_list_parse(
-              content, content_offset, node, initial_state='MetaBody',
-              blank_finish=1, state_machine_kwargs=metaSMkwargs)
-        if (new_line_offset - content_offset) != len(content):
-            # incomplete parse of block?
-            error = state_machine.reporter.error(
-                'Invalid meta directive.',
-                nodes.literal_block(block_text, block_text), line=lineno)
-            node += error
+    if block:
+        newlineoffset, blankfinish = state.nestedlistparse(
+              block, offset, node, initialstate='MetaBody',
+              blankfinish=blankfinish, statemachinekwargs=metaSMkwargs)
+        if (newlineoffset - offset) != len(block): # incomplete parse of block?
+            blocktext = '\n'.join(statemachine.inputlines[
+                  lineoffset : statemachine.lineoffset+1])
+            msg = statemachine.memo.reporter.error(
+                  'Invalid meta directive at line %s.'
+                  % statemachine.abslineno(), '',
+                  nodes.literal_block(blocktext, blocktext))
+            node += msg
     else:
-        error = state_machine.reporter.error(
-            'Empty meta directive.',
-            nodes.literal_block(block_text, block_text), line=lineno)
-        node += error
-    return node.get_children()
+        msg = statemachine.memo.reporter.error(
+              'Empty meta directive at line %s.' % statemachine.abslineno())
+        node += msg
+    return node.getchildren(), blankfinish
 
-meta.content = 1
-
-def imagemap(name, arguments, options, content, lineno,
-             content_offset, block_text, state, state_machine):
-    return []
+def imagemap(match, typename, data, state, statemachine, attributes):
+    return [], 0
 
 
 class MetaBody(states.SpecializedBody):
@@ -49,48 +50,40 @@ class MetaBody(states.SpecializedBody):
         """HTML-specific "meta" element."""
         pass
 
-    def field_marker(self, match, context, next_state):
+    def field_marker(self, match, context, nextstate):
         """Meta element."""
-        node, blank_finish = self.parsemeta(match)
-        self.parent += node
-        return [], next_state, []
+        node, blankfinish = self.parsemeta(match)
+        self.statemachine.node += node
+        return [], nextstate, []
 
     def parsemeta(self, match):
-        name = self.parse_field_marker(match)
-        indented, indent, line_offset, blank_finish = \
-              self.state_machine.get_first_known_indented(match.end())
+        name, args = self.parse_field_marker(match)
+        indented, indent, lineoffset, blankfinish = \
+              self.statemachine.getfirstknownindented(match.end())
         node = self.meta()
-        pending = nodes.pending(components.Filter,
-                                {'component': 'writer',
-                                 'format': 'html',
-                                 'nodes': [node]})
         node['content'] = ' '.join(indented)
         if not indented:
-            line = self.state_machine.line
-            msg = self.reporter.info(
-                  'No content for meta tag "%s".' % name,
-                  nodes.literal_block(line, line),
-                  line=self.state_machine.abs_line_number())
-            return msg, blank_finish
-        tokens = name.split()
+            line = self.statemachine.line
+            msg = self.statemachine.memo.reporter.info(
+                  'No content for meta tag "%s".' % name, '',
+                  nodes.literal_block(line, line))
+            self.statemachine.node += msg
         try:
-            attname, val = utils.extract_name_value(tokens[0])[0]
+            attname, val = utils.extract_name_value(name)[0]
             node[attname.lower()] = val
         except utils.NameValueError:
-            node['name'] = tokens[0]
-        for token in tokens[1:]:
+            node['name'] = name
+        for arg in args:
             try:
-                attname, val = utils.extract_name_value(token)[0]
+                attname, val = utils.extract_name_value(arg)[0]
                 node[attname.lower()] = val
             except utils.NameValueError, detail:
-                line = self.state_machine.line
-                msg = self.reporter.error(
-                      'Error parsing meta tag attribute "%s": %s.'
-                      % (token, detail), nodes.literal_block(line, line),
-                      line=self.state_machine.abs_line_number())
-                return msg, blank_finish
-        self.document.note_pending(pending)
-        return pending, blank_finish
+                line = self.statemachine.line
+                msg = self.statemachine.memo.reporter.error(
+                      'Error parsing meta tag attribute "%s": %s'
+                      % (arg, detail), '', nodes.literal_block(line, line))
+                self.statemachine.node += msg
+        return node, blankfinish
 
 
-metaSMkwargs = {'state_classes': (MetaBody,)}
+metaSMkwargs = {'stateclasses': (MetaBody,)}

@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -32,7 +32,7 @@ One-liners:
 :Parameter i: integer
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         One-liners:
     <field_list>
@@ -56,7 +56,9 @@ One-liners:
                     2001-08-11
         <field>
             <field_name>
-                Parameter i
+                Parameter
+            <field_argument>
+                i
             <field_body>
                 <paragraph>
                     integer
@@ -70,7 +72,7 @@ One-liners, no blank lines:
 :Parameter i: integer
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         One-liners, no blank lines:
     <field_list>
@@ -94,7 +96,9 @@ One-liners, no blank lines:
                     2001-08-11
         <field>
             <field_name>
-                Parameter i
+                Parameter
+            <field_argument>
+                i
             <field_body>
                 <paragraph>
                     integer
@@ -104,15 +108,15 @@ One-liners, no blank lines:
 empty item above, no blank line
 """,
 """\
-<document source="test data">
+<document>
     <field_list>
         <field>
             <field_name>
                 field
             <field_body>
-    <system_message level="2" line="2" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Field list ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 2.
     <paragraph>
         empty item above, no blank line
 """],
@@ -129,7 +133,7 @@ Field bodies starting on the next line:
   integer
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Field bodies starting on the next line:
     <field_list>
@@ -153,7 +157,9 @@ Field bodies starting on the next line:
                     2001-08-11
         <field>
             <field_name>
-                Parameter i
+                Parameter
+            <field_argument>
+                i
             <field_body>
                 <paragraph>
                     integer
@@ -172,7 +178,7 @@ One-paragraph, multi-liners:
               (integer)
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         One-paragraph, multi-liners:
     <field_list>
@@ -200,7 +206,9 @@ One-paragraph, multi-liners:
                     (Saturday)
         <field>
             <field_name>
-                Parameter i
+                Parameter
+            <field_argument>
+                i
             <field_body>
                 <paragraph>
                     counter
@@ -220,7 +228,7 @@ One-paragraph, multi-liners, not lined up:
   (integer)
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         One-paragraph, multi-liners, not lined up:
     <field_list>
@@ -248,7 +256,9 @@ One-paragraph, multi-liners, not lined up:
                     (Saturday)
         <field>
             <field_name>
-                Parameter i
+                Parameter
+            <field_argument>
+                i
             <field_body>
                 <paragraph>
                     counter
@@ -277,7 +287,7 @@ Multiple body elements:
     :Time: 15:07
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Multiple body elements:
     <field_list>
@@ -304,7 +314,7 @@ Multiple body elements:
                     containing multiple elements.
                 <paragraph>
                     Here's a literal block:
-                <literal_block xml:space="preserve">
+                <literal_block>
                     def f(x):
                         return x**2 + x
                 <paragraph>
@@ -340,7 +350,7 @@ Nested field lists on one line:
            body line 2
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Nested field lists on one line:
     <field_list>
@@ -400,11 +410,17 @@ Nested field lists on one line:
 :Parameter i j k: multiple arguments
 """,
 """\
-<document source="test data">
+<document>
     <field_list>
         <field>
             <field_name>
-                Parameter i j k
+                Parameter
+            <field_argument>
+                i
+            <field_argument>
+                j
+            <field_argument>
+                k
             <field_body>
                 <paragraph>
                     multiple arguments
@@ -427,7 +443,7 @@ Field: marker is missing its open-colon.
 :Field marker is missing its close-colon.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Some edge cases:
     <field_list>
@@ -441,15 +457,21 @@ Field: marker is missing its open-colon.
             <field_body>
                 <paragraph>
                     Me
-    <system_message level="2" line="5" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Field list ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 4.
     <paragraph>
         No blank line before this paragraph.
     <field_list>
         <field>
             <field_name>
-                *Field* `with` **inline** ``markup``
+                *Field*
+            <field_argument>
+                `with`
+            <field_argument>
+                **inline**
+            <field_argument>
+                ``markup``
             <field_body>
                 <paragraph>
                     inline markup shouldn't be recognized.

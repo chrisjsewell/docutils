@@ -16,10 +16,11 @@ More information about this DTD and the Docutils project can be found
 at http://docutils.sourceforge.net/.  The latest version of this DTD
 is available from http://docutils.sourceforge.net/spec/pysource.dtd.
 
-The formal public identifier for this DTD is::
+The proposed formal public identifier for this DTD is::
 
-    +//IDN docutils.sourceforge.net//DTD Docutils Python Source//EN//XML
+    +//IDN python.org//DTD Docutils Python Source//EN//XML
 -->
+
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,17 +28,17 @@ The formal public identifier for this DTD is::
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 
-<!ENTITY % additional.section.elements
+<!ENTITY % additional.structural.elements
   " | package_section | module_section | class_section
-    | method_section | function_section
-    | module_attribute_section | function_attribute_section
+    | method_section | function_section | module_attribute_section
     | class_attribute_section | instance_attribute_section ">
 
 <!ENTITY % additional.inline.elements
   " | package | module | class | method | function
-    | variable | parameter | type | attribute
+    | variable | parameter | type
     | module_attribute | class_attribute | instance_attribute
     | exception_class | warning_class ">
+
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,83 +54,49 @@ http://docutils.sourceforge.net/spec/docutils.dtd.
     "docutils.dtd">
 %docutils;
 
+
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Additional Section Elements
+    Additional Structural Elements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 
-<!ELEMENT package_section
-    (package, fullname?, import_list?, %structure.model;)>
+<!ELEMENT package_section (package, %structure.model;)>
 <!ATTLIST package_section %basic.atts;>
 
-<!ELEMENT module_section
-    (module, fullname?, import_list?, %structure.model;)>
+<!ELEMENT module_section (module, %structure.model;)>
 <!ATTLIST module_section %basic.atts;>
 
 <!ELEMENT class_section
-    (class, inheritance_list?, fullname?, subclasses?,
-     %structure.model;)>
+    (class, inheritance_list?, parameter_list?, %structure.model;)>
 <!ATTLIST class_section %basic.atts;>
 
-<!ELEMENT method_section
-    (method, parameter_list?, fullname?, overrides?,
-     %structure.model;)>
+<!ELEMENT method_section (method, parameter_list?, %structure.model;)>
 <!ATTLIST method_section %basic.atts;>
 
-<!ELEMENT function_section
-    (function, parameter_list?, fullname?, %structure.model;)>
+<!ELEMENT function_section (function, parameter_list?, %structure.model;)>
 <!ATTLIST function_section %basic.atts;>
 
 <!ELEMENT module_attribute_section
-    (attribute, initial_value?, fullname?, %structure.model;)>
+    (module_attribute, initial_value?, %structure.model;)>
 <!ATTLIST module_attribute_section %basic.atts;>
 
-<!ELEMENT function_attribute_section
-    (attribute, initial_value?, fullname?, %structure.model;)>
-<!ATTLIST function_attribute_section %basic.atts;>
-
 <!ELEMENT class_attribute_section
-    (attribute, initial_value?, fullname?, overrides?,
-     %structure.model;)>
+    (class_attribute, initial_value?, %structure.model;)>
 <!ATTLIST class_attribute_section %basic.atts;>
 
 <!ELEMENT instance_attribute_section
-    (attribute, initial_value?, fullname?, overrides?,
-     %structure.model;)>
+    (instance_attribute, initial_value?, %structure.model;)>
 <!ATTLIST instance_attribute_section %basic.atts;>
-
-<!--
-    Section Subelements
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
-
-<!ELEMENT fullname
-    (package | module | class | method | function | attribute)+>
-<!ATTLIST fullname %basic.atts;>
-
-<!ELEMENT import_list (import_item+)>
-<!ATTLIST import_list %basic.atts;>
-
-<!--
-Support ``import module``, ``import module as alias``, ``from module
-import identifier``, and ``from module import identifier as alias``.
--->
-<!ELEMENT import_item (fullname, identifier?, alias?)>
-<!ATTLIST import_item %basic.atts;>
 
 <!ELEMENT inheritance_list (class+)>
 <!ATTLIST inheritance_list %basic.atts;>
 
-<!ELEMENT subclasses (class+)>
-<!ATTLIST subclasses %basic.atts;>
-
-<!ELEMENT parameter_list
+<!ELEMENT parameter_list 
     ((parameter_item+, optional_parameters*) | optional_parameters+)>
 <!ATTLIST parameter_list %basic.atts;>
 
-<!ELEMENT parameter_item
-    ((parameter | parameter_tuple), parameter_default?)>
+<!ELEMENT parameter_item ((parameter | parameter_tuple), parameter_default?)>
 <!ATTLIST parameter_item %basic.atts;>
 
 <!ELEMENT optional_parameters (parameter_item+, optional_parameters*)>
@@ -141,11 +108,9 @@ import identifier``, and ``from module import identifier as alias``.
 <!ELEMENT parameter_default (#PCDATA)>
 <!ATTLIST parameter_default %basic.atts;>
 
-<!ELEMENT overrides (fullname+)>
-<!ATTLIST overrides %basic.atts;>
-
 <!ELEMENT initial_value (#PCDATA)>
 <!ATTLIST initial_value %basic.atts;>
+
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,13 +122,13 @@ import identifier``, and ``from module import identifier as alias``.
 <!ELEMENT package (#PCDATA)>
 <!ATTLIST package
     %basic.atts;
-    %reference.atts;>
+    %link.atts;>
 
 <!-- Also used as the `module_section` identifier/title. -->
 <!ELEMENT module (#PCDATA)>
 <!ATTLIST module
     %basic.atts;
-    %reference.atts;>
+    %link.atts;>
 
 <!--
 Also used as the `class_section` identifier/title, and in the
@@ -172,31 +137,19 @@ Also used as the `class_section` identifier/title, and in the
 <!ELEMENT class (#PCDATA)>
 <!ATTLIST class
     %basic.atts;
-    %reference.atts;>
+    %link.atts;>
 
 <!-- Also used as the `method_section` identifier/title. -->
 <!ELEMENT method (#PCDATA)>
 <!ATTLIST method
     %basic.atts;
-    %reference.atts;>
+    %link.atts;>
 
 <!-- Also used as the `function_section` identifier/title. -->
 <!ELEMENT function (#PCDATA)>
 <!ATTLIST function
     %basic.atts;
-    %reference.atts;>
-
-<!--
-??? Use this instead of the ``*_attribute`` elements below?  Add a
-"type" attribute to differentiate?
-
-Also used as the identifier/title for `module_attribute_section`,
-`class_attribute_section`, and `instance_attribute_section`.
--->
-<!ELEMENT attribute (#PCDATA)>
-<!ATTLIST attribute
-    %basic.atts;
-    %reference.atts;>
+    %link.atts;>
 
 <!--
 Also used as the `module_attribute_section` identifier/title. A module
@@ -205,13 +158,13 @@ attribute is an exported module-level global variable.
 <!ELEMENT module_attribute (#PCDATA)>
 <!ATTLIST module_attribute
     %basic.atts;
-    %reference.atts;>
+    %link.atts;>
 
 <!-- Also used as the `class_attribute_section` identifier/title. -->
 <!ELEMENT class_attribute (#PCDATA)>
 <!ATTLIST class_attribute
     %basic.atts;
-    %reference.atts;>
+    %link.atts;>
 
 <!--
 Also used as the `instance_attribute_section` identifier/title.
@@ -219,35 +172,36 @@ Also used as the `instance_attribute_section` identifier/title.
 <!ELEMENT instance_attribute (#PCDATA)>
 <!ATTLIST instance_attribute
     %basic.atts;
-    %reference.atts;>
+    %link.atts;>
 
 <!ELEMENT variable (#PCDATA)>
 <!ATTLIST variable
     %basic.atts;
-    %reference.atts;>
+    %link.atts;>
 
 <!-- Also used in `parameter_list`. -->
 <!ELEMENT parameter (#PCDATA)>
 <!ATTLIST parameter
     %basic.atts;
-    %reference.atts;
+    %link.atts;
     excess_positional  %yesorno;  #IMPLIED
     excess_keyword     %yesorno;  #IMPLIED>
 
 <!ELEMENT type (#PCDATA)>
 <!ATTLIST type
     %basic.atts;
-    %reference.atts;>
+    %link.atts;>
 
 <!ELEMENT exception_class (#PCDATA)>
 <!ATTLIST exception_class
     %basic.atts;
-    %reference.atts;>
+    %link.atts;>
 
 <!ELEMENT warning_class (#PCDATA)>
 <!ATTLIST warning_class
     %basic.atts;
-    %reference.atts;>
+    %link.atts;>
+
 
 <!--
 Local Variables:

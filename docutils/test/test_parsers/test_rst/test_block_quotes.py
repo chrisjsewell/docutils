@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -27,7 +27,7 @@ Line 2.
    Indented.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Line 1.
         Line 2.
@@ -44,7 +44,7 @@ Line 2.
       Indented 2.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Line 1.
         Line 2.
@@ -61,13 +61,13 @@ Line 2.
     Unexpectedly indented.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Line 1.
         Line 2.
-    <system_message level="3" line="3" source="test data" type="ERROR">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Unexpected indentation.
+            Unexpected indentation at line 3.
     <block_quote>
         <paragraph>
             Unexpectedly indented.
@@ -80,16 +80,16 @@ Line 2.
 no blank line
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Line 1.
         Line 2.
     <block_quote>
         <paragraph>
             Indented.
-    <system_message level="2" line="5" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Block quote ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 5.
     <paragraph>
         no blank line
 """],
@@ -104,7 +104,7 @@ Is this correct? Should it generate a warning?
 Yes, it is correct, no warning necessary.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Here is a paragraph.
     <block_quote>
@@ -116,134 +116,6 @@ Yes, it is correct, no warning necessary.
     <paragraph>
         Is this correct? Should it generate a warning?
         Yes, it is correct, no warning necessary.
-"""],
-["""\
-Paragraph.
-
-   Block quote.
-
-   -- Attribution
-
-Paragraph.
-
-   Block quote.
-
-   --Attribution
-""",
-"""\
-<document source="test data">
-    <paragraph>
-        Paragraph.
-    <block_quote>
-        <paragraph>
-            Block quote.
-        <attribution>
-            Attribution
-    <paragraph>
-        Paragraph.
-    <block_quote>
-        <paragraph>
-            Block quote.
-        <attribution>
-            Attribution
-"""],
-["""\
-Paragraph.
-
-   Block quote.
-
-   -- Attribution line one
-   and line two
-
-Paragraph.
-
-   Block quote.
-
-   -- Attribution line one
-      and line two
-""",
-"""\
-<document source="test data">
-    <paragraph>
-        Paragraph.
-    <block_quote>
-        <paragraph>
-            Block quote.
-        <attribution>
-            Attribution line one
-            and line two
-    <paragraph>
-        Paragraph.
-    <block_quote>
-        <paragraph>
-            Block quote.
-        <attribution>
-            Attribution line one
-            and line two
-"""],
-["""\
-Paragraph.
-
-   -- Not an attribution
-
-Paragraph.
-
-   Block quote.
-
-   \-- Not an attribution
-
-Paragraph.
-
-   Block quote.
-
-   --- Not an attribution
-
-Paragraph.
-
-   Block quote.
-
-   -- Not an attribution line one
-      and line two
-          and line three
-""",
-"""\
-<document source="test data">
-    <paragraph>
-        Paragraph.
-    <block_quote>
-        <paragraph>
-            -- Not an attribution
-    <paragraph>
-        Paragraph.
-    <block_quote>
-        <paragraph>
-            Block quote.
-        <paragraph>
-            -- Not an attribution
-    <paragraph>
-        Paragraph.
-    <block_quote>
-        <paragraph>
-            Block quote.
-        <paragraph>
-            --- Not an attribution
-    <paragraph>
-        Paragraph.
-    <block_quote>
-        <paragraph>
-            Block quote.
-        <definition_list>
-            <definition_list_item>
-                <term>
-                    -- Not an attribution line one
-                <definition>
-                    <definition_list>
-                        <definition_list_item>
-                            <term>
-                                and line two
-                            <definition>
-                                <paragraph>
-                                    and line three
 """],
 ]
 

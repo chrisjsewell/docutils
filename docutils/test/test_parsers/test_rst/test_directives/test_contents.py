@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
-Tests for parts.py contents directive.
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
+Tests for components.py contents directives.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -24,10 +24,11 @@ totest['contents'] = [
 .. contents::
 """,
 """\
-<document source="test data">
+<document>
     <pending>
         .. internal attributes:
-             .transform: docutils.transforms.parts.Contents
+             .transform: docutils.transforms.components.Contents
+             .stage: 'last_reader'
              .details:
                title: None
 """],
@@ -35,10 +36,11 @@ totest['contents'] = [
 .. contents:: Table of Contents
 """,
 """\
-<document source="test data">
+<document>
     <pending>
         .. internal attributes:
-             .transform: docutils.transforms.parts.Contents
+             .transform: docutils.transforms.components.Contents
+             .stage: 'last_reader'
              .details:
                title:
                  <title>
@@ -49,10 +51,11 @@ totest['contents'] = [
    Table of Contents
 """,
 """\
-<document source="test data">
+<document>
     <pending>
         .. internal attributes:
-             .transform: docutils.transforms.parts.Contents
+             .transform: docutils.transforms.components.Contents
+             .stage: 'last_reader'
              .details:
                title:
                  <title>
@@ -64,31 +67,31 @@ totest['contents'] = [
    Contents
 """,
 """\
-<document source="test data">
+<document>
     <pending>
         .. internal attributes:
-             .transform: docutils.transforms.parts.Contents
+             .transform: docutils.transforms.components.Contents
+             .stage: 'last_reader'
              .details:
                title:
                  <title>
-                     Table
-                     of
-                     Contents
+                     Table of Contents
 """],
 ["""\
 .. contents:: *Table* of ``Contents``
 """,
 """\
-<document source="test data">
+<document>
     <pending>
         .. internal attributes:
-             .transform: docutils.transforms.parts.Contents
+             .transform: docutils.transforms.components.Contents
+             .stage: 'last_reader'
              .details:
                title:
                  <title>
                      <emphasis>
                          Table
-                      of \n\
+                      of 
                      <literal>
                          Contents
 """],
@@ -98,43 +101,28 @@ totest['contents'] = [
    :local:
 """,
 """\
-<document source="test data">
+<document>
     <pending>
         .. internal attributes:
-             .transform: docutils.transforms.parts.Contents
+             .transform: docutils.transforms.components.Contents
+             .stage: 'last_reader'
              .details:
                depth: 2
                local: None
                title: None
 """],
 ["""\
-.. contents::
-   :local: arg
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Error in "contents" directive:
-            invalid option value: (option: "local"; value: 'arg')
-            no argument is allowed; "arg" supplied.
-        <literal_block xml:space="preserve">
-            .. contents::
-               :local: arg
-"""],
-["""\
 .. contents:: Table of Contents
    :local:
    :depth: 2
-   :backlinks: none
 """,
 """\
-<document source="test data">
+<document>
     <pending>
         .. internal attributes:
-             .transform: docutils.transforms.parts.Contents
+             .transform: docutils.transforms.components.Contents
+             .stage: 'last_reader'
              .details:
-               backlinks: None
                depth: 2
                local: None
                title:
@@ -146,13 +134,13 @@ totest['contents'] = [
    :depth: two
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error in "contents" directive:
-            invalid option value: (option: "depth"; value: 'two')
-            invalid literal for int(): two.
-        <literal_block xml:space="preserve">
+            Error in "contents" directive attributes at line 1:
+            invalid attribute value:
+            (attribute "depth", value "'two'") invalid literal for int(): two.
+        <literal_block>
             .. contents::
                :depth: two
 """],
@@ -161,44 +149,14 @@ totest['contents'] = [
    :width: 2
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error in "contents" directive:
-            unknown option: "width".
-        <literal_block xml:space="preserve">
+            Error in "contents" directive attributes at line 1:
+            unknown attribute: "width".
+        <literal_block>
             .. contents::
                :width: 2
-"""],
-["""\
-.. contents::
-   :backlinks: no way!
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Error in "contents" directive:
-            invalid option value: (option: "backlinks"; value: 'no way!')
-            "no way!" unknown; choose from "top", "entry", or "none".
-        <literal_block xml:space="preserve">
-            .. contents::
-               :backlinks: no way!
-"""],
-["""\
-.. contents::
-   :backlinks:
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Error in "contents" directive:
-            invalid option value: (option: "backlinks"; value: None)
-            must supply an argument; choose from "top", "entry", or "none".
-        <literal_block xml:space="preserve">
-            .. contents::
-               :backlinks:
 """],
 ]
 

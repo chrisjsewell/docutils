@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -28,7 +28,7 @@ totest['enumerated_lists'] = [
 3. Item three.
 """,
 """\
-<document source="test data">
+<document>
     <enumerated_list enumtype="arabic" prefix="" suffix=".">
         <list_item>
             <paragraph>
@@ -48,7 +48,7 @@ No blank lines betwen items:
 3. Item three.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         No blank lines betwen items:
     <enumerated_list enumtype="arabic" prefix="" suffix=".">
@@ -67,50 +67,50 @@ No blank lines betwen items:
 empty item above, no blank line
 """,
 """\
-<document source="test data">
+<document>
+    <enumerated_list enumtype="arabic" prefix="" suffix=".">
+        <list_item>
+    <system_message level="2" type="WARNING">
+        <paragraph>
+            Unindent without blank line at line 2.
     <paragraph>
-        1.
         empty item above, no blank line
 """],
 ["""\
 Scrambled:
 
 3. Item three.
-
-2. Item two.
-
-1. Item one.
-
-3. Item three.
 2. Item two.
 1. Item one.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Scrambled:
-    <system_message level="1" line="3" source="test data" type="INFO">
+    <system_message level="1" type="INFO">
         <paragraph>
-            Enumerated list start value not ordinal-1: "3" (ordinal 3)
+            Enumerated list start value not ordinal-1 at line 3: '3' (ordinal 3)
     <enumerated_list enumtype="arabic" prefix="" start="3" suffix=".">
         <list_item>
             <paragraph>
                 Item three.
-    <system_message level="1" line="5" source="test data" type="INFO">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Enumerated list start value not ordinal-1: "2" (ordinal 2)
+            Unindent without blank line at line 4.
+    <system_message level="1" type="INFO">
+        <paragraph>
+            Enumerated list start value not ordinal-1 at line 4: '2' (ordinal 2)
     <enumerated_list enumtype="arabic" prefix="" start="2" suffix=".">
         <list_item>
             <paragraph>
                 Item two.
+    <system_message level="2" type="WARNING">
+        <paragraph>
+            Unindent without blank line at line 5.
     <enumerated_list enumtype="arabic" prefix="" suffix=".">
         <list_item>
             <paragraph>
                 Item one.
-    <paragraph>
-        3. Item three.
-        2. Item two.
-        1. Item one.
 """],
 ["""\
 Skipping item 3:
@@ -120,19 +120,26 @@ Skipping item 3:
 4. Item 4.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Skipping item 3:
     <enumerated_list enumtype="arabic" prefix="" suffix=".">
         <list_item>
             <paragraph>
                 Item 1.
-    <system_message level="2" line="4" source="test data" type="WARNING">
+        <list_item>
+            <paragraph>
+                Item 2.
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Enumerated list ends without a blank line; unexpected unindent.
-    <paragraph>
-        2. Item 2.
-        4. Item 4.
+            Unindent without blank line at line 4.
+    <system_message level="1" type="INFO">
+        <paragraph>
+            Enumerated list start value not ordinal-1 at line 5: '4' (ordinal 4)
+    <enumerated_list enumtype="arabic" prefix="" start="4" suffix=".">
+        <list_item>
+            <paragraph>
+                Item 4.
 """],
 ["""\
 Start with non-ordinal-1:
@@ -148,12 +155,12 @@ And again:
 3. Item three.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Start with non-ordinal-1:
-    <system_message level="1" line="3" source="test data" type="INFO">
+    <system_message level="1" type="INFO">
         <paragraph>
-            Enumerated list start value not ordinal-1: "0" (ordinal 0)
+            Enumerated list start value not ordinal-1 at line 3: '0' (ordinal 0)
     <enumerated_list enumtype="arabic" prefix="" start="0" suffix=".">
         <list_item>
             <paragraph>
@@ -169,9 +176,9 @@ And again:
                 Item three.
     <paragraph>
         And again:
-    <system_message level="1" line="10" source="test data" type="INFO">
+    <system_message level="1" type="INFO">
         <paragraph>
-            Enumerated list start value not ordinal-1: "2" (ordinal 2)
+            Enumerated list start value not ordinal-1 at line 10: '2' (ordinal 2)
     <enumerated_list enumtype="arabic" prefix="" start="2" suffix=".">
         <list_item>
             <paragraph>
@@ -191,7 +198,7 @@ And again:
    Paragraph 2.
 """,
 """\
-<document source="test data">
+<document>
     <enumerated_list enumtype="arabic" prefix="" suffix=".">
         <list_item>
             <paragraph>
@@ -232,7 +239,7 @@ ii. Item ii.
 iii. Item iii.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Different enumeration sequences:
     <enumerated_list enumtype="arabic" prefix="" suffix=".">
@@ -290,26 +297,15 @@ iii. Item iii.
 Bad Roman numerals:
 
 i. i
-
 ii. ii
-
 iii. iii
-
 iiii. iiii
-      second line
-
-(LCD) is an acronym made up of Roman numerals
-
-(livid) is a word made up of Roman numerals
-
-(CIVIL) is another such word
 
 (I) I
-
 (IVXLCDM) IVXLCDM
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Bad Roman numerals:
     <enumerated_list enumtype="lowerroman" prefix="" suffix=".">
@@ -322,25 +318,28 @@ iiii. iiii
         <list_item>
             <paragraph>
                 iii
-    <definition_list>
-        <definition_list_item>
-            <term>
-                iiii. iiii
-            <definition>
-                <paragraph>
-                    second line
-    <paragraph>
-        (LCD) is an acronym made up of Roman numerals
-    <paragraph>
-        (livid) is a word made up of Roman numerals
-    <paragraph>
-        (CIVIL) is another such word
+    <system_message level="2" type="WARNING">
+        <paragraph>
+            Unindent without blank line at line 4.
+    <system_message level="3" type="ERROR">
+        <paragraph>
+            Enumerated list start value invalid at line 6: 'iiii' (sequence 'lowerroman')
+    <block_quote>
+        <paragraph>
+            iiii
     <enumerated_list enumtype="upperroman" prefix="(" suffix=")">
         <list_item>
             <paragraph>
                 I
-    <paragraph>
-        (IVXLCDM) IVXLCDM
+    <system_message level="2" type="WARNING">
+        <paragraph>
+            Unindent without blank line at line 9.
+    <system_message level="3" type="ERROR">
+        <paragraph>
+            Enumerated list start value invalid at line 9: 'IVXLCDM' (sequence 'upperroman')
+    <block_quote>
+        <paragraph>
+            IVXLCDM
 """],
 ["""\
 Potentially ambiguous cases:
@@ -364,7 +363,7 @@ iii. Item iii.
 Phew! Safe!
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Potentially ambiguous cases:
     <enumerated_list enumtype="upperalpha" prefix="" suffix=".">
@@ -438,7 +437,7 @@ ii. Item ii.
 iii. Item iii.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Definitely ambiguous:
     <enumerated_list enumtype="upperalpha" prefix="" suffix=".">
@@ -466,13 +465,16 @@ iii. Item iii.
         <list_item>
             <paragraph>
                 Item H.
-    <system_message level="2" line="11" source="test data" type="WARNING">
-        <paragraph>
-            Enumerated list ends without a blank line; unexpected unindent.
-    <enumerated_list enumtype="upperroman" prefix="" suffix=".">
         <list_item>
             <paragraph>
                 Item I.
+    <system_message level="2" type="WARNING">
+        <paragraph>
+            Unindent without blank line at line 4.
+    <system_message level="1" type="INFO">
+        <paragraph>
+            Enumerated list start value not ordinal-1 at line 12: 'II' (ordinal 2)
+    <enumerated_list enumtype="upperroman" prefix="" start="2" suffix=".">
         <list_item>
             <paragraph>
                 Item II.
@@ -504,13 +506,16 @@ iii. Item iii.
         <list_item>
             <paragraph>
                 Item h.
-    <system_message level="2" line="23" source="test data" type="WARNING">
-        <paragraph>
-            Enumerated list ends without a blank line; unexpected unindent.
-    <enumerated_list enumtype="lowerroman" prefix="" suffix=".">
         <list_item>
             <paragraph>
                 Item i.
+    <system_message level="2" type="WARNING">
+        <paragraph>
+            Unindent without blank line at line 16.
+    <system_message level="1" type="INFO">
+        <paragraph>
+            Enumerated list start value not ordinal-1 at line 24: 'ii' (ordinal 2)
+    <enumerated_list enumtype="lowerroman" prefix="" start="2" suffix=".">
         <list_item>
             <paragraph>
                 Item ii.
@@ -534,7 +539,7 @@ Different enumeration formats:
 (3) Item (3).
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Different enumeration formats:
     <enumerated_list enumtype="arabic" prefix="" suffix=".">
@@ -596,7 +601,7 @@ Nested enumerated lists:
 3. Item 3.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Nested enumerated lists:
     <enumerated_list enumtype="arabic" prefix="" suffix=".">
@@ -650,77 +655,7 @@ Nested enumerated lists:
             <paragraph>
                 Item 3.
 """],
-["""\
-A. Einstein was a great influence on
-B. Physicist, who was a colleague of
-C. Chemist.  They all worked in
-Princeton, NJ.
-""",
-# @@@ I think this is the correct result, but I'm not certain:
-"""\
-<document source="test data">
-    <enumerated_list enumtype="upperalpha" prefix="" suffix=".">
-        <list_item>
-            <paragraph>
-                Einstein was a great influence on
-        <list_item>
-            <paragraph>
-                Physicist, who was a colleague of
-    <system_message level="2" line="3" source="test data" type="WARNING">
-        <paragraph>
-            Enumerated list ends without a blank line; unexpected unindent.
-    <paragraph>
-        C. Chemist.  They all worked in
-        Princeton, NJ.
-"""],
-["""\
-1. Item one: line 1,
-   line 2.
-2. Item two: line 1,
-  line 2.
-3. Item three: paragraph 1, line 1,
- line 2.
-
-   Paragraph 2.
-""",
-"""\
-<document source="test data">
-    <enumerated_list enumtype="arabic" prefix="" suffix=".">
-        <list_item>
-            <paragraph>
-                Item one: line 1,
-                line 2.
-        <list_item>
-            <paragraph>
-                Item two: line 1,
-    <system_message level="2" line="4" source="test data" type="WARNING">
-        <paragraph>
-            Enumerated list ends without a blank line; unexpected unindent.
-    <block_quote>
-        <paragraph>
-            line 2.
-    <system_message level="2" line="5" source="test data" type="WARNING">
-        <paragraph>
-            Block quote ends without a blank line; unexpected unindent.
-    <system_message level="1" line="5" source="test data" type="INFO">
-        <paragraph>
-            Enumerated list start value not ordinal-1: "3" (ordinal 3)
-    <enumerated_list enumtype="arabic" prefix="" start="3" suffix=".">
-        <list_item>
-            <paragraph>
-                Item three: paragraph 1, line 1,
-    <system_message level="2" line="6" source="test data" type="WARNING">
-        <paragraph>
-            Enumerated list ends without a blank line; unexpected unindent.
-    <block_quote>
-        <paragraph>
-            line 2.
-        <block_quote>
-            <paragraph>
-                Paragraph 2.
-"""],
 ]
-
 
 if __name__ == '__main__':
     import unittest

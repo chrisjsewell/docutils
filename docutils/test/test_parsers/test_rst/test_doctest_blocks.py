@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -29,10 +29,10 @@ Doctest block.
 Paragraph.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Paragraph.
-    <doctest_block xml:space="preserve">
+    <doctest_block>
         >>> print "Doctest block."
         Doctest block.
     <paragraph>
@@ -45,10 +45,10 @@ Paragraph.
     Indented output.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Paragraph.
-    <doctest_block xml:space="preserve">
+    <doctest_block>
         >>> print "    Indented output."
             Indented output.
 """],
@@ -59,11 +59,11 @@ Paragraph.
         Indented block & output.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Paragraph.
     <block_quote>
-        <doctest_block xml:space="preserve">
+        <doctest_block>
             >>> print "    Indented block & output."
                 Indented block & output.
 """],

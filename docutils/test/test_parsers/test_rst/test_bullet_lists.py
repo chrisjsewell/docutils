@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -24,7 +24,7 @@ totest['bullet_lists'] = [
 - item
 """,
 """\
-<document source="test data">
+<document>
     <bullet_list bullet="-">
         <list_item>
             <paragraph>
@@ -36,7 +36,7 @@ totest['bullet_lists'] = [
 * item 2
 """,
 """\
-<document source="test data">
+<document>
     <bullet_list bullet="*">
         <list_item>
             <paragraph>
@@ -52,7 +52,7 @@ No blank line between:
 + item 2
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         No blank line between:
     <bullet_list bullet="+">
@@ -71,7 +71,7 @@ No blank line between:
 - item 2
 """,
 """\
-<document source="test data">
+<document>
     <bullet_list bullet="-">
         <list_item>
             <paragraph>
@@ -88,7 +88,7 @@ No blank line between:
 - item 2
 """,
 """\
-<document source="test data">
+<document>
     <bullet_list bullet="-">
         <list_item>
             <paragraph>
@@ -109,7 +109,7 @@ Different bullets:
 - item 4
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Different bullets:
     <bullet_list bullet="-">
@@ -124,9 +124,9 @@ Different bullets:
         <list_item>
             <paragraph>
                 item 3
-    <system_message level="2" line="8" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Bullet list ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 8.
     <bullet_list bullet="-">
         <list_item>
             <paragraph>
@@ -137,14 +137,14 @@ Different bullets:
 no blank line
 """,
 """\
-<document source="test data">
+<document>
     <bullet_list bullet="-">
         <list_item>
             <paragraph>
                 item
-    <system_message level="2" line="2" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Bullet list ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 2.
     <paragraph>
         no blank line
 """],
@@ -154,7 +154,7 @@ no blank line
 empty item above
 """,
 """\
-<document source="test data">
+<document>
     <bullet_list bullet="-">
         <list_item>
     <paragraph>
@@ -165,12 +165,12 @@ empty item above
 empty item above, no blank line
 """,
 """\
-<document source="test data">
+<document>
     <bullet_list bullet="-">
         <list_item>
-    <system_message level="2" line="2" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Bullet list ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 2.
     <paragraph>
         empty item above, no blank line
 """],

@@ -1,18 +1,17 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Test module for nodes.py.
 """
 
 import unittest
-from types import ClassType
-from DocutilsTestSupport import nodes, utils
+from DocutilsTestSupport import nodes
 
 debug = 0
 
@@ -27,6 +26,11 @@ class TextTests(unittest.TestCase):
 
     def test_str(self):
         self.assertEquals(str(self.text), 'Line 1.\nLine 2.')
+
+    def test_asdom(self):
+        dom = self.text.asdom()
+        self.assertEquals(dom.toxml(), 'Line 1.\nLine 2.')
+        dom.unlink()
 
     def test_astext(self):
         self.assertEquals(self.text.astext(), 'Line 1.\nLine 2.')
@@ -51,13 +55,6 @@ class ElementTests(unittest.TestCase):
         self.assertEquals(dom.toxml(), '<Element attr="1"/>')
         dom.unlink()
         self.assertEquals(element.pformat(), '<Element attr="1">\n')
-        del element['attr']
-        element['mark'] = u'\u2022'
-        self.assertEquals(repr(element), '<Element: >')
-        self.assertEquals(str(element), '<Element mark="\\u2022"/>')
-        dom = element.asdom()
-        self.assertEquals(dom.toxml(), u'<Element mark="\u2022"/>')
-        dom.unlink()
 
     def test_withtext(self):
         element = nodes.Element('text\nmore', nodes.Text('text\nmore'))
@@ -80,73 +77,6 @@ class ElementTests(unittest.TestCase):
     text
     more
 """)
-
-
-class MiscTests(unittest.TestCase):
-
-    def test_node_class_names(self):
-        node_class_names = []
-        for x in dir(nodes):
-            c = getattr(nodes, x)
-            if type(c) is ClassType and issubclass(c, nodes.Node) \
-                   and len(c.__bases__) > 1:
-                node_class_names.append(x)
-        node_class_names.sort()
-        nodes.node_class_names.sort()
-        self.assertEquals(node_class_names, nodes.node_class_names)
-
-    ids = [('a', 'a'), ('A', 'a'), ('', ''), ('a b \n c', 'a-b-c'),
-           ('a.b.c', 'a-b-c'), (' - a - b - c - ', 'a-b-c'), (' - ', ''),
-           (u'\u2020\u2066', ''), (u'a \xa7 b \u2020 c', 'a-b-c'),
-           ('1', ''), ('1abc', 'abc')]
-
-    def test_make_id(self):
-        for input, output in self.ids:
-            normed = nodes.make_id(input)
-            self.assertEquals(normed, output)
-
-
-class TreeCopyVisitorTests(unittest.TestCase):
-
-    def setUp(self):
-        document = utils.new_document('test data')
-        document += nodes.paragraph('', 'Paragraph 1.')
-        blist = nodes.bullet_list()
-        for i in range(1, 6):
-            item = nodes.list_item()
-            for j in range(1, 4):
-                item += nodes.paragraph('', 'Item %s, paragraph %s.' % (i, j))
-            blist += item
-        document += blist
-        self.document = document
-
-    def compare_trees(self, one, two):
-        self.assertEquals(one.__class__, two.__class__)
-        self.assertNotEquals(id(one), id(two))
-        children1 = one.get_children()
-        children2 = two.get_children()
-        self.assertEquals(len(children1), len(children2))
-        for i in range(len(children1)):
-            self.compare_trees(children1[i], children2[i])
-
-    def test_copy_whole(self):
-        visitor = nodes.TreeCopyVisitor(self.document)
-        self.document.walkabout(visitor)
-        newtree = visitor.get_tree_copy()
-        self.assertEquals(self.document.pformat(), newtree.pformat())
-        self.compare_trees(self.document, newtree)
-
-
-class MiscFunctionTests(unittest.TestCase):
-
-    names = [('a', 'a'), ('A', 'a'), ('A a A', 'a a a'),
-             ('A  a  A  a', 'a a a a'),
-             ('  AaA\n\r\naAa\tAaA\t\t', 'aaa aaa aaa')]
-
-    def test_normalize_name(self):
-        for input, output in self.names:
-            normed = nodes.fully_normalize_name(input)
-            self.assertEquals(normed, output)
 
 
 if __name__ == '__main__':

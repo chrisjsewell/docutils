@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for unknown directives.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -29,33 +29,21 @@ totest['unknown'] = [
    block
 """,
 """\
-<document source="test data">
-    <system_message level="1" line="1" source="test data" type="INFO">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            No directive entry for "reStructuredText-unknown-directive" in module "docutils.parsers.rst.languages.en".
-            Trying "reStructuredText-unknown-directive" as canonical directive name.
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Unknown directive type "reStructuredText-unknown-directive".
-        <literal_block xml:space="preserve">
+            Unknown directive type "reStructuredText-unknown-directive" at line 1.
+        <literal_block>
             .. reStructuredText-unknown-directive::
-    <system_message level="1" line="3" source="test data" type="INFO">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            No directive entry for "reStructuredText-unknown-directive" in module "docutils.parsers.rst.languages.en".
-            Trying "reStructuredText-unknown-directive" as canonical directive name.
-    <system_message level="3" line="3" source="test data" type="ERROR">
-        <paragraph>
-            Unknown directive type "reStructuredText-unknown-directive".
-        <literal_block xml:space="preserve">
+            Unknown directive type "reStructuredText-unknown-directive" at line 3.
+        <literal_block>
             .. reStructuredText-unknown-directive:: argument
-    <system_message level="1" line="5" source="test data" type="INFO">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            No directive entry for "reStructuredText-unknown-directive" in module "docutils.parsers.rst.languages.en".
-            Trying "reStructuredText-unknown-directive" as canonical directive name.
-    <system_message level="3" line="5" source="test data" type="ERROR">
-        <paragraph>
-            Unknown directive type "reStructuredText-unknown-directive".
-        <literal_block xml:space="preserve">
+            Unknown directive type "reStructuredText-unknown-directive" at line 5.
+        <literal_block>
             .. reStructuredText-unknown-directive::
                block
 """],

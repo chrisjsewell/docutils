@@ -1,48 +1,37 @@
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
+#! /usr/bin/env python
 
 """
-This package contains Docutils parser modules.
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
 """
 
 __docformat__ = 'reStructuredText'
 
-from docutils import Component
 
+class Parser:
 
-class Parser(Component):
-
-    component_type = 'parser'
-
-    def parse(self, inputstring, document):
-        """Override to parse `inputstring` into document tree `document`."""
+    def parse(self, inputstring, docroot):
+        """Override to parse `inputstring` into document tree `docroot`."""
         raise NotImplementedError('subclass must override this method')
 
-    def setup_parse(self, inputstring, document):
-        """Initial parse setup.  Call at start of `self.parse()`."""
+    def setup_parse(self, inputstring, docroot):
+        """Initial setup, used by `parse()`."""
         self.inputstring = inputstring
-        self.document = document
-        document.reporter.attach_observer(document.note_parse_message)
-
-    def finish_parse(self):
-        """Finalize parse details.  Call at end of `self.parse()`."""
-        self.document.reporter.detach_observer(
-            self.document.note_parse_message)
+        self.docroot = docroot
 
 
 _parser_aliases = {
       'restructuredtext': 'rst',
       'rest': 'rst',
-      'restx': 'rst',
       'rtxt': 'rst',}
 
-def get_parser_class(parser_name):
-    """Return the Parser class from the `parser_name` module."""
-    parser_name = parser_name.lower()
-    if _parser_aliases.has_key(parser_name):
-        parser_name = _parser_aliases[parser_name]
-    module = __import__(parser_name, globals(), locals())
+def get_parser_class(parsername):
+    """Return the Parser class from the `parsername` module."""
+    parsername = parsername.lower()
+    if _parser_aliases.has_key(parsername):
+        parsername = _parser_aliases[parsername]
+    module = __import__(parsername, globals(), locals())
     return module.Parser

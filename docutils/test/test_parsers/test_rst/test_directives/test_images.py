@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for images.py image directives.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -24,30 +24,29 @@ totest['images'] = [
 .. image:: picture.png
 """,
 """\
-<document source="test data">
+<document>
     <image uri="picture.png">
 """],
 ["""\
 .. image::
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error in "image" directive:
-            1 argument(s) required, 0 supplied.
-        <literal_block xml:space="preserve">
+            Missing image URI argument at line 1.
+        <literal_block>
             .. image::
 """],
 ["""\
 .. image:: one two three
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Image URI contains whitespace.
-        <literal_block xml:space="preserve">
+            Image URI at line 1 contains whitespace.
+        <literal_block>
             .. image:: one two three
 """],
 ["""\
@@ -57,7 +56,7 @@ totest['images'] = [
    :scale: 50
 """,
 """\
-<document source="test data">
+<document>
     <image height="100" scale="50" uri="picture.png" width="200">
 """],
 ["""\
@@ -68,7 +67,7 @@ totest['images'] = [
    :scale: 50
 """,
 """\
-<document source="test data">
+<document>
     <image height="100" scale="50" uri="picture.png" width="200">
 """],
 ["""\
@@ -78,12 +77,11 @@ totest['images'] = [
    :scale: 50
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error in "image" directive:
-            1 argument(s) required, 0 supplied.
-        <literal_block xml:space="preserve">
+            Missing image URI argument at line 1.
+        <literal_block>
             .. image::
                :height: 100
                :width: 200
@@ -97,7 +95,7 @@ totest['images'] = [
    :scale: 50
 """,
 """\
-<document source="test data">
+<document>
     <image height="100" scale="50" uri="a/very/long/path/to/picture.png" width="200">
 """],
 ["""\
@@ -108,7 +106,7 @@ totest['images'] = [
    :alt: Alternate text for the picture
 """,
 """\
-<document source="test data">
+<document>
     <image alt="Alternate text for the picture" height="100" scale="50" uri="picture.png" width="200">
 """],
 ["""\
@@ -116,13 +114,13 @@ totest['images'] = [
    :scale: - 50
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error in "image" directive:
-            invalid option value: (option: "scale"; value: '- 50')
-            negative value; must be positive or zero.
-        <literal_block xml:space="preserve">
+            Error in "image" directive attributes at line 1:
+            invalid attribute data: extension attribute field body may contain
+            a single paragraph only (attribute "scale").
+        <literal_block>
             .. image:: picture.png
                :scale: - 50
 """],
@@ -131,27 +129,27 @@ totest['images'] = [
    :scale:
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error in "image" directive:
-            invalid option value: (option: "scale"; value: None)
-            %s.
-        <literal_block xml:space="preserve">
+            Error in "image" directive attributes at line 1:
+            invalid attribute value:
+            (attribute "scale", value "None") object can't be converted to int.
+        <literal_block>
             .. image:: picture.png
                :scale:
-""" % DocutilsTestSupport.exception_args('int(None)')[0]],
+"""],
 ["""\
 .. image:: picture.png
    :scale 50
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error in "image" directive:
-            invalid option block.
-        <literal_block xml:space="preserve">
+            Error in "image" directive attributes at line 1:
+            invalid attribute block.
+        <literal_block>
             .. image:: picture.png
                :scale 50
 """],
@@ -160,11 +158,11 @@ totest['images'] = [
    scale: 50
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Image URI contains whitespace.
-        <literal_block xml:space="preserve">
+            Image URI at line 1 contains whitespace.
+        <literal_block>
             .. image:: picture.png
                scale: 50
 """],
@@ -173,12 +171,12 @@ totest['images'] = [
    :: 50
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error in "image" directive:
-            invalid option block.
-        <literal_block xml:space="preserve">
+            Error in "image" directive attributes at line 1:
+            invalid attribute block.
+        <literal_block>
             .. image:: picture.png
                :: 50
 """],
@@ -187,41 +185,27 @@ totest['images'] = [
    :sale: 50
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error in "image" directive:
-            unknown option: "sale".
-        <literal_block xml:space="preserve">
+            Error in "image" directive attributes at line 1:
+            unknown attribute: "sale".
+        <literal_block>
             .. image:: picture.png
                :sale: 50
-"""],
-["""\
-.. image:: picture.png
-   :scale is: 50
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Error in "image" directive:
-            invalid option data: extension option field name may not contain multiple words.
-        <literal_block xml:space="preserve">
-            .. image:: picture.png
-               :scale is: 50
 """],
 ["""\
 .. image:: picture.png
    :scale: fifty
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error in "image" directive:
-            invalid option value: (option: "scale"; value: 'fifty')
-            invalid literal for int(): fifty.
-        <literal_block xml:space="preserve">
+            Error in "image" directive attributes at line 1:
+            invalid attribute value:
+            (attribute "scale", value "'fifty'") invalid literal for int(): fifty.
+        <literal_block>
             .. image:: picture.png
                :scale: fifty
 """],
@@ -231,12 +215,12 @@ totest['images'] = [
    :scale: 50
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error in "image" directive:
-            invalid option data: duplicate option "scale".
-        <literal_block xml:space="preserve">
+            Error in "image" directive attributes at line 1:
+            invalid attribute data: duplicate attribute "scale".
+        <literal_block>
             .. image:: picture.png
                :scale: 50
                :scale: 50

@@ -1,10 +1,12 @@
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
+#! /usr/bin/env python
 
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Directives for figures and simple images.
 """
 
@@ -12,89 +14,84 @@ __docformat__ = 'reStructuredText'
 
 
 import sys
+from docutils.parsers.rst import states
 from docutils import nodes, utils
-from docutils.parsers.rst import directives
 
-try:
-    import Image                        # PIL
-except ImportError:
-    Image = None
+def unchanged(arg):
+    return arg                          # unchanged!
 
-align_values = ('top', 'middle', 'bottom', 'left', 'center', 'right')
+image_attribute_spec = {'alt': unchanged,
+                        'height': int,
+                        'width': int,
+                        'scale': int}
 
-def align(argument):
-    return directives.choice(argument, align_values)
-
-def image(name, arguments, options, content, lineno,
-          content_offset, block_text, state, state_machine):
-    reference = ''.join(arguments[0].split('\n'))
-    if reference.find(' ') != -1:
-        error = state_machine.reporter.error(
-              'Image URI contains whitespace.',
-              nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    options['uri'] = reference
-    image_node = nodes.image(block_text, **options)
-    return [image_node]
-
-image.arguments = (1, 0, 1)
-image.options = {'alt': directives.unchanged,
-                 'height': directives.nonnegative_int,
-                 'width': directives.nonnegative_int,
-                 'scale': directives.nonnegative_int,
-                 'align': align,
-                 'class': directives.class_option}
-
-def figure(name, arguments, options, content, lineno,
-           content_offset, block_text, state, state_machine):
-    figwidth = options.setdefault('figwidth')
-    figclass = options.setdefault('figclass')
-    del options['figwidth']
-    del options['figclass']
-    (image_node,) = image(name, arguments, options, content, lineno,
-                         content_offset, block_text, state, state_machine)
-    if isinstance(image_node, nodes.system_message):
-        return [image_node]
-    figure_node = nodes.figure('', image_node)
-    if figwidth == 'image':
-        if Image:
-            # PIL doesn't like Unicode paths:
-            try:
-                i = Image.open(str(image_node['uri']))
-            except (IOError, UnicodeError):
-                pass
-            else:
-                figure_node['width'] = i.size[0]
-    elif figwidth is not None:
-        figure_node['width'] = figwidth
-    if figclass:
-        figure_node.set_class(figclass)
-    if content:
-        node = nodes.Element()          # anonymous container for parsing
-        state.nested_parse(content, content_offset, node)
-        first_node = node[0]
-        if isinstance(first_node, nodes.paragraph):
-            caption = nodes.caption(first_node.rawsource, '',
-                                    *first_node.children)
-            figure_node += caption
-        elif not (isinstance(first_node, nodes.comment)
-                  and len(first_node) == 0):
-            error = state_machine.reporter.error(
-                  'Figure caption must be a paragraph or empty comment.',
-                  nodes.literal_block(block_text, block_text), line=lineno)
-            return [figure_node, error]
-        if len(node) > 1:
-            figure_node += nodes.legend('', *node[1:])
-    return [figure_node]
-
-def figwidth_value(argument):
-    if argument.lower() == 'image':
-        return 'image'
+def image(match, typename, data, state, statemachine, attributes):
+    lineno = statemachine.abslineno()
+    lineoffset = statemachine.lineoffset
+    datablock, indent, offset, blankfinish = \
+          statemachine.getfirstknownindented(match.end(), uptoblank=1)
+    blocktext = '\n'.join(statemachine.inputlines[
+          lineoffset : lineoffset + len(datablock) + 1])
+    for i in range(len(datablock)):
+        if datablock[i][:1] == ':':
+            attlines = datablock[i:]
+            datablock = datablock[:i]
+            break
     else:
-        return directives.nonnegative_int(argument)
+        attlines = []
+    if not datablock:
+        error = statemachine.memo.reporter.error(
+              'Missing image URI argument at line %s.' % lineno, '',
+              nodes.literal_block(blocktext, blocktext))
+        return [error], blankfinish
+    attoffset = lineoffset + i
+    reference = ''.join([line.strip() for line in datablock])
+    if reference.find(' ') != -1:
+        error = statemachine.memo.reporter.error(
+              'Image URI at line %s contains whitespace.' % lineno, '',
+              nodes.literal_block(blocktext, blocktext))
+        return [error], blankfinish
+    if attlines:
+        success, data, blankfinish = state.parse_extension_attributes(
+              image_attribute_spec, attlines, blankfinish)
+        if success:                     # data is a dict of attributes
+            attributes.update(data)
+        else:                           # data is an error string
+            error = statemachine.memo.reporter.error(
+                  'Error in "%s" directive attributes at line %s:\n%s.'
+                  % (match.group(1), lineno, data), '',
+                  nodes.literal_block(blocktext, blocktext))
+            return [error], blankfinish
+    attributes['uri'] = reference
+    imagenode = nodes.image(blocktext, **attributes)
+    return [imagenode], blankfinish
 
-figure.arguments = (1, 0, 1)
-figure.options = {'figwidth': figwidth_value,
-                  'figclass': directives.class_option}
-figure.options.update(image.options)
-figure.content = 1
+def figure(match, typename, data, state, statemachine, attributes):
+    lineoffset = statemachine.lineoffset
+    (imagenode,), blankfinish = image(match, typename, data, state,
+                                      statemachine, attributes)
+    indented, indent, offset, blankfinish \
+          = statemachine.getfirstknownindented(sys.maxint)
+    blocktext = '\n'.join(statemachine.inputlines[lineoffset:
+                                                  statemachine.lineoffset+1])
+    if isinstance(imagenode, nodes.system_message):
+        if indented:
+            imagenode[-1] = nodes.literal_block(blocktext, blocktext)
+        return [imagenode], blankfinish
+    figurenode = nodes.figure('', imagenode)
+    if indented:
+        node = nodes.Element()          # anonymous container for parsing
+        state.nestedparse(indented, lineoffset, node)
+        firstnode = node[0]
+        if isinstance(firstnode, nodes.paragraph):
+            caption = nodes.caption(firstnode.rawsource, '',
+                                    *firstnode.children)
+            figurenode += caption
+        elif not (isinstance(firstnode, nodes.comment) and len(firstnode) == 0):
+            error = statemachine.memo.reporter.error(
+                  'Figure caption must be a paragraph or empty comment.', '',
+                  nodes.literal_block(blocktext, blocktext))
+            return [figurenode, error], blankfinish
+        if len(node) > 1:
+            figurenode += nodes.legend('', *node[1:])
+    return [figurenode], blankfinish

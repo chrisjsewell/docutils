@@ -1,25 +1,25 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
-    s = DocutilsTestSupport.GridTableParserTestSuite()
+    s = DocutilsTestSupport.TableParserTestSuite()
     s.generateTests(totest)
     return s
 
 totest = {}
 
-totest['grid_tables'] = [
+totest['tables'] = [
 ["""\
 +-------------------------------------+
 | A table with one cell and one line. |
@@ -191,7 +191,6 @@ totest['grid_tables'] = [
 'TableMarkupError: Multiple head/body row separators in table '
 '(at line offset 2 and 4); only one allowed.'],
 ]
-
 
 if __name__ == '__main__':
     import unittest

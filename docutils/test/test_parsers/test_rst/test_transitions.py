@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for transition markers.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -30,7 +30,7 @@ Test transition markers.
 Paragraph
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Test transition markers.
     <transition>
@@ -51,7 +51,7 @@ Section 2
 Paragraph 2 in section 2.
 """,
 """\
-<document source="test data">
+<document>
     <section id="section-1" name="section 1">
         <title>
             Section 1
@@ -86,10 +86,10 @@ may not end with a transition.
 --------
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Document or section may not begin with a transition.
+            Document or section may not begin with a transition (line 1).
     <transition>
     <paragraph>
         A section or document may not begin with a transition.
@@ -97,21 +97,21 @@ may not end with a transition.
         The DTD specifies that two transitions may not
         be adjacent:
     <transition>
-    <system_message level="3" line="10" source="test data" type="ERROR">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            At least one body element must separate transitions; adjacent transitions not allowed.
+            At least one body element must separate transitions; adjacent transitions at line 10.
     <transition>
-    <system_message level="3" line="12" source="test data" type="ERROR">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            At least one body element must separate transitions; adjacent transitions not allowed.
+            At least one body element must separate transitions; adjacent transitions at line 12.
     <transition>
     <paragraph>
         The DTD also specifies that a section or document
         may not end with a transition.
     <transition>
-    <system_message level="3" line="17" source="test data" type="ERROR">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Document or section may not end with a transition.
+            Document or section may not end with a transition (line 17).
 """],
 ["""\
 Test unexpected transition markers.
@@ -123,97 +123,21 @@ Test unexpected transition markers.
     Paragraph.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Test unexpected transition markers.
     <block_quote>
         <paragraph>
             Block quote.
-        <system_message level="4" line="5" source="test data" type="SEVERE">
+        <system_message level="4" type="SEVERE">
             <paragraph>
-                Unexpected section title or transition.
-            <literal_block xml:space="preserve">
+                Unexpected section title or transition at line 5.
+            <literal_block>
                 --------
         <paragraph>
             Paragraph.
 """],
-["""\
-Short transition marker.
-
----
-
-Paragraph
-""",
-"""\
-<document source="test data">
-    <paragraph>
-        Short transition marker.
-    <paragraph>
-        ---
-    <paragraph>
-        Paragraph
-"""],
-["""\
-Sections with transitions at beginning and end.
-
-Section 1
-=========
-
-----------
-
-Illegal transitions.
-
-----------
-
-Section 2
-=========
-
-----------
-""",
-"""\
-<document source="test data">
-    <paragraph>
-        Sections with transitions at beginning and end.
-    <section id="section-1" name="section 1">
-        <title>
-            Section 1
-        <system_message level="3" line="6" source="test data" type="ERROR">
-            <paragraph>
-                Section may not begin with a transition.
-        <transition>
-        <paragraph>
-            Illegal transitions.
-        <transition>
-        <system_message level="3" line="10" source="test data" type="ERROR">
-            <paragraph>
-                Section may not end with a transition.
-    <section id="section-2" name="section 2">
-        <title>
-            Section 2
-        <system_message level="3" line="15" source="test data" type="ERROR">
-            <paragraph>
-                Section may not begin with a transition.
-        <transition>
-        <system_message level="3" line="15" source="test data" type="ERROR">
-            <paragraph>
-                Document or section may not end with a transition.
-"""],
-["""\
-----------
-
-Document beginning with a transition.
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Document or section may not begin with a transition.
-    <transition>
-    <paragraph>
-        Document beginning with a transition.
-"""],
 ]
-
 
 if __name__ == '__main__':
     import unittest

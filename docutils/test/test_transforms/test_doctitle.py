@@ -1,16 +1,17 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for docutils.transforms.frontmatter.DocTitle.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
+import UnitTestFolder
 from docutils.transforms.frontmatter import DocTitle
 from docutils.parsers.rst import Parser
 
@@ -33,10 +34,10 @@ Title
 Paragraph.
 """,
 """\
-<document id="title" name="title" source="test data">
+<document id="title" name="title">
     <title>
         Title
-    <comment xml:space="preserve">
+    <comment>
         test title promotion
     <paragraph>
         Paragraph.
@@ -47,7 +48,7 @@ Title
 Paragraph (no blank line).
 """,
 """\
-<document id="title" name="title" source="test data">
+<document id="title" name="title">
     <title>
         Title
     <paragraph>
@@ -62,7 +63,7 @@ Title
 Paragraph.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Paragraph.
     <section id="title" name="title">
@@ -81,7 +82,7 @@ Subtitle
 Test title & subtitle.
 """,
 """\
-<document id="title" name="title" source="test data">
+<document id="title" name="title">
     <title>
         Title
     <subtitle id="subtitle" name="subtitle">
@@ -96,13 +97,13 @@ Title
 Test short underline.
 """,
 """\
-<document id="title" name="title" source="test data">
+<document id="title" name="title">
     <title>
         Title
-    <system_message level="2" line="2" source="test data" type="WARNING">
+    <system_message level="1" type="INFO">
         <paragraph>
-            Title underline too short.
-        <literal_block xml:space="preserve">
+            Title underline too short at line 2.
+        <literal_block>
             Title
             ====
     <paragraph>
@@ -118,13 +119,13 @@ The system_message should move after the document title
 (it was before the beginning of the section).
 """,
 """\
-<document id="long-title" name="long title" source="test data">
+<document id="long-title" name="long title">
     <title>
         Long    Title
-    <system_message level="2" line="1" source="test data" type="WARNING">
+    <system_message level="1" type="INFO">
         <paragraph>
-            Title overline too short.
-        <literal_block xml:space="preserve">
+            Title overline too short at line 1.
+        <literal_block>
             =======
              Long    Title
             =======
@@ -149,10 +150,10 @@ Title 3
 Paragraph 3.
 """,
 """\
-<document id="title-1" name="title 1" source="test data">
+<document id="title-1" name="title 1">
     <title>
         Title 1
-    <comment xml:space="preserve">
+    <comment>
         Test multiple second-level titles.
     <paragraph>
         Paragraph 1.
@@ -168,7 +169,6 @@ Paragraph 3.
             Paragraph 3.
 """],
 ])
-
 
 if __name__ == '__main__':
     import unittest

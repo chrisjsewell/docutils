@@ -1,15 +1,12 @@
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
-# New language mappings are welcome.  Before doing a new translation, please
-# read <http://docutils.sf.net/spec/howto/i18n.html>.  Two files must be
-# translated for each language: one in docutils/languages, the other in
-# docutils/parsers/rst/languages.
+#! /usr/bin/env python
 
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 English-language mappings for language-dependent features of
 reStructuredText.
 """
@@ -18,7 +15,6 @@ __docformat__ = 'reStructuredText'
 
 
 directives = {
-      # language-dependent: fixed
       'attention': 'attention',
       'caution': 'caution',
       'danger': 'danger',
@@ -28,67 +24,15 @@ directives = {
       'note': 'note',
       'tip': 'tip',
       'warning': 'warning',
-      'admonition': 'admonition',
-      'sidebar': 'sidebar',
-      'topic': 'topic',
-      'line-block': 'line-block',
-      'parsed-literal': 'parsed-literal',
-      'rubric': 'rubric',
-      'epigraph': 'epigraph',
-      'highlights': 'highlights',
-      'pull-quote': 'pull-quote',
-      #'questions': 'questions',
-      #'qa': 'questions',
-      #'faq': 'questions',
-      'meta': 'meta',
-      #'imagemap': 'imagemap',
       'image': 'image',
       'figure': 'figure',
-      'include': 'include',
-      'raw': 'raw',
-      'replace': 'replace',
-      'unicode': 'unicode',
-      'class': 'class',
       'contents': 'contents',
-      'sectnum': 'sectnum',
-      'section-numbering': 'sectnum',
-      #'footnotes': 'footnotes',
-      #'citations': 'citations',
-      'target-notes': 'target-notes',
+      'footnotes': 'footnotes',
+      'citations': 'citations',
+      'topic': 'topic',
+      'meta': 'meta',
+      'imagemap': 'imagemap',
+      'raw': 'raw',
       'restructuredtext-test-directive': 'restructuredtext-test-directive'}
 """English name to registered (in directives/__init__.py) directive name
 mapping."""
-
-roles = {
-    # language-dependent: fixed
-    'abbreviation': 'abbreviation',
-    'ab': 'abbreviation',
-    'acronym': 'acronym',
-    'ac': 'acronym',
-    'index': 'index',
-    'i': 'index',
-    'subscript': 'subscript',
-    'sub': 'subscript',
-    'superscript': 'superscript',
-    'sup': 'superscript',
-    'title-reference': 'title-reference',
-    'title': 'title-reference',
-    't': 'title-reference',
-    'pep-reference': 'pep-reference',
-    'pep': 'pep-reference',
-    'rfc-reference': 'rfc-reference',
-    'rfc': 'rfc-reference',
-    'emphasis': 'emphasis',
-    'strong': 'strong',
-    'literal': 'literal',
-    'named-reference': 'named-reference',
-    'anonymous-reference': 'anonymous-reference',
-    'footnote-reference': 'footnote-reference',
-    'citation-reference': 'citation-reference',
-    'substitution-reference': 'substitution-reference',
-    'target': 'target',
-    'uri-reference': 'uri-reference',
-    'uri': 'uri-reference',
-    'url': 'uri-reference',}
-"""Mapping of English role names to canonical role names for interpreted text.
-"""

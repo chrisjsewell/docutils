@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -26,17 +26,10 @@ totest['targets'] = [
 (Internal hyperlink target.)
 """,
 """\
-<document source="test data">
+<document>
     <target id="target" name="target">
     <paragraph>
         (Internal hyperlink target.)
-"""],
-["""\
-.. _optional space before colon :
-""",
-"""\
-<document source="test data">
-    <target id="optional-space-before-colon" name="optional space before colon">
 """],
 ["""\
 External hyperlink targets:
@@ -54,7 +47,7 @@ External hyperlink targets:
 .. _not-indirect: uri\_
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         External hyperlink targets:
     <target id="one-liner" name="one-liner" refuri="http://structuredtext.sourceforge.net">
@@ -70,7 +63,7 @@ Indirect hyperlink targets:
 .. _target2: `phrase-link reference`_
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Indirect hyperlink targets:
     <target id="target1" name="target1" refname="reference">
@@ -85,21 +78,21 @@ Indirect hyperlink targets:
    ending with an underscore, but not a phrase-link_
 """,
 """\
-<document source="test data">
-    <system_message level="2" line="1" source="test data" type="WARNING">
+<document>
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Hyperlink target contains whitespace. Perhaps a footnote was intended?
-        <literal_block xml:space="preserve">
+            Hyperlink target at line 1 contains whitespace. Perhaps a footnote was intended?
+        <literal_block>
             .. _target1: Not a proper hyperlink target
-    <system_message level="2" line="3" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Hyperlink target contains whitespace. Perhaps a footnote was intended?
-        <literal_block xml:space="preserve">
+            Hyperlink target at line 3 contains whitespace. Perhaps a footnote was intended?
+        <literal_block>
             .. _target2: Although it ends with an underscore, this is not a phrase-link_
-    <system_message level="2" line="5" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Hyperlink target contains whitespace. Perhaps a footnote was intended?
-        <literal_block xml:space="preserve">
+            Hyperlink target at line 5 contains whitespace. Perhaps a footnote was intended?
+        <literal_block>
             .. _target3: A multi-line verson of something
                ending with an underscore, but not a phrase-link_
 """],
@@ -112,21 +105,21 @@ __ A multi-line verson of something
    ending with an underscore, but not a phrase-link_
 """,
 """\
-<document source="test data">
-    <system_message level="2" line="1" source="test data" type="WARNING">
+<document>
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Hyperlink target contains whitespace. Perhaps a footnote was intended?
-        <literal_block xml:space="preserve">
+            Hyperlink target at line 1 contains whitespace. Perhaps a footnote was intended?
+        <literal_block>
             .. __: Not a proper hyperlink target
-    <system_message level="2" line="3" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Anonymous hyperlink target contains whitespace. Perhaps a footnote was intended?
-        <literal_block xml:space="preserve">
+            Anonymous hyperlink target at line 3 contains whitespace. Perhaps a footnote was intended?
+        <literal_block>
             __ Although it ends with an underscore, this is not a phrase-link_
-    <system_message level="2" line="5" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Anonymous hyperlink target contains whitespace. Perhaps a footnote was intended?
-        <literal_block xml:space="preserve">
+            Anonymous hyperlink target at line 5 contains whitespace. Perhaps a footnote was intended?
+        <literal_block>
             __ A multi-line verson of something
             ending with an underscore, but not a phrase-link_
 """],
@@ -138,7 +131,7 @@ __ A multi-line verson of something
 .. _a target name\: including a colon (escaped):
 """,
 """\
-<document source="test data">
+<document>
     <target id="a-long-target-name" name="a long target name">
     <target id="a-target-name-including-a-colon-quoted" name="a target name: including a colon (quoted)">
     <target id="a-target-name-including-a-colon-escaped" name="a target name: including a colon (escaped)">
@@ -150,7 +143,7 @@ __ A multi-line verson of something
    with backquotes`:
 """,
 """\
-<document source="test data">
+<document>
     <target id="a-very-long-target-name-split-across-lines" name="a very long target name, split across lines">
     <target id="and-another-with-backquotes" name="and another, with backquotes">
 """],
@@ -160,21 +153,10 @@ External hyperlink:
 .. _target: http://www.python.org/
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         External hyperlink:
     <target id="target" name="target" refuri="http://www.python.org/">
-"""],
-["""\
-.. _email: jdoe@example.com
-
-.. _multi-line email: jdoe
-   @example.com
-""",
-"""\
-<document source="test data">
-    <target id="email" name="email" refuri="mailto:jdoe@example.com">
-    <target id="multi-line-email" name="multi-line email" refuri="mailto:jdoe@example.com">
 """],
 ["""\
 Duplicate external targets (different URIs):
@@ -184,11 +166,11 @@ Duplicate external targets (different URIs):
 .. _target: second
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Duplicate external targets (different URIs):
     <target dupname="target" id="target" refuri="first">
-    <system_message backrefs="id1" level="2" line="5" source="test data" type="WARNING">
+    <system_message backrefs="id1" level="2" type="WARNING">
         <paragraph>
             Duplicate explicit target name: "target".
     <target dupname="target" id="id1" refuri="second">
@@ -201,14 +183,14 @@ Duplicate external targets (same URIs):
 .. _target: first
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Duplicate external targets (same URIs):
-    <target id="target" name="target" refuri="first">
-    <system_message backrefs="id1" level="1" line="5" source="test data" type="INFO">
+    <target dupname="target" id="target" refuri="first">
+    <system_message backrefs="id1" level="1" type="INFO">
         <paragraph>
             Duplicate explicit target name: "target".
-    <target dupname="target" id="id1" refuri="first">
+    <target id="id1" name="target" refuri="first">
 """],
 ["""\
 Duplicate implicit targets.
@@ -224,7 +206,7 @@ Title
 Paragraph.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Duplicate implicit targets.
     <section dupname="title" id="title">
@@ -235,7 +217,7 @@ Paragraph.
     <section dupname="title" id="id1">
         <title>
             Title
-        <system_message backrefs="id1" level="1" line="9" source="test data" type="INFO">
+        <system_message backrefs="id1" level="1" type="INFO">
             <paragraph>
                 Duplicate implicit target name: "title".
         <paragraph>
@@ -252,13 +234,13 @@ Title
 Paragraph.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Duplicate implicit/explicit targets.
     <section dupname="title" id="title">
         <title>
             Title
-        <system_message backrefs="id1" level="1" line="6" source="test data" type="INFO">
+        <system_message backrefs="id1" level="1" type="INFO">
             <paragraph>
                 Duplicate implicit target name: "title".
         <target id="id1" name="title">
@@ -281,19 +263,19 @@ Second.
 Third.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Duplicate explicit targets.
     <target dupname="title" id="title">
     <paragraph>
         First.
-    <system_message backrefs="id1" level="2" line="7" source="test data" type="WARNING">
+    <system_message backrefs="id1" level="2" type="WARNING">
         <paragraph>
             Duplicate explicit target name: "title".
     <target dupname="title" id="id1">
     <paragraph>
         Second.
-    <system_message backrefs="id2" level="2" line="11" source="test data" type="WARNING">
+    <system_message backrefs="id2" level="2" type="WARNING">
         <paragraph>
             Duplicate explicit target name: "title".
     <target dupname="title" id="id2">
@@ -319,7 +301,7 @@ Explicit internal target.
 .. _target: Explicit_external_target
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Duplicate targets:
     <section dupname="target" id="target">
@@ -330,24 +312,24 @@ Explicit internal target.
         <citation dupname="target" id="id1">
             <label>
                 target
-            <system_message backrefs="id1" level="1" line="8" source="test data" type="INFO">
+            <system_message backrefs="id1" level="1" type="INFO">
                 <paragraph>
                     Duplicate implicit target name: "target".
             <paragraph>
                 Citation target.
         <footnote auto="1" dupname="target" id="id2">
-            <system_message backrefs="id2" level="2" line="10" source="test data" type="WARNING">
+            <system_message backrefs="id2" level="2" type="WARNING">
                 <paragraph>
                     Duplicate explicit target name: "target".
             <paragraph>
                 Autonumber-labeled footnote target.
-        <system_message backrefs="id3" level="2" line="12" source="test data" type="WARNING">
+        <system_message backrefs="id3" level="2" type="WARNING">
             <paragraph>
                 Duplicate explicit target name: "target".
         <target dupname="target" id="id3">
         <paragraph>
             Explicit internal target.
-        <system_message backrefs="id4" level="2" line="16" source="test data" type="WARNING">
+        <system_message backrefs="id4" level="2" type="WARNING">
             <paragraph>
                 Duplicate explicit target name: "target".
         <target dupname="target" id="id4" refuri="Explicit_external_target">
@@ -361,7 +343,7 @@ Anonymous external hyperlink target:
 .. __: http://w3c.org/
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Anonymous external hyperlink target:
     <target anonymous="1" id="id1" refuri="http://w3c.org/">
@@ -372,7 +354,7 @@ Anonymous external hyperlink target:
 __ http://w3c.org/
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Anonymous external hyperlink target:
     <target anonymous="1" id="id1" refuri="http://w3c.org/">
@@ -383,7 +365,7 @@ Anonymous indirect hyperlink target:
 .. __: reference_
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Anonymous indirect hyperlink target:
     <target anonymous="1" id="id1" refname="reference">
@@ -396,7 +378,7 @@ __ `a very long
    reference`_
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Anonymous indirect hyperlink targets:
     <target anonymous="1" id="id1" refname="reference">
@@ -418,30 +400,29 @@ __ reference_
 no blank line
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Mixed anonymous & named indirect hyperlink targets:
     <target anonymous="1" id="id1" refname="reference">
     <target anonymous="1" id="id2" refname="reference">
     <target anonymous="1" id="id3" refname="reference">
     <target id="target1" name="target1" refname="reference">
-    <system_message level="2" line="7" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Explicit markup ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 7.
     <paragraph>
         no blank line
     <target id="target2" name="target2" refname="reference">
     <target anonymous="1" id="id4" refname="reference">
     <target anonymous="1" id="id5" refname="reference">
     <target anonymous="1" id="id6" refname="reference">
-    <system_message level="2" line="13" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Explicit markup ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 13.
     <paragraph>
         no blank line
 """],
 ]
-
 
 if __name__ == '__main__':
     import unittest

@@ -1,35 +1,30 @@
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
+#! /usr/bin/env python
 
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Docutils document tree element class library.
 
 Classes in CamelCase are abstract base classes or auxiliary classes. The one
-exception is `Text`, for a text (PCDATA) node; uppercase is used to
-differentiate from element classes.  Classes in lower_case_with_underscores
-are element classes, matching the XML element generic identifiers in the DTD_.
+exception is `Text`, for a text node; uppercase is used to differentiate from
+element classes.
 
-The position of each node (the level at which it can occur) is significant and
-is represented by abstract base classes (`Root`, `Structural`, `Body`,
-`Inline`, etc.).  Certain transformations will be easier because we can use
-``isinstance(node, base_class)`` to determine the position of the node in the
-hierarchy.
+Classes in lower_case_with_underscores are element classes, matching the XML
+element generic identifiers in the DTD_.
 
-.. _DTD: http://docutils.sourceforge.net/spec/docutils.dtd
+.. _DTD: http://docstring.sourceforge.net/spec/gpdi.dtd
 """
 
-__docformat__ = 'reStructuredText'
-
-import sys
-import os
-import re
+import sys, os
 import xml.dom.minidom
-from types import IntType, SliceType, StringType, UnicodeType, \
-     TupleType, ListType
-from UserString import UserString
+from types import IntType, SliceType, StringType, TupleType, ListType
+from UserString import MutableString
+import utils
+import docutils
 
 
 # ==============================
@@ -41,140 +36,81 @@ class Node:
     """Abstract base class of nodes in a document tree."""
 
     parent = None
-    """Back-reference to the Node immediately containing this Node."""
-
-    document = None
-    """The `document` node at the root of the tree containing this Node."""
-
-    source = None
-    """Path or description of the input source which generated this Node."""
-
-    line = None
-    """The line number (1-based) of the beginning of this Node in `source`."""
+    """Back-reference to the `Node` containing this `Node`."""
 
     def __nonzero__(self):
-        """
-        Node instances are always true, even if they're empty.  A node is more
-        than a simple container.  Its boolean "truth" does not depend on
-        having one or more subnodes in the doctree.
-
-        Use `len()` to check node length.  Use `None` to represent a boolean
-        false value.
-        """
+        """Node instances are always true."""
         return 1
 
     def asdom(self, dom=xml.dom.minidom):
-        """Return a DOM **fragment** representation of this Node."""
-        domroot = dom.Document()
-        return self._dom_node(domroot)
+        """Return a DOM representation of this Node."""
+        return self._dom_node(dom)
 
     def pformat(self, indent='    ', level=0):
         """Return an indented pseudo-XML representation, for test purposes."""
         raise NotImplementedError
-
-    def copy(self):
-        """Return a copy of self."""
-        raise NotImplementedError
-
-    def setup_child(self, child):
-        child.parent = self
-        if self.document:
-            child.document = self.document
-            if child.source is None:
-                child.source = self.document.current_source
-            if child.line is None:
-                child.line = self.document.current_line
 
     def walk(self, visitor):
         """
         Traverse a tree of `Node` objects, calling ``visit_...`` methods of
         `visitor` when entering each node. If there is no
         ``visit_particular_node`` method for a node of type
-        ``particular_node``, the ``unknown_visit`` method is called.  (The
-        `walkabout()` method is similar, except it also calls ``depart_...``
-        methods before exiting each node.)
+        ``particular_node``, the ``unknown_visit`` method is called.
 
-        This tree traversal supports limited in-place tree
-        modifications.  Replacing one node with one or more nodes is
-        OK, as is removing an element.  However, if the node removed
-        or replaced occurs after the current node, the old node will
-        still be traversed, and any new nodes will not.
-
-        Within ``visit_...`` methods (and ``depart_...`` methods for
-        `walkabout()`), `TreePruningException` subclasses may be raised
-        (`SkipChildren`, `SkipSiblings`, `SkipNode`, `SkipDeparture`).
+        Doesn't handle arbitrary modification in-place during the traversal.
+        Replacing one element with one element is OK.
 
         Parameter `visitor`: A `NodeVisitor` object, containing a
         ``visit_...`` method for each `Node` subclass encountered.
         """
         name = 'visit_' + self.__class__.__name__
         method = getattr(visitor, name, visitor.unknown_visit)
-        visitor.document.reporter.debug(name, category='nodes.Node.walk')
+        visitor.doctree.reporter.debug(name, category='nodes.Node.walk')
         try:
             method(self)
+            children = self.getchildren()
+            try:
+                for i in range(len(children)):
+                    children[i].walk(visitor)
+            except SkipSiblings:
+                pass
         except (SkipChildren, SkipNode):
-            return
-        except SkipDeparture:           # not applicable; ignore
-            pass
-        children = self.get_children()
-        try:
-            for child in children[:]:
-                child.walk(visitor)
-        except SkipSiblings:
             pass
 
     def walkabout(self, visitor):
         """
-        Perform a tree traversal similarly to `Node.walk()` (which see),
-        except also call ``depart_...`` methods before exiting each node. If
-        there is no ``depart_particular_node`` method for a node of type
+        Perform a tree traversal similarly to `Node.walk()`, except also call
+        ``depart_...`` methods before exiting each node. If there is no
+        ``depart_particular_node`` method for a node of type
         ``particular_node``, the ``unknown_departure`` method is called.
 
         Parameter `visitor`: A `NodeVisitor` object, containing ``visit_...``
         and ``depart_...`` methods for each `Node` subclass encountered.
         """
-        call_depart = 1
         name = 'visit_' + self.__class__.__name__
         method = getattr(visitor, name, visitor.unknown_visit)
-        visitor.document.reporter.debug(name, category='nodes.Node.walkabout')
+        visitor.doctree.reporter.debug(name, category='nodes.Node.walkabout')
         try:
+            method(self)
+            children = self.getchildren()
             try:
-                method(self)
-            except SkipNode:
-                return
-            except SkipDeparture:
-                call_depart = 0
-            children = self.get_children()
-            try:
-                for child in children[:]:
-                    child.walkabout(visitor)
+                for i in range(len(children)):
+                    children[i].walkabout(visitor)
             except SkipSiblings:
                 pass
         except SkipChildren:
             pass
-        if call_depart:
-            name = 'depart_' + self.__class__.__name__
-            method = getattr(visitor, name, visitor.unknown_departure)
-            visitor.document.reporter.debug(
-                  name, category='nodes.Node.walkabout')
-            method(self)
+        except SkipNode:
+            return
+        name = 'depart_' + self.__class__.__name__
+        method = getattr(visitor, name, visitor.unknown_departure)
+        visitor.doctree.reporter.debug(name, category='nodes.Node.walkabout')
+        method(self)
 
 
-class Text(Node, UserString):
-
-    """
-    Instances are terminal nodes (leaves) containing text only; no child
-    nodes or attributes.  Initialize by passing a string to the constructor.
-    Access the text itself with the `astext` method.
-    """
+class Text(Node, MutableString):
 
     tagname = '#text'
-
-    def __init__(self, data, rawsource=''):
-        UserString.__init__(self, data)
-
-        self.rawsource = rawsource
-        """The raw text from which this element was constructed."""
 
     def __repr__(self):
         data = repr(self.data)
@@ -182,23 +118,20 @@ class Text(Node, UserString):
             data = repr(self.data[:64] + ' ...')
         return '<%s: %s>' % (self.tagname, data)
 
-    def __len__(self):
-        return len(self.data)
-
     def shortrepr(self):
         data = repr(self.data)
         if len(data) > 20:
             data = repr(self.data[:16] + ' ...')
         return '<%s: %s>' % (self.tagname, data)
 
-    def _dom_node(self, domroot):
+    def _dom_node(self, dom):
+        return dom.Text(self.data)
+
+    def _rooted_dom_node(self, domroot):
         return domroot.createTextNode(self.data)
 
     def astext(self):
         return self.data
-
-    def copy(self):
-        return self.__class__(self.data)
 
     def pformat(self, indent='    ', level=0):
         result = []
@@ -207,7 +140,7 @@ class Text(Node, UserString):
             result.append(indent + line + '\n')
         return ''.join(result)
 
-    def get_children(self):
+    def getchildren(self):
         """Text nodes have no children. Return []."""
         return []
 
@@ -217,30 +150,26 @@ class Element(Node):
     """
     `Element` is the superclass to all specific elements.
 
-    Elements contain attributes and child nodes.  Elements emulate
-    dictionaries for attributes, indexing by attribute name (a string).  To
-    set the attribute 'att' to 'value', do::
+    Elements contain attributes and child nodes. Elements emulate dictionaries
+    for attributes, indexing by attribute name (a string). To set the
+    attribute 'att' to 'value', do::
 
         element['att'] = 'value'
 
     Elements also emulate lists for child nodes (element nodes and/or text
-    nodes), indexing by integer.  To get the first child node, use::
+    nodes), indexing by integer. To get the first child node, use::
 
         element[0]
 
-    Elements may be constructed using the ``+=`` operator.  To add one new
+    Elements may be constructed using the ``+=`` operator. To add one new
     child node to element, do::
 
         element += node
-
-    This is equivalent to ``element.append(node)``.
 
     To add a list of multiple child nodes at once, use the same ``+=``
     operator::
 
         element += [node1, node2]
-
-    This is equivalent to ``element.extend([node1, node2])``.
     """
 
     tagname = None
@@ -257,7 +186,7 @@ class Element(Node):
         self.children = []
         """List of child nodes (elements and/or `Text`)."""
 
-        self.extend(children)           # maintain parent info
+        self.extend(children)           # extend self.children w/ attributes
 
         self.attributes = {}
         """Dictionary of attribute {name: value}."""
@@ -268,14 +197,20 @@ class Element(Node):
         if self.tagname is None:
             self.tagname = self.__class__.__name__
 
-    def _dom_node(self, domroot):
+    def _dom_node(self, dom):
+        element = dom.Element(self.tagname)
+        for attribute, value in self.attributes.items():
+            element.setAttribute(attribute, str(value))
+        for child in self.children:
+            element.appendChild(child._dom_node(dom))
+        return element
+
+    def _rooted_dom_node(self, domroot):
         element = domroot.createElement(self.tagname)
         for attribute, value in self.attributes.items():
-            if isinstance(value, ListType):
-                value = ' '.join(['%s' % v for v in value])
-            element.setAttribute(attribute, '%s' % value)
+            element.setAttribute(attribute, str(value))
         for child in self.children:
-            element.appendChild(child._dom_node(domroot))
+            element.appendChild(child._rooted_dom_node(domroot))
         return element
 
     def __repr__(self):
@@ -299,13 +234,10 @@ class Element(Node):
             return '<%s...>' % self.tagname
 
     def __str__(self):
-        return unicode(self).encode('raw_unicode_escape')
-
-    def __unicode__(self):
         if self.children:
-            return u'%s%s%s' % (self.starttag(),
-                                 ''.join([str(c) for c in self.children]),
-                                 self.endtag())
+            return '%s%s%s' % (self.starttag(),
+                                ''.join([str(c) for c in self.children]),
+                                self.endtag())
         else:
             return self.emptytag()
 
@@ -315,57 +247,57 @@ class Element(Node):
             if value is None:           # boolean attribute
                 parts.append(name)
             elif isinstance(value, ListType):
-                values = ['%s' % v for v in value]
+                values = [str(v) for v in value]
                 parts.append('%s="%s"' % (name, ' '.join(values)))
             else:
-                parts.append('%s="%s"' % (name, value))
+                parts.append('%s="%s"' % (name, str(value)))
         return '<%s>' % ' '.join(parts)
 
     def endtag(self):
         return '</%s>' % self.tagname
 
     def emptytag(self):
-        return u'<%s/>' % ' '.join([self.tagname] +
-                                    ['%s="%s"' % (n, v)
-                                     for n, v in self.attlist()])
+        return '<%s/>' % ' '.join([self.tagname] +
+                                  ['%s="%s"' % (n, v)
+                                   for n, v in self.attlist()])
 
     def __len__(self):
         return len(self.children)
 
     def __getitem__(self, key):
-        if isinstance(key, UnicodeType) or isinstance(key, StringType):
+        if isinstance(key, StringType):
             return self.attributes[key]
         elif isinstance(key, IntType):
             return self.children[key]
         elif isinstance(key, SliceType):
-            assert key.step in (None, 1), 'cannot handle slice with stride'
+            assert key.step is None, 'cannot handle slice with stride'
             return self.children[key.start:key.stop]
         else:
             raise TypeError, ('element index must be an integer, a slice, or '
                               'an attribute name string')
 
     def __setitem__(self, key, item):
-        if isinstance(key, UnicodeType) or isinstance(key, StringType):
-            self.attributes[str(key)] = item
+        if isinstance(key, StringType):
+            self.attributes[key] = item
         elif isinstance(key, IntType):
-            self.setup_child(item)
+            item.parent = self
             self.children[key] = item
         elif isinstance(key, SliceType):
-            assert key.step in (None, 1), 'cannot handle slice with stride'
+            assert key.step is None, 'cannot handle slice with stride'
             for node in item:
-                self.setup_child(node)
+                node.parent = self
             self.children[key.start:key.stop] = item
         else:
             raise TypeError, ('element index must be an integer, a slice, or '
                               'an attribute name string')
 
     def __delitem__(self, key):
-        if isinstance(key, UnicodeType) or isinstance(key, StringType):
+        if isinstance(key, StringType):
             del self.attributes[key]
         elif isinstance(key, IntType):
             del self.children[key]
         elif isinstance(key, SliceType):
-            assert key.step in (None, 1), 'cannot handle slice with stride'
+            assert key.step is None, 'cannot handle slice with stride'
             del self.children[key.start:key.stop]
         else:
             raise TypeError, ('element index must be an integer, a simple '
@@ -380,11 +312,11 @@ class Element(Node):
     def __iadd__(self, other):
         """Append a node or a list of nodes to `self.children`."""
         if isinstance(other, Node):
-            self.setup_child(other)
+            other.parent = self
             self.children.append(other)
         elif other is not None:
             for node in other:
-                self.setup_child(node)
+                node.parent = self
             self.children.extend(other)
         return self
 
@@ -413,20 +345,18 @@ class Element(Node):
     has_key = hasattr
 
     def append(self, item):
-        self.setup_child(item)
+        item.parent = self
         self.children.append(item)
 
     def extend(self, item):
         for node in item:
-            self.setup_child(node)
+            node.parent = self
         self.children.extend(item)
 
-    def insert(self, index, item):
-        if isinstance(item, Node):
-            self.setup_child(item)
-            self.children.insert(index, item)
-        elif item is not None:
-            self[index:index] = item
+    def insert(self, i, item):
+        assert isinstance(item, Node)
+        item.parent = self
+        self.children.insert(i, item)
 
     def pop(self, i=-1):
         return self.children.pop(i)
@@ -441,12 +371,11 @@ class Element(Node):
         """Replace one child `Node` with another child or children."""
         index = self.index(old)
         if isinstance(new, Node):
-            self.setup_child(new)
             self[index] = new
         elif new is not None:
             self[index:index+1] = new
 
-    def first_child_matching_class(self, childclass, start=0, end=sys.maxint):
+    def findclass(self, childclass, start=0, end=sys.maxint):
         """
         Return the index of the first child whose class exactly matches.
 
@@ -465,8 +394,7 @@ class Element(Node):
                     return index
         return None
 
-    def first_child_not_matching_class(self, childclass, start=0,
-                                       end=sys.maxint):
+    def findnonclass(self, childclass, start=0, end=sys.maxint):
         """
         Return the index of the first child whose class does *not* match.
 
@@ -484,7 +412,6 @@ class Element(Node):
             for c in childclass:
                 if isinstance(self.children[index], c):
                     match = 1
-                    break
             if not match:
                 return index
         return None
@@ -494,17 +421,9 @@ class Element(Node):
                        [child.pformat(indent, level+1)
                         for child in self.children])
 
-    def get_children(self):
+    def getchildren(self):
         """Return this element's children."""
         return self.children
-
-    def copy(self):
-        return self.__class__(**self.attributes)
-
-    def set_class(self, name):
-        """Add a new name to the "class" attribute."""
-        self.attributes['class'] = (self.attributes.get('class', '') + ' '
-                                    + name.lower()).strip()
 
 
 class TextElement(Element):
@@ -525,15 +444,6 @@ class TextElement(Element):
                               **attributes)
         else:
             Element.__init__(self, rawsource, *children, **attributes)
-
-
-class FixedTextElement(TextElement):
-
-    """An element which directly contains preformatted text."""
-
-    def __init__(self, rawsource='', text='', *children, **attributes):
-        TextElement.__init__(self, rawsource, text, *children, **attributes)
-        self.attributes['xml:space'] = 'preserve'
 
 
 # ========
@@ -559,15 +469,13 @@ class Root: pass
 
 class Titular: pass
 
-class PreDecorative:
-    """Category of Node which may occur before Decorative Nodes."""
+class Bibliographic: pass
 
-class PreBibliographic(PreDecorative):
+
+class PreBibliographic:
     """Category of Node which may occur before Bibliographic Nodes."""
+    pass
 
-class Bibliographic(PreDecorative): pass
-
-class Decorative: pass
 
 class Structural: pass
 
@@ -579,24 +487,24 @@ class Sequential(Body): pass
 
 class Admonition(Body): pass
 
+
 class Special(Body):
-    """Special internal body elements."""
+    """Special internal body elements, not true document components."""
+    pass
 
-class Invisible:
-    """Internal elements that don't appear in output."""
 
-class Part: pass
+class Component: pass
 
 class Inline: pass
 
 class Referential(Resolvable): pass
+    #refnode = None
+    #"""Resolved reference to a node."""
+
 
 class Targetable(Resolvable):
 
     referenced = 0
-
-class Labeled:
-    """Contains a `label` as its first element."""
 
 
 # ==============
@@ -605,20 +513,21 @@ class Labeled:
 
 class document(Root, Structural, Element):
 
-    def __init__(self, settings, reporter, *args, **kwargs):
+    def __init__(self, reporter, languagecode, *args, **kwargs):
         Element.__init__(self, *args, **kwargs)
-
-        self.current_source = None
-        """Path to or description of the input source being processed."""
-
-        self.current_line = None
-        """Line number (1-based) of `current_source`."""
-
-        self.settings = settings
-        """Runtime settings data record."""
 
         self.reporter = reporter
         """System message generator."""
+
+        self.languagecode = languagecode
+        """ISO 639 2-letter language identifier."""
+
+        self.explicit_targets = {}
+        """Mapping of target names to explicit target nodes."""
+
+        self.implicit_targets = {}
+        """Mapping of target names to implicit (internal) target
+        nodes."""
 
         self.external_targets = []
         """List of external target nodes."""
@@ -632,10 +541,6 @@ class document(Root, Structural, Element):
         self.substitution_defs = {}
         """Mapping of substitution names to substitution_definition nodes."""
 
-        self.substitution_names = {}
-        """Mapping of case-normalized substitution names to case-sensitive
-        names."""
-
         self.refnames = {}
         """Mapping of names to lists of referencing nodes."""
 
@@ -644,10 +549,6 @@ class document(Root, Structural, Element):
 
         self.nameids = {}
         """Mapping of names to unique id's."""
-
-        self.nametypes = {}
-        """Mapping of names to hyperlink type (boolean: True => explicit,
-        False => implicit."""
 
         self.ids = {}
         """Mapping of ids to nodes."""
@@ -686,6 +587,9 @@ class document(Root, Structural, Element):
         self.citations = []
         """List of citation nodes."""
 
+        self.pending = []
+        """List of pending elements @@@."""
+
         self.autofootnote_start = 1
         """Initial auto-numbered footnote number."""
 
@@ -695,34 +599,25 @@ class document(Root, Structural, Element):
         self.id_start = 1
         """Initial ID number."""
 
-        self.parse_messages = []
-        """System messages generated while parsing."""
-
-        self.transform_messages = []
-        """System messages generated while applying transforms."""
-
-        import docutils.transforms
-        self.transformer = docutils.transforms.Transformer(self)
-        """Storage for transforms to be applied to this document."""
-
-        self.document = self
+        self.messages = Element()
+        """System messages generated after parsing."""
 
     def asdom(self, dom=xml.dom.minidom):
-        """Return a DOM representation of this document."""
         domroot = dom.Document()
-        domroot.appendChild(self._dom_node(domroot))
+        domroot.appendChild(Element._rooted_dom_node(self, domroot))
         return domroot
 
     def set_id(self, node, msgnode=None):
+        if msgnode == None:
+            msgnode = self.messages
         if node.has_key('id'):
             id = node['id']
             if self.ids.has_key(id) and self.ids[id] is not node:
                 msg = self.reporter.severe('Duplicate ID: "%s".' % id)
-                if msgnode != None:
-                    msgnode += msg
+                msgnode += msg
         else:
             if node.has_key('name'):
-                id = make_id(node['name'])
+                id = utils.id(node['name'])
             else:
                 id = ''
             while not id or self.ids.has_key(id):
@@ -730,99 +625,64 @@ class document(Root, Structural, Element):
                 self.id_start += 1
             node['id'] = id
         self.ids[id] = node
+        if node.has_key('name'):
+            self.nameids[node['name']] = id
         return id
 
-    def set_name_id_map(self, node, id, msgnode=None, explicit=None):
-        """
-        `self.nameids` maps names to IDs, while `self.nametypes` maps names to
-        booleans representing hyperlink type (True==explicit,
-        False==implicit).  This method updates the mappings.
-
-        The following state transition table shows how `self.nameids` ("ids")
-        and `self.nametypes` ("types") change with new input (a call to this
-        method), and what actions are performed:
-
-        ====  =====  ========  ========  =======  ====  =====  =====
-         Old State    Input          Action        New State   Notes
-        -----------  --------  -----------------  -----------  -----
-        ids   types  new type  sys.msg.  dupname  ids   types
-        ====  =====  ========  ========  =======  ====  =====  =====
-        --    --     explicit  --        --       new   True
-        --    --     implicit  --        --       new   False
-        None  False  explicit  --        --       new   True
-        old   False  explicit  implicit  old      new   True
-        None  True   explicit  explicit  new      None  True
-        old   True   explicit  explicit  new,old  None  True   [#]_
-        None  False  implicit  implicit  new      None  False
-        old   False  implicit  implicit  new,old  None  False
-        None  True   implicit  implicit  new      None  True
-        old   True   implicit  implicit  new      old   True
-        ====  =====  ========  ========  =======  ====  =====  =====
-
-        .. [#] Do not clear the name-to-id map or invalidate the old target if
-           both old and new targets are external and refer to identical URIs.
-           The new target is invalidated regardless.
-        """
-        if node.has_key('name'):
-            name = node['name']
-            if self.nameids.has_key(name):
-                self.set_duplicate_name_id(node, id, name, msgnode, explicit)
-            else:
-                self.nameids[name] = id
-                self.nametypes[name] = explicit
-
-    def set_duplicate_name_id(self, node, id, name, msgnode, explicit):
-        old_id = self.nameids[name]
-        old_explicit = self.nametypes[name]
-        self.nametypes[name] = old_explicit or explicit
-        if explicit:
-            if old_explicit:
-                level = 2
-                if old_id is not None:
-                    old_node = self.ids[old_id]
-                    if node.has_key('refuri'):
-                        refuri = node['refuri']
-                        if old_node.has_key('name') \
-                               and old_node.has_key('refuri') \
-                               and old_node['refuri'] == refuri:
-                            level = 1   # just inform if refuri's identical
-                    if level > 1:
-                        dupname(old_node)
-                        self.nameids[name] = None
-                msg = self.reporter.system_message(
-                    level, 'Duplicate explicit target name: "%s".' % name,
-                    backrefs=[id], base_node=node)
-                if msgnode != None:
-                    msgnode += msg
-                dupname(node)
-            else:
-                self.nameids[name] = id
-                if old_id is not None:
-                    old_node = self.ids[old_id]
-                    dupname(old_node)
-        else:
-            if old_id is not None and not old_explicit:
-                self.nameids[name] = None
-                old_node = self.ids[old_id]
-                dupname(old_node)
-            dupname(node)
-        if not explicit or (not old_explicit and old_id is not None):
-            msg = self.reporter.info(
-                'Duplicate implicit target name: "%s".' % name,
-                backrefs=[id], base_node=node)
-            if msgnode != None:
-                msgnode += msg
-
-    def has_name(self, name):
-        return self.nameids.has_key(name)
-
     def note_implicit_target(self, target, msgnode=None):
+        if msgnode == None:
+            msgnode = self.messages
         id = self.set_id(target, msgnode)
-        self.set_name_id_map(target, id, msgnode, explicit=None)
+        name = target['name']
+        if self.explicit_targets.has_key(name) \
+              or self.implicit_targets.has_key(name):
+            msg = self.reporter.info(
+                  'Duplicate implicit target name: "%s".' % name, backrefs=[id])
+            msgnode += msg
+            self.clear_target_names(name, self.implicit_targets)
+            del target['name']
+            target['dupname'] = name
+            self.implicit_targets[name] = None
+        else:
+            self.implicit_targets[name] = target
 
     def note_explicit_target(self, target, msgnode=None):
+        if msgnode == None:
+            msgnode = self.messages
         id = self.set_id(target, msgnode)
-        self.set_name_id_map(target, id, msgnode, explicit=1)
+        name = target['name']
+        if self.explicit_targets.has_key(name):
+            level = 2
+            if target.has_key('refuri'): # external target, dups OK
+                refuri = target['refuri']
+                t = self.explicit_targets[name]
+                if t.has_key('name') and t.has_key('refuri') \
+                      and t['refuri'] == refuri:
+                    level = 1           # just inform if refuri's identical
+            msg = self.reporter.system_message(
+                  level, 'Duplicate explicit target name: "%s".' % name,
+                  backrefs=[id])
+            msgnode += msg
+            self.clear_target_names(name, self.explicit_targets,
+                                    self.implicit_targets)
+            if level > 1:
+                del target['name']
+                target['dupname'] = name
+        elif self.implicit_targets.has_key(name):
+            msg = self.reporter.info(
+                  'Duplicate implicit target name: "%s".' % name, backrefs=[id])
+            msgnode += msg
+            self.clear_target_names(name, self.implicit_targets)
+        self.explicit_targets[name] = target
+
+    def clear_target_names(self, name, *targetdicts):
+        for targetdict in targetdicts:
+            if not targetdict.has_key(name):
+                continue
+            node = targetdict[name]
+            if node.has_key('name'):
+                node['dupname'] = node['name']
+                del node['name']
 
     def note_refname(self, node):
         self.refnames.setdefault(node['refname'], []).append(node)
@@ -874,6 +734,7 @@ class document(Root, Structural, Element):
         self.note_refname(ref)
 
     def note_citation(self, citation):
+        self.set_id(citation)
         self.citations.append(citation)
 
     def note_citation_ref(self, ref):
@@ -881,44 +742,26 @@ class document(Root, Structural, Element):
         self.citation_refs.setdefault(ref['refname'], []).append(ref)
         self.note_refname(ref)
 
-    def note_substitution_def(self, subdef, def_name, msgnode=None):
-        name = subdef['name'] = whitespace_normalize_name(def_name)
+    def note_substitution_def(self, subdef, msgnode=None):
+        name = subdef['name']
         if self.substitution_defs.has_key(name):
             msg = self.reporter.error(
-                  'Duplicate substitution definition name: "%s".' % name,
-                  base_node=subdef)
-            if msgnode != None:
-                msgnode += msg
+                  'Duplicate substitution definition name: "%s".' % name)
+            if msgnode == None:
+                msgnode = self.messages
+            msgnode += msg
             oldnode = self.substitution_defs[name]
-            dupname(oldnode)
-        # keep only the last definition:
+            oldnode['dupname'] = oldnode['name']
+            del oldnode['name']
+        # keep only the last definition
         self.substitution_defs[name] = subdef
-        # case-insensitive mapping:
-        self.substitution_names[fully_normalize_name(name)] = name
 
-    def note_substitution_ref(self, subref, refname):
-        name = subref['refname'] = whitespace_normalize_name(refname)
-        self.substitution_refs.setdefault(name, []).append(subref)
+    def note_substitution_ref(self, subref):
+        self.substitution_refs.setdefault(
+              subref['refname'], []).append(subref)
 
-    def note_pending(self, pending, priority=None):
-        self.transformer.add_pending(pending, priority)
-
-    def note_parse_message(self, message):
-        self.parse_messages.append(message)
-
-    def note_transform_message(self, message):
-        self.transform_messages.append(message)
-
-    def note_source(self, source, offset):
-        self.current_source = source
-        if offset is None:
-            self.current_line = offset
-        else:
-            self.current_line = offset + 1
-
-    def copy(self):
-        return self.__class__(self.settings, self.reporter,
-                              **self.attributes)
+    def note_pending(self, pending):
+        self.pending.append(pending)
 
 
 # ================
@@ -927,7 +770,6 @@ class document(Root, Structural, Element):
 
 class title(Titular, PreBibliographic, TextElement): pass
 class subtitle(Titular, PreBibliographic, TextElement): pass
-class rubric(Titular, TextElement): pass
 
 
 # ========================
@@ -938,7 +780,6 @@ class docinfo(Bibliographic, Element): pass
 class author(Bibliographic, TextElement): pass
 class authors(Bibliographic, Element): pass
 class organization(Bibliographic, TextElement): pass
-class address(Bibliographic, FixedTextElement): pass
 class contact(Bibliographic, TextElement): pass
 class version(Bibliographic, TextElement): pass
 class revision(Bibliographic, TextElement): pass
@@ -948,50 +789,25 @@ class copyright(Bibliographic, TextElement): pass
 
 
 # =====================
-#  Decorative Elements
-# =====================
-
-class decoration(Decorative, Element): pass
-class header(Decorative, Element): pass
-class footer(Decorative, Element): pass
-
-
-# =====================
 #  Structural Elements
 # =====================
 
 class section(Structural, Element): pass
 
-
 class topic(Structural, Element):
 
     """
     Topics are terminal, "leaf" mini-sections, like block quotes with titles,
-    or textual figures.  A topic is just like a section, except that it has no
+    or textual figures. A topic is just like a section, except that it has no
     subsections, and it doesn't have to conform to section placement rules.
 
     Topics are allowed wherever body elements (list, table, etc.) are allowed,
-    but only at the top level of a section or document.  Topics cannot nest
-    inside topics, sidebars, or body elements; you can't have a topic inside a
-    table, list, block quote, etc.
+    but only at the top level of a section or document. Topics cannot nest
+    inside topics or body elements; you can't have a topic inside a table,
+    list, block quote, etc.
     """
 
-
-class sidebar(Structural, Element):
-
-    """
-    Sidebars are like miniature, parallel documents that occur inside other
-    documents, providing related or reference material.  A sidebar is
-    typically offset by a border and "floats" to the side of the page; the
-    document's main text may flow around it.  Sidebars can also be likened to
-    super-footnotes; their content is outside of the flow of the document's
-    main text.
-
-    Sidebars are allowed wherever body elements (list, table, etc.) are
-    allowed, but only at the top level of a section or document.  Sidebars
-    cannot nest inside sidebars, topics, or body elements; you can't have a
-    sidebar inside a table, list, block quote, etc.
-    """
+    pass
 
 
 class transition(Structural, Element): pass
@@ -1004,30 +820,31 @@ class transition(Structural, Element): pass
 class paragraph(General, TextElement): pass
 class bullet_list(Sequential, Element): pass
 class enumerated_list(Sequential, Element): pass
-class list_item(Part, Element): pass
+class list_item(Component, Element): pass
 class definition_list(Sequential, Element): pass
-class definition_list_item(Part, Element): pass
-class term(Part, TextElement): pass
-class classifier(Part, TextElement): pass
-class definition(Part, Element): pass
+class definition_list_item(Component, Element): pass
+class term(Component, TextElement): pass
+class classifier(Component, TextElement): pass
+class definition(Component, Element): pass
 class field_list(Sequential, Element): pass
-class field(Part, Element): pass
-class field_name(Part, TextElement): pass
-class field_body(Part, Element): pass
+class field(Component, Element): pass
+class field_name(Component, TextElement): pass
+class field_argument(Component, TextElement): pass
+class field_body(Component, Element): pass
 
 
-class option(Part, Element):
+class option(Component, Element):
 
     child_text_separator = ''
 
 
-class option_argument(Part, TextElement):
+class option_argument(Component, TextElement):
 
     def astext(self):
         return self.get('delimiter', ' ') + TextElement.astext(self)
 
 
-class option_group(Part, Element):
+class option_group(Component, Element):
 
     child_text_separator = ', '
 
@@ -1035,18 +852,16 @@ class option_group(Part, Element):
 class option_list(Sequential, Element): pass
 
 
-class option_list_item(Part, Element):
+class option_list_item(Component, Element):
 
     child_text_separator = '  '
 
 
-class option_string(Part, TextElement): pass
-class description(Part, Element): pass
-class literal_block(General, FixedTextElement): pass
-class doctest_block(General, FixedTextElement): pass
-class line_block(General, FixedTextElement): pass
+class option_string(Component, TextElement): pass
+class description(Component, Element): pass
+class literal_block(General, TextElement): pass
 class block_quote(General, Element): pass
-class attribution(Part, TextElement): pass
+class doctest_block(General, TextElement): pass
 class attention(Admonition, Element): pass
 class caution(Admonition, Element): pass
 class danger(Admonition, Element): pass
@@ -1056,52 +871,45 @@ class note(Admonition, Element): pass
 class tip(Admonition, Element): pass
 class hint(Admonition, Element): pass
 class warning(Admonition, Element): pass
-class admonition(Admonition, Element): pass
-class comment(Special, Invisible, PreBibliographic, FixedTextElement): pass
-class substitution_definition(Special, Invisible, TextElement): pass
-class target(Special, Invisible, Inline, TextElement, Targetable): pass
-class footnote(General, Element, Labeled, BackLinkable): pass
-class citation(General, Element, Labeled, BackLinkable): pass
-class label(Part, TextElement): pass
+class comment(Special, PreBibliographic, TextElement): pass
+class substitution_definition(Special, TextElement): pass
+class target(Special, Inline, TextElement, Targetable): pass
+class footnote(General, Element, BackLinkable): pass
+class citation(General, Element, BackLinkable): pass
+class label(Component, TextElement): pass
 class figure(General, Element): pass
-class caption(Part, TextElement): pass
-class legend(Part, Element): pass
+class caption(Component, TextElement): pass
+class legend(Component, Element): pass
 class table(General, Element): pass
-class tgroup(Part, Element): pass
-class colspec(Part, Element): pass
-class thead(Part, Element): pass
-class tbody(Part, Element): pass
-class row(Part, Element): pass
-class entry(Part, Element): pass
+class tgroup(Component, Element): pass
+class colspec(Component, Element): pass
+class thead(Component, Element): pass
+class tbody(Component, Element): pass
+class row(Component, Element): pass
+class entry(Component, Element): pass
 
 
 class system_message(Special, PreBibliographic, Element, BackLinkable):
 
-    def __init__(self, message=None, *children, **attributes):
-        if message:
-            p = paragraph('', message)
+    def __init__(self, comment=None, *children, **attributes):
+        if comment:
+            p = paragraph('', comment)
             children = (p,) + children
-        try:
-            Element.__init__(self, '', *children, **attributes)
-        except:
-            print 'system_message: children=%r' % (children,)
-            raise
+        Element.__init__(self, '', *children, **attributes)
 
     def astext(self):
-        line = self.get('line', '')
-        return u'%s:%s: (%s/%s) %s' % (self['source'], line, self['type'],
-                                       self['level'], Element.astext(self))
+        return '%s (%s) %s' % (self['type'], self['level'],
+                               Element.astext(self))
 
 
-class pending(Special, Invisible, PreBibliographic, Element):
+class pending(Special, PreBibliographic, Element):
 
     """
     The "pending" element is used to encapsulate a pending operation: the
-    operation (transform), the point at which to apply it, and any data it
-    requires.  Only the pending operation's location within the document is
-    stored in the public document tree (by the "pending" object itself); the
-    operation and its data are stored in the "pending" object's internal
-    instance attributes.
+    operation, the point at which to apply it, and any data it requires.  Only
+    the pending operation's location within the document is stored in the
+    public document tree; the operation itself and its data are stored in
+    internal instance attributes.
 
     For example, say you want a table of contents in your reStructuredText
     document.  The easiest way to specify where to put it is from within the
@@ -1110,18 +918,17 @@ class pending(Special, Invisible, PreBibliographic, Element):
         .. contents::
 
     But the "contents" directive can't do its work until the entire document
-    has been parsed and possibly transformed to some extent.  So the directive
-    code leaves a placeholder behind that will trigger the second phase of the
-    its processing, something like this::
+    has been parsed (and possibly transformed to some extent).  So the
+    directive code leaves a placeholder behind that will trigger the second
+    phase of the its processing, something like this::
 
         <pending ...public attributes...> + internal attributes
 
-    Use `document.note_pending()` so that the
-    `docutils.transforms.Transformer` stage of processing can run all pending
-    transforms.
+    The "pending" node is also appended to `document.pending`, so that a later
+    stage of processing can easily run all pending transforms.
     """
 
-    def __init__(self, transform, details=None,
+    def __init__(self, transform, stage, details,
                  rawsource='', *children, **attributes):
         Element.__init__(self, rawsource, *children, **attributes)
 
@@ -1129,14 +936,18 @@ class pending(Special, Invisible, PreBibliographic, Element):
         """The `docutils.transforms.Transform` class implementing the pending
         operation."""
 
-        self.details = details or {}
+        self.stage = stage
+        """The stage of processing when the function will be called."""
+
+        self.details = details
         """Detail data (dictionary) required by the pending operation."""
 
     def pformat(self, indent='    ', level=0):
         internals = [
               '.. internal attributes:',
               '     .transform: %s.%s' % (self.transform.__module__,
-                                          self.transform.__name__),
+                                                 self.transform.__name__),
+              '     .stage: %r' % self.stage,
               '     .details:']
         details = self.details.items()
         details.sort()
@@ -1145,24 +956,14 @@ class pending(Special, Invisible, PreBibliographic, Element):
                 internals.append('%7s%s:' % ('', key))
                 internals.extend(['%9s%s' % ('', line)
                                   for line in value.pformat().splitlines()])
-            elif value and isinstance(value, ListType) \
-                  and isinstance(value[0], Node):
-                internals.append('%7s%s:' % ('', key))
-                for v in value:
-                    internals.extend(['%9s%s' % ('', line)
-                                      for line in v.pformat().splitlines()])
             else:
                 internals.append('%7s%s: %r' % ('', key, value))
         return (Element.pformat(self, indent, level)
                 + ''.join([('    %s%s\n' % (indent * level, line))
                            for line in internals]))
 
-    def copy(self):
-        return self.__class__(self.transform, self.details, self.rawsource,
-                              **self.attribuates)
 
-
-class raw(Special, Inline, PreBibliographic, FixedTextElement):
+class raw(Special, Inline, PreBibliographic, TextElement):
 
     """
     Raw data that is to be passed untouched to the Writer.
@@ -1177,16 +978,12 @@ class raw(Special, Inline, PreBibliographic, FixedTextElement):
 
 class emphasis(Inline, TextElement): pass
 class strong(Inline, TextElement): pass
+class interpreted(Inline, Referential, TextElement): pass
 class literal(Inline, TextElement): pass
 class reference(Inline, Referential, TextElement): pass
 class footnote_reference(Inline, Referential, TextElement): pass
 class citation_reference(Inline, Referential, TextElement): pass
 class substitution_reference(Inline, TextElement): pass
-class title_reference(Inline, TextElement): pass
-class abbreviation(Inline, TextElement): pass
-class acronym(Inline, TextElement): pass
-class superscript(Inline, TextElement): pass
-class subscript(Inline, TextElement): pass
 
 
 class image(General, Inline, TextElement):
@@ -1194,10 +991,8 @@ class image(General, Inline, TextElement):
     def astext(self):
         return self.get('alt', '')
 
-
-class inline(Inline, TextElement): pass
+    
 class problematic(Inline, TextElement): pass
-class generated(Inline, TextElement): pass
 
 
 # ========================================
@@ -1206,29 +1001,26 @@ class generated(Inline, TextElement): pass
 
 node_class_names = """
     Text
-    abbreviation acronym address admonition attention attribution author
-        authors
+    attention author authors
     block_quote bullet_list
-    caption caution citation citation_reference classifier colspec comment
-        contact copyright
-    danger date decoration definition definition_list definition_list_item
+    caption caution citation citation_reference classifier colspec
+        comment contact copyright
+    danger date definition definition_list definition_list_item
         description docinfo doctest_block document
     emphasis entry enumerated_list error
-    field field_body field_list field_name figure footer
+    field field_argument field_body field_list field_name figure
         footnote footnote_reference
-    generated
-    header hint
-    image important inline
-    label legend line_block list_item literal literal_block
+    hint
+    image important interpreted
+    label legend list_item literal literal_block
     note
     option option_argument option_group option_list option_list_item
         option_string organization
     paragraph pending problematic
-    raw reference revision row rubric
-    section sidebar status strong subscript substitution_definition
-        substitution_reference subtitle superscript system_message
-    table target tbody term tgroup thead tip title title_reference topic
-        transition
+    raw reference revision row
+    section status strong substitution_definition
+        substitution_reference subtitle system_message
+    table target tbody term tgroup thead tip title topic transition
     version
     warning""".split()
 """A list of names of all concrete Node subclasses."""
@@ -1241,27 +1033,18 @@ class NodeVisitor:
     tree traversals.
 
     Each node class has corresponding methods, doing nothing by default;
-    override individual methods for specific and useful behaviour.  The
+    override individual methods for specific and useful behaviour. The
     "``visit_`` + node class name" method is called by `Node.walk()` upon
-    entering a node.  `Node.walkabout()` also calls the "``depart_`` + node
+    entering a node. `Node.walkabout()` also calls the "``depart_`` + node
     class name" method before exiting a node.
-
-    This is a base class for visitors whose ``visit_...`` & ``depart_...``
-    methods should be implemented for *all* node types encountered (such as
-    for `docutils.writers.Writer` subclasses).  Unimplemented methods will
-    raise exceptions.
-
-    For sparse traversals, where only certain node types are of interest,
-    subclass `SparseNodeVisitor` instead.  When (mostly or entirely) uniform
-    processing is desired, subclass `GenericNodeVisitor`.
 
     .. [GoF95] Gamma, Helm, Johnson, Vlissides. *Design Patterns: Elements of
        Reusable Object-Oriented Software*. Addison-Wesley, Reading, MA, USA,
        1995.
     """
 
-    def __init__(self, document):
-        self.document = document
+    def __init__(self, doctree):
+        self.doctree = doctree
 
     def unknown_visit(self, node):
         """
@@ -1281,16 +1064,6 @@ class NodeVisitor:
         raise NotImplementedError('departing unknown node type: %s'
                                   % node.__class__.__name__)
 
-
-class SparseNodeVisitor(NodeVisitor):
-
-    """
-    Base class for sparse traversals, where only certain node types are of
-    interest.  When ``visit_...`` & ``depart_...`` methods should be
-    implemented for *all* node types (such as for `docutils.writers.Writer`
-    subclasses), subclass `NodeVisitor` instead.
-    """
-
     # Save typing with dynamic definitions.
     for name in node_class_names:
         exec """def visit_%s(self, node): pass\n""" % name
@@ -1305,12 +1078,12 @@ class GenericNodeVisitor(NodeVisitor):
 
     Unless overridden, each ``visit_...`` method calls `default_visit()`, and
     each ``depart_...`` method (when using `Node.walkabout()`) calls
-    `default_departure()`. `default_visit()` (and `default_departure()`) must
-    be overridden in subclasses.
+    `default_departure()`. `default_visit()` (`default_departure()`) must be
+    overridden in subclasses.
 
-    Define fully generic visitors by overriding `default_visit()` (and
-    `default_departure()`) only. Define semi-generic visitors by overriding
-    individual ``visit_...()`` (and ``depart_...()``) methods also.
+    Define fully generic visitors by overriding `default_visit()`
+    (`default_departure()`) only. Define semi-generic visitors by overriding
+    individual ``visit_...()`` (``depart_...()``) methods also.
 
     `NodeVisitor.unknown_visit()` (`NodeVisitor.unknown_departure()`) should
     be overridden for default behavior.
@@ -1333,146 +1106,7 @@ class GenericNodeVisitor(NodeVisitor):
     del name
 
 
-class TreeCopyVisitor(GenericNodeVisitor):
-
-    """
-    Make a complete copy of a tree or branch, including element attributes.
-    """
-
-    def __init__(self, document):
-        GenericNodeVisitor.__init__(self, document)
-        self.parent_stack = []
-        self.parent = []
-
-    def get_tree_copy(self):
-        return self.parent[0]
-
-    def default_visit(self, node):
-        """Copy the current node, and make it the new acting parent."""
-        newnode = node.copy()
-        self.parent.append(newnode)
-        self.parent_stack.append(self.parent)
-        self.parent = newnode
-
-    def default_departure(self, node):
-        """Restore the previous acting parent."""
-        self.parent = self.parent_stack.pop()
-
-
-class TreePruningException(Exception):
-
-    """
-    Base class for `NodeVisitor`-related tree pruning exceptions.
-
-    Raise subclasses from within ``visit_...`` or ``depart_...`` methods
-    called from `Node.walk()` and `Node.walkabout()` tree traversals to prune
-    the tree traversed.
-    """
-
-    pass
-
-
-class SkipChildren(TreePruningException):
-
-    """
-    Do not visit any children of the current node.  The current node's
-    siblings and ``depart_...`` method are not affected.
-    """
-
-    pass
-
-
-class SkipSiblings(TreePruningException):
-
-    """
-    Do not visit any more siblings (to the right) of the current node.  The
-    current node's children and its ``depart_...`` method are not affected.
-    """
-
-    pass
-
-
-class SkipNode(TreePruningException):
-
-    """
-    Do not visit the current node's children, and do not call the current
-    node's ``depart_...`` method.
-    """
-
-    pass
-
-
-class SkipDeparture(TreePruningException):
-
-    """
-    Do not call the current node's ``depart_...`` method.  The current node's
-    children and siblings are not affected.
-    """
-
-    pass
-
-
-class NodeFound(TreePruningException):
-
-    """
-    Raise to indicate that the target of a search has been found.  This
-    exception must be caught by the client; it is not caught by the traversal
-    code.
-    """
-
-    pass
-
-
-def make_id(string):
-    """
-    Convert `string` into an identifier and return it.
-
-    Docutils identifiers will conform to the regular expression
-    ``[a-z](-?[a-z0-9]+)*``.  For CSS compatibility, identifiers (the "class"
-    and "id" attributes) should have no underscores, colons, or periods.
-    Hyphens may be used.
-
-    - The `HTML 4.01 spec`_ defines identifiers based on SGML tokens:
-
-          ID and NAME tokens must begin with a letter ([A-Za-z]) and may be
-          followed by any number of letters, digits ([0-9]), hyphens ("-"),
-          underscores ("_"), colons (":"), and periods (".").
-
-    - However the `CSS1 spec`_ defines identifiers based on the "name" token,
-      a tighter interpretation ("flex" tokenizer notation; "latin1" and
-      "escape" 8-bit characters have been replaced with entities)::
-
-          unicode     \\[0-9a-f]{1,4}
-          latin1      [&iexcl;-&yuml;]
-          escape      {unicode}|\\[ -~&iexcl;-&yuml;]
-          nmchar      [-a-z0-9]|{latin1}|{escape}
-          name        {nmchar}+
-
-    The CSS1 "nmchar" rule does not include underscores ("_"), colons (":"),
-    or periods ("."), therefore "class" and "id" attributes should not contain
-    these characters. They should be replaced with hyphens ("-"). Combined
-    with HTML's requirements (the first character must be a letter; no
-    "unicode", "latin1", or "escape" characters), this results in the
-    ``[a-z](-?[a-z0-9]+)*`` pattern.
-
-    .. _HTML 4.01 spec: http://www.w3.org/TR/html401
-    .. _CSS1 spec: http://www.w3.org/TR/REC-CSS1
-    """
-    id = _non_id_chars.sub('-', ' '.join(string.lower().split()))
-    id = _non_id_at_ends.sub('', id)
-    return str(id)
-
-_non_id_chars = re.compile('[^a-z0-9]+')
-_non_id_at_ends = re.compile('^[-0-9]+|-+$')
-
-def dupname(node):
-    node['dupname'] = node['name']
-    del node['name']
-
-def fully_normalize_name(name):
-    """Return a case- and whitespace-normalized name."""
-    return ' '.join(name.lower().split())
-
-def whitespace_normalize_name(name):
-    """Return a whitespace-normalized name."""
-    return ' '.join(name.split())
+class VisitorException(Exception): pass
+class SkipChildren(VisitorException): pass
+class SkipSiblings(VisitorException): pass
+class SkipNode(VisitorException): pass

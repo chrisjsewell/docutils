@@ -1,25 +1,31 @@
 #!/usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
-A minimal front end to the Docutils Publisher, producing HTML.
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
+A minimal front-end to the Docutils Publisher.
+
+This module takes advantage of the default values defined in `publish()`.
 """
 
-import locale
-try:
-    locale.setlocale(locale.LC_ALL, '')
-except:
-    pass
+import sys
+from docutils.core import publish
+from docutils import utils
 
-from docutils.core import publish_cmdline, default_description
+reporter = utils.Reporter(2, 4)
+#reporter.setconditions('nodes.Node.walkabout', 2, 4, debug=1)
 
-
-description = ('Generates (X)HTML documents from standalone reStructuredText '
-               'sources.  ' + default_description)
-
-publish_cmdline(writer_name='html', description=description)
+if len(sys.argv) == 2:
+    publish(writername='html', source=sys.argv[1], reporter=reporter)
+elif len(sys.argv) == 3:
+    publish(writername='html', source=sys.argv[1], destination=sys.argv[2],
+            reporter=reporter)
+elif len(sys.argv) > 3:
+    print >>sys.stderr, 'Maximum 2 arguments allowed.'
+    sys.exit(1)
+else:
+    publish()

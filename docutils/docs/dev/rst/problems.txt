@@ -5,7 +5,6 @@
 :Contact: goodger@users.sourceforge.net
 :Revision: $Revision$
 :Date: $Date$
-:Copyright: This document has been placed in the public domain.
 
 There are several problems, unresolved issues, and areas of
 controversy within StructuredText_ (Classic and Next Generation).  In
@@ -214,35 +213,26 @@ People will write enumerated lists in all different ways.  It is folly
 to try to come up with the "perfect" format for an enumerated list,
 and limit the docstring parser's recognition to that one format only.
 
-Rather, the parser should recognize a variety of enumerator styles.
+Rather, the parser should recognize a variety of enumerator styles,
+marking each block as a potential enumerated list item (PELI), and
+interpret the enumerators of adjacent PELIs to decide whether they
+make up a consistent enumerated list.
+
+If a PELI is labeled with a "1.", and is immediately followed by a
+PELI labeled with a "2.", we've got an enumerated list.  Or "(A)"
+followed by "(B)".  Or "i)" followed by "ii)", etc.  The chances of
+accidentally recognizing two adjacent and consistently labeled PELIs,
+are acceptably small.
+
+For an enumerated list to be recognized, the following must be true:
+
+- the list must consist of multiple adjacent list items (2 or more)
+- the enumerators must all have the same format
+- the enumerators must be sequential
+
 It is also recommended that the enumerator of the first list item be
 ordinal-1 ('1', 'A', 'a', 'I', or 'i'), as output formats may not be
 able to begin a list at an arbitrary enumeration.
-
-An initial idea was to require two or more consistent enumerated list
-items in a row.  This idea proved impractical and was dropped.  In
-practice, the presence of a proper enumerator is enough to reliably
-recognize an enumerated list item; any ambiguities are reported by the
-parser.  Here's the original idea for posterity:
-
-    The parser should recognize a variety of enumerator styles, mark
-    each block as a potential enumerated list item (PELI), and
-    interpret the enumerators of adjacent PELIs to decide whether they
-    make up a consistent enumerated list.
-
-    If a PELI is labeled with a "1.", and is immediately followed by a
-    PELI labeled with a "2.", we've got an enumerated list.  Or "(A)"
-    followed by "(B)".  Or "i)" followed by "ii)", etc.  The chances
-    of accidentally recognizing two adjacent and consistently labeled
-    PELIs, are acceptably small.
-
-    For an enumerated list to be recognized, the following must be
-    true:
-
-    - the list must consist of multiple adjacent list items (2 or
-      more)
-    - the enumerators must all have the same format
-    - the enumerators must be sequential
 
 
 Definition List Markup
@@ -282,7 +272,6 @@ definition (this distinguishes definition lists from block quotes).
 
 Literal Blocks
 ==============
-
 The StructuredText_ specification has literal blocks indicated by
 'example', 'examples', or '::' ending the preceding paragraph.  STNG
 only recognizes '::'; 'example'/'examples' are not implemented.  This
@@ -350,7 +339,7 @@ documentation.  Alternatives:
    allowed; the first line of text in a cell determines its left
    margin.
 
-2. Below is a simpler table structure.  It may be better suited to
+2. Below is a minimalist possibility.  It may be better suited to
    manual input than alternative #1, but there is no Emacs editing
    mode available.  One disadvantage is that it resembles section
    titles; a one-column table would look exactly like section &
@@ -376,105 +365,7 @@ documentation.  Alternatives:
    table consists of '=' underlines.  A blank line is required
    following a table.
 
-3. A minimalist alternative is as follows::
-
-       ====  =====  ========  ========  =======  ====  =====  =====
-       Old State    Input     Action             New State    Notes
-       -----------  --------  -----------------  -----------
-       ids   types  new type  sys.msg.  dupname  ids   types
-       ====  =====  ========  ========  =======  ====  =====  =====
-       --    --     explicit  --        --       new   True
-       --    --     implicit  --        --       new   False
-       None  False  explicit  --        --       new   True
-       old   False  explicit  implicit  old      new   True
-       None  True   explicit  explicit  new      None  True
-       old   True   explicit  explicit  new,old  None  True   [1]
-       None  False  implicit  implicit  new      None  False
-       old   False  implicit  implicit  new,old  None  False
-       None  True   implicit  implicit  new      None  True
-       old   True   implicit  implicit  new      old   True
-       ====  =====  ========  ========  =======  ====  =====  =====
-
-   The table begins with a top border of equals signs with one or more
-   spaces at each column boundary (regardless of spans).  There must
-   be at least two columns in the table (to differentiate it from
-   section headers).  Each line starts a new row.  The rightmost
-   column is unbounded; text may continue past the edge of the table.
-   Each row/line must contain spaces at column boundaries, except for
-   explicit column spans.  Underlines of '-' can be used to indicate
-   column spans, but should be used sparingly if at all.  Lines
-   containing column span underlines may not contain any other text.
-   The last of the optional head rows is underlined with '=', again
-   with spaces at column boundaries.  The bottom boundary of the table
-   consists of '=' underlines.  A blank line is required following a
-   table.
-
-   This table sums up the features.  Using all the features in such a
-   small space is not pretty though::
-
-       ========  ========  ========
-                 Header 2 & 3 Span
-                 ------------------
-       Header 1  Header 2  Header 3
-       ========  ========  ========
-       Each      line is   a new row.
-       Each row  consists  of one line only.
-       Row       spans     are not possible.
-       The last  column    may spill over to the right.
-       Column spans are possible with an underline joining columns.
-       ----------------------------
-       The span  is        limited to the row above the underline.
-       ========  ========  ========
-
-4. As a variation of alternative 3, bullet list syntax in the first
-   column could be used to indicate row starts.  Multi-line rows are
-   possible, but row spans are not.  For example::
-
-       ===== =====
-       col 1 col 2
-       ===== =====
-       - 1   Second column of row 1.
-       - 2   Second column of row 2.
-             Second line of paragraph.
-       - 3   Second column of row 3.
-
-             Second paragraph of row 3,
-             column 2
-       ===== =====
-
-   Column spans would be indicated on the line after the last line of
-   the row.  To indicate a real bullet list within a first-column
-   cell, simply nest the bullets.
-
-5. In a further variation, we could simply assume that whitespace in
-   the first column implies a multi-line row; the text in other
-   columns is continuation text.  For example::
-
-       ===== =====
-       col 1 col 2
-       ===== =====
-       1     Second column of row 1.
-       2     Second column of row 2.
-             Second line of paragraph.
-       3     Second column of row 3.
-
-             Second paragraph of row 3,
-             column 2
-       ===== =====
-
-   Limitations of this approach:
-
-   - Cells in the first column are limited to one line of text.
-
-   - Cells in the first column *must* contain some text; blank cells
-     would lead to a misinterpretation.  An empty comment ("..") is
-     sufficient.
-
-6. Combining alternative 3 and 4, a bullet list in the first column
-   could mean multi-line rows, and no bullet list means single-line
-   rows only.
-
-Alternatives 1 and 5 has been adopted by reStructuredText.
+Alternative #1 is the choice adopted by reStructuredText.
 
 
 Delimitation of Inline Markup

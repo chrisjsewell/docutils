@@ -1,16 +1,17 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for docutils.transforms.universal.Messages.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
+import UnitTestFolder
 from docutils.transforms.universal import Messages
 from docutils.transforms.references import Substitutions
 from docutils.parsers.rst import Parser
@@ -24,17 +25,17 @@ def suite():
 
 totest = {}
 
-totest['system_message_sections'] = ((Substitutions, Messages), [
+totest['system_message_sections'] = ((Substitutions, Messages,), [
 ["""\
 This |unknown substitution| will generate a system message, thanks to
 the ``Substitutions`` transform. The ``Messages`` transform will
 generate a "System Messages" section.
 
 (A second copy of the system message is tacked on to the end of the
-document by the test framework.)
+doctree by the test framework.)
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         This \n\
         <problematic id="id2" refid="id1">
@@ -50,11 +51,11 @@ document by the test framework.)
         generate a "System Messages" section.
     <paragraph>
         (A second copy of the system message is tacked on to the end of the
-        document by the test framework.)
+        doctree by the test framework.)
     <section class="system-messages">
         <title>
             Docutils System Messages
-        <system_message backrefs="id2" id="id1" level="3" line="1" source="test data" type="ERROR">
+        <system_message backrefs="id2" id="id1" level="3" type="ERROR">
             <paragraph>
                 Undefined substitution referenced: "unknown substitution".
 """],

@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -26,7 +26,7 @@ Here's an image substitution definition:
 .. |symbol| image:: symbol.png
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Here's an image substitution definition:
     <substitution_definition name="symbol">
@@ -39,7 +39,7 @@ Embedded directive starts on the next line:
    image:: symbol.png
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Embedded directive starts on the next line:
     <substitution_definition name="symbol">
@@ -55,12 +55,12 @@ Here's a series of substitution definitions:
 .. |symbol 3| image:: symbol3.png
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Here's a series of substitution definitions:
     <substitution_definition name="symbol 1">
         <image alt="symbol 1" uri="symbol1.png">
-    <substitution_definition name="SYMBOL 2">
+    <substitution_definition name="symbol 2">
         <image alt="SYMBOL 2" height="50" uri="symbol2.png" width="100">
     <substitution_definition name="symbol 3">
         <image alt="symbol 3" uri="symbol3.png">
@@ -70,32 +70,9 @@ Here's a series of substitution definitions:
    split across lines| image:: symbol.png
 """,
 """\
-<document source="test data">
+<document>
     <substitution_definition name="very long substitution text, split across lines">
         <image alt="very long substitution text, split across lines" uri="symbol.png">
-"""],
-["""\
-.. |symbol 1| image:: symbol.png
-
-    Followed by a block quote.
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Error in "image" directive:
-            no content permitted.
-        <literal_block xml:space="preserve">
-            image:: symbol.png
-            \n\
-                Followed by a block quote.
-    <system_message level="2" line="1" source="test data" type="WARNING">
-        <paragraph>
-            Substitution definition "symbol 1" empty or invalid.
-        <literal_block xml:space="preserve">
-            .. |symbol 1| image:: symbol.png
-            \n\
-                Followed by a block quote.
 """],
 ["""\
 .. |symbol 1| image:: symbol.png
@@ -104,37 +81,19 @@ Followed by a paragraph.
 
 .. |symbol 2| image:: symbol.png
 
-..
-
     Followed by a block quote.
 """,
 """\
-<document source="test data">
+<document>
     <substitution_definition name="symbol 1">
         <image alt="symbol 1" uri="symbol.png">
     <paragraph>
         Followed by a paragraph.
     <substitution_definition name="symbol 2">
         <image alt="symbol 2" uri="symbol.png">
-    <comment xml:space="preserve">
     <block_quote>
         <paragraph>
             Followed by a block quote.
-"""],
-[u"""\
-Substitutions support case differences:
-
-.. |eacute| replace:: \u00E9
-.. |Eacute| replace:: \u00C9
-""",
-u"""\
-<document source="test data">
-    <paragraph>
-        Substitutions support case differences:
-    <substitution_definition name="eacute">
-        \u00E9
-    <substitution_definition name="Eacute">
-        \u00C9
 """],
 ["""\
 Here are some duplicate substitution definitions:
@@ -143,12 +102,12 @@ Here are some duplicate substitution definitions:
 .. |symbol| image:: symbol.png
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Here are some duplicate substitution definitions:
     <substitution_definition dupname="symbol">
         <image alt="symbol" uri="symbol.png">
-    <system_message level="3" line="4" source="test data" type="ERROR">
+    <system_message level="3" type="ERROR">
         <paragraph>
             Duplicate substitution definition name: "symbol".
     <substitution_definition name="symbol">
@@ -174,57 +133,59 @@ No blank line after.
 .. | bad name | bad data
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Here are some bad cases:
     <substitution_definition name="symbol">
         <image alt="symbol" uri="symbol.png">
-    <system_message level="2" line="4" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Explicit markup ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 4.
     <paragraph>
         No blank line after.
-    <system_message level="2" line="6" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Substitution definition "empty" missing contents.
-        <literal_block xml:space="preserve">
+            Substitution definition "empty" missing contents at line 6.
+        <literal_block>
             .. |empty|
-    <system_message level="1" line="8" source="test data" type="INFO">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            No directive entry for "directive" in module "docutils.parsers.rst.languages.en".
-            Trying "directive" as canonical directive name.
-    <system_message level="3" line="8" source="test data" type="ERROR">
-        <paragraph>
-            Unknown directive type "directive".
-        <literal_block xml:space="preserve">
+            Unknown directive type "directive" at line 8.
+        <literal_block>
             directive:: symbol.png
-    <system_message level="2" line="8" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Substitution definition "unknown" empty or invalid.
-        <literal_block xml:space="preserve">
+            Substitution definition "unknown" empty or invalid at line 8.
+        <literal_block>
             .. |unknown| directive:: symbol.png
-    <system_message level="2" line="10" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Substitution definition "invalid 1" empty or invalid.
-        <literal_block xml:space="preserve">
+            Substitution definition "invalid 1" empty or invalid at line 10.
+        <literal_block>
             .. |invalid 1| there's no directive here
-    <system_message level="2" line="11" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Substitution definition "invalid 2" empty or invalid.
-        <literal_block xml:space="preserve">
+            Substitution definition "invalid 2" empty or invalid at line 11.
+        <literal_block>
             .. |invalid 2| there's no directive here
                With some block quote text, line 1.
                And some more, line 2.
-    <system_message level="2" line="15" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Substitution definition "invalid 3" empty or invalid.
-        <literal_block xml:space="preserve">
+            Unindent without blank line at line 12.
+    <block_quote>
+        <paragraph>
+            With some block quote text, line 1.
+            And some more, line 2.
+    <system_message level="2" type="WARNING">
+        <paragraph>
+            Substitution definition "invalid 3" empty or invalid at line 15.
+        <literal_block>
             .. |invalid 3| there's no directive here
-    <comment xml:space="preserve">
+    <comment>
         | bad name | bad data
 """],
 ]
-
 
 if __name__ == '__main__':
     import unittest

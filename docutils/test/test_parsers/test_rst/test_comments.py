@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -26,8 +26,8 @@ totest['comments'] = [
 Paragraph.
 """,
 """\
-<document source="test data">
-    <comment xml:space="preserve">
+<document>
+    <comment>
         A comment
     <paragraph>
         Paragraph.
@@ -39,8 +39,8 @@ Paragraph.
 Paragraph.
 """,
 """\
-<document source="test data">
-    <comment xml:space="preserve">
+<document>
+    <comment>
         A comment
         block.
     <paragraph>
@@ -53,8 +53,8 @@ Paragraph.
    explicit markup start.
 """,
 """\
-<document source="test data">
-    <comment xml:space="preserve">
+<document>
+    <comment>
         A comment consisting of multiple lines
         starting on the line after the
         explicit markup start.
@@ -66,10 +66,10 @@ Paragraph.
 Paragraph.
 """,
 """\
-<document source="test data">
-    <comment xml:space="preserve">
+<document>
+    <comment>
         A comment.
-    <comment xml:space="preserve">
+    <comment>
         Another.
     <paragraph>
         Paragraph.
@@ -81,33 +81,12 @@ no blank line
 Paragraph.
 """,
 """\
-<document source="test data">
-    <comment xml:space="preserve">
+<document>
+    <comment>
         A comment
-    <system_message level="2" line="2" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Explicit markup ends without a blank line; unexpected unindent.
-    <paragraph>
-        no blank line
-    <paragraph>
-        Paragraph.
-"""],
-["""\
-.. A comment.
-.. Another.
-no blank line
-
-Paragraph.
-""",
-"""\
-<document source="test data">
-    <comment xml:space="preserve">
-        A comment.
-    <comment xml:space="preserve">
-        Another.
-    <system_message level="2" line="3" source="test data" type="WARNING">
-        <paragraph>
-            Explicit markup ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 2.
     <paragraph>
         no blank line
     <paragraph>
@@ -119,71 +98,11 @@ Paragraph.
 Paragraph.
 """,
 """\
-<document source="test data">
-    <comment xml:space="preserve">
+<document>
+    <comment>
         A comment::
     <paragraph>
         Paragraph.
-"""],
-["""\
-..
-   comment::
-
-The extra newline before the comment text prevents
-the parser from recognizing a directive.
-""",
-"""\
-<document source="test data">
-    <comment xml:space="preserve">
-        comment::
-    <paragraph>
-        The extra newline before the comment text prevents
-        the parser from recognizing a directive.
-"""],
-["""\
-..
-   _comment: http://example.org
-
-The extra newline before the comment text prevents
-the parser from recognizing a hyperlink target.
-""",
-"""\
-<document source="test data">
-    <comment xml:space="preserve">
-        _comment: http://example.org
-    <paragraph>
-        The extra newline before the comment text prevents
-        the parser from recognizing a hyperlink target.
-"""],
-["""\
-..
-   [comment] Not a citation.
-
-The extra newline before the comment text prevents
-the parser from recognizing a citation.
-""",
-"""\
-<document source="test data">
-    <comment xml:space="preserve">
-        [comment] Not a citation.
-    <paragraph>
-        The extra newline before the comment text prevents
-        the parser from recognizing a citation.
-"""],
-["""\
-..
-   |comment| image:: bogus.png
-
-The extra newline before the comment text prevents
-the parser from recognizing a substitution definition.
-""",
-"""\
-<document source="test data">
-    <comment xml:space="preserve">
-        |comment| image:: bogus.png
-    <paragraph>
-        The extra newline before the comment text prevents
-        the parser from recognizing a substitution definition.
 """],
 ["""\
 .. Next is an empty comment, which serves to end this comment and
@@ -194,11 +113,11 @@ the parser from recognizing a substitution definition.
     A block quote.
 """,
 """\
-<document source="test data">
-    <comment xml:space="preserve">
+<document>
+    <comment>
         Next is an empty comment, which serves to end this comment and
         prevents the following block quote being swallowed up.
-    <comment xml:space="preserve">
+    <comment>
     <block_quote>
         <paragraph>
             A block quote.
@@ -213,7 +132,7 @@ term 2
   definition 2
 """,
 """\
-<document source="test data">
+<document>
     <definition_list>
         <definition_list_item>
             <term>
@@ -221,7 +140,7 @@ term 2
             <definition>
                 <paragraph>
                     definition 1
-                <comment xml:space="preserve">
+                <comment>
                     a comment
         <definition_list_item>
             <term>
@@ -240,7 +159,7 @@ term 2
   definition 2
 """,
 """\
-<document source="test data">
+<document>
     <definition_list>
         <definition_list_item>
             <term>
@@ -248,7 +167,7 @@ term 2
             <definition>
                 <paragraph>
                     definition 1
-    <comment xml:space="preserve">
+    <comment>
         a comment
     <definition_list>
         <definition_list_item>
@@ -268,14 +187,14 @@ term 2
   bullet paragraph 3
 """,
 """\
-<document source="test data">
+<document>
     <bullet_list bullet="+">
         <list_item>
             <paragraph>
                 bullet paragraph 1
             <paragraph>
                 bullet paragraph 2
-            <comment xml:space="preserve">
+            <comment>
                 comment between bullet paragraphs 2 and 3
             <paragraph>
                 bullet paragraph 3
@@ -288,12 +207,12 @@ term 2
   bullet paragraph 2
 """,
 """\
-<document source="test data">
+<document>
     <bullet_list bullet="+">
         <list_item>
             <paragraph>
                 bullet paragraph 1
-            <comment xml:space="preserve">
+            <comment>
                 comment between bullet paragraphs 1 (leader) and 2
             <paragraph>
                 bullet paragraph 2
@@ -304,12 +223,12 @@ term 2
   .. trailing comment
 """,
 """\
-<document source="test data">
+<document>
     <bullet_list bullet="+">
         <list_item>
             <paragraph>
                 bullet
-            <comment xml:space="preserve">
+            <comment>
                 trailing comment
 """],
 ]

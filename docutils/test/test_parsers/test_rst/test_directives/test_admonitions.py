@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for admonitions.py directives.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -47,7 +47,7 @@ totest['admonitions'] = [
    - Back up your data.
 """,
 """\
-<document source="test data">
+<document>
     <attention>
         <paragraph>
             Directives at large.
@@ -98,7 +98,7 @@ totest['admonitions'] = [
 .. note:: No blank lines in-between.
 """,
 """\
-<document source="test data">
+<document>
     <note>
         <paragraph>
             One-line notes.
@@ -108,73 +108,6 @@ totest['admonitions'] = [
     <note>
         <paragraph>
             No blank lines in-between.
-"""],
-["""\
-.. note::
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            The "note" admonition is empty; content required.
-        <literal_block xml:space="preserve">
-            .. note::
-"""],
-["""\
-.. admonition:: Admonition
-
-   This is a generic admonition.
-""",
-"""\
-<document source="test data">
-    <admonition class="admonition-admonition">
-        <title>
-            Admonition
-        <paragraph>
-            This is a generic admonition.
-"""],
-["""\
-.. admonition:: And, by the way...
-
-   You can make up your own admonition too.
-""",
-"""\
-<document source="test data">
-    <admonition class="admonition-and-by-the-way">
-        <title>
-            And, by the way...
-        <paragraph>
-            You can make up your own admonition too.
-"""],
-["""\
-.. admonition:: Admonition
-   :class: emergency
-
-   Test the "class" override.
-""",
-"""\
-<document source="test data">
-    <admonition class="emergency">
-        <title>
-            Admonition
-        <paragraph>
-            Test the "class" override.
-"""],
-["""\
-.. admonition::
-
-   Generic admonitions require a title.
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Error in "admonition" directive:
-            1 argument(s) required, 0 supplied.
-        <literal_block xml:space="preserve">
-            .. admonition::
-            
-               Generic admonitions require a title.
 """],
 ]
 

@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -30,7 +30,7 @@ Short options:
 -c name  option -c
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Short options:
     <option_list>
@@ -73,7 +73,7 @@ Long options:
 --h_i_j_k    option --h_i_j_k
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Long options:
     <option_list>
@@ -132,7 +132,7 @@ Old GNU-style options:
 +c name  option +c
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Old GNU-style options:
     <option_list>
@@ -175,7 +175,7 @@ VMS/DOS-style options:
 /EEE=int  option /EEE
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         VMS/DOS-style options:
     <option_list>
@@ -237,7 +237,7 @@ Mixed short, long, and VMS/DOS options:
 /F file      option /F
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Mixed short, long, and VMS/DOS options:
     <option_list>
@@ -305,7 +305,7 @@ Aliased options:
 -b file, --bbbb=file, /B file  option -b, --bbbb, /B
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Aliased options:
     <option_list>
@@ -353,7 +353,7 @@ Multiple lines in descriptions, aligned:
          line 2
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Multiple lines in descriptions, aligned:
     <option_list>
@@ -387,7 +387,7 @@ Multiple lines in descriptions, not aligned:
     line 2
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Multiple lines in descriptions, not aligned:
     <option_list>
@@ -423,7 +423,7 @@ Descriptions begin on next line:
     line 2
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Descriptions begin on next line:
     <option_list>
@@ -460,7 +460,7 @@ Multiple body elements in descriptions:
     para 2
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Multiple body elements in descriptions:
     <option_list>
@@ -492,7 +492,7 @@ Multiple body elements in descriptions:
 empty item above, no blank line
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         --option
         empty item above, no blank line
@@ -518,7 +518,7 @@ An option list using mixed delimiters in one line:
 --long1=arg1, --long2 arg2  Description
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         An option list using equals:
     <option_list>
@@ -641,7 +641,7 @@ These next ones should be simple paragraphs:
 -1 and this one too.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Some edge cases:
     <paragraph>

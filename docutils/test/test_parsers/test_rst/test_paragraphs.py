@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -24,7 +24,7 @@ totest['paragraphs'] = [
 A paragraph.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         A paragraph.
 """],
@@ -34,7 +34,7 @@ Paragraph 1.
 Paragraph 2.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Paragraph 1.
     <paragraph>
@@ -46,7 +46,7 @@ Line 2.
 Line 3.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Line 1.
         Line 2.
@@ -62,7 +62,7 @@ Line 2.
 Line 3.
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Paragraph 1, Line 1.
         Line 2.
@@ -71,16 +71,6 @@ Line 3.
         Paragraph 2, Line 1.
         Line 2.
         Line 3.
-"""],
-["""\
-A. Einstein was a really
-smart dude.
-""",
-"""\
-<document source="test data">
-    <paragraph>
-        A. Einstein was a really
-        smart dude.
 """],
 ]
 

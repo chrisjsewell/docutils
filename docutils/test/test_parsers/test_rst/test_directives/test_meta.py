@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for html.py meta directives.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -26,23 +26,9 @@ totest['meta'] = [
    :keywords: plaintext,markup language
 """,
 """\
-<document source="test data">
-    <pending>
-        .. internal attributes:
-             .transform: docutils.transforms.components.Filter
-             .details:
-               component: 'writer'
-               format: 'html'
-               nodes:
-                 <meta content="The reStructuredText plaintext markup language" name="description">
-    <pending>
-        .. internal attributes:
-             .transform: docutils.transforms.components.Filter
-             .details:
-               component: 'writer'
-               format: 'html'
-               nodes:
-                 <meta content="plaintext,markup language" name="keywords">
+<document>
+    <meta content="The reStructuredText plaintext markup language" name="description">
+    <meta content="plaintext,markup language" name="keywords">
 """],
 ["""\
 .. meta::
@@ -50,38 +36,17 @@ totest['meta'] = [
    :description lang=fr: Un histoire amusant
 """,
 """\
-<document source="test data">
-    <pending>
-        .. internal attributes:
-             .transform: docutils.transforms.components.Filter
-             .details:
-               component: 'writer'
-               format: 'html'
-               nodes:
-                 <meta content="An amusing story" lang="en" name="description">
-    <pending>
-        .. internal attributes:
-             .transform: docutils.transforms.components.Filter
-             .details:
-               component: 'writer'
-               format: 'html'
-               nodes:
-                 <meta content="Un histoire amusant" lang="fr" name="description">
+<document>
+    <meta content="An amusing story" lang="en" name="description">
+    <meta content="Un histoire amusant" lang="fr" name="description">
 """],
 ["""\
 .. meta::
    :http-equiv=Content-Type: text/html; charset=ISO-8859-1
 """,
 """\
-<document source="test data">
-    <pending>
-        .. internal attributes:
-             .transform: docutils.transforms.components.Filter
-             .details:
-               component: 'writer'
-               format: 'html'
-               nodes:
-                 <meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type">
+<document>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type">
 """],
 ["""\
 .. meta::
@@ -89,15 +54,8 @@ totest['meta'] = [
      over multiple lines
 """,
 """\
-<document source="test data">
-    <pending>
-        .. internal attributes:
-             .transform: docutils.transforms.components.Filter
-             .details:
-               component: 'writer'
-               format: 'html'
-               nodes:
-                 <meta content="content over multiple lines" name="name">
+<document>
+    <meta content="content over multiple lines" name="name">
 """],
 ["""\
 Paragraph
@@ -106,51 +64,43 @@ Paragraph
    :name: content
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Paragraph
-    <pending>
-        .. internal attributes:
-             .transform: docutils.transforms.components.Filter
-             .details:
-               component: 'writer'
-               format: 'html'
-               nodes:
-                 <meta content="content" name="name">
+    <meta content="content" name="name">
 """],
 ["""\
 .. meta::
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Empty meta directive.
-        <literal_block xml:space="preserve">
-            .. meta::
+            Empty meta directive at line 1.
 """],
 ["""\
 .. meta::
    :empty:
 """,
 """\
-<document source="test data">
-    <system_message level="1" line="2" source="test data" type="INFO">
+<document>
+    <system_message level="1" type="INFO">
         <paragraph>
             No content for meta tag "empty".
-        <literal_block xml:space="preserve">
+        <literal_block>
             :empty:
+    <meta content="" name="empty">
 """],
 ["""\
 .. meta::
    not a field list
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Invalid meta directive.
-        <literal_block xml:space="preserve">
+            Invalid meta directive at line 2.
+        <literal_block>
             .. meta::
                not a field list
 """],
@@ -158,57 +108,15 @@ Paragraph
 .. meta::
    :name: content
    not a field
-   :name: content
 """,
 """\
-<document source="test data">
-    <pending>
-        .. internal attributes:
-             .transform: docutils.transforms.components.Filter
-             .details:
-               component: 'writer'
-               format: 'html'
-               nodes:
-                 <meta content="content" name="name">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <meta content="content" name="name">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Invalid meta directive.
-        <literal_block xml:space="preserve">
+            Invalid meta directive at line 3.
+        <literal_block>
             .. meta::
-               :name: content
-               not a field
-               :name: content
-"""],
-["""\
-.. meta::
-   :name: content
-   :name: content
-   not a field
-""",
-"""\
-<document source="test data">
-    <pending>
-        .. internal attributes:
-             .transform: docutils.transforms.components.Filter
-             .details:
-               component: 'writer'
-               format: 'html'
-               nodes:
-                 <meta content="content" name="name">
-    <pending>
-        .. internal attributes:
-             .transform: docutils.transforms.components.Filter
-             .details:
-               component: 'writer'
-               format: 'html'
-               nodes:
-                 <meta content="content" name="name">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Invalid meta directive.
-        <literal_block xml:space="preserve">
-            .. meta::
-               :name: content
                :name: content
                not a field
 """],
@@ -217,12 +125,13 @@ Paragraph
    :name notattval: content
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="2" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Error parsing meta tag attribute "notattval": missing "=".
-        <literal_block xml:space="preserve">
+            Error parsing meta tag attribute "notattval": missing "="
+        <literal_block>
             :name notattval: content
+    <meta content="content" name="name">
 """],
 ]
 

@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -24,7 +24,7 @@ totest['citations'] = [
 .. [citation] This is a citation.
 """,
 """\
-<document source="test data">
+<document>
     <citation id="citation" name="citation">
         <label>
             citation
@@ -35,7 +35,7 @@ totest['citations'] = [
 .. [citation1234] This is a citation with year.
 """,
 """\
-<document source="test data">
+<document>
     <citation id="citation1234" name="citation1234">
         <label>
             citation1234
@@ -47,7 +47,7 @@ totest['citations'] = [
    on multiple lines.
 """,
 """\
-<document source="test data">
+<document>
     <citation id="citation" name="citation">
         <label>
             citation
@@ -63,7 +63,7 @@ totest['citations'] = [
   on multiple lines with less space.
 """,
 """\
-<document source="test data">
+<document>
     <citation id="citation1" name="citation1">
         <label>
             citation1
@@ -83,7 +83,7 @@ totest['citations'] = [
    whose block starts on line 2.
 """,
 """\
-<document source="test data">
+<document>
     <citation id="citation" name="citation">
         <label>
             citation
@@ -97,7 +97,7 @@ totest['citations'] = [
 That was an empty citation.
 """,
 """\
-<document source="test data">
+<document>
     <citation id="citation" name="citation">
         <label>
             citation
@@ -109,13 +109,13 @@ That was an empty citation.
 No blank line.
 """,
 """\
-<document source="test data">
+<document>
     <citation id="citation" name="citation">
         <label>
             citation
-    <system_message level="2" line="2" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Explicit markup ends without a blank line; unexpected unindent.
+            Unindent without blank line at line 2.
     <paragraph>
         No blank line.
 """],
@@ -125,10 +125,10 @@ No blank line.
 .. [*citationlabelwithmarkup*] this isn't a citation
 """,
 """\
-<document source="test data">
-    <comment xml:space="preserve">
+<document>
+    <comment>
         [citation label with spaces] this isn't a citation
-    <comment xml:space="preserve">
+    <comment>
         [*citationlabelwithmarkup*] this isn't a citation
 """],
 ]

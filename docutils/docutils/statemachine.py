@@ -1,10 +1,13 @@
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
+#! /usr/bin/env python
 
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Version: 1.3
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 A finite state machine specialized for regular-expression-based text filters,
 this module defines the following classes:
 
@@ -14,12 +17,9 @@ this module defines the following classes:
 - `StateWS`, a state superclass for use with `StateMachineWS`
 - `SearchStateMachine`, uses `re.search()` instead of `re.match()`
 - `SearchStateMachineWS`, uses `re.search()` instead of `re.match()`
-- `ViewList`, extends standard Python lists.
-- `StringList`, string-specific ViewList.
 
 Exception classes:
 
-- `StateMachineError`
 - `UnknownStateError`
 - `DuplicateStateError`
 - `UnknownTransitionError`
@@ -28,12 +28,11 @@ Exception classes:
 - `TransitionMethodNotFound`
 - `UnexpectedIndentationError`
 - `TransitionCorrection`: Raised to switch to another transition.
-- `StateCorrection`: Raised to switch to another state & transition.
 
 Functions:
 
 - `string2lines()`: split a multi-line string into a list of one-line strings
-
+- `extractindented()`: return indented lines with minimum indentation removed
 
 How To Use This Module
 ======================
@@ -54,18 +53,18 @@ How To Use This Module
           patterns = {'atransition': r'pattern', ...}
 
    b) Include a list of initial transitions to be set up automatically, in
-      `State.initial_transitions`::
+      `State.initialtransitions`::
 
-          initial_transitions = ['atransition', ...]
+          initialtransitions = ['atransition', ...]
 
    c) Define a method for each transition, with the same name as the
       transition pattern::
 
-          def atransition(self, match, context, next_state):
+          def atransition(self, match, context, nextstate):
               # do something
               result = [...]  # a list
-              return context, next_state, result
-              # context, next_state may be altered
+              return context, nextstate, result
+              # context, nextstate may be altered
 
       Transition methods may raise an `EOFError` to cut processing short.
 
@@ -73,44 +72,40 @@ How To Use This Module
       transition methods, which handle the beginning- and end-of-file.
 
    e) In order to handle nested processing, you may wish to override the
-      attributes `State.nested_sm` and/or `State.nested_sm_kwargs`.
+      attributes `State.nestedSM` and/or `State.nestedSMkwargs`.
 
       If you are using `StateWS` as a base class, in order to handle nested
       indented blocks, you may wish to:
 
-      - override the attributes `StateWS.indent_sm`,
-        `StateWS.indent_sm_kwargs`, `StateWS.known_indent_sm`, and/or
-        `StateWS.known_indent_sm_kwargs`;
+      - override the attributes `StateWS.indentSM`, `StateWS.indentSMkwargs`,
+        `StateWS.knownindentSM`, and/or `StateWS.knownindentSMkwargs`;
       - override the `StateWS.blank()` method; and/or
-      - override or extend the `StateWS.indent()`, `StateWS.known_indent()`,
-        and/or `StateWS.firstknown_indent()` methods.
+      - override or extend the `StateWS.indent()`, `StateWS.knownindent()`,
+        and/or `StateWS.firstknownindent()` methods.
 
 3. Create a state machine object::
 
-       sm = StateMachine(state_classes=[MyState, ...],
-                         initial_state='MyState')
+       sm = StateMachine(stateclasses=[MyState, ...], initialstate='MyState')
 
 4. Obtain the input text, which needs to be converted into a tab-free list of
    one-line strings. For example, to read text from a file called
    'inputfile'::
 
-       input_string = open('inputfile').read()
-       input_lines = statemachine.string2lines(input_string)
+       inputstring = open('inputfile').read()
+       inputlines = statemachine.string2lines(inputstring)
 
-5. Run the state machine on the input text and collect the results, a list::
+6. Run the state machine on the input text and collect the results, a list::
 
-       results = sm.run(input_lines)
+       results = sm.run(inputlines)
 
-6. Remove any lingering circular references::
+7. Remove any lingering circular references::
 
        sm.unlink()
 """
 
 __docformat__ = 'restructuredtext'
 
-import sys
-import re
-from types import SliceType as _SliceType
+import sys, re, string
 
 
 class StateMachine:
@@ -127,48 +122,42 @@ class StateMachine:
     results of processing in a list.
     """
 
-    def __init__(self, state_classes, initial_state, debug=0):
+    def __init__(self, stateclasses, initialstate, debug=0):
         """
         Initialize a `StateMachine` object; add state objects.
 
         Parameters:
 
-        - `state_classes`: a list of `State` (sub)classes.
-        - `initial_state`: a string, the class name of the initial state.
+        - `stateclasses`: a list of `State` (sub)classes.
+        - `initialstate`: a string, the class name of the initial state.
         - `debug`: a boolean; produce verbose output if true (nonzero).
         """
 
-        self.input_lines = None
-        """`StringList` of input lines (without newlines).
-        Filled by `self.run()`."""
+        self.inputlines = None
+        """List of strings (without newlines). Filled by `self.run()`."""
 
-        self.input_offset = 0
-        """Offset of `self.input_lines` from the beginning of the file."""
+        self.inputoffset = 0
+        """Offset of `self.inputlines` from the beginning of the file."""
 
         self.line = None
         """Current input line."""
 
-        self.line_offset = -1
-        """Current input line offset from beginning of `self.input_lines`."""
+        self.lineoffset = None
+        """Current input line offset from beginning of `self.inputlines`."""
 
         self.debug = debug
         """Debugging mode on/off."""
 
-        self.initial_state = initial_state
+        self.initialstate = initialstate
         """The name of the initial state (key to `self.states`)."""
 
-        self.current_state = initial_state
+        self.currentstate = initialstate
         """The name of the current state (key to `self.states`)."""
 
         self.states = {}
         """Mapping of {state_name: State_object}."""
 
-        self.add_states(state_classes)
-
-        self.observers = []
-        """List of bound methods or functions to call whenever the current
-        line changes.  Observers are called with one argument, ``self``.
-        Cleared at the end of `run()`."""
+        self.addstates(stateclasses)
 
     def unlink(self):
         """Remove circular references to objects no longer required."""
@@ -176,12 +165,11 @@ class StateMachine:
             state.unlink()
         self.states = None
 
-    def run(self, input_lines, input_offset=0, context=None,
-            input_source=None):
+    def run(self, inputlines, inputoffset=0):
         """
-        Run the state machine on `input_lines`. Return results (a list).
+        Run the state machine on `inputlines`. Return results (a list).
 
-        Reset `self.line_offset` and `self.current_state`. Run the
+        Reset `self.lineoffset` and `self.currentstate`. Run the
         beginning-of-file transition. Input one line at a time and check for a
         matching transition. If a match is found, call the transition method
         and possibly change the state. Store the context returned by the
@@ -192,27 +180,20 @@ class StateMachine:
 
         Parameters:
 
-        - `input_lines`: a list of strings without newlines, or `StringList`.
-        - `input_offset`: the line offset of `input_lines` from the beginning
-          of the file.
-        - `context`: application-specific storage.
-        - `input_source`: name or path of source of `input_lines`.
+        - `inputlines`: a list of strings without newlines.
+        - `inputoffset`: the line offset of `inputlines` from the beginning of
+          the file.
         """
-        self.runtime_init()
-        if isinstance(input_lines, StringList):
-            self.input_lines = input_lines
-        else:
-            self.input_lines = StringList(input_lines, source=input_source)
-        self.input_offset = input_offset
-        self.line_offset = -1
-        self.current_state = self.initial_state
+        self.inputlines = inputlines
+        self.inputoffset = inputoffset
+        self.lineoffset = -1
+        self.currentstate = self.initialstate
         if self.debug:
-            print >>sys.stderr, (
-                '\nStateMachine.run: input_lines (line_offset=%s):\n| %s'
-                % (self.line_offset, '\n| '.join(self.input_lines)))
-        transitions = None
+            print >>sys.stderr, ('\nStateMachine.run: inputlines:\n| %s' %
+                                 '\n| '.join(self.inputlines))
+        context = None
         results = []
-        state = self.get_state()
+        state = self.getstate()
         try:
             if self.debug:
                 print >>sys.stderr, ('\nStateMachine.run: bof transition')
@@ -220,207 +201,181 @@ class StateMachine:
             results.extend(result)
             while 1:
                 try:
-                    try:
-                        self.next_line()
-                        if self.debug:
-                            source, offset = self.input_lines.info(
-                                self.line_offset)
-                            print >>sys.stderr, (
-                                '\nStateMachine.run: line (source=%r, '
-                                'offset=%r):\n| %s'
-                                % (source, offset, self.line))
-                        context, next_state, result = self.check_line(
-                            context, state, transitions)
-                    except EOFError:
-                        if self.debug:
-                            print >>sys.stderr, (
-                                '\nStateMachine.run: %s.eof transition'
-                                % state.__class__.__name__)
-                        result = state.eof(context)
-                        results.extend(result)
-                        break
-                    else:
-                        results.extend(result)
-                except TransitionCorrection, exception:
-                    self.previous_line() # back up for another try
-                    transitions = (exception.args[0],)
+                    self.nextline()
                     if self.debug:
-                        print >>sys.stderr, (
-                              '\nStateMachine.run: TransitionCorrection to '
-                              'state "%s", transition %s.'
-                              % (state.__class__.__name__, transitions[0]))
-                    continue
-                except StateCorrection, exception:
-                    self.previous_line() # back up for another try
-                    next_state = exception.args[0]
-                    if len(exception.args) == 1:
-                        transitions = None
-                    else:
-                        transitions = (exception.args[1],)
-                    if self.debug:
-                        print >>sys.stderr, (
-                              '\nStateMachine.run: StateCorrection to state '
-                              '"%s", transition %s.'
-                              % (next_state, transitions[0]))
-                else:
-                    transitions = None
-                state = self.get_state(next_state)
-        except:
+                        print >>sys.stderr, ('\nStateMachine.run: line:\n| %s'
+                                             % self.line)
+                except IndexError:
+                    break
+                try:
+                    context, nextstate, result = self.checkline(context, state)
+                except EOFError:
+                    break
+                state = self.getstate(nextstate)
+                results.extend(result)
             if self.debug:
-                self.error()
+                print >>sys.stderr, ('\nStateMachine.run: eof transition')
+            result = state.eof(context)
+            results.extend(result)
+        except:
+            self.error()
             raise
-        self.observers = []
         return results
 
-    def get_state(self, next_state=None):
+    def getstate(self, nextstate=None):
         """
-        Return current state object; set it first if `next_state` given.
+        Return current state object; set it first if `nextstate` given.
 
-        Parameter `next_state`: a string, the name of the next state.
+        Parameter `nextstate`: a string, the name of the next state.
 
-        Exception: `UnknownStateError` raised if `next_state` unknown.
+        Exception: `UnknownStateError` raised if `nextstate` unknown.
         """
-        if next_state:
-            if self.debug and next_state != self.current_state:
+        if nextstate:
+            if self.debug and nextstate != self.currentstate:
                 print >>sys.stderr, \
-                      ('\nStateMachine.get_state: Changing state from '
+                      ('\nStateMachine.getstate: Changing state from '
                        '"%s" to "%s" (input line %s).'
-                       % (self.current_state, next_state,
-                          self.abs_line_number()))
-            self.current_state = next_state
+                       % (self.currentstate, nextstate, self.abslineno()))
+            self.currentstate = nextstate
         try:
-            return self.states[self.current_state]
+            return self.states[self.currentstate]
         except KeyError:
-            raise UnknownStateError(self.current_state)
+            raise UnknownStateError(self.currentstate)
 
-    def next_line(self, n=1):
+    def nextline(self, n=1):
         """Load `self.line` with the `n`'th next line and return it."""
-        try:
-            try:
-                self.line_offset += n
-                self.line = self.input_lines[self.line_offset]
-            except IndexError:
-                self.line = None
-                raise EOFError
-            return self.line
-        finally:
-            self.notify_observers()
+        self.lineoffset += n
+        self.line = self.inputlines[self.lineoffset]
+        return self.line
 
-    def is_next_line_blank(self):
+    def nextlineblank(self):
         """Return 1 if the next line is blank or non-existant."""
         try:
-            return not self.input_lines[self.line_offset + 1].strip()
+            return not self.inputlines[self.lineoffset + 1].strip()
         except IndexError:
             return 1
 
-    def at_eof(self):
+    def ateof(self):
         """Return 1 if the input is at or past end-of-file."""
-        return self.line_offset >= len(self.input_lines) - 1
+        return self.lineoffset >= len(self.inputlines) - 1
 
-    def at_bof(self):
+    def atbof(self):
         """Return 1 if the input is at or before beginning-of-file."""
-        return self.line_offset <= 0
+        return self.lineoffset <= 0
 
-    def previous_line(self, n=1):
+    def previousline(self, n=1):
         """Load `self.line` with the `n`'th previous line and return it."""
-        self.line_offset -= n
-        if self.line_offset < 0:
-            self.line = None
-        else:
-            self.line = self.input_lines[self.line_offset]
-        self.notify_observers()
+        self.lineoffset -= n
+        self.line = self.inputlines[self.lineoffset]
         return self.line
 
-    def goto_line(self, line_offset):
-        """Jump to absolute line offset `line_offset`, load and return it."""
-        try:
-            try:
-                self.line_offset = line_offset - self.input_offset
-                self.line = self.input_lines[self.line_offset]
-            except IndexError:
-                self.line = None
-                raise EOFError
-            return self.line
-        finally:
-            self.notify_observers()
+    def gotoline(self, lineoffset):
+        """Jump to absolute line offset `lineoffset`, load and return it."""
+        self.lineoffset = lineoffset - self.inputoffset
+        self.line = self.inputlines[self.lineoffset]
+        return self.line
 
-    def abs_line_offset(self):
+    def abslineoffset(self):
         """Return line offset of current line, from beginning of file."""
-        return self.line_offset + self.input_offset
+        return self.lineoffset + self.inputoffset
 
-    def abs_line_number(self):
+    def abslineno(self):
         """Return line number of current line (counting from 1)."""
-        return self.line_offset + self.input_offset + 1
+        return self.lineoffset + self.inputoffset + 1
 
-    def insert_input(self, input_lines, source):
-        self.input_lines.insert(self.line_offset + 1, '',
-                                source='internal padding')
-        self.input_lines.insert(self.line_offset + 1, '',
-                                source='internal padding')
-        self.input_lines.insert(self.line_offset + 2,
-                                StringList(input_lines, source))
+    def gettextblock(self):
+        """Return a contiguous block of text."""
+        block = []
+        for line in self.inputlines[self.lineoffset:]:
+            if not line.strip():
+                break
+            block.append(line)
+        self.nextline(len(block) - 1)  # advance to last line of block
+        return block
 
-    def get_text_block(self, flush_left=0):
+    def getunindented(self):
         """
-        Return a contiguous block of text.
+        Return a contiguous, flush-left block of text.
 
-        If `flush_left` is true, raise `UnexpectedIndentationError` if an
-        indented line is encountered before the text block ends (with a blank
-        line).
+        Raise `UnexpectedIndentationError` if an indented line is encountered
+        before the text block ends (with a blank line).
         """
-        try:
-            block = self.input_lines.get_text_block(self.line_offset,
-                                                    flush_left)
-            self.next_line(len(block) - 1)
-            return block
-        except UnexpectedIndentationError, error:
-            block, source, lineno = error
-            self.next_line(len(block) - 1) # advance to last line of block
-            raise
+        block = [self.line]
+        for line in self.inputlines[self.lineoffset + 1:]:
+            if not line.strip():
+                break
+            if line[0] == ' ':
+                self.nextline(len(block) - 1) # advance to last line of block
+                raise UnexpectedIndentationError(block, self.abslineno() + 1)
+            block.append(line)
+        self.nextline(len(block) - 1)  # advance to last line of block
+        return block
 
-    def check_line(self, context, state, transitions=None):
+    def checkline(self, context, state):
         """
-        Examine one line of input for a transition match & execute its method.
+        Examine one line of input for a transition match.
 
         Parameters:
 
         - `context`: application-dependent storage.
         - `state`: a `State` object, the current state.
-        - `transitions`: an optional ordered list of transition names to try,
-          instead of ``state.transition_order``.
 
         Return the values returned by the transition method:
 
         - context: possibly modified from the parameter `context`;
-        - next state name (`State` subclass name);
+        - next state name (`State` subclass name), or ``None`` if no match;
         - the result output of the transition, a list.
-
-        When there is no match, ``state.no_match()`` is called and its return
-        value is returned.
         """
-        if transitions is None:
-            transitions =  state.transition_order
-        state_correction = None
+        if self.debug:
+            print >>sys.stdout, ('\nStateMachine.checkline: '
+                                 'context "%s", state "%s"' %
+                                 (context, state.__class__.__name__))
+        context, nextstate, result = self.matchtransition(context, state)
+        return context, nextstate, result
+
+    def matchtransition(self, context, state):
+        """
+        Try to match the current line to a transition & execute its method.
+
+        Parameters:
+
+        - `context`: application-dependent storage.
+        - `state`: a `State` object, the current state.
+
+        Return the values returned by the transition method:
+
+        - context: possibly modified from the parameter `context`, unchanged
+          if no match;
+        - next state name (`State` subclass name), or ``None`` if no match;
+        - the result output of the transition, a list (empty if no match).
+        """
         if self.debug:
             print >>sys.stderr, (
-                  '\nStateMachine.check_line: state="%s", transitions=%r.'
-                  % (state.__class__.__name__, transitions))
-        for name in transitions:
-            pattern, method, next_state = state.transitions[name]
-            match = self.match(pattern)
-            if match:
+                  '\nStateMachine.matchtransition: state="%s", transitions=%r.'
+                  % (state.__class__.__name__, state.transitionorder))
+        for name in state.transitionorder:
+            while 1:
+                pattern, method, nextstate = state.transitions[name]
                 if self.debug:
                     print >>sys.stderr, (
-                          '\nStateMachine.check_line: Matched transition '
+                          '\nStateMachine.matchtransition: Trying transition '
                           '"%s" in state "%s".'
                           % (name, state.__class__.__name__))
-                return method(match, context, next_state)
+                match = self.match(pattern)
+                if match:
+                    if self.debug:
+                        print >>sys.stderr, (
+                              '\nStateMachine.matchtransition: Matched '
+                              'transition "%s" in state "%s".'
+                              % (name, state.__class__.__name__))
+                    try:
+                        return method(match, context, nextstate)
+                    except TransitionCorrection, detail:
+                        name = str(detail)
+                        continue        # try again with new transition name
+                break
         else:
-            if self.debug:
-                print >>sys.stderr, (
-                      '\nStateMachine.check_line: No match in state "%s".'
-                      % state.__class__.__name__)
-            return state.no_match(context, transitions)
+            return context, None, []    # no match
 
     def match(self, pattern):
         """
@@ -430,57 +385,31 @@ class StateMachine:
         """
         return pattern.match(self.line)
 
-    def add_state(self, state_class):
+    def addstate(self, stateclass):
         """
-        Initialize & add a `state_class` (`State` subclass) object.
+        Initialize & add a `stateclass` (`State` subclass) object.
 
-        Exception: `DuplicateStateError` raised if `state_class` was already
-        added.
+        Exception: `DuplicateStateError` raised if `stateclass` already added.
         """
-        statename = state_class.__name__
+        statename = stateclass.__name__
         if self.states.has_key(statename):
             raise DuplicateStateError(statename)
-        self.states[statename] = state_class(self, self.debug)
+        self.states[statename] = stateclass(self, self.debug)
 
-    def add_states(self, state_classes):
+    def addstates(self, stateclasses):
         """
-        Add `state_classes` (a list of `State` subclasses).
+        Add `stateclasses` (a list of `State` subclasses).
         """
-        for state_class in state_classes:
-            self.add_state(state_class)
-
-    def runtime_init(self):
-        """
-        Initialize `self.states`.
-        """
-        for state in self.states.values():
-            state.runtime_init()
+        for stateclass in stateclasses:
+            self.addstate(stateclass)
 
     def error(self):
         """Report error details."""
-        type, value, module, line, function = _exception_data()
+        type, value, module, line, function = _exceptiondata()
         print >>sys.stderr, '%s: %s' % (type, value)
-        print >>sys.stderr, 'input line %s' % (self.abs_line_number())
+        print >>sys.stderr, 'input line %s' % (self.abslineno())
         print >>sys.stderr, ('module %s, line %s, function %s'
                              % (module, line, function))
-
-    def attach_observer(self, observer):
-        """
-        The `observer` parameter is a function or bound method which takes two
-        arguments, the source and offset of the current line.
-        """
-        self.observers.append(observer)
-
-    def detach_observer(self, observer):
-        self.observers.remove(observer)
-
-    def notify_observers(self):
-        for observer in self.observers:
-            try:
-                info = self.input_lines.info(self.line_offset)
-            except IndexError:
-                info = (None, None)
-            observer(*info)
 
 
 class State:
@@ -519,48 +448,47 @@ class State:
     final processing result.
 
     Typical applications need only subclass `State` (or a subclass), set the
-    `patterns` and `initial_transitions` class attributes, and provide
+    `patterns` and `initialtransitions` class attributes, and provide
     corresponding transition methods. The default object initialization will
     take care of constructing the list of transitions.
     """
 
     patterns = None
     """
-    {Name: pattern} mapping, used by `make_transition()`. Each pattern may
+    {Name: pattern} mapping, used by `maketransition()`. Each pattern may
     be a string or a compiled `re` pattern. Override in subclasses.
     """
 
-    initial_transitions = None
+    initialtransitions = None
     """
     A list of transitions to initialize when a `State` is instantiated.
     Each entry is either a transition name string, or a (transition name, next
-    state name) pair. See `make_transitions()`. Override in subclasses.
+    state name) pair. See `maketransitions()`. Override in subclasses.
     """
 
-    nested_sm = None
+    nestedSM = None
     """
     The `StateMachine` class for handling nested processing.
 
-    If left as ``None``, `nested_sm` defaults to the class of the state's
+    If left as ``None``, `nestedSM` defaults to the class of the state's
     controlling state machine. Override it in subclasses to avoid the default.
     """
 
-    nested_sm_kwargs = None
+    nestedSMkwargs = None
     """
-    Keyword arguments dictionary, passed to the `nested_sm` constructor.
+    Keyword arguments dictionary, passed to the `nestedSM` constructor.
 
     Two keys must have entries in the dictionary:
 
-    - Key 'state_classes' must be set to a list of `State` classes.
-    - Key 'initial_state' must be set to the name of the initial state class.
+    - Key 'stateclasses' must be set to a list of `State` classes.
+    - Key 'initialstate' must be set to the name of the initial state class.
 
-    If `nested_sm_kwargs` is left as ``None``, 'state_classes' defaults to the
-    class of the current state, and 'initial_state' defaults to the name of
-    the class of the current state. Override in subclasses to avoid the
-    defaults.
+    If `nestedSMkwargs` is left as ``None``, 'stateclasses' defaults to the
+    class of the current state, and 'initialstate' defaults to the name of the
+    class of the current state. Override in subclasses to avoid the defaults.
     """
 
-    def __init__(self, state_machine, debug=0):
+    def __init__(self, statemachine, debug=0):
         """
         Initialize a `State` object; make & add initial transitions.
 
@@ -570,7 +498,7 @@ class State:
         - `debug`: a boolean; produce verbose output if true (nonzero).
         """
 
-        self.transition_order = []
+        self.transitionorder = []
         """A list of transition names in search order."""
 
         self.transitions = {}
@@ -582,39 +510,27 @@ class State:
         or other classes.
         """
 
-        self.add_initial_transitions()
+        if self.initialtransitions:
+            names, transitions = self.maketransitions(self.initialtransitions)
+            self.addtransitions(names, transitions)
 
-        self.state_machine = state_machine
+        self.statemachine = statemachine
         """A reference to the controlling `StateMachine` object."""
 
         self.debug = debug
         """Debugging mode on/off."""
 
-        if self.nested_sm is None:
-            self.nested_sm = self.state_machine.__class__
-        if self.nested_sm_kwargs is None:
-            self.nested_sm_kwargs = {'state_classes': [self.__class__],
-                                     'initial_state': self.__class__.__name__}
-
-    def runtime_init(self):
-        """
-        Initialize this `State` before running the state machine; called from
-        `self.state_machine.run()`.
-        """
-        pass
+        if self.nestedSM is None:
+            self.nestedSM = self.statemachine.__class__
+        if self.nestedSMkwargs is None:
+            self.nestedSMkwargs = {'stateclasses': [self.__class__],
+                                   'initialstate': self.__class__.__name__}
 
     def unlink(self):
         """Remove circular references to objects no longer required."""
-        self.state_machine = None
+        self.statemachine = None
 
-    def add_initial_transitions(self):
-        """Make and add transitions listed in `self.initial_transitions`."""
-        if self.initial_transitions:
-            names, transitions = self.make_transitions(
-                  self.initial_transitions)
-            self.add_transitions(names, transitions)
-
-    def add_transitions(self, names, transitions):
+    def addtransitions(self, names, transitions):
         """
         Add a list of transitions to the start of the transition list.
 
@@ -630,10 +546,10 @@ class State:
                 raise DuplicateTransitionError(name)
             if not transitions.has_key(name):
                 raise UnknownTransitionError(name)
-        self.transition_order[:0] = names
+        self.transitionorder[:0] = names
         self.transitions.update(transitions)
 
-    def add_transition(self, name, transition):
+    def addtransition(self, name, transition):
         """
         Add a transition to the start of the transition list.
 
@@ -643,10 +559,10 @@ class State:
         """
         if self.transitions.has_key(name):
             raise DuplicateTransitionError(name)
-        self.transition_order[:0] = [name]
+        self.transitionorder[:0] = [name]
         self.transitions[name] = transition
 
-    def remove_transition(self, name):
+    def removetransition(self, name):
         """
         Remove a transition by `name`.
 
@@ -654,11 +570,11 @@ class State:
         """
         try:
             del self.transitions[name]
-            self.transition_order.remove(name)
+            self.transitionorder.remove(name)
         except:
             raise UnknownTransitionError(name)
 
-    def make_transition(self, name, next_state=None):
+    def maketransition(self, name, nextstate=None):
         """
         Make & return a transition tuple based on `name`.
 
@@ -669,14 +585,14 @@ class State:
         - `name`: a string, the name of the transition pattern & method. This
           `State` object must have a method called '`name`', and a dictionary
           `self.patterns` containing a key '`name`'.
-        - `next_state`: a string, the name of the next `State` object for this
+        - `nextstate`: a string, the name of the next `State` object for this
           transition. A value of ``None`` (or absent) implies no state change
           (i.e., continue with the same state).
 
         Exceptions: `TransitionPatternNotFound`, `TransitionMethodNotFound`.
         """
-        if next_state is None:
-            next_state = self.__class__.__name__
+        if nextstate is None:
+            nextstate = self.__class__.__name__
         try:
             pattern = self.patterns[name]
             if not hasattr(pattern, 'match'):
@@ -689,41 +605,27 @@ class State:
         except AttributeError:
             raise TransitionMethodNotFound(
                   '%s.%s' % (self.__class__.__name__, name))
-        return (pattern, method, next_state)
+        return (pattern, method, nextstate)
 
-    def make_transitions(self, name_list):
+    def maketransitions(self, namelist):
         """
         Return a list of transition names and a transition mapping.
 
-        Parameter `name_list`: a list, where each entry is either a transition
-        name string, or a 1- or 2-tuple (transition name, optional next state
-        name).
+        Parameter `namelist`: a list, where each entry is either a
+        transition name string, or a 1- or 2-tuple (transition name, optional
+        next state name).
         """
         stringtype = type('')
         names = []
         transitions = {}
-        for namestate in name_list:
+        for namestate in namelist:
             if type(namestate) is stringtype:
-                transitions[namestate] = self.make_transition(namestate)
+                transitions[namestate] = self.maketransition(namestate)
                 names.append(namestate)
             else:
-                transitions[namestate[0]] = self.make_transition(*namestate)
+                transitions[namestate[0]] = self.maketransition(*namestate)
                 names.append(namestate[0])
         return names, transitions
-
-    def no_match(self, context, transitions):
-        """
-        Called when there is no match from `StateMachine.check_line()`.
-
-        Return the same values returned by transition methods:
-
-        - context: unchanged;
-        - next state name: ``None``;
-        - empty result list.
-
-        Override in subclasses to catch this event.
-        """
-        return context, None, []
 
     def bof(self, context):
         """
@@ -745,14 +647,14 @@ class State:
         """
         return []
 
-    def nop(self, match, context, next_state):
+    def nop(self, match, context, nextstate):
         """
         A "do nothing" transition method.
 
-        Return unchanged `context` & `next_state`, empty result. Useful for
+        Return unchanged `context` & `nextstate`, empty result. Useful for
         simple state changes (actionless transitions).
         """
-        return context, next_state, []
+        return context, nextstate, []
 
 
 class StateMachineWS(StateMachine):
@@ -760,25 +662,82 @@ class StateMachineWS(StateMachine):
     """
     `StateMachine` subclass specialized for whitespace recognition.
 
-    There are three methods provided for extracting indented text blocks:
-    
-    - `get_indented()`: use when the indent is unknown.
-    - `get_known_indented()`: use when the indent is known for all lines.
-    - `get_first_known_indented()`: use when only the first line's indent is
+    The transitions 'blank' (for blank lines) and 'indent' (for indented text
+    blocks) are defined implicitly, and are checked before any other
+    transitions. The companion `StateWS` class defines default transition
+    methods. There are three methods provided for extracting indented text
+    blocks:
+
+    - `getindented()`: use when the indent is unknown.
+    - `getknownindented()`: use when the indent is known for all lines.
+    - `getfirstknownindented()`: use when only the first line's indent is
       known.
     """
 
-    def get_indented(self, until_blank=0, strip_indent=1):
+    spaces = re.compile(' *')
+    """Indentation recognition pattern."""
+
+    def checkline(self, context, state):
         """
-        Return a block of indented lines of text, and info.
+        Examine one line of input for whitespace first, then transitions.
+
+        Extends `StateMachine.checkline()`.
+        """
+        if self.debug:
+            print >>sys.stdout, ('\nStateMachineWS.checkline: '
+                                 'context "%s", state "%s"' %
+                                 (context, state.__class__.__name__))
+        context, nextstate, result = self.checkwhitespace(context, state)
+        if nextstate == '':             # no whitespace match
+            return StateMachine.checkline(self, context, state)
+        else:
+            return context, nextstate, result
+
+    def checkwhitespace(self, context, state):
+        """
+        Check for a blank line or increased indent. Call the state's
+        transition method if a match is found.
+
+        Parameters:
+
+        - `context`: application-dependent storage.
+        - `state`: a `State` object, the current state.
+
+        Return the values returned by the transition method:
+
+        - context, possibly modified from the parameter `context`;
+        - next state name (`State` subclass name), or '' (empty string) if no
+          match;
+        - the result output of the transition, a list (empty if no match).
+        """
+        if self.debug:
+            print >>sys.stdout, ('\nStateMachineWS.checkwhitespace: '
+                                 'context "%s", state "%s"' %
+                                 (context, state.__class__.__name__))
+        match = self.spaces.match(self.line)
+        indent = match.end()
+        if indent == len(self.line):
+            if self.debug:
+                print >>sys.stdout, ('\nStateMachineWS.checkwhitespace: '
+                                     'implicit transition "blank" matched')
+            return state.blank(match, context, self.currentstate)
+        elif indent:
+            if self.debug:
+                print >>sys.stdout, ('\nStateMachineWS.checkwhitespace: '
+                                     'implicit transition "indent" matched')
+            return state.indent(match, context, self.currentstate)
+        else:
+            return context, '', []      # neither blank line nor indented
+
+    def getindented(self, uptoblank=0, stripindent=1):
+        """
+        Return a indented lines of text and info.
 
         Extract an indented block where the indent is unknown for all lines.
 
         :Parameters:
-            - `until_blank`: Stop collecting at the first blank line if true
-              (1).
-            - `strip_indent`: Strip common leading indent if true (1,
-              default).
+            - `uptoblank`: Stop collecting at the first blank line if true (1).
+            - `stripindent`: Strip common leading indent if true (1, default).
 
         :Return:
             - the indented block (a list of lines of text),
@@ -786,17 +745,17 @@ class StateMachineWS(StateMachine):
             - its first line offset from BOF, and
             - whether or not it finished with a blank line.
         """
-        offset = self.abs_line_offset()
-        indented, indent, blank_finish = self.input_lines.get_indented(
-              self.line_offset, until_blank, strip_indent)
+        offset = self.abslineoffset()
+        indented, indent, blankfinish = extractindented(
+              self.inputlines[self.lineoffset:], uptoblank, stripindent)
         if indented:
-            self.next_line(len(indented) - 1) # advance to last indented line
+            self.nextline(len(indented) - 1) # advance to last indented line
         while indented and not indented[0].strip():
-            indented.trim_start()
+            indented.pop(0)
             offset += 1
-        return indented, indent, offset, blank_finish
+        return indented, indent, offset, blankfinish
 
-    def get_known_indented(self, indent, until_blank=0, strip_indent=1):
+    def getknownindented(self, indent, uptoblank=0, stripindent=1):
         """
         Return an indented block and info.
 
@@ -807,9 +766,8 @@ class StateMachineWS(StateMachine):
 
         :Parameters:
             - `indent`: The number of indent columns/characters.
-            - `until_blank`: Stop collecting at the first blank line if true
-              (1).
-            - `strip_indent`: Strip `indent` characters of indentation if true
+            - `uptoblank`: Stop collecting at the first blank line if true (1).
+            - `stripindent`: Strip `indent` characters of indentation if true
               (1, default).
 
         :Return:
@@ -817,18 +775,29 @@ class StateMachineWS(StateMachine):
             - its first line offset from BOF, and
             - whether or not it finished with a blank line.
         """
-        offset = self.abs_line_offset()
-        indented, indent, blank_finish = self.input_lines.get_indented(
-              self.line_offset, until_blank, strip_indent,
-              block_indent=indent)
-        self.next_line(len(indented) - 1) # advance to last indented line
+        offset = self.abslineoffset()
+        indented = [self.line[indent:]]
+        for line in self.inputlines[self.lineoffset + 1:]:
+            if line[:indent].strip():
+                blankfinish = not indented[-1].strip() and len(indented) > 1
+                break
+            if uptoblank and line.strip():
+                blankfinish = 1
+                break
+            if stripindent:
+                indented.append(line[indent:])
+            else:
+                indented.append(line)
+        else:
+            blankfinish = 1
+        if indented:
+            self.nextline(len(indented) - 1) # advance to last indented line
         while indented and not indented[0].strip():
-            indented.trim_start()
+            indented.pop(0)
             offset += 1
-        return indented, offset, blank_finish
+        return indented, offset, blankfinish
 
-    def get_first_known_indented(self, indent, until_blank=0, strip_indent=1,
-                                 strip_top=1):
+    def getfirstknownindented(self, indent, uptoblank=0, stripindent=1):
         """
         Return an indented block and info.
 
@@ -837,11 +806,9 @@ class StateMachineWS(StateMachine):
 
         :Parameters:
             - `indent`: The first line's indent (# of columns/characters).
-            - `until_blank`: Stop collecting at the first blank line if true
-              (1).
-            - `strip_indent`: Strip `indent` characters of indentation if true
+            - `uptoblank`: Stop collecting at the first blank line if true (1).
+            - `stripindent`: Strip `indent` characters of indentation if true
               (1, default).
-            - `strip_top`: Strip blank lines from the beginning of the block.
 
         :Return:
             - the indented block,
@@ -849,16 +816,15 @@ class StateMachineWS(StateMachine):
             - its first line offset from BOF, and
             - whether or not it finished with a blank line.
         """
-        offset = self.abs_line_offset()
-        indented, indent, blank_finish = self.input_lines.get_indented(
-              self.line_offset, until_blank, strip_indent,
-              first_indent=indent)
-        self.next_line(len(indented) - 1) # advance to last indented line
-        if strip_top:
-            while indented and not indented[0].strip():
-                indented.trim_start()
-                offset += 1
-        return indented, indent, offset, blank_finish
+        offset = self.abslineoffset()
+        indented = [self.line[indent:]]
+        indented[1:], indent, blankfinish = extractindented(
+              self.inputlines[self.lineoffset + 1:], uptoblank, stripindent)
+        self.nextline(len(indented) - 1)  # advance to last indented line
+        while indented and not indented[0].strip():
+            indented.pop(0)
+            offset += 1
+        return indented, indent, offset, blankfinish
 
 
 class StateWS(State):
@@ -866,140 +832,114 @@ class StateWS(State):
     """
     State superclass specialized for whitespace (blank lines & indents).
 
-    Use this class with `StateMachineWS`.  The transitions 'blank' (for blank
-    lines) and 'indent' (for indented text blocks) are added automatically,
-    before any other transitions.  The transition method `blank()` handles
-    blank lines and `indent()` handles nested indented blocks.  Indented
-    blocks trigger a new state machine to be created by `indent()` and run.
-    The class of the state machine to be created is in `indent_sm`, and the
-    constructor keyword arguments are in the dictionary `indent_sm_kwargs`.
+    Use this class with `StateMachineWS`. The transition method `blank()`
+    handles blank lines and `indent()` handles nested indented blocks.
+    Indented blocks trigger a new state machine to be created by `indent()`
+    and run. The class of the state machine to be created is in `indentSM`,
+    and the constructor keyword arguments are in the dictionary
+    `indentSMkwargs`.
 
-    The methods `known_indent()` and `firstknown_indent()` are provided for
+    The methods `knownindent()` and `firstknownindent()` are provided for
     indented blocks where the indent (all lines' and first line's only,
     respectively) is known to the transition method, along with the attributes
-    `known_indent_sm` and `known_indent_sm_kwargs`.  Neither transition method
-    is triggered automatically.
+    `knownindentSM` and `knownindentSMkwargs`. Neither transition method is
+    triggered automatically.
     """
 
-    indent_sm = None
+    indentSM = None
     """
     The `StateMachine` class handling indented text blocks.
 
-    If left as ``None``, `indent_sm` defaults to the value of
-    `State.nested_sm`.  Override it in subclasses to avoid the default.
+    If left as ``None``, `indentSM` defaults to the value of `State.nestedSM`.
+    Override it in subclasses to avoid the default.
     """
 
-    indent_sm_kwargs = None
+    indentSMkwargs = None
     """
-    Keyword arguments dictionary, passed to the `indent_sm` constructor.
+    Keyword arguments dictionary, passed to the `indentSM` constructor.
 
-    If left as ``None``, `indent_sm_kwargs` defaults to the value of
-    `State.nested_sm_kwargs`. Override it in subclasses to avoid the default.
+    If left as ``None``, `indentSMkwargs` defaults to the value of
+    `State.nestedSMkwargs`. Override it in subclasses to avoid the default.
     """
 
-    known_indent_sm = None
+    knownindentSM = None
     """
     The `StateMachine` class handling known-indented text blocks.
 
-    If left as ``None``, `known_indent_sm` defaults to the value of
-    `indent_sm`.  Override it in subclasses to avoid the default.
+    If left as ``None``, `knownindentSM` defaults to the value of `indentSM`.
+    Override it in subclasses to avoid the default.
     """
 
-    known_indent_sm_kwargs = None
+    knownindentSMkwargs = None
     """
-    Keyword arguments dictionary, passed to the `known_indent_sm` constructor.
+    Keyword arguments dictionary, passed to the `knownindentSM` constructor.
 
-    If left as ``None``, `known_indent_sm_kwargs` defaults to the value of
-    `indent_sm_kwargs`. Override it in subclasses to avoid the default.
+    If left as ``None``, `knownindentSMkwargs` defaults to the value of
+    `indentSMkwargs`. Override it in subclasses to avoid the default.
     """
 
-    ws_patterns = {'blank': ' *$',
-                   'indent': ' +'}
-    """Patterns for default whitespace transitions.  May be overridden in
-    subclasses."""
-
-    ws_initial_transitions = ('blank', 'indent')
-    """Default initial whitespace transitions, added before those listed in
-    `State.initial_transitions`.  May be overridden in subclasses."""
-
-    def __init__(self, state_machine, debug=0):
+    def __init__(self, statemachine, debug=0):
         """
         Initialize a `StateSM` object; extends `State.__init__()`.
 
         Check for indent state machine attributes, set defaults if not set.
         """
-        State.__init__(self, state_machine, debug)
-        if self.indent_sm is None:
-            self.indent_sm = self.nested_sm
-        if self.indent_sm_kwargs is None:
-            self.indent_sm_kwargs = self.nested_sm_kwargs
-        if self.known_indent_sm is None:
-            self.known_indent_sm = self.indent_sm
-        if self.known_indent_sm_kwargs is None:
-            self.known_indent_sm_kwargs = self.indent_sm_kwargs
+        State.__init__(self, statemachine, debug)
+        if self.indentSM is None:
+            self.indentSM = self.nestedSM
+        if self.indentSMkwargs is None:
+            self.indentSMkwargs = self.nestedSMkwargs
+        if self.knownindentSM is None:
+            self.knownindentSM = self.indentSM
+        if self.knownindentSMkwargs is None:
+            self.knownindentSMkwargs = self.indentSMkwargs
 
-    def add_initial_transitions(self):
-        """
-        Add whitespace-specific transitions before those defined in subclass.
-
-        Extends `State.add_initial_transitions()`.
-        """
-        State.add_initial_transitions(self)
-        if self.patterns is None:
-            self.patterns = {}
-        self.patterns.update(self.ws_patterns)
-        names, transitions = self.make_transitions(
-            self.ws_initial_transitions)
-        self.add_transitions(names, transitions)
-
-    def blank(self, match, context, next_state):
+    def blank(self, match, context, nextstate):
         """Handle blank lines. Does nothing. Override in subclasses."""
-        return self.nop(match, context, next_state)
+        return self.nop(match, context, nextstate)
 
-    def indent(self, match, context, next_state):
+    def indent(self, match, context, nextstate):
         """
         Handle an indented text block. Extend or override in subclasses.
 
         Recursively run the registered state machine for indented blocks
-        (`self.indent_sm`).
+        (`self.indentSM`).
         """
-        indented, indent, line_offset, blank_finish = \
-              self.state_machine.get_indented()
-        sm = self.indent_sm(debug=self.debug, **self.indent_sm_kwargs)
-        results = sm.run(indented, input_offset=line_offset)
-        return context, next_state, results
+        indented, indent, lineoffset, blankfinish = \
+              self.statemachine.getindented()
+        sm = self.indentSM(debug=self.debug, **self.indentSMkwargs)
+        results = sm.run(indented, inputoffset=lineoffset)
+        return context, nextstate, results
 
-    def known_indent(self, match, context, next_state):
+    def knownindent(self, match, context, nextstate):
         """
         Handle a known-indent text block. Extend or override in subclasses.
 
         Recursively run the registered state machine for known-indent indented
-        blocks (`self.known_indent_sm`). The indent is the length of the
-        match, ``match.end()``.
+        blocks (`self.knownindentSM`). The indent is the length of the match,
+        ``match.end()``.
         """
-        indented, line_offset, blank_finish = \
-              self.state_machine.get_known_indented(match.end())
-        sm = self.known_indent_sm(debug=self.debug,
-                                 **self.known_indent_sm_kwargs)
-        results = sm.run(indented, input_offset=line_offset)
-        return context, next_state, results
+        indented, lineoffset, blankfinish = \
+              self.statemachine.getknownindented(match.end())
+        sm = self.knownindentSM(debug=self.debug, **self.knownindentSMkwargs)
+        results = sm.run(indented, inputoffset=lineoffset)
+        return context, nextstate, results
 
-    def first_known_indent(self, match, context, next_state):
+    def firstknownindent(self, match, context, nextstate):
         """
         Handle an indented text block (first line's indent known).
 
         Extend or override in subclasses.
 
         Recursively run the registered state machine for known-indent indented
-        blocks (`self.known_indent_sm`). The indent is the length of the
-        match, ``match.end()``.
+        blocks (`self.knownindentSM`). The indent is the length of the match,
+        ``match.end()``.
         """
-        indented, line_offset, blank_finish = \
-              self.state_machine.get_first_known_indented(match.end())
-        sm = self.known_indent_sm(debug=self.debug,
-                                 **self.known_indent_sm_kwargs)
-        results = sm.run(indented, input_offset=line_offset)
-        return context, next_state, results
+        indented, lineoffset, blankfinish = \
+              self.statemachine.getfirstknownindented(match.end())
+        sm = self.knownindentSM(debug=self.debug, **self.knownindentSMkwargs)
+        results = sm.run(indented, inputoffset=lineoffset)
+        return context, nextstate, results
 
 
 class _SearchOverride:
@@ -1035,405 +975,90 @@ class SearchStateMachineWS(_SearchOverride, StateMachineWS):
     pass
 
 
-class ViewList:
-
-    """
-    List with extended functionality: slices of ViewList objects are child
-    lists, linked to their parents. Changes made to a child list also affect
-    the parent list.  A child list is effectively a "view" (in the SQL sense)
-    of the parent list.  Changes to parent lists, however, do *not* affect
-    active child lists.  If a parent list is changed, any active child lists
-    should be recreated.
-
-    The start and end of the slice can be trimmed using the `trim_start()` and
-    `trim_end()` methods, without affecting the parent list.  The link between
-    child and parent lists can be broken by calling `disconnect()` on the
-    child list.
-
-    Also, ViewList objects keep track of the source & offset of each item. 
-    This information is accessible via the `source()`, `offset()`, and
-    `info()` methods.
-    """
-
-    def __init__(self, initlist=None, source=None, items=None,
-                 parent=None, parent_offset=None):
-        self.data = []
-        """The actual list of data, flattened from various sources."""
-
-        self.items = []
-        """A list of (source, offset) pairs, same length as `self.data`: the
-        source of each line and the offset of each line from the beginning of
-        its source."""
-
-        self.parent = parent
-        """The parent list."""
-
-        self.parent_offset = parent_offset
-        """Offset of this list from the beginning of the parent list."""
-
-        if isinstance(initlist, ViewList):
-            self.data = initlist.data[:]
-            self.items = initlist.items[:]
-        elif initlist is not None:
-            self.data = list(initlist)
-            if items:
-                self.items = items
-            else:
-                self.items = [(source, i) for i in range(len(initlist))]
-        assert len(self.data) == len(self.items), 'data mismatch'
-
-    def __str__(self):
-        return str(self.data)
-
-    def __repr__(self):
-        return '%s(%s, items=%s)' % (self.__class__.__name__,
-                                     self.data, self.items)
-
-    def __lt__(self, other): return self.data <  self.__cast(other)
-    def __le__(self, other): return self.data <= self.__cast(other)
-    def __eq__(self, other): return self.data == self.__cast(other)
-    def __ne__(self, other): return self.data != self.__cast(other)
-    def __gt__(self, other): return self.data >  self.__cast(other)
-    def __ge__(self, other): return self.data >= self.__cast(other)
-    def __cmp__(self, other): return cmp(self.data, self.__cast(other))
-
-    def __cast(self, other):
-        if isinstance(other, ViewList):
-            return other.data
-        else:
-            return other
-
-    def __contains__(self, item): return item in self.data
-    def __len__(self): return len(self.data)
-
-    # The __getitem__()/__setitem__() methods check whether the index
-    # is a slice first, since native list objects start supporting
-    # them directly in Python 2.3 (no exception is raised when
-    # indexing a list with a slice object; they just work).
-
-    def __getitem__(self, i):
-        if isinstance(i, _SliceType):
-            assert i.step in (None, 1),  'cannot handle slice with stride'
-            return self.__class__(self.data[i.start:i.stop],
-                                  items=self.items[i.start:i.stop],
-                                  parent=self, parent_offset=i.start)
-        else:
-            return self.data[i]
-
-    def __setitem__(self, i, item):
-        if isinstance(i, _SliceType):
-            assert i.step in (None, 1), 'cannot handle slice with stride'
-            if not isinstance(item, ViewList):
-                raise TypeError('assigning non-ViewList to ViewList slice')
-            self.data[i.start:i.stop] = item.data
-            self.items[i.start:i.stop] = item.items
-            assert len(self.data) == len(self.items), 'data mismatch'
-            if self.parent:
-                self.parent[i.start + self.parent_offset
-                            : i.stop + self.parent_offset] = item
-        else:
-            self.data[i] = item
-            if self.parent:
-                self.parent[i + self.parent_offset] = item
-
-    def __delitem__(self, i):
-        try:
-            del self.data[i]
-            del self.items[i]
-            if self.parent:
-                del self.parent[i + self.parent_offset]
-        except TypeError:
-            assert i.step is None, 'cannot handle slice with stride'
-            del self.data[i.start:i.stop]
-            del self.items[i.start:i.stop]
-            if self.parent:
-                del self.parent[i.start + self.parent_offset
-                                : i.stop + self.parent_offset]
-
-    def __add__(self, other):
-        if isinstance(other, ViewList):
-            return self.__class__(self.data + other.data,
-                                  items=(self.items + other.items))
-        else:
-            raise TypeError('adding non-ViewList to a ViewList')
-
-    def __radd__(self, other):
-        if isinstance(other, ViewList):
-            return self.__class__(other.data + self.data,
-                                  items=(other.items + self.items))
-        else:
-            raise TypeError('adding ViewList to a non-ViewList')
-
-    def __iadd__(self, other):
-        if isinstance(other, ViewList):
-            self.data += other.data
-        else:
-            raise TypeError('argument to += must be a ViewList')
-        return self
-
-    def __mul__(self, n):
-        return self.__class__(self.data * n, items=(self.items * n))
-
-    __rmul__ = __mul__
-
-    def __imul__(self, n):
-        self.data *= n
-        self.items *= n
-        return self
-
-    def extend(self, other):
-        if not isinstance(other, ViewList):
-            raise TypeError('extending a ViewList with a non-ViewList')
-        if self.parent:
-            self.parent.insert(len(self.data) + self.parent_offset, other)
-        self.data.extend(other.data)
-        self.items.extend(other.items)
-
-    def append(self, item, source=None, offset=0):
-        if source is None:
-            self.extend(item)
-        else:
-            if self.parent:
-                self.parent.insert(len(self.data) + self.parent_offset, item,
-                                   source, offset)
-            self.data.append(item)
-            self.items.append((source, offset))
-
-    def insert(self, i, item, source=None, offset=0):
-        if source is None:
-            if not isinstance(item, ViewList):
-                raise TypeError('inserting non-ViewList with no source given')
-            self.data[i:i] = item.data
-            self.items[i:i] = item.items
-            if self.parent:
-                index = (len(self.data) + i) % len(self.data)
-                self.parent.insert(index + self.parent_offset, item)
-        else:
-            self.data.insert(i, item)
-            self.items.insert(i, (source, offset))
-            if self.parent:
-                index = (len(self.data) + i) % len(self.data)
-                self.parent.insert(index + self.parent_offset, item,
-                                   source, offset)
-
-    def pop(self, i=-1):
-        if self.parent:
-            index = (len(self.data) + i) % len(self.data)
-            self.parent.pop(index + self.parent_offset)
-        self.items.pop(i)
-        return self.data.pop(i)
-
-    def trim_start(self, n=1):
-        """
-        Remove items from the start of the list, without touching the parent.
-        """
-        if n > len(self.data):
-            raise IndexError("Size of trim too large; can't trim %s items "
-                             "from a list of size %s." % (n, len(self.data)))
-        elif n < 0:
-            raise IndexError('Trim size must be >= 0.')
-        del self.data[:n]
-        del self.items[:n]
-        if self.parent:
-            self.parent_offset += n
-
-    def trim_end(self, n=1):
-        """
-        Remove items from the end of the list, without touching the parent.
-        """
-        if n > len(self.data):
-            raise IndexError("Size of trim too large; can't trim %s items "
-                             "from a list of size %s." % (n, len(self.data)))
-        elif n < 0:
-            raise IndexError('Trim size must be >= 0.')
-        del self.data[-n:]
-        del self.items[-n:]
-
-    def remove(self, item):
-        index = self.index(item)
-        del self[index]
-
-    def count(self, item): return self.data.count(item)
-    def index(self, item): return self.data.index(item)
-
-    def reverse(self):
-        self.data.reverse()
-        self.items.reverse()
-        self.parent = None
-
-    def sort(self, *args):
-        tmp = zip(self.data, self.items)
-        tmp.sort(*args)
-        self.data = [entry[0] for entry in tmp]
-        self.items = [entry[1] for entry in tmp]
-        self.parent = None
-
-    def info(self, i):
-        """Return source & offset for index `i`."""
-        try:
-            return self.items[i]
-        except IndexError:
-            if i == len(self.data):     # Just past the end
-                return self.items[i - 1][0], None
-            else:
-                raise
-
-    def source(self, i):
-        """Return source for index `i`."""
-        return self.info(i)[0]
-
-    def offset(self, i):
-        """Return offset for index `i`."""
-        return self.info(i)[1]
-
-    def disconnect(self):
-        """Break link between this list and parent list."""
-        self.parent = None
-
-
-class StringList(ViewList):
-
-    """A `ViewList` with string-specific methods."""
-
-    def strip_indent(self, length, start=0, end=sys.maxint):
-        """
-        Strip `length` characters off the beginning of each item, in-place,
-        from index `start` to `end`.  No whitespace-checking is done on the
-        stripped text.  Does not affect slice parent.
-        """
-        self.data[start:end] = [line[length:]
-                                for line in self.data[start:end]]
-
-    def get_text_block(self, start, flush_left=0):
-        """
-        Return a contiguous block of text.
-
-        If `flush_left` is true, raise `UnexpectedIndentationError` if an
-        indented line is encountered before the text block ends (with a blank
-        line).
-        """
-        end = start
-        last = len(self.data)
-        while end < last:
-            line = self.data[end]
-            if not line.strip():
-                break
-            if flush_left and (line[0] == ' '):
-                source, offset = self.info(end)
-                raise UnexpectedIndentationError(self[start:end], source,
-                                                 offset + 1)
-            end += 1
-        return self[start:end]
-
-    def get_indented(self, start=0, until_blank=0, strip_indent=1,
-                     block_indent=None, first_indent=None):
-        """
-        Extract and return a StringList of indented lines of text.
-
-        Collect all lines with indentation, determine the minimum indentation,
-        remove the minimum indentation from all indented lines (unless
-        `strip_indent` is false), and return them. All lines up to but not
-        including the first unindented line will be returned.
-
-        :Parameters:
-          - `start`: The index of the first line to examine.
-          - `until_blank`: Stop collecting at the first blank line if true.
-          - `strip_indent`: Strip common leading indent if true (default).
-          - `block_indent`: The indent of the entire block, if known.
-          - `first_indent`: The indent of the first line, if known.
-
-        :Return:
-          - a StringList of indented lines with mininum indent removed;
-          - the amount of the indent;
-          - a boolean: did the indented block finish with a blank line or EOF?
-        """
-        indent = block_indent           # start with None if unknown
-        end = start
-        if block_indent is not None and first_indent is None:
-            first_indent = block_indent
-        if first_indent is not None:
-            end += 1
-        last = len(self.data)
-        while end < last:
-            line = self.data[end]
-            if line and (line[0] != ' '
-                         or (block_indent is not None
-                             and line[:block_indent].strip())):
-                # Line not indented or insufficiently indented.
-                # Block finished properly iff the last indented line blank:
-                blank_finish = ((end > start)
-                                and not self.data[end - 1].strip())
-                break
-            stripped = line.lstrip()
-            if not stripped:            # blank line
-                if until_blank:
-                    blank_finish = 1
-                    break
-            elif block_indent is None:
-                line_indent = len(line) - len(stripped)
-                if indent is None:
-                    indent = line_indent
-                else:
-                    indent = min(indent, line_indent)
-            end += 1
-        else:
-            blank_finish = 1            # block ends at end of lines
-        block = self[start:end]
-        if first_indent is not None and block:
-            block.data[0] = block.data[0][first_indent:]
-        if indent and strip_indent:
-            block.strip_indent(indent, start=(first_indent is not None))
-        return block, indent or 0, blank_finish
-
-
-class StateMachineError(Exception): pass
-class UnknownStateError(StateMachineError): pass
-class DuplicateStateError(StateMachineError): pass
-class UnknownTransitionError(StateMachineError): pass
-class DuplicateTransitionError(StateMachineError): pass
-class TransitionPatternNotFound(StateMachineError): pass
-class TransitionMethodNotFound(StateMachineError): pass
-class UnexpectedIndentationError(StateMachineError): pass
+class UnknownStateError(Exception): pass
+class DuplicateStateError(Exception): pass
+class UnknownTransitionError(Exception): pass
+class DuplicateTransitionError(Exception): pass
+class TransitionPatternNotFound(Exception): pass
+class TransitionMethodNotFound(Exception): pass
+class UnexpectedIndentationError(Exception): pass
 
 
 class TransitionCorrection(Exception):
 
     """
     Raise from within a transition method to switch to another transition.
-
-    Raise with one argument, the new transition name.
     """
 
 
-class StateCorrection(Exception):
+_whitespace_conversion_table = string.maketrans('\v\f', '  ')
 
-    """
-    Raise from within a transition method to switch to another state.
-
-    Raise with one or two arguments: new state name, and an optional new
-    transition name.
-    """
-
-
-def string2lines(astring, tab_width=8, convert_whitespace=0,
-                 whitespace=re.compile('[\v\f]')):
+def string2lines(astring, tabwidth=8, convertwhitespace=0):
     """
     Return a list of one-line strings with tabs expanded and no newlines.
 
-    Each tab is expanded with between 1 and `tab_width` spaces, so that the
-    next character's index becomes a multiple of `tab_width` (8 by default).
+    Each tab is expanded with between 1 and `tabwidth` spaces, so that the
+    next character's index becomes a multiple of `tabwidth` (8 by default).
 
     Parameters:
 
     - `astring`: a multi-line string.
-    - `tab_width`: the number of columns between tab stops.
-    - `convert_whitespace`: convert form feeds and vertical tabs to spaces?
+    - `tabwidth`: the number of columns between tab stops.
+    - `convertwhitespace`: convert form feeds and vertical tabs to spaces?
     """
-    if convert_whitespace:
-        astring = whitespace.sub(' ', astring)
-    return [s.expandtabs(tab_width) for s in astring.splitlines()]
+    if convertwhitespace:
+        astring = astring.translate(_whitespace_conversion_table)
+    return [s.expandtabs(tabwidth) for s in astring.splitlines()]
 
-def _exception_data():
+def extractindented(lines, uptoblank=0, stripindent=1):
+    """
+    Extract and return a list of indented lines of text.
+
+    Collect all lines with indentation, determine the minimum indentation,
+    remove the minimum indentation from all indented lines (unless
+    `stripindent` is false), and return them. All lines up to but not
+    including the first unindented line will be returned.
+
+    :Parameters:
+        - `lines`: a list of one-line strings without newlines.
+        - `uptoblank`: Stop collecting at the first blank line if true (1).
+        - `stripindent`: Strip common leading indent if true (1, default).
+
+    :Return:
+        - a list of indented lines with mininum indent removed;
+        - the amount of the indent;
+        - whether or not the block finished with a blank line or at the end of
+          `lines`.
+    """
+    source = []
+    indent = None
+    for line in lines:
+        if line and line[0] != ' ':     # line not indented
+            # block finished properly iff the last indented line was blank
+            blankfinish = len(source) and not source[-1].strip()
+            break
+        stripped = line.lstrip()
+        if uptoblank and not stripped: # blank line
+            blankfinish = 1
+            break
+        source.append(line)
+        if not stripped:                # blank line
+            continue
+        lineindent = len(line) - len(stripped)
+        if indent is None:
+            indent = lineindent
+        else:
+            indent = min(indent, lineindent)
+    else:
+        blankfinish = 1                 # block ends at end of lines
+    if indent:
+        if stripindent:
+            source = [s[indent:] for s in source]
+        return source, indent, blankfinish
+    else:
+        return [], 0, blankfinish
+
+def _exceptiondata():
     """
     Return exception information:
 

@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
-from __init__ import DocutilsTestSupport
+import DocutilsTestSupport
 
 def suite():
     s = DocutilsTestSupport.ParserTestSuite()
@@ -19,14 +19,14 @@ def suite():
 
 totest = {}
 
-totest['full_tables'] = [
+totest['tables'] = [
 ["""\
 +-------------------------------------+
 | A table with one cell and one line. |
 +-------------------------------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="1">
             <colspec colwidth="37">
@@ -43,7 +43,7 @@ totest['full_tables'] = [
 +-----------------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="1">
             <colspec colwidth="23">
@@ -60,14 +60,14 @@ totest['full_tables'] = [
 +-----------------------+
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Malformed table.
-        <literal_block xml:space="preserve">
-            +-----------------------+
-            | A malformed table. |
-            +-----------------------+
+            Malformed table at line 1; formatting as a literal block.
+    <literal_block>
+        +-----------------------+
+        | A malformed table. |
+        +-----------------------+
 """],
 ["""\
 +------------------------+
@@ -79,7 +79,7 @@ totest['full_tables'] = [
 +------------------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="1">
             <colspec colwidth="24">
@@ -103,7 +103,7 @@ totest['full_tables'] = [
 +--------------+--------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="2">
             <colspec colwidth="14">
@@ -125,7 +125,7 @@ totest['full_tables'] = [
 +--------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="1">
             <colspec colwidth="14">
@@ -147,7 +147,7 @@ totest['full_tables'] = [
 +--------------+-------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="2">
             <colspec colwidth="14">
@@ -176,7 +176,7 @@ totest['full_tables'] = [
 +------------------------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="2">
             <colspec colwidth="14">
@@ -205,7 +205,7 @@ totest['full_tables'] = [
 +--------------------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="2">
             <colspec colwidth="12">
@@ -236,7 +236,7 @@ totest['full_tables'] = [
 +--------------+--------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="2">
             <colspec colwidth="14">
@@ -264,7 +264,7 @@ totest['full_tables'] = [
 +------------+-------------+---------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="3">
             <colspec colwidth="12">
@@ -302,7 +302,7 @@ Complex spanning pattern (no edge knows all rows/cols):
 +-------------------------+-----------+
 """,
 """\
-<document source="test data">
+<document>
     <paragraph>
         Complex spanning pattern (no edge knows all rows/cols):
     <table>
@@ -344,7 +344,7 @@ Complex spanning pattern (no edge knows all rows/cols):
 +------------------------+------------+---------------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="4">
             <colspec colwidth="24">
@@ -419,7 +419,7 @@ Complex spanning pattern (no edge knows all rows/cols):
 No blank line after table.
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="2">
             <colspec colwidth="17">
@@ -439,9 +439,9 @@ No blank line after table.
                     <entry>
                         <paragraph>
                             cell 4
-    <system_message level="2" line="6" source="test data" type="WARNING">
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Blank line required after table.
+            Blank line required after table at line 6.
     <paragraph>
         No blank line after table.
 """],
@@ -454,7 +454,7 @@ No blank line after table.
     Unexpected indent and no blank line after table.
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="2">
             <colspec colwidth="17">
@@ -474,12 +474,12 @@ No blank line after table.
                     <entry>
                         <paragraph>
                             cell 4
-    <system_message level="3" line="6" source="test data" type="ERROR">
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Unexpected indentation.
-    <system_message level="2" line="6" source="test data" type="WARNING">
+            Unexpected indentation at line 6.
+    <system_message level="2" type="WARNING">
         <paragraph>
-            Blank line required after table.
+            Blank line required after table at line 6.
     <block_quote>
         <paragraph>
             Unexpected indent and no blank line after table.
@@ -492,17 +492,17 @@ No blank line after table.
 +----------------------------+
 """,
 """\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
+<document>
+    <system_message level="3" type="ERROR">
         <paragraph>
-            Malformed table.
+            Malformed table at line 1; formatting as a literal block.
             Malformed table; parse incomplete.
-        <literal_block xml:space="preserve">
-            +--------------+-------------+
-            | A bad table. |             |
-            +--------------+             |
-            | Cells must be rectangles.  |
-            +----------------------------+
+    <literal_block>
+        +--------------+-------------+
+        | A bad table. |             |
+        +--------------+             |
+        | Cells must be rectangles.  |
+        +----------------------------+
 """],
 ["""\
 +------------------------------+
@@ -514,7 +514,7 @@ No blank line after table.
 +------------------------------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="1">
             <colspec colwidth="30">
@@ -540,7 +540,7 @@ No blank line after table.
 +------------------+--------+
 """,
 """\
-<document source="test data">
+<document>
     <table>
         <tgroup cols="2">
             <colspec colwidth="18">
@@ -558,593 +558,6 @@ No blank line after table.
                     <entry>
 """],
 ]
-
-totest['simple_tables'] = [
-["""\
-============  ============
-A table with  two columns.
-============  ============
-
-Paragraph.
-""",
-"""\
-<document source="test data">
-    <table>
-        <tgroup cols="2">
-            <colspec colwidth="12">
-            <colspec colwidth="12">
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            A table with
-                    <entry>
-                        <paragraph>
-                            two columns.
-    <paragraph>
-        Paragraph.
-"""],
-["""\
-============  ============
-A table with  two columns
-and           two rows.
-============  ============
-""",
-"""\
-<document source="test data">
-    <table>
-        <tgroup cols="2">
-            <colspec colwidth="12">
-            <colspec colwidth="12">
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            A table with
-                    <entry>
-                        <paragraph>
-                            two columns
-                <row>
-                    <entry>
-                        <paragraph>
-                            and
-                    <entry>
-                        <paragraph>
-                            two rows.
-"""],
-["""\
-============  ==============
-A table with  two columns,
-two rows, and a column span.
-============================
-""",
-"""\
-<document source="test data">
-    <table>
-        <tgroup cols="2">
-            <colspec colwidth="12">
-            <colspec colwidth="14">
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            A table with
-                    <entry>
-                        <paragraph>
-                            two columns,
-                <row>
-                    <entry morecols="1">
-                        <paragraph>
-                            two rows, and a column span.
-"""],
-["""\
-==  ===========  ===========
-1   A table with three rows,
---  ------------------------
-2   and three    columns.
-3   First and third rows
-    contain column spans.
-
-    This row is a multi-line row, and overflows to the right.
---  ------------------------
-4   One last     row.
-==  ===========  ===========
-""",
-"""\
-<document source="test data">
-    <table>
-        <tgroup cols="3">
-            <colspec colwidth="2">
-            <colspec colwidth="11">
-            <colspec colwidth="44">
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            1
-                    <entry morecols="1">
-                        <paragraph>
-                            A table with three rows,
-                <row>
-                    <entry>
-                        <paragraph>
-                            2
-                    <entry>
-                        <paragraph>
-                            and three
-                    <entry>
-                        <paragraph>
-                            columns.
-                <row>
-                    <entry>
-                        <paragraph>
-                            3
-                    <entry morecols="1">
-                        <paragraph>
-                            First and third rows
-                            contain column spans.
-                        <paragraph>
-                            This row is a multi-line row, and overflows to the right.
-                <row>
-                    <entry>
-                        <paragraph>
-                            4
-                    <entry>
-                        <paragraph>
-                            One last
-                    <entry>
-                        <paragraph>
-                            row.
-"""],
-["""\
-=======  =========  ========
-A table with three  columns.
-==================  ========
-""",
-"""\
-<document source="test data">
-    <table>
-        <tgroup cols="3">
-            <colspec colwidth="7">
-            <colspec colwidth="9">
-            <colspec colwidth="8">
-            <tbody>
-                <row>
-                    <entry morecols="1">
-                        <paragraph>
-                            A table with three
-                    <entry>
-                        <paragraph>
-                            columns.
-"""],
-["""\
-==============  ======
-A simple table  with
-no bottom       border
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Malformed table.
-            No bottom table border found.
-        <literal_block xml:space="preserve">
-            ==============  ======
-            A simple table  with
-            no bottom       border
-"""],
-["""\
-==============  ======
-A simple table  cell 2
-cell 3          cell 4
-==============  ======
-No blank line after table.
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Malformed table.
-            No bottom table border found or no blank line after table bottom.
-        <literal_block xml:space="preserve">
-            ==============  ======
-            A simple table  cell 2
-            cell 3          cell 4
-            ==============  ======
-    <system_message level="2" line="5" source="test data" type="WARNING">
-        <paragraph>
-            Blank line required after table.
-    <paragraph>
-        No blank line after table.
-"""],
-["""\
-==============  ======
-A simple table  cell 2
-==============  ======
-cell 3          cell 4
-==============  ======
-No blank line after table.
-""",
-"""\
-<document source="test data">
-    <table>
-        <tgroup cols="2">
-            <colspec colwidth="14">
-            <colspec colwidth="6">
-            <thead>
-                <row>
-                    <entry>
-                        <paragraph>
-                            A simple table
-                    <entry>
-                        <paragraph>
-                            cell 2
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            cell 3
-                    <entry>
-                        <paragraph>
-                            cell 4
-    <system_message level="2" line="6" source="test data" type="WARNING">
-        <paragraph>
-            Blank line required after table.
-    <paragraph>
-        No blank line after table.
-"""],
-["""\
-==============  ======
-A simple table  cell 2
-cell 3          cell 4
-==============  ======
-    Unexpected indent and no blank line after table.
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Malformed table.
-            No bottom table border found or no blank line after table bottom.
-        <literal_block xml:space="preserve">
-            ==============  ======
-            A simple table  cell 2
-            cell 3          cell 4
-            ==============  ======
-    <system_message level="2" line="5" source="test data" type="WARNING">
-        <paragraph>
-            Blank line required after table.
-    <block_quote>
-        <paragraph>
-            Unexpected indent and no blank line after table.
-"""],
-["""\
-==============  ======
-A bad table     cell 2
-cell 3          cell 4
-============  ========
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Malformed table.
-            Column span alignment problem at line offset 2.
-        <literal_block xml:space="preserve">
-            ==============  ======
-            A bad table     cell 2
-            cell 3          cell 4
-            ============  ========
-"""],
-["""\
-========  =========
-A bad table  cell 2
-cell 3       cell 4
-========  =========
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Malformed table.
-            Text in column margin at line offset 1.
-        <literal_block xml:space="preserve">
-            ========  =========
-            A bad table  cell 2
-            cell 3       cell 4
-            ========  =========
-"""],
-["""\
-==  ============================
-1   This table contains another.
-2   =======  ======  ========
-    A table  within  a table.
-    =======  ======  ========
-
-    The outer table does have to
-    have at least two columns
-    though.
-==  ============================
-""",
-"""\
-<document source="test data">
-    <table>
-        <tgroup cols="2">
-            <colspec colwidth="2">
-            <colspec colwidth="28">
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            1
-                    <entry>
-                        <paragraph>
-                            This table contains another.
-                <row>
-                    <entry>
-                        <paragraph>
-                            2
-                    <entry>
-                        <table>
-                            <tgroup cols="3">
-                                <colspec colwidth="7">
-                                <colspec colwidth="6">
-                                <colspec colwidth="8">
-                                <tbody>
-                                    <row>
-                                        <entry>
-                                            <paragraph>
-                                                A table
-                                        <entry>
-                                            <paragraph>
-                                                within
-                                        <entry>
-                                            <paragraph>
-                                                a table.
-                        <paragraph>
-                            The outer table does have to
-                            have at least two columns
-                            though.
-"""],
-["""\
-================  ======
-A simple table
-with empty cells
-================  ======
-""",
-"""\
-<document source="test data">
-    <table>
-        <tgroup cols="2">
-            <colspec colwidth="16">
-            <colspec colwidth="6">
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            A simple table
-                    <entry>
-                <row>
-                    <entry>
-                        <paragraph>
-                            with empty cells
-                    <entry>
-"""],
-["""\
-==============  ========
-   A table        with
-==============  ========
-   centered      cells.
-
-==============  ========
-""",
-"""\
-<document source="test data">
-    <table>
-        <tgroup cols="2">
-            <colspec colwidth="14">
-            <colspec colwidth="8">
-            <thead>
-                <row>
-                    <entry>
-                        <paragraph>
-                            A table
-                    <entry>
-                        <paragraph>
-                            with
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            centered
-                    <entry>
-                        <paragraph>
-                            cells.
-"""],
-["""\
-==============  ======
-A simple table  this text extends to the right
-cell 3          the bottom border below is too long
-==============  ========
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Malformed table.
-            Bottom/header table border does not match top border.
-        <literal_block xml:space="preserve">
-            ==============  ======
-            A simple table  this text extends to the right
-            cell 3          the bottom border below is too long
-            ==============  ========
-"""],
-["""\
-============  =================
-A table with  row separators.
-------------  -----------------
-
-Blank line    before.
-------------  -----------------
-
-Blank lines   before and after.
-
-------------  -----------------
-Blank line    after.
-
-============  =================
-""",
-"""\
-<document source="test data">
-    <table>
-        <tgroup cols="2">
-            <colspec colwidth="12">
-            <colspec colwidth="17">
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            A table with
-                    <entry>
-                        <paragraph>
-                            row separators.
-                <row>
-                    <entry>
-                        <paragraph>
-                            Blank line
-                    <entry>
-                        <paragraph>
-                            before.
-                <row>
-                    <entry>
-                        <paragraph>
-                            Blank lines
-                    <entry>
-                        <paragraph>
-                            before and after.
-                <row>
-                    <entry>
-                        <paragraph>
-                            Blank line
-                    <entry>
-                        <paragraph>
-                            after.
-"""],
-["""\
-============  ====================
-A table with  many row separators.
-------------  --------------------
-------------  --------------------
-
-------------  --------------------
-============  ====================
-""",
-"""\
-<document source="test data">
-    <table>
-        <tgroup cols="2">
-            <colspec colwidth="12">
-            <colspec colwidth="20">
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            A table with
-                    <entry>
-                        <paragraph>
-                            many row separators.
-                <row>
-                    <entry>
-                    <entry>
-                <row>
-                    <entry>
-                    <entry>
-                <row>
-                    <entry>
-                    <entry>
-"""],
-["""\
-==  ===========  ===========
-1   Span columns 2 & 3
---  ------------------------
-2   Span columns 2 & 3
-    ------------------------
-3
-==  ===========  ===========
-
-==  ===========  ===========
-1 Span cols 1&2  but not 3
----------------  -----------
-2 Span cols 1&2  but not 3
----------------
-3   no spans     here
-==  ===========  ===========
-
-==  ===========  ===========
-1   Not a span   Not a span
-    -----------  -----------
-2
-==  ===========  ===========
-""",
-"""\
-<document source="test data">
-    <system_message level="3" line="1" source="test data" type="ERROR">
-        <paragraph>
-            Malformed table.
-            Text in column margin at line offset 3.
-        <literal_block xml:space="preserve">
-            ==  ===========  ===========
-            1   Span columns 2 & 3
-            --  ------------------------
-            2   Span columns 2 & 3
-                ------------------------
-            3
-            ==  ===========  ===========
-    <system_message level="3" line="9" source="test data" type="ERROR">
-        <paragraph>
-            Malformed table.
-            Column span incomplete at line offset 4.
-        <literal_block xml:space="preserve">
-            ==  ===========  ===========
-            1 Span cols 1&2  but not 3
-            ---------------  -----------
-            2 Span cols 1&2  but not 3
-            ---------------
-            3   no spans     here
-            ==  ===========  ===========
-    <table>
-        <tgroup cols="3">
-            <colspec colwidth="2">
-            <colspec colwidth="11">
-            <colspec colwidth="11">
-            <tbody>
-                <row>
-                    <entry>
-                        <paragraph>
-                            1
-                    <entry>
-                        <system_message level="4" line="20" source="test data" type="SEVERE">
-                            <paragraph>
-                                Unexpected section title.
-                            <literal_block xml:space="preserve">
-                                Not a span
-                                -----------
-                    <entry>
-                        <system_message level="4" line="20" source="test data" type="SEVERE">
-                            <paragraph>
-                                Unexpected section title.
-                            <literal_block xml:space="preserve">
-                                Not a span
-                                -----------
-                <row>
-                    <entry>
-                        <paragraph>
-                            2
-                    <entry>
-                    <entry>
-"""],
-]
-
 
 if __name__ == '__main__':
     import unittest

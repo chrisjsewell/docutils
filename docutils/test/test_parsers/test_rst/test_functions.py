@@ -1,18 +1,17 @@
 #! /usr/bin/env python
 
-# Author: David Goodger
-# Contact: goodger@users.sourceforge.net
-# Revision: $Revision$
-# Date: $Date$
-# Copyright: This module has been placed in the public domain.
-
 """
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This module has been placed in the public domain.
+
 Tests for states.py.
 """
 
 import unittest
-from __init__ import DocutilsTestSupport
-states = DocutilsTestSupport.states
+from DocutilsTestSupport import states
 
 
 class FuctionTests(unittest.TestCase):
