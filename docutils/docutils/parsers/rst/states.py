@@ -591,6 +591,25 @@ class Inliner:
             remaining, lineno, self.patterns.initial.search)
         return nodes, messages
 
+    def debug_match(self, msg, match, group):
+        """
+        Show where the given group of the given sre match object
+        falls in the text that was searched, and where the match
+        overall falls
+        """
+        if match and self._debug:
+            searched = match.string
+            self %= msg + ' ' + repr(searched)
+            x0 = len(repr(searched[:match.start(0)]))
+            x1 = len(repr(searched[:match.start(group)]))
+            x2 = len(repr(searched[:match.end(group)]))
+            x3 = len(repr(searched[:match.end(0)]))
+            self %= (
+                (x0 + len(msg)) * ' '
+                + (x1-x0) * '-'
+                + (x2-x1)*'^' 
+                + (x3-x2) * '-')
+        
     def inner_parse(self, remaining, lineno, token_search):
         """The guts of the parse method"""
         nodes = []    # Buffer for result nodes 
@@ -598,27 +617,36 @@ class Inliner:
         prefixes = [] # Buffer for un-marked text preceding first
                       # recognized explicit inline markup
         self.indent += '  '
-        match = None
+        token_match = None
         while remaining:
             # !!! all "self %=" lines for debugging; 2Bcut
             self %= 'inner_parse of: %r' % remaining
-            match = token_search(remaining)
-            if not match:
+            token_match = token_search(remaining)
+            if not token_match:
                 break
-            groups = match.groupdict()
-            # self %= 'with: %r' % match.re.pattern
-            self %= 'inner_parse, groupdict', groups
-            self %= 'inner_parse, groups:', match.groups()
+            groups = token_match.groupdict()
+            # self %= 'with: %r' % token_match.re.pattern
+            # self %= 'inner_parse, groupdict', groups
+            # self %= 'inner_parse, groups:', token_match.groups()
+            
             opener = groups['start'] or groups['backquote'] \
                      or groups['refend'] or groups['fnend']
+
             if not opener: # either the end-string was found or we're done
-                self %= 'inner_parse, dropping: %r' % remaining[match.start(1):]
-                remaining = remaining[:match.start(1)]
+                self %= 'inner_parse, dropping: %r' % remaining[token_match.start(1):]
+                remaining = remaining[:token_match.start(1)]
                 break
-            self %= 'inner_parse, opener: %r' % opener
+            
+            # self %= 'inner_parse, opener: %r' % opener
+            if self._debug:
+                opengrp = [
+                    x for x in ('start', 'backquote', 'refend', 'fnend') if groups[x]][0]
+                self.debug_match('inner_parse:', token_match, opengrp)
+            
             method = self.dispatch[opener]
             before, inlines, remaining, sysmessages = method(
-                self, match, lineno)
+                self, token_match, lineno)
+            
             prefixes.append(before)
             messages += sysmessages
             if inlines:
@@ -629,7 +657,7 @@ class Inliner:
         if remaining:
             nodes += self.implicit_inline(remaining, lineno)
         self.indent = self.indent[:-2]
-        return nodes, messages, match
+        return nodes, messages, token_match
         
     openers = '\'"([{<'
     closers = '\'")]}>'
@@ -687,9 +715,9 @@ class Inliner:
                '',
                non_whitespace_after,
                [ ('backquote',
-                  '(?P<role>(:%s:)?)' % simplename,    # optional role
+                  '(?P<role>(:%s:)?)' % simplename,   # optional role
                   '',
-                  ['`(?!`)']                             # backquote but not literal
+                  ['`(?!`)']                          # backquote but not literal
                   )
                  ]         
                )
@@ -707,12 +735,20 @@ class Inliner:
         )
     interpreted_or_phrase_ref_end = (
         r'(?:' + embedded_uri + ')?'
+        
+        # The assumption here is that the only excuse for escaped
+        # whitespace immediately following an inline markup start
+        # string is to prevent the backquote from being interpreted as
+        # part of the literal token (``).  This negative lookbehind is
+        # required for cases such as:
+        #
+        #  `\ `\ suffix roles`:emphasis: aren't worth the trouble`:strong:
+        #
+        # (hint, hint)
+        + r'(?<!^\x00[ \n])'
         + '`(?P<rolesuffix>:' + simplename + ':)?(?:__?)?'
         )
-    interpreted_or_phrase_ref_end2 = (
-        r'(?:' + embedded_uri + ')?'
-        + '`(?:(?P<rolesuffix>:' + simplename + ':)(?:__?)?|(?:__?))'
-        )
+
     _end_pattern = non_whitespace_escape_before + '(%s)' + end_string_suffix
     
     def _compile_end_pattern(endpattern, _end_pattern = _end_pattern):
@@ -720,6 +756,7 @@ class Inliner:
     
     _re_map = {}
 
+    # Matches named groups in regexps
     _groupname = re.compile(r'\(\?P\<[^>]+\>', re.UNICODE)
     
     def _push_end_string(self, startmatch, endpattern):
@@ -729,13 +766,14 @@ class Inliner:
         end-of-string in nested markup
         """
         oldpattern = startmatch.re.pattern
-        self %= '_push_end_string, endpattern=', endpattern
+        # self %= '_push_end_string, endpattern=', endpattern
         # self %= '_push_end_string, oldpattern=', oldpattern
         
         X = '(?##)'
         parts = oldpattern.split(X)
         
         if len(parts) == 2:
+            # no end strings being sought yet
             part1 = (
                 '(?:' + self.non_whitespace_escape_before
                 + '(?:'
@@ -744,11 +782,13 @@ class Inliner:
             allends = '(' + endpattern + ')'
             part2 = ')' + self.end_string_suffix + ')|' + parts[0]
             part3 = parts[1]
+            
         else:
             part1,oldends,part2,part3 = parts
-            groupnames = self._groupname.findall(endpattern)
-            for n in groupnames:
-                oldends = oldends.replace(n, '(?:')
+
+            # No group name can appear twice in a regexp.
+            oldends = self._groupname.sub('(?:',oldends)
+            
             allends = '(%s)(?:%s)?|%s' % (endpattern,oldends,oldends)
             
         newpattern = ''.join((
@@ -759,7 +799,7 @@ class Inliner:
             part3
             ))
 
-        self %= "_push_end_string ->      r'" + newpattern + "'"
+        # self %= "_push_end_string ->      r'" + newpattern + "'"
         return self._compile_re(newpattern)
 
     def _compile_re(self, pattern):
@@ -779,8 +819,6 @@ class Inliner:
         end-of-string in nested markup
         """
         oldpattern = startmatch.re.pattern
-        self %= '_push_end_string, endpattern=', endpattern
-        # self %= '_push_end_string, oldpattern=', oldpattern
         
         X = '(?##)'
         parts = oldpattern.split(X)
@@ -921,7 +959,7 @@ class Inliner:
               % nodeclass.__name__, line=lineno)
         rawsource = null2escape(start)
         prb = self.problematic(rawsource, rawsource, msg)
-        return before, [prb], remaining, [msg], ''
+        return (before, [prb], remaining, [msg], '')
 
     def problematic(self, text, rawsource, message):
         msgid = self.document.set_id(message, self.parent)
@@ -944,8 +982,9 @@ class Inliner:
         return self.nested_inline_obj(match, lineno, r'\*\*', nodes.strong)
 
     def interpreted_or_phrase_ref(self, startmatch, lineno):
+        # self %= 'interpreted_or_phrase_ref:'
         before,start,remaining = _split_match(startmatch,'interpreted_or_phrase_ref')
-        
+
         role = startmatch.group('role')
                 
         roleposition = ''
@@ -955,31 +994,23 @@ class Inliner:
             role = role[1:-1] # drop the leading and trailing colons
             roleposition = 'prefix'
         elif self.quoted_start(startmatch):
-            return (remaining, [], remaining, [])
+            return (before+start, [], remaining, [])
 
         # Look for the end
-        if role:
-            endpattern = self.interpreted_or_phrase_ref_end
-        else:
-            endpattern = self.interpreted_or_phrase_ref_end2
-            
-        pattern = self._push_end_string(startmatch, endpattern)
+        newpattern = self._push_end_string(startmatch, self.interpreted_or_phrase_ref_end)
 
-        children,msgs,endmatch = self.inner_parse(remaining,lineno,pattern.search)
-        self %= 'interpreted_or_phrase_ref:'
+        children,msgs,endmatch = self.inner_parse(remaining,lineno,newpattern.search)
         self %= '  searched = %r' % remaining
         self %= '  children =', children
         
         if endmatch and endmatch.group(1):   
-            # self %= '  groups = ', endmatch.groups()
-            # self %= '  named groups = ', endmatch.groupdict()
 
             mid, end, after = _split_match(endmatch, 1)
             # length absorbed by inner_parse
             innerlen = len(remaining)-len(endmatch.string)
             between = remaining[:innerlen]+mid
 
-            # self %= '  split=', (before, start, between, end, after)
+            rawsource = null2escape(start+between+end)
             
             if endmatch.group('rolesuffix'):
                 
@@ -994,8 +1025,6 @@ class Inliner:
                 role = endmatch.group('rolesuffix')[1:-1] # drop the colons
                 roleposition = 'suffix'
                 
-            rawsource = null2escape(start+between+end)
-            
             if rawsource[-1:] == '_':
                 
                 if not role:
@@ -1338,7 +1367,7 @@ class Inliner:
             prb = self.problematic(between, between, msg)
             return [prb], [msg]
         ref = self.pep_url % pepnum
-        return [nodes.reference(rawsource, 'PEP ' + between, refuri=ref, *children)], []
+        return [nodes.reference(rawsource, 'PEP ' + between, refuri=ref)], []
 
     def rfc_reference_role(self, role, rawsource, between, children, lineno):
         try:
@@ -1352,7 +1381,7 @@ class Inliner:
             prb = self.problematic(between, between, msg)
             return [prb], [msg]
         ref = self.rfc_url % rfcnum
-        return [nodes.reference(rawsource, 'RFC ' + between, refuri=ref, *children)], []
+        return [nodes.reference(rawsource, 'RFC ' + between, refuri=ref)], []
 
 
 class Body(RSTState):
