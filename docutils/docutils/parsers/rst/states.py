@@ -1050,7 +1050,7 @@ class Inliner(object):
             uri = self.adjust_uri(uri)     # add mailto: if it's an email
 
             if uri:
-                target = nodes.target(endmatch.group(1), refuri=uri, *children)
+                target = nodes.target(endmatch.group(1), refuri=uri)
             else:
                 raise ApplicationError('problem with URI: %r' % uritext)
             
@@ -1062,6 +1062,7 @@ class Inliner(object):
             
         refname = normalize_name(name)
             
+        self %= '  reftext = %r' % reftext
         reference = nodes.reference(rawsource, reftext, *children)
         
         node_list = [reference]
