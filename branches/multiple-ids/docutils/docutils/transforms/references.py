@@ -97,8 +97,8 @@ class AnonymousHyperlinks(Transform):
                 internal
             <reference anonymous="1">
                 external
-        <target anonymous="1" id="id1">
-        <target anonymous="1" id="id2" refuri="http://external">
+        <target anonymous="1" ids="id1">
+        <target anonymous="1" ids="id2" refuri="http://external">
 
     Corresponding references are linked via "refid" or resolved via "refuri"::
 
@@ -107,8 +107,8 @@ class AnonymousHyperlinks(Transform):
                 text
             <reference anonymous="1" refuri="http://external">
                 external
-        <target anonymous="1" id="id1">
-        <target anonymous="1" id="id2" refuri="http://external">
+        <target anonymous="1" ids="id1">
+        <target anonymous="1" ids="id2" refuri="http://external">
     """
 
     default_priority = 440
