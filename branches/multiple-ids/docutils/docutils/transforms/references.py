@@ -57,20 +57,30 @@ class PropagateTargets(Transform):
                  isinstance(next_node, nodes.target))):
                 next_node['ids'].extend(target['ids'])
                 next_node['names'].extend(target['names'])
+                # Set defaults for next_node.expect_referenced_by_name/id.
                 if not hasattr(next_node, 'expect_referenced_by_name'):
                     next_node.expect_referenced_by_name = {}
                 if not hasattr(next_node, 'expect_referenced_by_id'):
                     next_node.expect_referenced_by_id = {}
                 for id in target['ids']:
+                    # Update IDs to node mapping.
                     self.document.ids[id] = next_node
+                    # If next_node is referenced by id ``id``, this
+                    # target shall be marked as referenced.
                     next_node.expect_referenced_by_id[id] = target
                 for name in target['names']:
                     next_node.expect_referenced_by_name[name] = target
+                # If there are any expect_referenced_by_... attributes
+                # in target set, copy them to next_node.
                 next_node.expect_referenced_by_name.update(
                     getattr(target, 'expect_referenced_by_name', {}))
                 next_node.expect_referenced_by_id.update(
                     getattr(target, 'expect_referenced_by_id', {}))
+                # Set refid to point to the first former ID of target
+                # which is now an ID of next_node.
                 target['refid'] = target['ids'][0]
+                # Clear ids and names; they have been moved to
+                # next_node.
                 target['ids'] = []
                 target['names'] = []
                 self.document.note_refid(target)
@@ -388,7 +398,6 @@ class InternalTargets(Transform):
               or not target['names']:
             return
         for name in target['names']:
-            # Reference's refid attribute.
             refid = self.document.nameids[name]
             reflist = self.document.refnames.get(name, [])
             if reflist:
@@ -742,8 +751,8 @@ class TargetNotes(Transform):
         else:                           # original
             footnote = nodes.footnote()
             footnote_id = self.document.set_id(footnote)
-            # Use uppercase letters; they can't be produced inside
-            # names by the parser.
+            # Use uppercase letters and a colon; they can't be
+            # produced inside names by the parser.
             footnote_name = 'TARGET_NOTE: ' + footnote_id
             footnote['auto'] = 1
             footnote['names'] = [footnote_name]

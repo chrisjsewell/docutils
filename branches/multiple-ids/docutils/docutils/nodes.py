@@ -239,7 +239,7 @@ class Node:
         except IndexError:
             return None
 
-class Text(UserString, Node):
+class Text(Node, UserString):
 
     """
     Instances are terminal nodes (leaves) containing text only; no child
@@ -328,8 +328,8 @@ class Element(Node):
     """
 
     attr_defaults = {'ids': [], 'classes': [], 'names': [], 'dupnames': []}
-    """Dictionary mapping attribute keys to types instances of which
-    provide default values."""
+    """Default attributes.  ``attributes`` is initialized with a copy
+    of ``attr_defaults``."""
 
     tagname = None
     """The element generic identifier. If None, it is set as an instance
@@ -503,7 +503,6 @@ class Element(Node):
         return self.attributes.setdefault(key, failobj)
 
     has_key = hasattr
-    __contains__ = has_key
 
     def append(self, item):
         self.setup_child(item)
@@ -605,9 +604,9 @@ class Element(Node):
         `name` or id `id`."""
         self.referenced = 1
         # Element.expect_referenced_by_* dictionaries map names or ids
-        # to nodes whose referenced attribute is set to true as soon
-        # as this node is referenced by the given name or id.  Needed
-        # for target propagation.
+        # to nodes whose ``referenced`` attribute is set to true as
+        # soon as this node is referenced by the given name or id.
+        # Needed for target propagation.
         by_name = getattr(self, 'expect_referenced_by_name', {}).get(name)
         by_id = getattr(self, 'expect_referenced_by_id', {}).get(id)
         if by_name:
@@ -663,7 +662,7 @@ class Resolvable:
     resolved = 0
 
 
-class BackLinkable(Element):
+class BackLinkable:
 
     attr_defaults = Element.attr_defaults.copy()
     attr_defaults['backrefs'] = []

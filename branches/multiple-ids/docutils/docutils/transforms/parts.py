@@ -91,7 +91,6 @@ class Contents(Transform):
         else:
             startnode = self.document
 
-        assert len(self.startnode.parent['ids'])
         self.toc_id = self.startnode.parent['ids'][0]
         if details.has_key('backlinks'):
             self.backlinks = details['backlinks']
