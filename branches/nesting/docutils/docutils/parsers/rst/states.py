@@ -783,22 +783,46 @@ class Inliner(object):
             ))
 
         self %= "_push_end_string ->      r'" + newpattern + "'"
-        
-        newregex = self._re_map.get(newpattern)
+        return self._compile_re(newpattern)
+
+    def _compile_re(self, pattern):
+        newregex = self._re_map.get(pattern)
         
         if not newregex:
-            newregex = re.compile(newpattern, re.UNICODE)
+            newregex = re.compile(pattern, re.UNICODE)
 
-            self._re_map[newpattern] = newregex
+            self._re_map[pattern] = newregex
             
         return newregex
 
+    def _literal_end(self, prefix, startmatch, endpattern):
+        """
+        Given the match object for a start-of-string, return a new
+        regular expression object that can be used to find the
+        end-of-string in nested markup
+        """
+        oldpattern = startmatch.re.pattern
+        self %= '_push_end_string, endpattern=', endpattern
+        # self %= '_push_end_string, oldpattern=', oldpattern
+        
+        X = '(?##)'
+        parts = oldpattern.split(X)
+        
+        if len(parts) == 2:
+            otherends = ''
+        else:
+            otherends = '(' + parts[1] + ')?'
+        
+        return self._compile_re(
+            prefix + '(' + endpattern + ')' + otherends + self.end_string_suffix
+            )
+        
     patterns = Struct(
           initial=re.compile(initial_pattern, re.UNICODE),
           
-          literal=re.compile(non_whitespace_before + '(``)'
-                             + end_string_suffix),
-          substitution_ref=_compile_end_pattern('\|_{0,2}'),
+          #literal=re.compile(non_whitespace_before + '(``)'
+          #                   + end_string_suffix),
+          #substitution_ref=_compile_end_pattern('\|_{0,2}'),
           email=re.compile(email_pattern % locals() + '$', re.VERBOSE),
           uri=re.compile(
                 (r"""
@@ -1139,9 +1163,12 @@ class Inliner(object):
             raise UnknownInterpretedRoleError(messages)
 
     def literal(self, match, lineno):
+        endpattern = self._literal_end(self.non_whitespace_before, match, '``')
+        
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
-              match, lineno, self.patterns.literal, nodes.literal,
+              match, lineno, endpattern, nodes.literal,
               literal=1)
+        
         return before, inlines, remaining, sysmessages
 
     def inline_internal_target(self, match, lineno):
@@ -1158,8 +1185,10 @@ class Inliner(object):
         return result
 
     def substitution_reference(self, match, lineno):
+        endpattern = self._literal_end(self.non_whitespace_escape_before, match, r'\|_{0,2}')
+        
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
-              match, lineno, self.patterns.substitution_ref,
+              match, lineno, endpattern,
               nodes.substitution_reference, literal=1)
         
         if len(inlines) == 1:
