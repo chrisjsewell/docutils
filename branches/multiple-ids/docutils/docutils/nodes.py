@@ -427,10 +427,7 @@ class Element(Node):
             return self.children[key]
         elif isinstance(key, SliceType):
             assert key.step in (None, 1), 'cannot handle slice with stride'
-            stop = key.stop
-            if stop is None:  # Py22 compatibility
-                stop = sys.maxint
-            return self.children[key.start or 0:stop]
+            return self.children[key.start:key.stop]
         else:
             raise TypeError, ('element index must be an integer, a slice, or '
                               'an attribute name string')
@@ -445,10 +442,7 @@ class Element(Node):
             assert key.step in (None, 1), 'cannot handle slice with stride'
             for node in item:
                 self.setup_child(node)
-            stop = key.stop
-            if stop is None:  # Py22 compatibility
-                stop = sys.maxint
-            self.children[key.start or 0:stop] = item
+            self.children[key.start:key.stop] = item
         else:
             raise TypeError, ('element index must be an integer, a slice, or '
                               'an attribute name string')
@@ -460,10 +454,7 @@ class Element(Node):
             del self.children[key]
         elif isinstance(key, SliceType):
             assert key.step in (None, 1), 'cannot handle slice with stride'
-            stop = key.stop
-            if stop is None:  # Py22 compatibility
-                stop = sys.maxint
-            del self.children[key.start or 0:stop]
+            del self.children[key.start:key.stop]
         else:
             raise TypeError, ('element index must be an integer, a simple '
                               'slice, or an attribute name string')

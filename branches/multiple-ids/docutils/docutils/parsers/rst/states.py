@@ -2477,7 +2477,6 @@ class SubstitutionDef(Body):
     def embedded_directive(self, match, context, next_state):
         nodelist, blank_finish = self.directive(match,
                                                 alt=self.parent['names'][0])
-        # XXX MULTIPLE-IDS REFACTORING what is alt=... doing?
         self.parent += nodelist
         if not self.state_machine.at_eof():
             self.blank_finish = blank_finish
