@@ -364,6 +364,75 @@ The results of the transform are not visible at the XML level.
         The results of the transform are not visible at the XML level.
 """],
 ["""\
+.. _a:
+.. _b:
+
+x
+""",
+"""\
+<document source="test data">
+    <target refid="a">
+    <target refid="b">
+    <paragraph ids="b a" names="b a">
+        x
+    <system_message level="1" line="1" source="test data" type="INFO">
+        <paragraph>
+            Hyperlink target "a" is not referenced.
+    <system_message level="1" line="2" source="test data" type="INFO">
+        <paragraph>
+            Hyperlink target "b" is not referenced.
+"""],
+["""\
+.. _a:
+.. _b:
+
+a_
+""",
+"""\
+<document source="test data">
+    <target refid="a">
+    <target refid="b">
+    <paragraph ids="b a" names="b a">
+        <reference names="a" refid="a">
+            a
+    <system_message level="1" line="2" source="test data" type="INFO">
+        <paragraph>
+            Hyperlink target "b" is not referenced.
+"""],
+["""\
+.. _a:
+.. _b:
+
+b_
+""",
+"""\
+<document source="test data">
+    <target refid="a">
+    <target refid="b">
+    <paragraph ids="b a" names="b a">
+        <reference names="b" refid="b">
+            b
+    <system_message level="1" line="1" source="test data" type="INFO">
+        <paragraph>
+            Hyperlink target "a" is not referenced.
+"""],
+["""\
+.. _a:
+.. _b:
+
+a_\ b_
+""",
+"""\
+<document source="test data">
+    <target refid="a">
+    <target refid="b">
+    <paragraph ids="b a" names="b a">
+        <reference names="a" refid="a">
+            a
+        <reference names="b" refid="b">
+            b
+"""],
+["""\
 .. _external hyperlink: http://uri
 
 `External hyperlink`_ reference.
@@ -386,7 +455,7 @@ The results of the transform are not visible at the XML level.
     <target ids="indirect-target" names="indirect target" refuri="http://uri">
     <system_message level="1" line="2" source="test data" type="INFO">
         <paragraph>
-            Indirect hyperlink target "indirect target" is not referenced.
+            Hyperlink target "indirect target" is not referenced.
 """],
 ["""\
 .. _chained:

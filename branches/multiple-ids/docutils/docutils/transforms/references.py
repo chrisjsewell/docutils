@@ -63,11 +63,15 @@ class PropagateTargets(Transform):
                     next_node.expect_referenced_by_id[id] = target
                 for name in target['names']:
                     next_node.expect_referenced_by_name[name] = target
+                next_node.expect_referenced_by_name.update(
+                    getattr(target, 'expect_referenced_by_name', {}))
+                next_node.expect_referenced_by_id.update(
+                    getattr(target, 'expect_referenced_by_id', {}))
                 target['refid'] = target['ids'][0]
-                self.document.note_refid(target)
-                self.document.note_internal_target(next_node)
                 target['ids'] = []
                 target['names'] = []
+                self.document.note_refid(target)
+                self.document.note_internal_target(next_node)
 
 
 class AnonymousHyperlinks(Transform):
@@ -111,6 +115,11 @@ class AnonymousHyperlinks(Transform):
                 prbid = self.document.set_id(prb)
                 msg.add_backref(prbid)
                 ref.parent.replace(ref, prb)
+            for target in self.document.anonymous_targets:
+                # Assume that all anonymous targets have been
+                # referenced to avoid generating lots of
+                # system_messages.
+                target.referenced = 1
             return
         for ref, target in zip(self.document.anonymous_refs,
                                self.document.anonymous_targets):
@@ -193,7 +202,6 @@ class IndirectHyperlinks(Transform):
     def resolve_indirect_target(self, target):
         refname = target.get('refname')
         if refname is None:
-            raise 'This cannot happen.'
             reftarget_id = target['refid']
         else:
             reftarget_id = self.document.nameids.get(refname)
@@ -284,13 +292,7 @@ class IndirectHyperlinks(Transform):
         attval = target[attname]
         for name in target['names']:
             reflist = self.document.refnames.get(name, [])
-            if not reflist:
-                if not target.referenced:
-                    self.document.reporter.info(
-                        'Indirect hyperlink target "%s" is not referenced.'
-                        % name, base_node=target)
-                    target.note_referenced_by(name=name)
-            else:
+            if reflist:
                 target.note_referenced_by(name=name)
             for ref in reflist:
                 if ref.resolved:
@@ -304,13 +306,7 @@ class IndirectHyperlinks(Transform):
                     self.resolve_indirect_references(ref)
         for id in target['ids']:
             reflist = self.document.refids.get(id, [])
-            if not reflist:
-                if not target.referenced:
-                    self.document.reporter.info(
-                        'Indirect hyperlink target id="%s" is not referenced.'
-                        % id, base_node=target)
-                    target.note_referenced_by(id=id)
-            else:
+            if reflist:
                 target.note_referenced_by(id=id)
             for ref in reflist:
                 if ref.resolved:
@@ -347,20 +343,11 @@ class ExternalTargets(Transform):
     def apply(self):
         for target in self.document.external_targets:
             if target.hasattr('refuri'):
+                refuri = target['refuri']
                 for name in target['names']:
-                    refuri = target['refuri']
-                    try:
-                        reflist = self.document.refnames[name]
-                    except KeyError, instance:
-                        # @@@ First clause correct???
-                        if not isinstance(target, nodes.target) or target.referenced:
-                            continue
-                        msg = self.document.reporter.info(
-                              'External hyperlink target "%s" is not referenced.'
-                              % name, base_node=target)
+                    reflist = self.document.refnames.get(name, [])
+                    if reflist:
                         target.note_referenced_by(name=name)
-                        continue
-                    target.note_referenced_by(name=name)
                     for ref in reflist:
                         if ref.resolved:
                             continue
@@ -399,9 +386,10 @@ class InternalTargets(Transform):
             return
         for name in target['names']:
             try:
+                # Reference's refid attribute.
                 refid = self.document.nameids[name]
             except KeyError:
-                continue
+                continue   #XXX can this happen?
             reflist = self.document.refnames.get(name, [])
             if reflist:
                 target.note_referenced_by(name=name)
@@ -411,11 +399,6 @@ class InternalTargets(Transform):
                 del ref['refname']
                 ref['refid'] = refid
                 ref.resolved = 1
-        if isinstance(target, nodes.target) and not target.referenced:
-            msg = self.document.reporter.info(
-                'Internal hyperlink target "%s" is not referenced.'
-                % target['names'][0], base_node=target)
-            target.referenced = 1
 
 
 class Footnotes(Transform):

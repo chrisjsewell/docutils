@@ -610,9 +610,11 @@ class Element(Node):
         # for target propagation.
         by_name = getattr(self, 'expect_referenced_by_name', {}).get(name)
         by_id = getattr(self, 'expect_referenced_by_id', {}).get(id)
-        if name and by_name:
+        if by_name:
+            assert name is not None
             by_name.referenced = 1
-        if id and by_id:
+        if by_id:
+            assert id is not None
             by_id.referenced = 1
 
 
@@ -1650,6 +1652,9 @@ _non_id_at_ends = re.compile('^[-0-9]+|-+$')
 def dupname(node, name):
     node['dupnames'].append(name)
     node['names'].remove(name)
+    # Assume that this method is referenced, even though it isn't; we
+    # don't want to throw unnecessary system_messages.
+    node.referenced = 1
 
 def fully_normalize_name(name):
     """Return a case- and whitespace-normalized name."""
