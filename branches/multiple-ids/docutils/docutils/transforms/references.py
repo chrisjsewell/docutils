@@ -441,22 +441,18 @@ class InternalTargets(Transform):
             return
         for name in target['names']:
             refid = target['ids'][0]
-            try:
-                reflist = self.document.refnames[name]
-            except KeyError, instance:
-                if target.referenced:
-                    return   # XXX MULTIPLE-IDS continue
-                msg = self.document.reporter.info(
-                      'Internal hyperlink target "%s" is not referenced.'
-                      % name, base_node=target)
-                target.referenced = 1
-                return   # XXX MULTIPLE-IDS continue
+            reflist = self.document.refnames.get(name, [])
             for ref in reflist:
                 if ref.resolved:
-                    return
+                    continue
                 del ref['refname']
                 ref['refid'] = refid
                 ref.resolved = 1
+                target.referenced = 1
+        if not target.referenced:
+            msg = self.document.reporter.info(
+                'Internal hyperlink target "%s" is not referenced.'
+                % name, base_node=target)
             target.referenced = 1
 
 
