@@ -657,7 +657,7 @@ class Inliner(object):
 #         )
     end_string_suffix = end_string_tmpl % ''
     
-    not_end_string_suffix = r'(?![-/:.,;!? \n\x00%s])' % re.escape(closers)
+    not_end_string_suffix = r'(?<![-/:.,;!? \n\x00%s])' % re.escape(closers)
     
     separated_prefix = r'(?:(?<![%s])|(?<=\x00[ \n]))'
     non_whitespace_before = separated_prefix % r' \n'
@@ -761,22 +761,22 @@ class Inliner(object):
         if len(parts) == 2:
             part1 = (
                 '(?:' + self.non_whitespace_escape_before
-                + self.not_end_string_suffix
                 + '(?:'
                 )
             
-            ends1 = ''
+            allends = '(' + endpattern + ')'
             part2 = ')' + self.end_string_suffix + ')|' + parts[0]
             part3 = parts[1]
         else:
-            part1,ends1,part2,part3 = parts
+            part1,oldends,part2,part3 = parts
             groupnames = self._groupname.findall(endpattern)
             for n in groupnames:
-                ends1 = ends1.replace(n, '(?:')
+                oldends = oldends.replace(n, '(?:')
+            allends = '(%s)(?:%s)?|%s' % (endpattern,oldends,oldends)
             
         newpattern = ''.join((
             part1,
-            X, '(', endpattern, ')?', ends1,
+            X, allends,
             X, part2,
             X, '(', self._groupname.sub('(?:',endpattern), ')?',
             part3
