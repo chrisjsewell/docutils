@@ -468,8 +468,14 @@ def build_regexp(definition, compile=1):
     else:
         return regexp
 
+def _split_match(match, group):
+    return (
+        match.string[:match.start(group)],
+        match.group(group),
+        match.string[match.end(group):]
+        )
 
-class Inliner:
+class Inliner(object):
 
     """
     Parse inline markup; call the `parse()` method.
@@ -515,6 +521,17 @@ class Inliner:
     Used by the `generic_interpreted_role` method for simple, straightforward
     roles (simple wrapping; no extra processing)."""
 
+    _debug = None  # set to 1 to enable debug output
+    
+    def __imod__(self, stuff):
+        if self._debug:
+            print self.indent,
+            if type(stuff) is str:
+                stuff = (stuff,)
+            for x in stuff: print x,
+            print
+        return self
+        
     def __init__(self, roles=None):
         """
         `roles` is a mapping of canonical role name to role function or bound
@@ -535,6 +552,8 @@ class Inliner:
             else:
                 self.interpreted_roles[canonical] = None
         self.interpreted_roles.update(roles or {})
+
+        self.indent = ''
 
     def init_customizations(self, settings):
         """Setting-based customizations; run when parsing begins."""
@@ -566,38 +585,84 @@ class Inliner:
         pattern_search = self.patterns.initial.search
         dispatch = self.dispatch
         remaining = escape2null(text)
-        processed = []
-        unprocessed = []
-        messages = []
-        while remaining:
-            match = pattern_search(remaining)
-            if match:
-                groups = match.groupdict()
-                method = dispatch[groups['start'] or groups['backquote']
-                                  or groups['refend'] or groups['fnend']]
-                before, inlines, remaining, sysmessages = method(self, match,
-                                                                 lineno)
-                unprocessed.append(before)
-                messages += sysmessages
-                if inlines:
-                    processed += self.implicit_inline(''.join(unprocessed),
-                                                      lineno)
-                    processed += inlines
-                    unprocessed = []
-            else:
-                break
-        remaining = ''.join(unprocessed) + remaining
-        if remaining:
-            processed += self.implicit_inline(remaining, lineno)
-        return processed, messages
+        
+        nodes, messages, notoken = self.inner_parse(
+            remaining, lineno, self.patterns.initial.search)
+        return nodes, messages
 
+    def inner_parse(self, remaining, lineno, find_token):
+        """
+        The guts of the parse method
+
+        
+        """
+        nodes = []    # Buffer for result nodes 
+        messages = [] # Buffer for error messages
+        
+        prefixes = [] # Buffer for un-marked text preceding first
+                      # recognized explicit inline markup
+
+                
+        self.indent += '  '
+        token = None
+        while remaining:
+            self %= 'inner_parse of: %r' % remaining
+            token = find_token(remaining)
+            if not token:
+                break
+            
+            groups = token.groupdict()
+
+            # self %= 'with: %r' % token.re.pattern
+            self %= 'inner_parse, groupdict', groups
+            self %= 'inner_parse, groups:', token.groups()
+            opener = groups['start'] or groups['backquote'] \
+                     or groups['refend'] or groups['fnend']
+
+            if not opener: # either the end token was found or we're done
+                self %= 'inner_parse, dropping: %r' % remaining[token.start(1):]
+                remaining = remaining[:token.start(1)]
+                break
+
+            self %= 'inner_parse, opener: %r' % opener
+            method = self.dispatch[opener]
+
+            before, inlines, remaining, sysmessages = method(
+                self, token, lineno)
+
+            prefixes.append(before)
+            messages += sysmessages
+
+            if inlines:
+                nodes += self.implicit_inline(''.join(prefixes), lineno)
+                prefixes = []
+                nodes += inlines
+            
+        remaining = ''.join(prefixes) + remaining
+        
+        if remaining:
+            nodes += self.implicit_inline(remaining, lineno)
+
+        self.indent = self.indent[:-2]
+        return nodes, messages, token
+        
     openers = '\'"([{<'
     closers = '\'")]}>'
     start_string_prefix = (r'((?<=^)|(?<=[-/: \n%s]))' % re.escape(openers))
-    end_string_suffix = (r'((?=$)|(?=[-/:.,;!? \n\x00%s]))'
-                         % re.escape(closers))
-    non_whitespace_before = r'(?<![ \n])'
-    non_whitespace_escape_before = r'(?<![ \n\x00])'
+    end_string_tmpl = (
+        r'(?=%s(?:$|[-/:.,;!? \n\x00%s]))' % ('%s',re.escape(closers))
+        )
+#     end_string_tmpl = (
+#         r'((?=$)|(?=%s[-/:.,;!? \n\x00%s]))' % ('%s',re.escape(closers))
+#         )
+    end_string_suffix = end_string_tmpl % ''
+    
+    not_end_string_suffix = r'(?![-/:.,;!? \n\x00%s])' % re.escape(closers)
+    
+    separated_prefix = r'(?:(?<![%s])|(?<=\x00[ \n]))'
+    non_whitespace_before = separated_prefix % r' \n'
+    non_whitespace_escape_before = separated_prefix % r' \n\x00'
+    
     non_whitespace_after = r'(?![ \n])'
     # Alphanumerics with isolated internal [-._] chars (i.e. not 2 together):
     simplename = r'(?:(?!_)\w)+(?:[-._](?:(?!_)\w)+)*'
@@ -613,7 +678,8 @@ class Inliner:
           %(emailc)s+(?:\.%(emailc)s*)*   # host
           %(urilast)s                     # final URI char
           """
-    parts = ('initial_inline', start_string_prefix, '',
+    initial_parts = (
+        'initial_inline', start_string_prefix, '',
              [('start', '', non_whitespace_after,  # simple start-strings
                [r'\*\*',                # strong
                 r'\*(?!\*)',            # emphasis but not strong
@@ -621,7 +687,7 @@ class Inliner:
                 r'_`',                  # inline internal target
                 r'\|(?!\|)']            # substitution reference
                ),
-              ('whole', '', end_string_suffix, # whole constructs
+              ('whole', '', end_string_tmpl % '(?##)', # whole constructs
                [# reference name & end-string
                 r'(?P<refname>%s)(?P<refend>__?)' % simplename,
                 ('footnotelabel', r'\[', r'(?P<fnend>\]_)',
@@ -632,50 +698,107 @@ class Inliner:
                  )
                 ]
                ),
-              ('backquote',             # interpreted text or phrase reference
-               '(?P<role>(:%s:)?)' % simplename, # optional role
+              
+              ('interpreted_or_phrase_ref',             # interpreted text or phrase reference
+               '',
                non_whitespace_after,
-               ['`(?!`)']               # but not literal
+               [ ('backquote',
+                  '(?P<role>(:%s:)?)' % simplename,    # optional role
+                  '',
+                  ['`(?!`)']                             # backquote but not literal
+                  )
+                 ]         
                )
               ]
              )
-    patterns = Struct(
-          initial=build_regexp(parts),
-          emphasis=re.compile(non_whitespace_escape_before
-                              + r'(\*)' + end_string_suffix),
-          strong=re.compile(non_whitespace_escape_before
-                            + r'(\*\*)' + end_string_suffix),
-          interpreted_or_phrase_ref=re.compile(
-              r"""
-              %(non_whitespace_escape_before)s
-              (
-                `
-                (?P<suffix>
-                  (?P<role>:%(simplename)s:)?
-                  (?P<refend>__?)?
+
+    initial_pattern = build_regexp(initial_parts,None)
+
+    embedded_uri = (
+        r'(?:[ \n]+|^)'            # spaces or beginning of line/string
+        + '<'                      # open bracket
+        + non_whitespace_after
+        + r'(?P<uri>[^<>\x00]+)'   # anything but angle brackets & nulls
+        + non_whitespace_before
+        + '>'                      # close bracket w/o whitespace
+                                   # before
+        )
+
+    
+
+    interpreted_or_phrase_ref_end = (
+        r'(?:' + embedded_uri + ')?'
+        + '`(?P<rolesuffix>:' + simplename + ':)?(?:__?)?'
+        )
+
+    interpreted_or_phrase_ref_end2 = (
+        r'(?:' + embedded_uri + ')?'
+        + '`(?:(?P<rolesuffix>:' + simplename + ':)(?:__?)?|(?:__?))'
+        )
+
+    _end_pattern = non_whitespace_escape_before + '(%s)' + end_string_suffix
+    
+    def _compile_end_pattern(endpattern, _end_pattern = _end_pattern):
+        return re.compile(_end_pattern % endpattern, re.UNICODE)
+    
+    _re_map = {}
+
+    _groupname = re.compile(r'\(\?P\<[^>]+\>', re.UNICODE)
+    
+    def _push_end_string(self, startmatch, endpattern):
+        """
+        Given the match object for a start-of-string, return a new
+        regular expression object that can be used to find the
+        end-of-string in nested markup
+        """
+        oldpattern = startmatch.re.pattern
+        self %= '_push_end_string, endpattern=', endpattern
+        # self %= '_push_end_string, oldpattern=', oldpattern
+        
+        X = '(?##)'
+        parts = oldpattern.split(X)
+        
+        if len(parts) == 2:
+            part1 = (
+                '(?:' + self.non_whitespace_escape_before
+                + self.not_end_string_suffix
+                + '(?:'
                 )
-              )
-              %(end_string_suffix)s
-              """ % locals(), re.VERBOSE | re.UNICODE),
-          embedded_uri=re.compile(
-              r"""
-              (
-                (?:[ \n]+|^)            # spaces or beginning of line/string
-                <                       # open bracket
-                %(non_whitespace_after)s
-                ([^<>\x00]+)            # anything but angle brackets & nulls
-                %(non_whitespace_before)s
-                >                       # close bracket w/o whitespace before
-              )
-              $                         # end of string
-              """ % locals(), re.VERBOSE),
+            
+            ends1 = ''
+            part2 = ')' + self.end_string_suffix + ')|' + parts[0]
+            part3 = parts[1]
+        else:
+            part1,ends1,part2,part3 = parts
+            groupnames = self._groupname.findall(endpattern)
+            for n in groupnames:
+                ends1 = ends1.replace(n, '(?:')
+            
+        newpattern = ''.join((
+            part1,
+            X, '(', endpattern, ')?', ends1,
+            X, part2,
+            X, '(', self._groupname.sub('(?:',endpattern), ')?',
+            part3
+            ))
+
+        self %= "_push_end_string ->      r'" + newpattern + "'"
+        
+        newregex = self._re_map.get(newpattern)
+        
+        if not newregex:
+            newregex = re.compile(newpattern, re.UNICODE)
+
+            self._re_map[newpattern] = newregex
+            
+        return newregex
+
+    patterns = Struct(
+          initial=re.compile(initial_pattern, re.UNICODE),
+          
           literal=re.compile(non_whitespace_before + '(``)'
                              + end_string_suffix),
-          target=re.compile(non_whitespace_escape_before
-                            + r'(`)' + end_string_suffix),
-          substitution_ref=re.compile(non_whitespace_escape_before
-                                      + r'(\|_{0,2})'
-                                      + end_string_suffix),
+          substitution_ref=_compile_end_pattern('\|_{0,2}'),
           email=re.compile(email_pattern % locals() + '$', re.VERBOSE),
           uri=re.compile(
                 (r"""
@@ -743,28 +866,61 @@ class Inliner:
             pass
         return 0
 
-    def inline_obj(self, match, lineno, end_pattern, nodeclass,
-                   restore_backslashes=0):
-        string = match.string
-        matchstart = match.start('start')
-        matchend = match.end('start')
-        if self.quoted_start(match):
-            return (string[:matchend], [], string[matchend:], [], '')
-        endmatch = end_pattern.search(string[matchend:])
-        if endmatch and endmatch.start(1):  # 1 or more chars
-            text = unescape(endmatch.string[:endmatch.start(1)],
-                            restore_backslashes)
-            textend = matchend + endmatch.end(1)
-            rawsource = unescape(string[matchstart:textend], 1)
-            return (string[:matchstart], [nodeclass(rawsource, text)],
-                    string[textend:], [], endmatch.group(1))
+    def literal_parse(self, remaining, lineno, search):
+        match = search(remaining)
+        if match:
+            text = null2escape(match.string[:match.start(1)])
+            return (nodes.Text(text),), [], match
+        return (),[],None
+        
+    def inline_obj(self, startmatch, lineno, endpattern, nodeclass,
+                   literal=0):
+        """
+        Create parse tree for inline markup
+        
+        :Return:
+            - `before` : [string]
+                  Unmarked text preceding the start match
+            - `inlines` : [list of nodes]
+                  Parse tree representing the marked text
+            - `after` : [string]
+                  Unmarked text following the endstring match
+            - `sysmessages` : [list of messages]
+            - `end` : [string]
+                  Found inline markup endstring
+        """
+        if literal:
+            search = self.literal_parse
+        else:
+            search = self.inner_parse
+        
+        return self.inline_obj1(startmatch,lineno,nodeclass,endpattern,search)
+        
+    def inline_obj1(self, startmatch, lineno, nodeclass, endpattern, search):
+        before, start, remaining = _split_match(startmatch, 'start')
+        
+        if self.quoted_start(startmatch):
+            return (before+start, [], remaining, [], '')
+
+        children,messages,endmatch = search(remaining,lineno,endpattern.search)
+
+        if endmatch and endmatch.group(1):
+            mid, end, after = _split_match(endmatch, 1)
+            # length absorbed by inner_parse
+            innerlen = len(remaining)-len(endmatch.string)
+            between = remaining[:innerlen]+mid
+            # self %= 'concatenating:', (start,between,end)
+            rawsource = null2escape(start+between+end)
+                
+            return (before, [nodeclass(rawsource, *children)],
+                    after, messages, end)
+            
         msg = self.reporter.warning(
               'Inline %s start-string without end-string.'
               % nodeclass.__name__, line=lineno)
-        text = unescape(string[matchstart:matchend], 1)
-        rawsource = unescape(string[matchstart:matchend], 1)
-        prb = self.problematic(text, rawsource, msg)
-        return string[:matchstart], [prb], string[matchend:], [msg], ''
+        rawsource = null2escape(start)
+        prb = self.problematic(rawsource, rawsource, msg)
+        return before, [prb], remaining, [msg], ''
 
     def problematic(self, text, rawsource, message):
         msgid = self.document.set_id(message, self.parent)
@@ -773,101 +929,141 @@ class Inliner:
         message.add_backref(prbid)
         return problematic
 
-    def emphasis(self, match, lineno):
+    def nested_inline_obj(self, startmatch, lineno, endpattern, nodeclass):
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
-              match, lineno, self.patterns.emphasis, nodes.emphasis)
+              startmatch, lineno,
+              self._push_end_string(startmatch, endpattern),
+              nodeclass)
         return before, inlines, remaining, sysmessages
+        
+    def emphasis(self, match, lineno):
+        return self.nested_inline_obj(match, lineno, r'\*', nodes.emphasis)
 
     def strong(self, match, lineno):
-        before, inlines, remaining, sysmessages, endstring = self.inline_obj(
-              match, lineno, self.patterns.strong, nodes.strong)
-        return before, inlines, remaining, sysmessages
+        return self.nested_inline_obj(match, lineno, r'\*\*', nodes.strong)
 
-    def interpreted_or_phrase_ref(self, match, lineno):
-        end_pattern = self.patterns.interpreted_or_phrase_ref
-        string = match.string
-        matchstart = match.start('backquote')
-        matchend = match.end('backquote')
-        rolestart = match.start('role')
-        role = match.group('role')
-        position = ''
+    def interpreted_or_phrase_ref(self, startmatch, lineno):
+        before,start,remaining = _split_match(startmatch,'interpreted_or_phrase_ref')
+        
+        role = startmatch.group('role')
+                
+        roleposition = ''
+
+        # Got a leading role?
         if role:
-            role = role[1:-1]
-            position = 'prefix'
-        elif self.quoted_start(match):
-            return (string[:matchend], [], string[matchend:], [])
-        endmatch = end_pattern.search(string[matchend:])
-        if endmatch and endmatch.start(1):  # 1 or more chars
-            textend = matchend + endmatch.end()
-            if endmatch.group('role'):
+            role = role[1:-1] # drop the leading and trailing colons
+            roleposition = 'prefix'
+        elif self.quoted_start(startmatch):
+            return (remaining, [], remaining, [])
+
+        # Look for the end
+        if role:
+            endpattern = self.interpreted_or_phrase_ref_end
+        else:
+            endpattern = self.interpreted_or_phrase_ref_end2
+            
+        pattern = self._push_end_string(startmatch, endpattern)
+
+        children,msgs,endmatch = self.inner_parse(remaining,lineno,pattern.search)
+        self %= 'interpreted_or_phrase_ref:'
+        self %= '  searched = %r' % remaining
+        self %= '  children =', children
+        
+        if endmatch and endmatch.group(1):   
+            # self %= '  groups = ', endmatch.groups()
+            # self %= '  named groups = ', endmatch.groupdict()
+
+            mid, end, after = _split_match(endmatch, 1)
+            # length absorbed by inner_parse
+            innerlen = len(remaining)-len(endmatch.string)
+            between = remaining[:innerlen]+mid
+
+            # self %= '  split=', (before, start, between, end, after)
+            
+            if endmatch.group('rolesuffix'):
+                
                 if role:
                     msg = self.reporter.warning(
                         'Multiple roles in interpreted text (both '
                         'prefix and suffix present; only one allowed).',
                         line=lineno)
-                    text = unescape(string[rolestart:textend], 1)
-                    prb = self.problematic(text, text, msg)
-                    return string[:rolestart], [prb], string[textend:], [msg]
-                role = endmatch.group('suffix')[1:-1]
-                position = 'suffix'
-            escaped = endmatch.string[:endmatch.start(1)]
-            text = unescape(escaped, 0)
-            rawsource = unescape(string[matchstart:textend], 1)
+                    prb = self.problematic(rawsource, rawsource, msg)
+                    return before, [prb], after, [msg]
+
+                role = endmatch.group('rolesuffix')[1:-1] # drop the colons
+                roleposition = 'suffix'
+                
+            rawsource = null2escape(start+between+end)
+            
             if rawsource[-1:] == '_':
-                if role:
-                    msg = self.reporter.warning(
-                          'Mismatch: both interpreted text role %s and '
-                          'reference suffix.' % position, line=lineno)
-                    text = unescape(string[rolestart:textend], 1)
-                    prb = self.problematic(text, text, msg)
-                    return string[:rolestart], [prb], string[textend:], [msg]
-                return self.phrase_ref(string[:matchstart], string[textend:],
-                                       rawsource, escaped, text)
+                
+                if not role:
+                    return before, self.phrase_ref(rawsource,between,children,endmatch), after, msgs
+                    
+
+                msgs += [self.reporter.warning('Mismatch: both interpreted text role %s and '
+                                               'reference suffix.' % roleposition,
+                                               line=lineno)]
             else:
                 try:
-                    return self.interpreted(
-                        string[:rolestart], string[textend:],
-                        rawsource, text, role, lineno)
+                    nodes, msgs2 = self.interpreted(rawsource, between, children, role, lineno)
+                    return before, nodes, after, msgs + msgs2
+                
                 except UnknownInterpretedRoleError, detail:
-                    msg = self.reporter.error(
-                        'Unknown interpreted text role "%s".' % role,
-                        line=lineno)
-                    text = unescape(string[rolestart:textend], 1)
-                    prb = self.problematic(text, text, msg)
-                    return (string[:rolestart], [prb], string[textend:],
-                            detail.args[0] + [msg])
-                except InterpretedRoleNotImplementedError, detail:
-                    msg = self.reporter.error(
-                        'Interpreted text role "%s" not implemented.' % role,
-                        line=lineno)
-                    text = unescape(string[rolestart:textend], 1)
-                    prb = self.problematic(text, text, msg)
-                    return (string[:rolestart], [prb], string[textend:],
-                            detail.args[0] + [msg])
-        msg = self.reporter.warning(
-              'Inline interpreted text or phrase reference start-string '
-              'without end-string.', line=lineno)
-        text = unescape(string[matchstart:matchend], 1)
-        prb = self.problematic(text, text, msg)
-        return string[:matchstart], [prb], string[matchend:], [msg]
+                    err = 'Unknown interpreted text role "%s".'
 
-    def phrase_ref(self, before, after, rawsource, escaped, text):
-        match = self.patterns.embedded_uri.search(escaped)
-        if match:
-            text = unescape(escaped[:match.start(0)])
-            uri_text = match.group(2)
-            uri = ''.join(uri_text.split())
-            uri = self.adjust_uri(uri)
+                except InterpretedRoleNotImplementedError, detail:
+                    err = 'Interpreted text role "%s" not implemented.'
+                    
+                msgs += detail.args[0] + [
+                    self.reporter.error(err % role, line=lineno)]
+
+            prb = self.problematic(rawsource, children, msgs[-1])
+            return before, [prb], after, msgs
+        
+        else:
+            msgs += [
+                self.reporter.warning(
+                    'Inline interpreted text or phrase reference start-string '
+                    'without end-string.', line=lineno)
+                ]
+            
+            rawstart = null2escape(start)
+            prb = self.problematic(rawstart, rawstart, msgs[-1])
+            return before, [prb], remaining, msgs
+
+
+    def phrase_ref(self, rawsource, between, children, endmatch):
+
+        self %= 'phrase_ref:'
+        self %= '  rawsource = %r' % rawsource
+        self %= '  between = %r' % between
+        self %= '  children = %r' % children
+        
+        name = unescape(between)
+        reftext = ''             # Assume that children contains the text
+
+        self %= 'phrase_ref, groupdict=', endmatch.groupdict()
+        uritext = endmatch.group('uri') # is there an embedded uri?
+        if uritext:
+            uri = ''.join(uritext.split()) # remove spaces
+            uri = self.adjust_uri(uri)     # add mailto: if it's an email
+
             if uri:
-                target = nodes.target(match.group(1), refuri=uri)
+                target = nodes.target(endmatch.group(1), refuri=uri, *children)
             else:
-                raise ApplicationError('problem with URI: %r' % uri_text)
-            if not text:
-                text = uri
+                raise ApplicationError('problem with URI: %r' % uritext)
+            
+            if not name: # Nothing between; use the uri for the refname and the text
+                name = uri
+                reftext = uri
         else:
             target = None
-        refname = normalize_name(text)
-        reference = nodes.reference(rawsource, text)
+            
+        refname = normalize_name(name)
+            
+        reference = nodes.reference(rawsource, reftext, *children)
+        
         node_list = [reference]
         if rawsource[-2:] == '__':
             if target:
@@ -885,7 +1081,8 @@ class Inliner:
             else:
                 reference['refname'] = refname
                 self.document.note_refname(reference)
-        return before, node_list, after, []
+                
+        return node_list
 
     def adjust_uri(self, uri):
         match = self.patterns.email.match(uri)
@@ -894,14 +1091,15 @@ class Inliner:
         else:
             return uri
 
-    def interpreted(self, before, after, rawsource, text, role, lineno):
-        role_function, canonical, messages = self.get_role_function(role,
-                                                                    lineno)
+    def interpreted(self, rawsource, between, children, role, lineno):
+        role_function, canonical, messages = self.get_role_function(role, lineno)
+        
         if role_function:
-            nodelist, messages2 = role_function(canonical, rawsource, text,
-                                                lineno)
+            nodelist, messages2 = role_function(
+                canonical, rawsource, between, children, lineno)
+            
             messages.extend(messages2)
-            return before, nodelist, after, messages
+            return nodelist, messages
         else:
             raise InterpretedRoleNotImplementedError(messages)
 
@@ -942,24 +1140,27 @@ class Inliner:
     def literal(self, match, lineno):
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
               match, lineno, self.patterns.literal, nodes.literal,
-              restore_backslashes=1)
+              literal=1)
         return before, inlines, remaining, sysmessages
 
     def inline_internal_target(self, match, lineno):
-        before, inlines, remaining, sysmessages, endstring = self.inline_obj(
-              match, lineno, self.patterns.target, nodes.target)
+        result = self.nested_inline_obj(match, lineno, '`', nodes.target)
+        inlines = result[1]
+        
         if inlines and isinstance(inlines[0], nodes.target):
             assert len(inlines) == 1
             target = inlines[0]
             name = normalize_name(target.astext())
             target['name'] = name
             self.document.note_explicit_target(target, self.parent)
-        return before, inlines, remaining, sysmessages
+            
+        return result
 
     def substitution_reference(self, match, lineno):
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
               match, lineno, self.patterns.substitution_ref,
-              nodes.substitution_reference)
+              nodes.substitution_reference, literal=1)
+        
         if len(inlines) == 1:
             subref_node = inlines[0]
             if isinstance(subref_node, nodes.substitution_reference):
@@ -1041,8 +1242,8 @@ class Inliner:
             else:
                 addscheme = ''
             text = match.group('whole')
-            unescaped = unescape(text, 0)
-            return [nodes.reference(unescape(text, 1), unescaped,
+            unescaped = unescape(text)
+            return [nodes.reference(null2escape(text), unescaped,
                                     refuri=addscheme + unescaped)]
         else:                   # not a valid scheme
             raise MarkupMismatch
@@ -1060,8 +1261,8 @@ class Inliner:
         else:
             raise MarkupMismatch
         ref = self.pep_url % pepnum
-        unescaped = unescape(text, 0)
-        return [nodes.reference(unescape(text, 1), unescaped, refuri=ref)]
+        unescaped = unescape(text)
+        return [nodes.reference(null2escape(text), unescaped, refuri=ref)]
 
     rfc_url = 'http://www.faqs.org/rfcs/rfc%d.html'
 
@@ -1072,8 +1273,8 @@ class Inliner:
             ref = self.rfc_url % rfcnum
         else:
             raise MarkupMismatch
-        unescaped = unescape(text, 0)
-        return [nodes.reference(unescape(text, 1), unescaped, refuri=ref)]
+        unescaped = unescape(text)
+        return [nodes.reference(null2escape(text), unescaped, refuri=ref)]
 
     def implicit_inline(self, text, lineno):
         """
@@ -1095,7 +1296,7 @@ class Inliner:
                             self.implicit_inline(text[match.end():], lineno))
                 except MarkupMismatch:
                     pass
-        return [nodes.Text(unescape(text), rawsource=unescape(text, 1))]
+        return [nodes.Text(unescape(text), rawsource=null2escape(text))]
 
     dispatch = {'*': emphasis,
                 '**': strong,
@@ -1107,43 +1308,44 @@ class Inliner:
                 '_': reference,
                 '__': anonymous_reference}
 
-    def generic_interpreted_role(self, role, rawtext, text, lineno):
+    def generic_interpreted_role(self, role, rawsource, between, children, lineno):
         try:
             role_class = self.generic_roles[role]
         except KeyError:
             msg = self.reporter.error('Unknown interpreted text role: "%s".'
                                       % role, line=lineno)
-            prb = self.problematic(text, text, msg)
+            prb = self.problematic(between, between, msg)
             return [prb], [msg]
-        return [role_class(rawtext, text)], []
+        
+        return [role_class(rawsource, '', *children)], []
 
-    def pep_reference_role(self, role, rawtext, text, lineno):
+    def pep_reference_role(self, role, rawsource, between, children, lineno):
         try:
-            pepnum = int(text)
+            pepnum = int(between)
             if pepnum < 0 or pepnum > 9999:
                 raise ValueError
         except ValueError:
             msg = self.reporter.error(
                 'PEP number must be a number from 0 to 9999; "%s" is invalid.'
-                % text, line=lineno)
-            prb = self.problematic(text, text, msg)
+                % between, line=lineno)
+            prb = self.problematic(between, between, msg)
             return [prb], [msg]
         ref = self.pep_url % pepnum
-        return [nodes.reference(rawtext, 'PEP ' + text, refuri=ref)], []
+        return [nodes.reference(rawsource, 'PEP ' + between, refuri=ref, *children)], []
 
-    def rfc_reference_role(self, role, rawtext, text, lineno):
+    def rfc_reference_role(self, role, rawsource, between, children, lineno):
         try:
-            rfcnum = int(text)
+            rfcnum = int(between)
             if rfcnum <= 0:
                 raise ValueError
         except ValueError:
             msg = self.reporter.error(
                 'RFC number must be a number greater than or equal to 1; '
-                '"%s" is invalid.' % text, line=lineno)
-            prb = self.problematic(text, text, msg)
+                '"%s" is invalid.' % between, line=lineno)
+            prb = self.problematic(between, between, msg)
             return [prb], [msg]
         ref = self.rfc_url % rfcnum
-        return [nodes.reference(rawtext, 'RFC ' + text, refuri=ref)], []
+        return [nodes.reference(rawsource, 'RFC ' + between, refuri=ref, *children)], []
 
 
 class Body(RSTState):
@@ -2988,13 +3190,22 @@ def escape2null(text):
         parts.append('\x00' + text[found+1:found+2])
         start = found + 2               # skip character after escape
 
+def null2escape(text):
+    """
+    return a string with nulls replaced by backslashes
+    """
+    return text.replace('\x00', '\\')
+
 def unescape(text, restore_backslashes=0):
     """
-    Return a string with nulls removed or restored to backslashes.
-    Backslash-escaped spaces are also removed.
+    Return a string with nulls, null-escaped spaces and null-escaped
+    newlines removed.
+
+    For backwards-compatibility, replaces nulls by backslashes instead
+    when restore_backslashes is zero (deprecated: use null2escape instead)
     """
     if restore_backslashes:
-        return text.replace('\x00', '\\')
+        return null2escape(text)
     else:
         for sep in ['\x00 ', '\x00\n', '\x00']:
             text = ''.join(text.split(sep))
