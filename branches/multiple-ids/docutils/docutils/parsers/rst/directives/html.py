@@ -47,16 +47,7 @@ class MetaBody(states.SpecializedBody):
 
     class meta(nodes.Special, nodes.PreBibliographic, nodes.Element):
         """HTML-specific "meta" element."""
-        def __init__(self, *args, **kwargs):
-            # XXX MULTIPLE-IDS AUXILIARY REFACTORING CRUFT.  REMOVE ME.
-            assert not kwargs.has_key('names')
-            name = None
-            if kwargs.has_key('name'):
-                name = kwargs.pop('name')
-            nodes.Element.__init__(self, *args, **kwargs)
-            self.attributes.no_checks()
-            if name is not None:
-                self.attributes['name'] = name
+        pass
 
     def field_marker(self, match, context, next_state):
         """Meta element."""

@@ -23,12 +23,11 @@ hierarchy.
 
 __docformat__ = 'reStructuredText'
 
-__metaclass__ = type
-
 import sys
 import os
 import re
 import xml.dom.minidom
+from copy import deepcopy
 from types import IntType, SliceType, StringType, UnicodeType, \
      TupleType, ListType
 from UserString import UserString
@@ -291,61 +290,6 @@ class Text(UserString, Node):
         return ''.join(result)
 
 
-class AttributeDict(dict):
-
-    """
-    Dictionary with error checking and default values.
-    """
-
-    def __init__(self, defaults):
-        dict.__init__(self)
-        # The defaults parameter is usually taken from some
-        # attr_defaults member variable and maps attribute names to
-        # types which are called to create the default value.
-        self.defaults = defaults
-        self.checks = 1
-
-    forbidden = ['id', 'name', 'dupname', 'class']
-
-    def has_key(self, key):
-        if self.checks and key in (self.forbidden + self.defaults.keys()):
-            raise KeyError, key
-        return dict.has_key(self, key)
-
-    def __getitem__(self, key):
-        if self.checks and key in self.forbidden:
-            raise KeyError, key
-        try:
-            return dict.__getitem__(self, key)
-        except KeyError:
-            default = self.defaults[key]()
-            self[key] = default
-            return default
-
-    def __setitem__(self, key, value):
-        if self.checks:
-            expected_type = self.defaults.get(key, (str, unicode, int, long))
-            assert isinstance(value, expected_type), 'can only set %r to ' \
-                   'an instance of %s' % (key, expected_type)
-        if self.checks and key in self.forbidden:
-            raise KeyError, key
-        dict.__setitem__(self, key, value)
-
-    def __delitem__(self, key):
-        if self.checks and key in (self.forbidden + self.defaults.keys()):
-            raise KeyError, key
-        dict.__delitem__(self, key)
-
-    def is_not_default(self, key):
-        """
-        Return true if the key is not set to its default value.
-        """
-        return key not in self.defaults or self[key] != self.defaults[key]()
-
-    def no_checks(self):
-        self.checks = 0
-
-
 class Element(Node):
 
     """
@@ -383,8 +327,7 @@ class Element(Node):
     This is equivalent to ``element.extend([node1, node2])``.
     """
 
-    attr_defaults = {'ids': list, 'classes': list, 'names': list,
-                     'dupnames': list}
+    attr_defaults = {'ids': [], 'classes': [], 'names': [], 'dupnames': []}
     """Dictionary mapping attribute keys to types instances of which
     provide default values."""
 
@@ -404,7 +347,7 @@ class Element(Node):
 
         self.extend(children)           # maintain parent info
 
-        self.attributes = AttributeDict(self.attr_defaults)
+        self.attributes = deepcopy(self.attr_defaults)
         """Dictionary of attribute {name: value}."""
 
         for att, value in attributes.items():
@@ -543,9 +486,15 @@ class Element(Node):
         return self.child_text_separator.join(
               [child.astext() for child in self.children])
 
+    def non_default_attributes(self):
+        atts = {}
+        for key, value in self.attributes.items():
+            if self.is_not_default(key):
+                atts[key] = value
+        return atts
+
     def attlist(self):
-        attlist = [(key, value) for key, value in self.attributes.items()
-                   if self.attributes.is_not_default(key)]
+        attlist = self.non_default_attributes().items()
         attlist.sort()
         return attlist
 
@@ -590,7 +539,10 @@ class Element(Node):
         return self.children.index(item)
 
     def is_not_default(self, key):
-        return self.attributes.is_not_default(key)
+        try:
+            return self[key] != self.attr_defaults[key]
+        except KeyError:
+            return 1
 
     def clear(self):
         self.children = []
@@ -706,7 +658,7 @@ class Resolvable:
 class BackLinkable(Element):
 
     attr_defaults = Element.attr_defaults.copy()
-    attr_defaults['backrefs'] = list
+    attr_defaults['backrefs'] = []
 
     def add_backref(self, refid):
         self['backrefs'].append(refid)

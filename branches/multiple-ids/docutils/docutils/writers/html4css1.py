@@ -797,7 +797,7 @@ class HTMLTranslator(nodes.NodeVisitor):
         self.depart_admonition()
 
     def visit_image(self, node):
-        atts = dict(node.attlist())
+        atts = node.non_default_attributes()
         if atts.has_key('class'):
             del atts['class']           # prevent duplication with node attrs
         atts['src'] = atts['uri']
@@ -918,7 +918,7 @@ class HTMLTranslator(nodes.NodeVisitor):
         self.body.append('\n</pre>\n')
 
     def visit_meta(self, node):
-        meta = self.emptytag(node, 'meta', **dict(node.attlist()))
+        meta = self.emptytag(node, 'meta', **node.non_default_attributes())
         self.add_meta(meta)
 
     def depart_meta(self, node):

@@ -195,7 +195,7 @@ class GenericRole:
 
     def __call__(self, role, rawtext, text, lineno, inliner,
                  options={}, content=[]):
-        options['classes'] = options.pop('class', '').split()
+        set_classes(options)
         return [self.node_class(rawtext, utils.unescape(text), **options)], []
 
 
@@ -234,7 +234,7 @@ def generic_custom_role(role, rawtext, text, lineno, inliner,
     """"""
     # Once nested inline markup is implemented, this and other methods should
     # recursively call inliner.nested_parse().
-    options['classes'] = options.pop('class', '').split()
+    set_classes(options)
     return [nodes.inline(rawtext, utils.unescape(text), **options)], []
 
 generic_custom_role.options = {'class': directives.class_option}
@@ -267,7 +267,7 @@ def pep_reference_role(role, rawtext, text, lineno, inliner,
         return [prb], [msg]
     # Base URL mainly used by inliner.pep_reference; so this is correct:
     ref = inliner.document.settings.pep_base_url + inliner.pep_url % pepnum
-    options['classes'] = options.pop('class', '').split()
+    set_classes(options)
     return [nodes.reference(rawtext, 'PEP ' + utils.unescape(text), refuri=ref,
                             **options)], []
 
@@ -287,7 +287,7 @@ def rfc_reference_role(role, rawtext, text, lineno, inliner,
         return [prb], [msg]
     # Base URL mainly used by inliner.rfc_reference, so this is correct:
     ref = inliner.document.settings.rfc_base_url + inliner.rfc_url % rfcnum
-    options['classes'] = options.pop('class', '').split()
+    set_classes(options)
     node = nodes.reference(rawtext, 'RFC ' + utils.unescape(text), refuri=ref,
                            **options)
     return [node], []
@@ -303,7 +303,7 @@ def raw_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
             'an associated format.' % role, line=lineno)
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
-    options['classes'] = options.pop('class', '').split()
+    set_classes(options)
     node = nodes.raw(rawtext, utils.unescape(text, 1), **options)
     return [node], []
 
@@ -334,3 +334,14 @@ register_canonical_role('target', unimplemented_role)
 # This should remain unimplemented, for testing purposes:
 register_canonical_role('restructuredtext-unimplemented-role',
                         unimplemented_role)
+
+
+def set_classes(options):
+    """
+    Auxiliary function to set options['classes'] and delete
+    options['class'].
+    """
+    if options.has_key('class'):
+        assert not options.has_key('classes')
+        options['classes'] = options['class'].split()
+        del options['class']

@@ -96,15 +96,14 @@ class ElementTests(unittest.TestCase):
     def test_default_attributes(self):
         element = nodes.Element()
         self.assertEquals(element['ids'], [])
-        self.assert_(not element.attributes.is_not_default('ids'))
+        self.assertEquals(element.non_default_attributes(), {})
+        self.assert_(not element.is_not_default('ids'))
         self.assert_(element['ids'] is not nodes.Element()['ids'])
         element['ids'].append('someid')
         self.assertEquals(element['ids'], ['someid'])
-        self.assert_(element.attributes.is_not_default('ids'))
-
-    def test_error_checking(self):
-        element = nodes.Element()
-        self.assertRaises(Exception, element.__setitem__, 'ids', 'foo')
+        self.assertEquals(element.non_default_attributes(),
+                          {'ids': ['someid']})
+        self.assert_(element.is_not_default('ids'))
 
 
 class MiscTests(unittest.TestCase):
@@ -113,7 +112,7 @@ class MiscTests(unittest.TestCase):
         node_class_names = []
         for x in dir(nodes):
             c = getattr(nodes, x)
-            if isinstance(c, type) and issubclass(c, nodes.Node) \
+            if isinstance(c, ClassType) and issubclass(c, nodes.Node) \
                    and len(c.__bases__) > 1:
                 node_class_names.append(x)
         node_class_names.sort()
