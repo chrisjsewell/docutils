@@ -256,6 +256,7 @@ class HTMLTranslator(nodes.NodeVisitor):
         are extracted), tag name, and optional attributes.
         """
         tagname = tagname.lower()
+        prefix = []
         atts = {}
         for (name, value) in attributes.items():
             atts[name.lower()] = value
@@ -266,7 +267,9 @@ class HTMLTranslator(nodes.NodeVisitor):
             atts['class'] = ' '.join(classes)
         assert not atts.has_key('id')
         if node.get('ids'):
-            atts['id'] = ' '.join(node['ids'])
+            atts['id'] = node['ids'][0]
+            for id in node['ids'][1:]:
+                prefix.append('<span id="%s"></span>' % id)
         if atts.has_key('id') and tagname in self.named_tags:
             atts['name'] = atts['id']   # for compatibility with old browsers
         attlist = atts.items()
@@ -286,7 +289,7 @@ class HTMLTranslator(nodes.NodeVisitor):
                 except TypeError:       # for Python 2.1 compatibility:
                     uval = unicode(str(value))
                 parts.append('%s="%s"' % (name.lower(), self.attval(uval)))
-        return '<%s%s>%s' % (' '.join(parts), infix, suffix)
+        return ''.join(prefix) + '<%s%s>' % (' '.join(parts), infix) + suffix
 
     def emptytag(self, node, tagname, suffix='\n', **attributes):
         """Construct and return an XML-compatible empty tag."""
