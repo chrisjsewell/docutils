@@ -71,7 +71,7 @@ Paragraph
 """,
 """\
 <document source="test data">
-    <section class="four" ids="section-title" name="section title">
+    <section class="four" ids="section-title" names="section title">
         <title>
             Section Title
         <paragraph>

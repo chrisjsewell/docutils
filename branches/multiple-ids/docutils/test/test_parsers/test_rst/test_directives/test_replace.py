@@ -33,7 +33,7 @@ Test the |name| directive.
         <substitution_reference refname="name">
             name
          directive.
-    <substitution_definition name="name">
+    <substitution_definition names="name">
         "
         <strong>
             replace
@@ -80,12 +80,12 @@ I recommend you try |Python|_.
 """,
 """\
 <document source="test data">
-    <substitution_definition name="Python">
+    <substitution_definition names="Python">
         Python, 
         <emphasis>
             the
          best language around
-    <target ids="python" name="python" refuri="http://www.python.org/">
+    <target ids="python" names="python" refuri="http://www.python.org/">
     <paragraph>
         I recommend you try 
         <reference refname="python">

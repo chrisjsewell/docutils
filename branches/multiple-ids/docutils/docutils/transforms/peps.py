@@ -152,7 +152,7 @@ class Contents(Transform):
         topic = nodes.topic('', title, CLASS='contents')
         name = nodes.fully_normalize_name(name)
         if not self.document.has_name(name):
-            topic['name'] = name
+            topic['names'].append(name)
         self.document.note_implicit_target(topic)
         pending = nodes.pending(parts.Contents)
         topic += pending

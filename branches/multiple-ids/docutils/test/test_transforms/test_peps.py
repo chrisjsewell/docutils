@@ -44,17 +44,17 @@ A "References" section should be generated.
 <document source="test data">
     <paragraph>
         A target exists, here's the \n\
-        <reference name="reference" refname="reference">
+        <reference names="reference" refname="reference">
             reference
          \n\
         <footnote_reference auto="1" ids="id3" refname="target_note: id2">
         .
         A "References" section should be generated.
-    <target ids="reference" name="reference" refuri="http://www.example.org">
+    <target ids="reference" names="reference" refuri="http://www.example.org">
     <section ids="id1">
         <title>
             References
-        <footnote auto="1" ids="id2" name="target_note: id2">
+        <footnote auto="1" ids="id2" names="target_note: id2">
             <paragraph>
                 <reference refuri="http://www.example.org">
                     http://www.example.org

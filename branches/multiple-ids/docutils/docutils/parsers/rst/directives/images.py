@@ -40,7 +40,8 @@ def image(name, arguments, options, content, lineno,
             reference_node = nodes.reference(refuri=data)
         elif target_type == 'refname':
             reference_node = nodes.reference(
-                refname=data, name=whitespace_normalize_name(options['target']))
+                refname=data,
+                names=[whitespace_normalize_name(options['target'])])
             state.document.note_refname(reference_node)
         else:                           # malformed target
             messages.append(data)       # data is a system message

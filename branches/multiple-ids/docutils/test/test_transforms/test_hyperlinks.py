@@ -42,10 +42,10 @@ direct_ external
 """\
 <document source="test data">
     <paragraph>
-        <reference name="direct" refuri="http://direct">
+        <reference names="direct" refuri="http://direct">
             direct
          external
-    <target ids="direct" name="direct" refuri="http://direct">
+    <target ids="direct" names="direct" refuri="http://direct">
 """],
 ["""\
 indirect_ external
@@ -56,11 +56,11 @@ indirect_ external
 """\
 <document source="test data">
     <paragraph>
-        <reference name="indirect" refuri="http://indirect">
+        <reference names="indirect" refuri="http://indirect">
             indirect
          external
-    <target ids="indirect" name="indirect" refuri="http://indirect">
-    <target ids="xtarget" name="xtarget" refuri="http://indirect">
+    <target ids="indirect" names="indirect" refuri="http://indirect">
+    <target ids="xtarget" names="xtarget" refuri="http://indirect">
 """],
 ["""\
 .. _direct:
@@ -69,9 +69,9 @@ direct_ internal
 """,
 """\
 <document source="test data">
-    <target ids="direct" name="direct">
+    <target ids="direct" names="direct">
     <paragraph>
-        <reference name="direct" refid="direct">
+        <reference names="direct" refid="direct">
             direct
          internal
 """],
@@ -85,13 +85,13 @@ indirect_ internal
 """,
 """\
 <document source="test data">
-    <target ids="ztarget" name="ztarget">
+    <target ids="ztarget" names="ztarget">
     <paragraph>
-        <reference name="indirect" refid="ztarget">
+        <reference names="indirect" refid="ztarget">
             indirect
          internal
-    <target ids="indirect2" name="indirect2" refid="ztarget">
-    <target ids="indirect" name="indirect" refid="ztarget">
+    <target ids="indirect2" names="indirect2" refid="ztarget">
+    <target ids="indirect" names="indirect" refid="ztarget">
 """],
 ["""\
 Implicit
@@ -103,14 +103,14 @@ indirect_ internal
 """,
 """\
 <document source="test data">
-    <section ids="implicit" name="implicit">
+    <section ids="implicit" names="implicit">
         <title>
             Implicit
         <paragraph>
-            <reference name="indirect" refid="implicit">
+            <reference names="indirect" refid="implicit">
                 indirect
              internal
-        <target ids="indirect" name="indirect" refid="implicit">
+        <target ids="indirect" names="indirect" refid="implicit">
 """],
 ["""\
 Implicit
@@ -123,15 +123,15 @@ Implicit
 """,
 """\
 <document source="test data">
-    <section ids="implicit" name="implicit">
+    <section ids="implicit" names="implicit">
         <title>
             Implicit
         <paragraph>
-            <reference name="multiply-indirect" refid="implicit">
+            <reference names="multiply-indirect" refid="implicit">
                 multiply-indirect
              internal
-        <target ids="multiply-indirect" name="multiply-indirect" refid="implicit">
-        <target ids="indirect" name="indirect" refid="implicit">
+        <target ids="multiply-indirect" names="multiply-indirect" refid="implicit">
+        <target ids="indirect" names="indirect" refid="implicit">
 """],
 ["""\
 circular_ indirect reference
@@ -145,7 +145,7 @@ circular_ indirect reference
         <problematic ids="id2" refid="id1">
             circular_
          indirect reference
-    <target ids="circular" name="circular" refid="circular">
+    <target ids="circular" names="circular" refid="circular">
     <problematic ids="id3" refid="id1">
         .. _indirect: circular_
     <system_message backrefs="id2 id3" ids="id1" level="3" line="3" source="test data" type="ERROR">
@@ -169,12 +169,12 @@ Direct internal reference: Implicit_
 """,
 """\
 <document source="test data">
-    <section dupname="implicit" ids="implicit">
+    <section dupnames="implicit" ids="implicit">
         <title>
             Implicit
         <paragraph>
             Duplicate implicit targets.
-    <section dupname="implicit" ids="id1">
+    <section dupnames="implicit" ids="id1">
         <title>
             Implicit
         <system_message backrefs="id1" level="1" line="7" source="test data" type="INFO">
@@ -184,7 +184,7 @@ Direct internal reference: Implicit_
             <problematic ids="id3" refid="id2">
                 indirect_
              internal
-        <target ids="indirect" name="indirect" refname="implicit">
+        <target ids="indirect" names="indirect" refname="implicit">
         <paragraph>
             Direct internal reference: 
             <problematic ids="id5" refid="id4">
@@ -204,7 +204,7 @@ __ http://direct
 """\
 <document source="test data">
     <paragraph>
-        <reference anonymous="1" name="direct external" refuri="http://direct">
+        <reference anonymous="1" names="direct external" refuri="http://direct">
             direct external
     <target anonymous="1" ids="id1" refuri="http://direct">
 """],
@@ -217,10 +217,10 @@ __ xtarget_
 """\
 <document source="test data">
     <paragraph>
-        <reference anonymous="1" name="indirect external" refuri="http://indirect">
+        <reference anonymous="1" names="indirect external" refuri="http://indirect">
             indirect external
     <target anonymous="1" ids="id1" refuri="http://indirect">
-    <target ids="xtarget" name="xtarget" refuri="http://indirect">
+    <target ids="xtarget" names="xtarget" refuri="http://indirect">
 """],
 ["""\
 __
@@ -231,7 +231,7 @@ __
 <document source="test data">
     <target anonymous="1" ids="id1">
     <paragraph>
-        <reference anonymous="1" name="direct internal" refid="id1">
+        <reference anonymous="1" names="direct internal" refid="id1">
             direct internal
 """],
 ["""\
@@ -243,9 +243,9 @@ __ ztarget_
 """,
 """\
 <document source="test data">
-    <target ids="ztarget" name="ztarget">
+    <target ids="ztarget" names="ztarget">
     <paragraph>
-        <reference anonymous="1" name="indirect internal" refid="ztarget">
+        <reference anonymous="1" names="indirect internal" refid="ztarget">
             indirect internal
     <target anonymous="1" ids="id1" refid="ztarget">
 """],
@@ -264,13 +264,13 @@ __ ztarget_
 """,
 """\
 <document source="test data">
-    <target dupname="ztarget" ids="ztarget">
+    <target dupnames="ztarget" ids="ztarget">
     <paragraph>
         First
     <system_message backrefs="id1" level="2" line="5" source="test data" type="WARNING">
         <paragraph>
             Duplicate explicit target name: "ztarget".
-    <target dupname="ztarget" ids="id1">
+    <target dupnames="ztarget" ids="id1">
     <paragraph>
         Second
     <paragraph>
@@ -290,13 +290,13 @@ Another reference to the same `embedded URI`_.
 <document source="test data">
     <paragraph>
         An \n\
-        <reference name="embedded uri" refuri="http://direct">
+        <reference names="embedded uri" refuri="http://direct">
             embedded uri
-        <target ids="embedded-uri" name="embedded uri" refuri="http://direct">
+        <target ids="embedded-uri" names="embedded uri" refuri="http://direct">
         .
     <paragraph>
         Another reference to the same \n\
-        <reference name="embedded URI" refuri="http://direct">
+        <reference names="embedded URI" refuri="http://direct">
             embedded URI
         .
 """],
@@ -307,7 +307,7 @@ An `anonymous embedded uri <http://direct>`__.
 <document source="test data">
     <paragraph>
         An \n\
-        <reference name="anonymous embedded uri" refuri="http://direct">
+        <reference names="anonymous embedded uri" refuri="http://direct">
             anonymous embedded uri
         .
 """],
@@ -325,12 +325,12 @@ By this `internal hyperlink`_ referemce.
 """,
 """\
 <document source="test data">
-    <target ids="internal-hyperlink" name="internal hyperlink">
+    <target ids="internal-hyperlink" names="internal hyperlink">
     <paragraph>
         This paragraph referenced.
     <paragraph>
         By this \n\
-        <reference name="internal hyperlink" refid="internal-hyperlink">
+        <reference names="internal hyperlink" refid="internal-hyperlink">
             internal hyperlink
          referemce.
 """],
@@ -347,17 +347,17 @@ The results of the transform are not visible at the XML level.
 """,
 """\
 <document source="test data">
-    <target ids="chained" name="chained">
-    <target ids="internal-hyperlink" name="internal hyperlink">
+    <target ids="chained" names="chained">
+    <target ids="internal-hyperlink" names="internal hyperlink">
     <paragraph>
         This paragraph referenced.
     <paragraph>
         By this \n\
-        <reference name="internal hyperlink" refid="internal-hyperlink">
+        <reference names="internal hyperlink" refid="internal-hyperlink">
             internal hyperlink
          referemce
         as well as by this \n\
-        <reference name="chained" refid="chained">
+        <reference names="chained" refid="chained">
             chained
          reference.
     <paragraph>
@@ -370,9 +370,9 @@ The results of the transform are not visible at the XML level.
 """,
 """\
 <document source="test data">
-    <target ids="external-hyperlink" name="external hyperlink" refuri="http://uri">
+    <target ids="external-hyperlink" names="external hyperlink" refuri="http://uri">
     <paragraph>
-        <reference name="External hyperlink" refuri="http://uri">
+        <reference names="External hyperlink" refuri="http://uri">
             External hyperlink
          reference.
 """],
@@ -382,8 +382,8 @@ The results of the transform are not visible at the XML level.
 """,
 """\
 <document source="test data">
-    <target ids="external-hyperlink" name="external hyperlink" refuri="http://uri">
-    <target ids="indirect-target" name="indirect target" refuri="http://uri">
+    <target ids="external-hyperlink" names="external hyperlink" refuri="http://uri">
+    <target ids="indirect-target" names="indirect target" refuri="http://uri">
     <system_message level="1" line="2" source="test data" type="INFO">
         <paragraph>
             Indirect hyperlink target "indirect target" is not referenced.
@@ -397,14 +397,14 @@ and a chained_ reference too.
 """,
 """\
 <document source="test data">
-    <target ids="chained" name="chained" refuri="http://uri">
-    <target ids="external-hyperlink" name="external hyperlink" refuri="http://uri">
+    <target ids="chained" names="chained" refuri="http://uri">
+    <target ids="external-hyperlink" names="external hyperlink" refuri="http://uri">
     <paragraph>
-        <reference name="External hyperlink" refuri="http://uri">
+        <reference names="External hyperlink" refuri="http://uri">
             External hyperlink
          reference
         and a \n\
-        <reference name="chained" refuri="http://uri">
+        <reference names="chained" refuri="http://uri">
             chained
          reference too.
 """],
@@ -416,10 +416,10 @@ and a chained_ reference too.
 """,
 """\
 <document source="test data">
-    <target ids="external-hyperlink" name="external hyperlink" refuri="http://uri">
-    <target ids="indirect-hyperlink" name="indirect hyperlink" refuri="http://uri">
+    <target ids="external-hyperlink" names="external hyperlink" refuri="http://uri">
+    <target ids="indirect-hyperlink" names="indirect hyperlink" refuri="http://uri">
     <paragraph>
-        <reference name="Indirect hyperlink" refuri="http://uri">
+        <reference names="Indirect hyperlink" refuri="http://uri">
             Indirect hyperlink
          reference.
 """],
@@ -432,14 +432,14 @@ Chained_ `indirect hyperlink`_ reference.
 """,
 """\
 <document source="test data">
-    <target ids="external-hyperlink" name="external hyperlink" refuri="http://uri">
-    <target ids="chained" name="chained" refuri="http://uri">
-    <target ids="indirect-hyperlink" name="indirect hyperlink" refuri="http://uri">
+    <target ids="external-hyperlink" names="external hyperlink" refuri="http://uri">
+    <target ids="chained" names="chained" refuri="http://uri">
+    <target ids="indirect-hyperlink" names="indirect hyperlink" refuri="http://uri">
     <paragraph>
-        <reference name="Chained" refuri="http://uri">
+        <reference names="Chained" refuri="http://uri">
             Chained
          \n\
-        <reference name="indirect hyperlink" refuri="http://uri">
+        <reference names="indirect hyperlink" refuri="http://uri">
             indirect hyperlink
          reference.
 """],
@@ -462,23 +462,23 @@ __
     <target anonymous="1" ids="id1" refuri="http://full">
     <target anonymous="1" ids="id2" refuri="http://simplified">
     <target anonymous="1" ids="id3" refuri="http://simplified">
-    <target ids="external" name="external" refuri="http://indirect.external">
+    <target ids="external" names="external" refuri="http://indirect.external">
     <target anonymous="1" ids="id4" refuri="http://indirect.external">
     <target anonymous="1" ids="id5">
     <paragraph>
-        <reference anonymous="1" name="Full syntax anonymous external hyperlink reference" refuri="http://full">
+        <reference anonymous="1" names="Full syntax anonymous external hyperlink reference" refuri="http://full">
             Full syntax anonymous external hyperlink reference
         ,
-        <reference anonymous="1" name="chained anonymous external reference" refuri="http://simplified">
+        <reference anonymous="1" names="chained anonymous external reference" refuri="http://simplified">
             chained anonymous external reference
         ,
-        <reference anonymous="1" name="simplified syntax anonymous external hyperlink reference" refuri="http://simplified">
+        <reference anonymous="1" names="simplified syntax anonymous external hyperlink reference" refuri="http://simplified">
             simplified syntax anonymous external hyperlink reference
         ,
-        <reference anonymous="1" name="indirect anonymous hyperlink reference" refuri="http://indirect.external">
+        <reference anonymous="1" names="indirect anonymous hyperlink reference" refuri="http://indirect.external">
             indirect anonymous hyperlink reference
         ,
-        <reference anonymous="1" name="internal anonymous hyperlink reference" refid="id5">
+        <reference anonymous="1" names="internal anonymous hyperlink reference" refid="id5">
             internal anonymous hyperlink reference
         .
 """],
@@ -493,14 +493,14 @@ Duplicate external target_'s (different URIs):
 <document source="test data">
     <paragraph>
         Duplicate external \n\
-        <reference name="target" refname="target">
+        <reference names="target" refname="target">
             target
         's (different URIs):
-    <target dupname="target" ids="target" refuri="first">
+    <target dupnames="target" ids="target" refuri="first">
     <system_message backrefs="id1" level="2" line="5" source="test data" type="WARNING">
         <paragraph>
             Duplicate explicit target name: "target".
-    <target dupname="target" ids="id1" refuri="second">
+    <target dupnames="target" ids="id1" refuri="second">
 """],
 ["""\
 Several__ anonymous__ hyperlinks__, but not enough targets.
@@ -541,14 +541,14 @@ __ http://example.org
 """,
 """\
 <document source="test data">
-    <target ids="external" name="external" refuri="http://uri">
-    <target ids="indirect" name="indirect" refuri="http://uri">
-    <target ids="internal" name="internal">
-    <reference name="external_" refuri="http://uri">
+    <target ids="external" names="external" refuri="http://uri">
+    <target ids="indirect" names="indirect" refuri="http://uri">
+    <target ids="internal" names="internal">
+    <reference names="external_" refuri="http://uri">
         <image uri="picture.png">
-    <reference name="indirect_" refuri="http://uri">
+    <reference names="indirect_" refuri="http://uri">
         <image uri="picture.png">
-    <reference name="internal_" refid="internal">
+    <reference names="internal_" refid="internal">
         <image uri="picture.png">
 """],
 ["""\
@@ -562,7 +562,7 @@ Testing an `indirect reference to the table of contents`_.
 """,
 """\
 <document source="test data">
-    <topic class="contents" ids="table-of-contents" name="table of contents">
+    <topic class="contents" ids="table-of-contents" names="table of contents">
         <title>
             Table of Contents
         <bullet_list>
@@ -570,13 +570,13 @@ Testing an `indirect reference to the table of contents`_.
                 <paragraph>
                     <reference ids="id1" refid="section">
                         Section
-    <target ids="indirect-reference-to-the-table-of-contents" name="indirect reference to the table of contents" refid="table-of-contents">
-    <section ids="section" name="section">
+    <target ids="indirect-reference-to-the-table-of-contents" names="indirect reference to the table of contents" refid="table-of-contents">
+    <section ids="section" names="section">
         <title refid="id1">
             Section
         <paragraph>
             Testing an 
-            <reference name="indirect reference to the table of contents" refid="table-of-contents">
+            <reference names="indirect reference to the table of contents" refid="table-of-contents">
                 indirect reference to the table of contents
             .
 """],
@@ -594,13 +594,13 @@ Let's reference it (`explicit target`_) to avoid an irrelevant error.
 <document source="test data">
     <paragraph>
         Target should end up inside the section title, not before the section:
-    <section ids="title" name="title">
+    <section ids="title" names="title">
         <title>
-            <target ids="explicit-target" name="explicit target">
+            <target ids="explicit-target" names="explicit target">
             Title
         <paragraph>
             Let's reference it (
-            <reference name="explicit target" refid="explicit-target">
+            <reference names="explicit target" refid="explicit-target">
                 explicit target
             ) to avoid an irrelevant error.
 """],
@@ -616,15 +616,15 @@ Title
 """\
 <document source="test data">
     <paragraph>
-        <reference name="target1" refuri="URI">
+        <reference names="target1" refuri="URI">
             target1
          should refer to \n\
-        <reference name="target2" refuri="URI">
+        <reference names="target2" refuri="URI">
             target2
         , not the Title.
-    <target ids="target1" name="target1" refuri="URI">
-    <target ids="target2" name="target2" refuri="URI">
-    <section ids="title" name="title">
+    <target ids="target1" names="target1" refuri="URI">
+    <target ids="target2" names="target2" refuri="URI">
+    <section ids="title" names="title">
         <title>
             Title
 """],

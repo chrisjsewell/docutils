@@ -55,7 +55,7 @@ def contents(name, arguments, options, content, lineno,
 
     name = nodes.fully_normalize_name(name)
     if not document.has_name(name):
-        topic['name'] = name
+        topic['names'].append(name)
     document.note_implicit_target(topic)
 
     pending = nodes.pending(parts.Contents, rawsource=block_text)

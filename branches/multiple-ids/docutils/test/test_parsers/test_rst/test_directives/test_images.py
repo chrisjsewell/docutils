@@ -259,7 +259,7 @@ totest['images'] = [
 """,
 """\
 <document source="test data">
-    <reference name="indirect_" refname="indirect">
+    <reference names="indirect_" refname="indirect">
         <image uri="picture.png">
 """],
 ["""\
@@ -275,7 +275,7 @@ totest['images'] = [
 <document source="test data">
     <reference refuri="a/multi/line/uri">
         <image uri="picture.png">
-    <reference name="`a multi line internal reference`_" refname="a multi line internal reference">
+    <reference names="`a multi line internal reference`_" refname="a multi line internal reference">
         <image uri="picture.png">
 """],
 ["""\

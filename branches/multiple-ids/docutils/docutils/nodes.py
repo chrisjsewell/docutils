@@ -303,16 +303,17 @@ class AttributeDict(dict):
         # attr_defaults member variable and maps attribute names to
         # types which are called to create the default value.
         self.defaults = defaults
+        self.checks = 1
+
+    forbidden = ['id', 'name', 'dupname']
 
     def has_key(self, key):
-        if key == 'id' or self.defaults.has_key(key):
+        if self.checks and key in (self.forbidden + self.defaults.keys()):
             raise KeyError, key
         return dict.has_key(self, key)
 
-    __contains__ = has_key
-
     def __getitem__(self, key):
-        if key == 'id':
+        if self.checks and key in self.forbidden:
             raise KeyError, key
         try:
             return dict.__getitem__(self, key)
@@ -322,15 +323,17 @@ class AttributeDict(dict):
             return default
 
     def __setitem__(self, key, value):
-        expected_type = self.defaults.get(key, (str, unicode, int, long))
-        assert isinstance(value, expected_type), \
-               'can only set %r to an instance of %s' % (key, expected_type)
-        if key == 'id':
+        if self.checks:
+            expected_type = self.defaults.get(key, (str, unicode, int, long))
+            assert isinstance(value, expected_type), 'can only set %r to ' \
+                   'an instance of %s' % (key, expected_type)
+        if self.checks and key in self.forbidden:
             raise KeyError, key
         dict.__setitem__(self, key, value)
 
     def __delitem__(self, key):
-        assert key not in ['id'] + self.defaults.keys()
+        if self.checks and key in (self.forbidden + self.defaults.keys()):
+            raise KeyError, key
         dict.__delitem__(self, key)
 
     def is_not_default(self, key):
@@ -338,6 +341,9 @@ class AttributeDict(dict):
         Return true if the key is not set to its default value.
         """
         return key not in self.defaults or self[key] != self.defaults[key]()
+
+    def no_checks(self):
+        self.checks = 0
 
 
 class Element(Node):
@@ -377,7 +383,8 @@ class Element(Node):
     This is equivalent to ``element.extend([node1, node2])``.
     """
 
-    attr_defaults = {'ids': list, 'classes': list, 'names': list}
+    attr_defaults = {'ids': list, 'classes': list, 'names': list,
+                     'dupnames': list}
     """Dictionary mapping attribute keys to types instances of which
     provide default values."""
 
@@ -423,16 +430,16 @@ class Element(Node):
             if len(data) > 60:
                 data = data[:56] + ' ...'
                 break
-        if self.hasattr('name'):
+        if self['names']:
             return '<%s "%s": %s>' % (self.__class__.__name__,
-                                      self.attributes['name'], data)
+                                      '; '.join(self['names']), data)
         else:
             return '<%s: %s>' % (self.__class__.__name__, data)
 
     def shortrepr(self):
-        if self.hasattr('name'):
+        if self['names']:
             return '<%s "%s"...>' % (self.__class__.__name__,
-                                      self.attributes['name'])
+                                     '; '.join(self['names']))
         else:
             return '<%s...>' % self.tagname
 
@@ -875,13 +882,15 @@ class document(Root, Structural, Element):
                 if msgnode != None:
                     msgnode += msg
         if not node['ids']:
-            if node.has_key('name'):
-                id = make_id(node['name'])
+            for i in range(len(node['names'])):
+                id = make_id(node['names'][i])
+                if id and not self.ids.has_key(id):
+                    break
             else:
                 id = ''
-            while not id or self.ids.has_key(id):
-                id = 'id%s' % self.id_start
-                self.id_start += 1
+                while not id or self.ids.has_key(id):
+                    id = 'id%s' % self.id_start
+                    self.id_start += 1
             node['ids'].append(id)
         self.ids[id] = node
         return id
@@ -917,8 +926,7 @@ class document(Root, Structural, Element):
            both old and new targets are external and refer to identical URIs.
            The new target is invalidated regardless.
         """
-        if node.has_key('name'):
-            name = node['name']
+        for name in node['names']:
             if self.nameids.has_key(name):
                 self.set_duplicate_name_id(node, id, name, msgnode, explicit)
             else:
@@ -936,30 +944,30 @@ class document(Root, Structural, Element):
                     old_node = self.ids[old_id]
                     if node.has_key('refuri'):
                         refuri = node['refuri']
-                        if old_node.has_key('name') \
+                        if old_node['names'] \
                                and old_node.has_key('refuri') \
                                and old_node['refuri'] == refuri:
                             level = 1   # just inform if refuri's identical
                     if level > 1:
-                        dupname(old_node)
+                        dupname(old_node, name)
                         self.nameids[name] = None
                 msg = self.reporter.system_message(
                     level, 'Duplicate explicit target name: "%s".' % name,
                     backrefs=[id], base_node=node)
                 if msgnode != None:
                     msgnode += msg
-                dupname(node)
+                dupname(node, name)
             else:
                 self.nameids[name] = id
                 if old_id is not None:
                     old_node = self.ids[old_id]
-                    dupname(old_node)
+                    dupname(old_node, name)
         else:
             if old_id is not None and not old_explicit:
                 self.nameids[name] = None
                 old_node = self.ids[old_id]
-                dupname(old_node)
-            dupname(node)
+                dupname(old_node, name)
+            dupname(node, name)
         if not explicit or (not old_explicit and old_id is not None):
             msg = self.reporter.info(
                 'Duplicate implicit target name: "%s".' % name,
@@ -993,7 +1001,7 @@ class document(Root, Structural, Element):
 
     def note_indirect_target(self, target):
         self.indirect_targets.append(target)
-        if target.has_key('name'):
+        if target['names']:
             self.note_refname(target)
 
     def note_anonymous_target(self, target):
@@ -1037,7 +1045,8 @@ class document(Root, Structural, Element):
         self.note_refname(ref)
 
     def note_substitution_def(self, subdef, def_name, msgnode=None):
-        name = subdef['name'] = whitespace_normalize_name(def_name)
+        name = whitespace_normalize_name(def_name)
+        subdef['names'].append(name)
         if self.substitution_defs.has_key(name):
             msg = self.reporter.error(
                   'Duplicate substitution definition name: "%s".' % name,
@@ -1045,7 +1054,7 @@ class document(Root, Structural, Element):
             if msgnode != None:
                 msgnode += msg
             oldnode = self.substitution_defs[name]
-            dupname(oldnode)
+            dupname(oldnode, name)
         # keep only the last definition:
         self.substitution_defs[name] = subdef
         # case-insensitive mapping:
@@ -1678,9 +1687,9 @@ def make_id(string):
 _non_id_chars = re.compile('[^a-z0-9]+')
 _non_id_at_ends = re.compile('^[-0-9]+|-+$')
 
-def dupname(node):
-    node['dupname'] = node['name']
-    del node['name']
+def dupname(node, name):
+    node['dupnames'].append(name)
+    node['names'].remove(name)
 
 def fully_normalize_name(name):
     """Return a case- and whitespace-normalized name."""

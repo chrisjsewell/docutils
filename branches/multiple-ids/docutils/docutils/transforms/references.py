@@ -122,7 +122,7 @@ class ChainedTargetResolver(nodes.SparseNodeVisitor):
                   or sibling.hasattr('refid'):
                 break
             sibling[attname] = attval
-            if sibling.hasattr('name') and call_if_named:
+            if sibling['names'] and call_if_named:
                 call_if_named(sibling)
 
 
@@ -265,7 +265,7 @@ class IndirectHyperlinks(Transform):
             del target.multiply_indirect
         if reftarget.hasattr('refuri'):
             target['refuri'] = reftarget['refuri']
-            if target.hasattr('name'):
+            if target['names']:
                 self.document.note_external_target(target)
         elif reftarget.hasattr('refid'):
             target['refid'] = reftarget['refid']
@@ -295,9 +295,9 @@ class IndirectHyperlinks(Transform):
     def indirect_target_error(self, target, explanation):
         naming = ''
         assert len(target['ids']) == 1
-        if target.hasattr('name'):
-            naming = '"%s" ' % target['name']
-            reflist = self.document.refnames.get(target['name'], [])
+        if target['names']:
+            naming = '"%s" ' % '; '.join(target['names'])
+            reflist = self.document.refnames.get(target['names'][0], [])
         else:
             reflist = self.document.refids.get(target['ids'][0], [])
         naming += '(id="%s")' % target['ids'][0]
@@ -326,10 +326,10 @@ class IndirectHyperlinks(Transform):
         else:
             return
         attval = target[attname]
-        if target.hasattr('name'):
-            name = target['name']
+        reflist = []
+        for name in target['names']:
             try:
-                reflist = self.document.refnames[name]
+                reflist.extend(self.document.refnames[name])
             except KeyError, instance:
                 if target.referenced:
                     return
@@ -339,7 +339,7 @@ class IndirectHyperlinks(Transform):
                 target.referenced = 1
                 return
             delatt = 'refname'
-        else:
+        if not target['names']:
             assert len(target['ids']) == 1
             id = target['ids'][0]
             try:
@@ -358,7 +358,7 @@ class IndirectHyperlinks(Transform):
                 continue
             del ref[delatt]
             ref[attname] = attval
-            if not call_if_named or ref.hasattr('name'):
+            if not call_if_named or ref['names']:
                 call_method(ref)
             ref.resolved = 1
             if isinstance(ref, nodes.target):
@@ -388,27 +388,27 @@ class ExternalTargets(Transform):
 
     def apply(self):
         for target in self.document.external_targets:
-            if target.hasattr('refuri') and target.hasattr('name'):
-                name = target['name']
-                refuri = target['refuri']
-                try:
-                    reflist = self.document.refnames[name]
-                except KeyError, instance:
-                    # @@@ First clause correct???
-                    if not isinstance(target, nodes.target) or target.referenced:
+            if target.hasattr('refuri'):
+                for name in target['names']:
+                    refuri = target['refuri']
+                    try:
+                        reflist = self.document.refnames[name]
+                    except KeyError, instance:
+                        # @@@ First clause correct???
+                        if not isinstance(target, nodes.target) or target.referenced:
+                            continue
+                        msg = self.document.reporter.info(
+                              'External hyperlink target "%s" is not referenced.'
+                              % name, base_node=target)
+                        target.referenced = 1
                         continue
-                    msg = self.document.reporter.info(
-                          'External hyperlink target "%s" is not referenced.'
-                          % name, base_node=target)
+                    for ref in reflist:
+                        if ref.resolved:
+                            continue
+                        del ref['refname']
+                        ref['refuri'] = refuri
+                        ref.resolved = 1
                     target.referenced = 1
-                    continue
-                for ref in reflist:
-                    if ref.resolved:
-                        continue
-                    del ref['refname']
-                    ref['refuri'] = refuri
-                    ref.resolved = 1
-                target.referenced = 1
 
 
 class InternalTargets(Transform):
@@ -437,28 +437,27 @@ class InternalTargets(Transform):
             <target id="id1" name="direct internal">
         """
         if target.hasattr('refuri') or target.hasattr('refid') \
-              or not target.hasattr('name'):
+              or not target['names']:
             return
-        name = target['name']
-        assert len(target['ids']) == 1
-        refid = target['ids'][0]
-        try:
-            reflist = self.document.refnames[name]
-        except KeyError, instance:
-            if target.referenced:
-                return
-            msg = self.document.reporter.info(
-                  'Internal hyperlink target "%s" is not referenced.'
-                  % name, base_node=target)
+        for name in target['names']:
+            refid = target['ids'][0]
+            try:
+                reflist = self.document.refnames[name]
+            except KeyError, instance:
+                if target.referenced:
+                    return   # XXX MULTIPLE-IDS continue
+                msg = self.document.reporter.info(
+                      'Internal hyperlink target "%s" is not referenced.'
+                      % name, base_node=target)
+                target.referenced = 1
+                return   # XXX MULTIPLE-IDS continue
+            for ref in reflist:
+                if ref.resolved:
+                    return
+                del ref['refname']
+                ref['refid'] = refid
+                ref.resolved = 1
             target.referenced = 1
-            return
-        for ref in reflist:
-            if ref.resolved:
-                return
-            del ref['refname']
-            ref['refid'] = refid
-            ref.resolved = 1
-        target.referenced = 1
 
 
 class Footnotes(Transform):
@@ -566,10 +565,7 @@ class Footnotes(Transform):
                 if not self.document.nameids.has_key(label):
                     break
             footnote.insert(0, nodes.label('', label))
-            if footnote.hasattr('dupname'):
-                continue
-            if footnote.hasattr('name'):
-                name = footnote['name']
+            for name in footnote['names']:
                 for ref in self.document.footnote_refs.get(name, []):
                     ref += nodes.Text(label)
                     ref.delattr('refname')
@@ -578,8 +574,8 @@ class Footnotes(Transform):
                     footnote.add_backref(ref['ids'][0])
                     self.document.note_refid(ref)
                     ref.resolved = 1
-            else:
-                footnote['name'] = label
+            if not footnote['names'] and not footnote['dupnames']:
+                footnote['names'].append(label)
                 self.document.note_explicit_target(footnote, footnote)
                 self.autofootnote_labels.append(label)
         return startnum
@@ -660,14 +656,12 @@ class Footnotes(Transform):
         references.
         """
         for footnote in self.document.footnotes:
-            if footnote.hasattr('name'):
-                label = footnote['name']
+            for label in footnote['names']:
                 if self.document.footnote_refs.has_key(label):
                     reflist = self.document.footnote_refs[label]
                     self.resolve_references(footnote, reflist)
         for citation in self.document.citations:
-            if citation.hasattr('name'):
-                label = citation['name']
+            for label in citation['names']:
                 if self.document.citation_refs.has_key(label):
                     reflist = self.document.citation_refs[label]
                     self.resolve_references(citation, reflist)
@@ -775,11 +769,12 @@ class TargetNotes(Transform):
         notes = {}
         nodelist = []
         for target in self.document.external_targets:
-            name = target.get('name')
-            if not name:
-                print >>sys.stderr, 'no name on target: %r' % target
-                continue
-            refs = self.document.refnames.get(name, [])
+            names = target['names']
+            # Only named targets.
+            assert names
+            refs = []
+            for name in names:
+                refs.extend(self.document.refnames.get(name, []))
             if not refs:
                 continue
             footnote = self.make_target_footnote(target, refs, notes)
@@ -801,14 +796,17 @@ class TargetNotes(Transform):
         refuri = target['refuri']
         if notes.has_key(refuri):  # duplicate?
             footnote = notes[refuri]
-            footnote_name = footnote['name']
+            assert len(footnote['names']) == 1
+            footnote_name = footnote['names'][0]
         else:                           # original
             footnote = nodes.footnote()
             footnote_id = self.document.set_id(footnote)
-            # Use a colon; they can't be produced inside names by the parser:
+            # Use uppercase letters; they can't be produced inside
+            # names by the parser.  XXX CHANGE ME AFTER MULTIPLE-IDS
+            # REFACTORING.  Don't break tests now.
             footnote_name = 'target_note: ' + footnote_id
             footnote['auto'] = 1
-            footnote['name'] = footnote_name
+            footnote['names'] = [footnote_name]
             footnote_paragraph = nodes.paragraph()
             footnote_paragraph += nodes.reference('', refuri, refuri=refuri)
             footnote += footnote_paragraph

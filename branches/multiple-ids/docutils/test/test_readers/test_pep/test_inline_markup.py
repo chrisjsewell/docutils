@@ -105,7 +105,7 @@ For *completeness*, _`let's` ``test`` **other** forms_
         <emphasis>
             completeness
         , \n\
-        <target ids="let-s" name="let's">
+        <target ids="let-s" names="let's">
             let's
          \n\
         <literal>
@@ -114,7 +114,7 @@ For *completeness*, _`let's` ``test`` **other** forms_
         <strong>
             other
          \n\
-        <reference name="forms" refname="forms">
+        <reference names="forms" refname="forms">
             forms
         \n\
         <substitution_reference refname="of">

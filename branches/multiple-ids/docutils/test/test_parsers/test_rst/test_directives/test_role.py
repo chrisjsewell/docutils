@@ -166,7 +166,7 @@ Testing a :fileref:`role` in a nested parse.
 """,
 """\
 <document source="test data">
-    <section ids="test" name="test">
+    <section ids="test" names="test">
         <title>
             Test
         <paragraph>
