@@ -1191,8 +1191,8 @@ class admonition(Admonition, Element): pass
 class comment(Special, Invisible, FixedTextElement): pass
 class substitution_definition(Special, Invisible, TextElement): pass
 class target(Special, Invisible, Inline, TextElement, Targetable): pass
-class footnote(General, BackLinkable, Element, Labeled): pass
-class citation(General, BackLinkable, Element, Labeled): pass
+class footnote(General, BackLinkable, Element, Labeled, Targetable): pass
+class citation(General, BackLinkable, Element, Labeled, Targetable): pass
 class label(Part, TextElement): pass
 class figure(General, Element): pass
 class caption(Part, TextElement): pass

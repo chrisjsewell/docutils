@@ -49,8 +49,11 @@ class PropagateTargets(Transform):
                          target.attributes.has_key('refname'))):
                 continue
             next_node = target.next_node(ascend=1)
+            # Do not move names and ids into Invisibles (we'd lose the
+            # attributes) or different Targetables (e.g. footnotes).
             if (next_node is not None and
-                (not isinstance(next_node, nodes.Invisible) or
+                ((not isinstance(next_node, nodes.Invisible) and
+                  not isinstance(next_node, nodes.Targetable)) or
                  isinstance(next_node, nodes.target))):
                 next_node['ids'].extend(target['ids'])
                 next_node['names'].extend(target['names'])

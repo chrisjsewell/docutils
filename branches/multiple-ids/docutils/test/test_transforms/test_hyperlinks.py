@@ -311,6 +311,42 @@ An `anonymous embedded uri <http://direct>`__.
             anonymous embedded uri
         .
 """],
+["""\
+.. _target:
+
+.. [1] Footnote; [1]_\ target_
+""",
+"""\
+<document source="test data">
+    <target ids="target" names="target">
+    <footnote ids="id1" names="1">
+        <label>
+            1
+        <paragraph>
+            Footnote; \n\
+            <footnote_reference ids="id2" refid="id1">
+                1
+            <reference name="target" refid="target">
+                target
+"""],
+["""\
+.. _target:
+
+.. [cit] Citation; [cit]_\ target_
+""",
+"""\
+<document source="test data">
+    <target ids="target" names="target">
+    <citation ids="cit" names="cit">
+        <label>
+            cit
+        <paragraph>
+            Citation; \n\
+            <citation_reference ids="id1" refid="cit">
+                cit
+            <reference name="target" refid="target">
+                target
+"""],
 ])
 
 totest['hyperlinks'] = ((PropagateTargets, AnonymousHyperlinks,
