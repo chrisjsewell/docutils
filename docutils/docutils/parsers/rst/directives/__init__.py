@@ -1,5 +1,5 @@
 # Author: David Goodger
-# Contact: goodger@users.sourceforge.net
+# Contact: goodger@python.org
 # Revision: $Revision$
 # Date: $Date$
 # Copyright: This module has been placed in the public domain.
@@ -20,11 +20,12 @@ The interface for directive functions is as follows::
 
 Parameters:
 
-- ``name`` is the directive type or name.
+- ``name`` is the directive type or name (string).
 
-- ``arguments`` is a list of positional arguments.
+- ``arguments`` is a list of positional arguments (strings).
 
-- ``options`` is a dictionary mapping option names to values.
+- ``options`` is a dictionary mapping option names (strings) to values (type
+  depends on option conversion functions; see below).
 
 - ``content`` is a list of strings, the directive content.
 
@@ -63,6 +64,10 @@ directive function):
   options to parse.  Several directive option conversion functions are defined
   in this module.
 
+  Option conversion functions take a single parameter, the option argument (a
+  string or ``None``), validate it and/or convert it to the appropriate form.
+  Conversion functions may raise ``ValueError`` and ``TypeError`` exceptions.
+
 - ``content``: A boolean; true if content is allowed.  Client code must handle
   the case where content is required but not supplied (an empty content list
   will be supplied).
@@ -74,11 +79,12 @@ empty list).
 See `Creating reStructuredText Directives`_ for more information.
 
 .. _Creating reStructuredText Directives:
-   http://docutils.sourceforge.net/spec/howto/rst-directives.html
+   http://docutils.sourceforge.net/docs/howto/rst-directives.html
 """
 
 __docformat__ = 'reStructuredText'
 
+import re
 from docutils import nodes
 from docutils.parsers.rst.languages import en as _fallback_language_module
 
@@ -102,8 +108,9 @@ _directive_registry = {
       'epigraph': ('body', 'epigraph'),
       'highlights': ('body', 'highlights'),
       'pull-quote': ('body', 'pull_quote'),
-      'table': ('body', 'table'),
       #'questions': ('body', 'question_list'),
+      'table': ('tables', 'table'),
+      'csv-table': ('tables', 'csv_table'),
       'image': ('images', 'image'),
       'figure': ('images', 'figure'),
       'contents': ('parts', 'contents'),
@@ -118,6 +125,7 @@ _directive_registry = {
       'replace': ('misc', 'replace'),
       'unicode': ('misc', 'unicode_directive'),
       'class': ('misc', 'class_directive'),
+      'role': ('misc', 'role'),
       'restructuredtext-test-directive': ('misc', 'directive_test_function'),}
 """Mapping of directive name to (module name, function name).  The directive
 name is canonical & must be lowercase.  Language-dependent names are defined
@@ -192,9 +200,12 @@ def directive(directive_name, language_module, document):
         return None, messages
     return function, messages
 
-def register_directive(name, directive):
-    """Register a nonstandard application-defined directive function."""
-    _directives[name] = directive
+def register_directive(name, directive_function):
+    """
+    Register a nonstandard application-defined directive function.
+    Language lookups are not needed for such functions.
+    """
+    _directives[name] = directive_function
 
 def flag(argument):
     """
@@ -269,7 +280,64 @@ def class_option(argument):
     """
     if argument is None:
         raise ValueError('argument required but none supplied')
-    return nodes.make_id(argument)
+    class_name = nodes.make_id(argument)
+    if not class_name:
+        raise ValueError('cannot make "%s" into a class name' % argument)
+    return class_name
+
+unicode_pattern = re.compile(
+    r'(?:0x|x|\\x|U\+?|\\u)([0-9a-f]+)$|&#x([0-9a-f]+);$', re.IGNORECASE)
+
+def unicode_code(code):
+    r"""
+    Convert a Unicode character code to a Unicode character.
+
+    Codes may be decimal numbers, hexadecimal numbers (prefixed by ``0x``,
+    ``x``, ``\x``, ``U+``, ``u``, or ``\u``; e.g. ``U+262E``), or XML-style
+    numeric character entities (e.g. ``&#x262E;``).  Other text remains as-is.
+    """
+    try:
+        if code.isdigit():                  # decimal number
+            return unichr(int(code))
+        else:
+            match = unicode_pattern.match(code)
+            if match:                       # hex number
+                value = match.group(1) or match.group(2)
+                return unichr(int(value, 16))
+            else:                           # other text
+                return code
+    except OverflowError, detail:
+        raise ValueError('code too large (%s)' % detail)
+
+
+def single_char_or_unicode(argument):
+    char = unicode_code(argument)
+    if len(char) > 1:
+        raise ValueError('%r invalid; must be a single character or '
+                         'a Unicode code' % char)
+    return char
+
+def single_char_or_whitespace_or_unicode(argument):
+    if argument == 'tab':
+        char = '\t'
+    elif argument == 'space':
+        char = ' '
+    else:
+        char = single_char_or_unicode(argument)
+    return char
+
+def positive_int(argument):
+    value = int(argument)
+    if value < 1:
+        raise ValueError('negative or zero value; must be positive')
+    return value
+
+def positive_int_list(argument):
+    if ',' in argument:
+        entries = argument.split(',')
+    else:
+        entries = argument.split()
+    return [positive_int(entry) for entry in entries]
 
 def format_values(values):
     return '%s, or "%s"' % (', '.join(['"%s"' % s for s in values[:-1]]),

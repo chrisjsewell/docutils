@@ -2,7 +2,7 @@
  reStructuredText Directives
 =============================
 :Author: David Goodger
-:Contact: goodger@users.sourceforge.net
+:Contact: goodger@python.org
 :Revision: $Revision$
 :Date: $Date$
 :Copyright: This document has been placed in the public domain.
@@ -33,12 +33,15 @@ Descriptions below list "doctree elements" (document tree element
 names; XML DTD generic identifiers) corresponding to individual
 directives.  For details on the hierarchy of elements, please see `The
 Docutils Document Tree`_ and the `Docutils Generic DTD`_ XML document
-type definition.
+type definition.  For directive implementation details, see `Creating
+reStructuredText Directives`_.
 
-.. _Directives: ./reStructuredText.html#directives
-.. _reStructuredText Markup Specification: ./reStructuredText.html
+.. _Directives: restructuredtext.html#directives
+.. _reStructuredText Markup Specification: restructuredtext.html
 .. _The Docutils Document Tree: ../doctree.html
 .. _Docutils Generic DTD: ../docutils.dtd
+.. _Creating reStructuredText Directives:
+   ../../howto/rst-directives.html
 
 
 -------------
@@ -194,16 +197,24 @@ The following options are recognized:
     for visually impaired users.
 
 ``height`` : integer
-    The height of the image in pixels, used to reserve space or scale
-    the image vertically.
+    The desired height of the image in pixels, used to reserve space
+    or scale the image vertically.  When the "scale" option is also
+    specified, they are combined.  For example, a height of 200 and a
+    scale of 50 is equivalent to a height of 100 with no scale.
 
 ``width`` : integer
     The width of the image in pixels, used to reserve space or scale
-    the image horizontally.
+    the image horizontally.  As with "height" above, when the "scale"
+    option is also specified, they are combined.
 
 ``scale`` : integer
     The uniform scaling factor of the image, a percentage (but no "%"
-    symbol is required or allowed).  "100" means full-size.
+    symbol is required or allowed).  "100" means full-size, and is
+    equivalent to omitting a "scale" option.
+
+    If no "height" or "width" options are specified, PIL [#PIL]_ may
+    be used to determine them, if PIL is installed and the image file
+    is available.
 
 ``align`` : "top", "middle", "bottom", "left", "center", or "right"
     The alignment of the image, equivalent to the HTML ``<img>`` tag's
@@ -270,9 +281,9 @@ options are recognized:
 ``figwidth`` : integer or "image"
     The width of the figure in pixels, to limit the horizontal space
     used.  A special value of "image" is allowed, in which case the
-    included image's actual width is used (requires PIL_ [#]_).  If the
-    image file is not found or the required software is unavailable,
-    this option is ignored.
+    included image's actual width is used (requires PIL [#PIL]_).  If
+    the image file is not found or the required software is
+    unavailable, this option is ignored.
 
     Sets the "width" attribute of the "figure" doctree element.
 
@@ -298,9 +309,8 @@ options are recognized:
     Set a "class" attribute value on the figure element.  See the
     class_ directive below.
 
-.. [#] `Python Imaging Library`_.
+.. [#PIL] `Python Imaging Library`_.
 
-.. _PIL:
 .. _Python Imaging Library: http://www.pythonware.com/products/pil/
 
 
@@ -434,9 +444,14 @@ constructs a literal block where the text is parsed for inline markup.
 It is equivalent to a `line block`_ with different rendering:
 typically in a typewriter/monospaced typeface, like an ordinary
 literal block.  Parsed literal blocks are useful for adding hyperlinks
-to code examples.  However, care must be taken with the text, because
-inline markup is recognized; there is no protection from parsing.
-Backslash-escapes may be necessary in places.
+to code examples.
+
+However, care must be taken with the text, because inline markup is
+recognized and there is no protection from parsing.  Backslash-escapes
+may be necessary to prevent unintended parsing.  And because the
+markup characters are removed by the parser, care must also be taken
+with vertical alignment.  Parsed "ASCII art" is tricky, and extra
+whitespace may be necessary.
 
 For example, all the element names in this content model are links::
 
@@ -529,6 +544,154 @@ Pull-Quote
 :Directive Content: Interpreted as the body of the block quote.
 
 Produces a pull-quote-class block quote.  See Epigraph_ above.
+
+
+--------
+ Tables
+--------
+
+Formal tables need more structure than the reStructuredText syntax
+supplies.  Tables may be given titles with the table_ directive.
+Sometimes reStructuredText tables are inconvenient to write, or table
+data in a standard format is readily available.  The csv-table_
+directive supports CSV data.
+
+
+Table
+=====
+
+:Directive Type: "table"
+:Doctree Element: table
+:Directive Arguments: 1, optional (table title).
+:Directive Options: Possible.
+:Directive Content: A normal reStructuredText table.
+
+(New in Docutils 0.3.1)
+
+The "table" directive is used to create a titled table, to associate a
+title with a table::
+
+    .. table:: Truth table for "not"
+
+       =====  =====
+         A    not A
+       =====  =====
+       False  True
+       True   False
+       =====  =====
+
+The following option is recognized:
+
+``class`` : text
+    Set a "class" attribute value on the table element.  See the
+    class_ directive below.
+
+
+.. _csv-table:
+
+CSV Table
+=========
+
+:Directive Type: "csv-table"
+:Doctree Element: table
+:Directive Arguments: 1, optional (table title).
+:Directive Options: Possible.
+:Directive Content: A CSV (comma-separated values) table.
+
+.. Warning::
+
+   The "csv-table" directive requires the ``csv.py`` module of the
+   Python standard library, which was added in Python 2.3.  It will
+   not work with earlier versions of Python.  Using the "csv-table"
+   directive in a document will make the document **incompatible**
+   with systems using Python 2.1 or 2.2.
+
+(New in Docutils 0.3.4)
+
+The "csv-table" directive is used to create a table from CSV
+(comma-separated values) data.  CSV is a common data format generated
+by spreadsheet applications and commercial databases.  The data may be
+internal (an integral part of the document) or external (a separate
+file).
+
+Example::
+
+    .. csv-table:: Frozen Delights!
+       :header: "Treat", "Quantity", "Description"
+       :widths: 15, 10, 30
+
+       "Albatross", 2.99, "On a stick!"
+       "Crunchy Frog", 1.49, "If we took the bones out, it wouldn't be
+       crunchy, now would it?"
+       "Gannet Ripple", 1.99, "On a stick!"
+
+Block markup and inline markup within cells is supported.  Line ends
+are recognized within cells.
+
+Working limitations:
+
+* Whitespace delimiters are supported only for external CSV files.
+
+* There is no support for checking that the number of columns in each
+  row is the same.  However, this directive supports CSV generators
+  that do not insert "empty" entries at the end of short rows, by
+  automatically adding empty entries.
+
+  .. Add "strict" option to verify input?
+
+* Due to limitations of the CSV parser, this directive is not Unicode
+  compatible.  It may also have problems with ASCII NUL characters.
+  Accordingly, CSV tables should be ASCII-printable safe.
+
+  .. Test with Unicode; see if that's really so.  "encoding" option?
+
+The following options are recognized:
+
+``class`` : text
+    Set a "class" attribute value on the table element.  See the
+    class_ directive below.
+
+``widths`` : integer [, integer...]
+    A comma-separated list of relative column widths.  The default is
+    equal-width columns (100%/#columns).
+
+``header-rows`` : integer
+    The number of rows of CSV data to use in the table header.
+    Defaults to 0.
+
+``header`` : CSV data
+    Supplemental data for the table header, added independently of and
+    before any ``header-rows`` from the main CSV data.  Must use the
+    same CSV format as the main CSV data.
+
+``file`` | ``url`` : path
+    Path or URL to CSV file.
+
+``delim`` : char | "tab" | "space"
+    A one-character string used to separate fields.  Defaults to ``,``
+    (comma).  May be specified as a Unicode code point; see the
+    unicode_ directive for syntax details.
+
+``quote`` : char
+    A one-character string used to quote elements containing the
+    delimiter or which start with the quote character.  Defaults to
+    ``"`` (quote).  May be specified as a Unicode code point; see the
+    unicode_ directive for syntax details.
+
+``keepspace`` : flag
+    Treat whitespace immediately following the delimiter as
+    significant.  The default is to ignore such whitespace.
+
+``escape`` : char
+    A one-character string used to escape the delimiter or quote
+    characters.  May be specified as a Unicode code point; see the
+    unicode_ directive for syntax details.  Used when the delimiter is
+    used in an unquoted field, or when quote characters are used
+    within a field.  The default is to double-up the character,
+    e.g. "He said, ""Hi!"""
+
+    .. Add another possible value, "double", to explicitly indicate
+       the default case?
 
 
 ----------------
@@ -630,6 +793,23 @@ The following options are recognized:
 ``depth`` : integer
     The number of section levels that are numbered by this directive.
     The default is unlimited depth.
+
+``prefix`` : string
+    An arbitrary string that is prefixed to the automatically
+    generated section numbers.  It may be something like "3.2.", which
+    will produce "3.2.1", "3.2.2", "3.2.2.1", and so on.  Note that
+    any separating punctuation (in the example, a period, ".") must be
+    explicitly provided.  The default is no prefix.
+
+``suffix`` : string
+    An arbitrary string that is appended to the automatically
+    generated section numbers.  The default is no suffix.
+
+``start`` : integer
+    The value that will be used for the first section number.
+    Combined with ``prefix``, this may be used to force the right
+    numbering for a document split over several source files.  The
+    default is 1.
 
 
 ------------
@@ -827,7 +1007,7 @@ output stream::
 
     .. raw:: latex
 
-       \documentclass[twocolumn]{article}
+       \setlength{\parindent}{0pt}
 
 Raw data can also be read from an external file, specified in a
 directive option.  In this case, the content block must be empty.  For
@@ -889,14 +1069,33 @@ Unicode Character Codes
 
 The "unicode" directive converts Unicode character codes (numerical
 values) to characters, and may be used in substitution definitions
-only.  Codes may be decimal numbers, hexadecimal numbers (prefixed by
-``0x``, ``x``, ``\x``, ``U+``, ``u``, or ``\u``), or XML-style numeric
-character entities (e.g. ``&#x1a2b;``).  Codes are case-insensitive.
+only.
 
-Text following " .. " is a comment and is ignored.  Spaces are
-ignored, and any other text remains as-is.
+The arguments, separated by spaces, can be:
 
-Example::
+* **character codes** as
+
+  - decimal numbers or
+
+  - hexadecimal numbers, prefixed by ``0x``, ``x``, ``\x``, ``U+``,
+    ``u``, or ``\u`` or as XML-style hexadecimal character entities,
+    e.g. ``&#x1a2b;``
+
+* **text**, which is used as-is.
+
+Text following " .. " is a comment and is ignored.  The spaces between
+the arguments are ignored and thus do not appear in the output.
+Hexadecimal codes are case-insensitive.
+
+For example, the following text::
+
+    Copyright |copy| 2003, |BogusMegaCorp (TM)|.
+
+    .. |copy| unicode:: 0xA9 .. copyright sign
+    .. |BogusMegaCorp (TM)| unicode:: BogusMegaCorp U+2122
+       .. with trademark sign
+
+results in:
 
     Copyright |copy| 2003, |BogusMegaCorp (TM)|.
 
@@ -959,6 +1158,90 @@ The text above is parsed and transformed into this doctree fragment::
    directive's content, and the parser would complain.
 
 __ ../doctree.html#class
+
+
+.. _role:
+
+Custom Interpreted Text Roles
+=============================
+
+:Directive Type: "role"
+:Doctree Element: None; affects subsequent parsing.
+:Directive Arguments: Two; one required (role name), one optional
+                      (base role name, in parentheses).
+:Directive Options: Possible (depends on base role).
+:Directive Content: depends on base role.
+
+(New in Docutils 0.3.2)
+
+The "role" directive dynamically creates a custom interpreted text
+role and registers it with the parser.  This means that after
+declaring a role like this::
+
+    .. role:: custom
+
+the document may use the new "custom" role::
+
+    An example of using :custom:`interpreted text`
+
+This will be parsed into the following document tree fragment::
+
+    <paragraph>
+        An example of using
+        <inline class="custom">
+            interpreted text
+
+The role must be declared in a document before it can be used.
+
+The new role may be based on an existing role, specified as a second
+argument in parentheses (whitespace optional)::
+
+    .. role:: custom(emphasis)
+
+    :custom:`text`
+
+The parsed result is as follows::
+
+    <paragraph>
+        <emphasis class="custom">
+            text
+
+If no base role is explicitly specified, a generic custom role is
+automatically used.  Subsequent interpreted text will produce an
+"inline" element with a "class" attribute, as in the first example
+above.
+
+With most roles, the ":class:" option can be used to set a "class"
+attribute that is different from the role name.  For example::
+
+    .. role:: custom
+       :class: special
+
+    :custom:`interpreted text`
+
+This is the parsed result::
+
+    <paragraph>
+        <inline class="special">
+            interpreted text
+
+.. _role class:
+
+The following option is recognized by the "role" directive for most
+base roles:
+
+``class`` : text
+    Set a "class" attribute value on the element produced (``inline``,
+    or element associated with a base class) when the custom
+    interpreted text role is used.  If no directive options are
+    specified, a "class" option with the directive argument (role
+    name) as the value is implied.  See the class_ directive above.
+
+Specific roles may support other options and/or directive content.
+See the `reStructuredText Interpreted Text Roles`_ document for
+details.
+
+.. _reStructuredText Interpreted Text Roles: roles.html
 
 
 Restructuredtext-Test-Directive

@@ -1,12 +1,12 @@
 # -*- coding: iso-8859-1 -*-
 # Author: Marcelo Huerta San Martín
-# Contact: mghsm@uol.com.ar
+# Contact: richieadler@users.sourceforge.net
 # Revision: $Revision$
 # Date: $Date$
 # Copyright: This module has been placed in the public domain.
 
 # New language mappings are welcome.  Before doing a new translation, please
-# read <http://docutils.sf.net/spec/howto/i18n.html>.  Two files must be
+# read <http://docutils.sf.net/docs/howto/i18n.html>.  Two files must be
 # translated for each language: one in docutils/languages, the other in
 # docutils/parsers/rst/languages.
 
@@ -42,10 +42,12 @@ directives = {
       u'epigrafe': 'epigraph',
       u'destacado': 'highlights',
       u'cita-destacada': 'pull-quote',
-      u'tabla': 'table',
       #'questions': 'questions',
       #'qa': 'questions',
       #'faq': 'questions',
+      u'tabla': 'table',
+      u'tabla-vsc': 'csv-table',
+      u'tabla-csv': 'csv-table',
       u'meta': 'meta',
       #'imagemap': 'imagemap',
       u'imagen': 'image',
@@ -55,6 +57,7 @@ directives = {
       u'reemplazar': 'replace',
       u'unicode': 'unicode',
       u'clase': 'class',
+      u'rol': 'role',
       u'contenido': 'contents',
       u'numseccion': 'sectnum',
       u'numsecci\u00f3n': 'sectnum',

@@ -2,74 +2,219 @@
  Docutils History
 ==================
 
-:Author: David Goodger
-:Contact: goodger@users.sourceforge.net
+:Author: David Goodger; open to all Docutils developers
+:Contact: goodger@python.org
 :Date: $Date$
 :Web site: http://docutils.sourceforge.net/
 :Copyright: This document has been placed in the public domain.
 
 .. contents::
 
-Acknowledgements
-================
 
-I would like to acknowledge the people who have made a direct impact
-on the Docutils project, knowingly or not, in terms of encouragement,
-suggestions, criticism, bug reports, code contributions, tasty treats,
-and related projects:
+Changes Since 0.3.5
+===================
 
-    Aahz, David Abrahams, David Ascher, Heiko Baumann, Eric Bellot,
-    Ian Bicking, Marek Blaha, Martin Blais, Fred Bremmer, Simon Budig,
-    Bill Bumgarner, Brett Cannon, Nicolas Chauveau, Beni Cherniavsky,
-    Adam Chodorowski, Artur de Sousa Rocha, Jason Diamond, William
-    Dode, Fred Drake, Dethe Elza, Marcus Ertl, Benja Fallenstein,
-    fantasai, Stefane Fermigier, Jim Fulton, Peter Funk, Dinu
-    C. Gherman, Jorge Gonzalez, Engelbert Gruber, Simon Hefti, Doug
-    Hellmann, Juergen Hermann, Jannie Hofmeyr, Michael Hudson, Marcelo
-    Huerta San Martin, Ludger Humbert, Jeremy Hylton, Tony Ibbs, Alan
-    Jaffray, Dmitry Jemerov, Richard Jones, Andreas Jung, Garth Kidd,
-    Axel Kollmorgen, Kirill Lapshin, Nicola Larosa, Daniel Larsson,
-    Marc-Andre Lemburg, Julien Letessier, Wolfgang Lipp, Edward Loper,
-    Dallas Mahrt, Ken Manheimer, Bob Marshall, Vasko Miroslav, Skip
-    Montanaro, Paul Moore, Nigel W. Moriarty, Mark Nodine, Patrick
-    K. O'Brien, Michel Pelletier, Sam Penrose, Tim Peters, Pearu
-    Peterson, Mark Pilgrim, Brett g Porter, David Priest, Jens Quade,
-    Andy Robinson, Tavis Rudd, Oliver Rutherfurd, Kenichi Sato, Ueli
-    Schlaepfer, Gunnar Schwant, Frank Siebenlist, Bruce Smith, Roman
-    Suzi, tav, Kent Tenney, Bob Tolbert, Paul Tremblay, Laurence
-    Tratt, Adrian van den Dries, Guido van Rossum, Paul Viren, Martin
-    von Loewis, Greg Ward, Barry Warsaw, Edward Welbourne, Ka-Ping
-    Yee, Moshe Zadka
+* docutils/parsers/rst/directives/parts.py:
 
-Thank you!
+  - Directive "sectnum" now accepts "prefix", "suffix", and "start"
+    options.  Thanks to Lele Gaifax.
 
-(I'm still waiting for contributions of computer equipment and cold
-hard cash :-).)  Hopefully I haven't forgotten anyone or misspelled
-any names; apologies (and please let me know!) if I have.
+* docutils/transforms/misc.py:
+
+  - Fixed bug when multiple "class" directives are applied to a single
+    element.
+
+* docutils/writers/latex2e.py:
+
+  - Add ``\PreloadUnicodePage{n}`` to the header if in LaTeX code
+    uses unicode.
+  - Add option "font-encoding".
+
+Release 0.3.5 (2004-07-29)
+==========================
+
+General:
+
+* _`Documentation cleanup/reorganization`.
+
+  - Created new subdirectories of docs/:
+
+    * ``docs/user/``: introductory/tutorial material for end-users
+    * ``docs/dev/``: for core-developers (development notes, plans, etc.)
+    * ``docs/api/``: API reference material for client-developers
+    * ``docs/ref/``: reference material for all groups
+    * ``docs/howto/``: for component-developers and core-developers
+    * ``docs/peps/``: Python Enhancement Proposals
+
+  - Moved ``docs/*`` to ``docs/user/``.
+  - Moved ``pysource.dtd``, ``pysource.txt``, ``semantics.txt`` from
+    ``spec/`` to ``docs/dev``.
+  - Moved ``doctree.txt``, ``docutils.dtd``, ``soextblx.dtd``,
+    ``transforms.txt`` from ``spec/`` to ``docs/ref/``.
+  - Moved ``alternatives.txt``, and ``problems.txt`` from
+    ``spec/rst/`` to ``docs/dev/rst/``.
+  - Moved ``reStructuredText.txt``, ``directives.txt``,
+    ``interpreted.txt``, and ``introduction.txt`` from ``spec/rst/``
+    to ``docs/ref/rst/``.  Renamed ``interpreted.txt`` to
+    ``roles.txt``, ``reStructuredText.txt`` to
+    ``restructuredtext.txt``.
+  - Moved ``spec/howto/`` to ``docs/howto``.
+
+  In order to keep the CVS history of moved files, we supplied
+  SourceForge with a `script for modifying the Docutils CVS
+  repository`__.
+
+  __ http://cvs.sourceforge.net/viewcvs.py/*checkout*/docutils/sandbox/davidg/infrastructure/cvs-reorg.sh?content-type=text/plain&rev=1.5
+
+  After running the cleanup script:
+
+  - Added ``docs/index.txt``.
+  - Added a ``.htaccess`` file to the ``web`` module, containing
+    redirects for all old paths to new paths.  They'll preserve
+    fragments (the "#name" part of a URL), and won't clutter up the
+    file system, and will correct the URL in the user's browser.
+  - Added ``BUGS.txt``, ``docs/dev/policies.txt``,
+    ``docs/dev/website.txt``, ``docs/dev/release.txt`` from all but
+    the "To Do" list itself in ``docs/dev/todo.txt``.
+  - Moved "Future Plans" from ``HISTORY.txt`` to new "Priorities"
+    section of ``docs/dev/todo.txt``.
+  - Added ``THANKS.txt`` from "Acknowledgements" in ``HISTORY.txt``.
+  - Added "How To Report Bugs" to ``BUGS.txt``.
+  - Went through all the sources and docs (including under web/) and
+    updated links.  Mostly done by Felix Wiemann; thanks Felix!
+    (Still need to update links in the sandboxes.)
+
+Specific:
+
+* BUGS.txt: Added to project.
+
+* THANKS.txt: Added to project.
+
+* docutils/__init__.py:
+
+  - 0.3.4: Post-release.
+
+* docutils/core.py:
+
+  - Added special error handling & advice for UnicodeEncodeError.
+  - Refactored Publisher.publish (simplified exception handling &
+    extracted debug dumps).
+  - Renamed "enable_exit" parameter of convenience functions to
+    "enable_exit_status".
+  - Enabled traceback (exception propagation) by default in
+    programmatic convenience functions.
+  - Now publish_file and publish_cmdline convenience functions return
+    the encoded string results in addition to their regular I/O.
+  - Extracted common code from publish_file, publish_string, and
+    publish_parts, into new publish_programmatically.  Extracted
+    settings code to ``Publisher.process_programmatic_settings``.
+  - In Publisher.publish, disabled ``settings_overrides`` when
+    ``settings`` is supplied; redundant.
+
+* docutils/frontend.py:
+
+  - Added help text for "--output-encoding-error-handler" and
+    "--error-encoding-error-handler".
+  - Renamed "--exit" to "--exit-status".
+  - Simplified default-setting code.
+
+* docutils/parsers/rst/__init__.py:
+
+  - Added "--pep-base-url" and "--rfc-base-url" options.
+
+* docutils/parsers/rst/states.py:
+
+  - Made URI recognition more aggressive and intelligent.
+
+* docutils/parsers/rst/directives/__init__.py:
+
+  - Added several directive option conversion functions.
+
+* docutils/parsers/rst/directives/body.py:
+
+  - Moved "table" directive to tables.py.
+
+* docutils/parsers/rst/directives/tables.py: Table-related directives,
+  added to project.
+
+* docutils/writers/latex2e.py:
+
+  - Added "--table-style=(standard|booktabs|nolines)"
+  - figures get "here" option (LaTeX per default puts them at bottom),
+    and figure content is centered.
+  - Rowspan support for tables.
+  - Fix: admonition titles before first section.
+  - Replace ``--`` in literal by ``-{}-`` because fontencoding T1 has endash.
+  - Replave ``_`` in literal by an underlined blank, because it has the correct
+    width.
+  - Fix: encode pdfbookmark titles, ``#`` broke pdflatex.
+  - A few unicode replacements, if output_encoding != utf
+  - Add "--graphicx-option".
+  - Indent literal-blocks.
+  - Fix: omit ``\maketitle`` when there is no document title.
+
+* docs/index.txt: "Docutils Project Documentation Overview", added to
+  project.
+
+* docs/api/cmdline-tool.txt: "Inside A Docutils Command-Line Front-End
+  Tool", added to project.
+
+* docs/api/publisher.txt: "The Docutils Publisher", added to project.
+
+* docs/api/runtime-settings.txt: "Docutils Runtime Settings", added to project.
+
+* docs/dev/policies.txt: Added to project (extracted from
+  ``docs/dev/todo.txt``, formerly ``spec/notes.txt``).
+
+* docs/dev/release.txt: Added to project (extracted from
+  ``docs/dev/todo.txt``, formerly ``spec/notes.txt``).
+
+* docs/dev/testing.txt: Added to project.
+
+* docs/dev/website.txt: Added to project (extracted from
+  ``docs/dev/todo.txt``, formerly ``spec/notes.txt``).
+
+* docs/ref/rst/directives.txt:
+
+  - Added directives: "table", "csv-table".
+
+* docs/user/rst/cheatsheet.txt: "The reStructuredText Cheat Sheet"
+  added to project.  1 page for syntax, and a 1 page reference for
+  directives and roles.  Source text to be used as-is; not meant to be
+  converted to HTML.
+
+* docs/user/rst/demo.txt: Added to project; moved from tools/test.txt
+  with a change of title.
+
+* test/functional/, contents, and test/test_functional.py: Added to
+  project.
+
+* tools/buildhtml.py: Fixed bug with config file handling.
+
+* tools/html.py: Removed from project.
+
+* tools/pep2html.py: Removed from project.
+
+* tools/rst2pseudoxml.py: Renamed from publish.py.
+
+* tools/rst2xml.py: Renamed from docutils-xml.py.
+
+* tools/test.txt: Removed from project; moved to
+  docs/user/rst/demo.txt.
+
+* setup.py: Now also installs ``rst2latex.py``.
 
 
-Future Plans
-============
-
-* Include substitution files for character entities, produced by the
-  tools/unicode2rstsubs.py.  As static data, these files could go
-  inside the docutils package somewhere.
-
-* Rename front-end tools (perhaps to "rst2*" pattern) and have
-  setup.py install them.
-
-* A Python Source Reader component (Python auto-documentation) will be
-  added as soon as there's enough time, effort, and will.  If you'd
-  like to help, let me know!
-
-
-Changes Since 0.3
-=================
+Release 0.3.3 (2004-05-09)
+==========================
 
 * docutils/__init__.py:
 
   - 0.3.1: Reorganized config file format (multiple sections); see
     docs/config.txt.
+  - Added unknown_reference_resolvers attribute to TransformSpec.
+  - 0.3.2: Interpreted text reorganization.
+  - 0.3.3: Released.
 
 * docutils/core.py:
 
@@ -79,6 +224,11 @@ Changes Since 0.3
   - Reordered components for OptionParser; application comes last.
   - Added "config_section" parameter to several methods and functions,
     allowing front ends to easily specify their config file sections.
+  - Added publish_parts convenience function to allow access to individual
+    parts of a document.
+
+* docutils/examples.py: Added to project; practical examples of
+  Docutils client code, to be used as-is or as models for variations.
 
 * docutils/frontend.py:
 
@@ -97,6 +247,7 @@ Changes Since 0.3
     for list setting attributes.
   - Added support for new ``DOCUTILSCONFIG`` environment variable;
     thanks to Beni Cherniavsky.
+  - Added "--no-section-numbering" option.
 
 * docutils/io.py:
 
@@ -109,6 +260,11 @@ Changes Since 0.3
   - Changed ``SparseNodeVisitor`` and ``GenericNodeVisitor`` dynamic
     method definitions (via ``exec``) to dynamic assignments (via
     ``setattr``); thanks to Roman Suzi.
+  - Encapsulated visitor dynamic assignments in a function; thanks to
+    Ian Bicking.
+  - Added indirect_reference_name attribute to the Targetable
+    class. This attribute holds the whitespace_normalized_name
+    (contains mixed case) of a target.
 
 * docutils/statemachine.py:
 
@@ -128,8 +284,16 @@ Changes Since 0.3
 * docutils/languages/eo.py: Added to project; Esperanto mappings by
   Marcelo Huerta San Martin.
 
+* docutils/languages/pt_br.py: Added to project; Brazilian Portuguese
+  mappings by Lalo Martins.
+
 * docutils/languages/ru.py: Added to project; Russian mappings by
   Roman Suzi.
+
+* docutils/parsers/rst/roles.py: Added to project.  Contains
+  interpreted text role functions, a registry for interpreted text
+  roles, and an API for adding to and retrieving from the registry.
+  Contributed by Edward Loper.
 
 * docutils/parsers/rst/states.py:
 
@@ -148,6 +312,16 @@ Changes Since 0.3
   - Made embedded-URIs' reference text omittable.  Idea from Beni
     Cherniavsky.
   - Refactored explicit target processing code.
+  - Added name attribute to references containing the reference name only
+    through whitespace_normalize_name (no case changes).
+  - parse_target no longer returns the refname after going through
+    normalize_name. This is now handled in make_target.
+  - Fixed bug relating to role-less interpreted text in non-English
+    contexts.
+  - Reorganized interpreted text processing; moved code into the new
+    roles.py module.  Contributed by Edward Loper.
+  - Refactored ``Body.parse_directive`` into ``run_directive`` and
+    ``parse_directive_block``.
 
 * docutils/parsers/rst/tableparser.py:
 
@@ -168,11 +342,21 @@ Changes Since 0.3
 * docutils/parsers/rst/directives/images.py:
 
   - Added "target" option to "image" directive.
+  - Added name attribute to references containing the reference name only
+    through whitespace_normalize_name (no case changes).
 
 * docutils/parsers/rst/directives/misc.py:
 
   - Isolated the import of the ``urllib2`` module; was causing
     problems on SourceForge (``libssl.so.2`` unavailable?).
+  - Added the "role" directive for declaring custom interpreted text
+    roles.
+
+* docutils/parsers/rst/directives/parts.py:
+
+  - The "contents" directive does more work up-front, creating the
+    "topic" and "title", and leaving the "pending" node for the
+    transform.  Allows earlier reference resolution; fixes subtle bug.
 
 * docutils/parsers/rst/languages/af.py: Added to project; Afrikaans
   mappings by Jannie Hofmeyr.
@@ -183,13 +367,44 @@ Changes Since 0.3
 * docutils/parsers/rst/languages/eo.py: Added to project; Esperanto
   mappings by Marcelo Huerta San Martin.
 
+* docutils/parsers/rst/languages/pt_br.py: Added to project; Brazilian
+  Portuguese mappings by Lalo Martins.
+
 * docutils/parsers/rst/languages/ru.py: Added to project; Russian
   mappings by Roman Suzi.
+
+* docutils/transforms/parts.py:
+
+  - The "contents" directive does more work up-front, creating the
+    "topic" and "title", and leaving the "pending" node for the
+    transform.  Allows earlier reference resolution; fixes subtle bug.
+  - Added support for disabling of section numbering.
+    
+* docutils/transforms/references.py:
+
+  - Verifying that external targets are truly targets and not indirect 
+    references. This is because we are now adding a "name" attribute to 
+    references in addition to targets. Note sure if this is correct!
+  - Added code to hook into the unknown_reference_resolvers list for a
+    transformer in resolve_indirect_target. This allows the
+    unknown_reference_resolvers to keep around indirect targets which
+    docutils doesn't know about.
+  - Added specific error message for duplicate targets.
 
 * docutils/transforms/universal.py:
 
   - Added FilterMessages transform (removes system messages below the
     verbosity threshold).
+  - Added hook (via docutils.TransformSpec.unknown_reference_resolvers)
+    to FinalCheckVisitor for application-specific handling of 
+    unresolvable references.
+  - Added specific error message for duplicate targets.
+  
+* docutils/writers/__init__.py:
+
+  - Added assemble_parts method to the Writer class to allow for
+    access to a documents individual parts.
+  - Documented & set default for ``Writer.output`` attribute.
 
 * docutils/writers/html4css1.py:
 
@@ -199,18 +414,44 @@ Changes Since 0.3
   - Improved table grid/border handling (prompted by report from Bob
     Marshall).
   - Added support for table titles.
+  - Added "<title />" for untitled docs, for XHTML conformance; thanks
+    to Darek Suchojad.
+  - Added functionality to keep track of individual parts of a document
+    and store them in a dictionary as the "parts" attribute of the writer.
+    Contributed by Reggie Dugard at the Docutils sprint at PyCon DC 2004.
+  - Added proper support for the "scale" attribute of the "image"
+    element.  Contributed by Brent Cook.
+  - Added ``--initial-header-level`` option.
+  - Fixed bug: the body_pre_docinfo segment depended on there being a
+    docinfo; if no docinfo, the document title was incorporated into
+    the body segment.  Adversely affected the publish_parts interface.
 
 * docutils/writers/latex2e.py:
 
   - Changed default stylesheet to "no stylesheet" to avoid latex complaining
     about a missing file.
-
+  - Added options and support: ``--compound-enumerators``,
+    ``--section-prefix-for-enumerators``, and
+    ``--section-enumerator-separator``.  By John F Meinel Jr (SF patch
+    934322).
+  - Added option ``--use-verbatim-when-possible``, to avoid
+    problematic characters (eg, '~' in italian) in literal blocks.
+  - It's now possible to use four section levels in the `book` and
+    `report` LaTeX classes.  The default `article` class still has
+    three levels limit.
+    
 * docs/config.txt: "Docutils Configuration Files", added to project.
   Moved config file entry descriptions from tools.txt.
 
 * docs/tools.txt:
 
   - Moved config file entry descriptions to config.txt.
+
+* spec/notes.txt: Continual updates.  Added "Setting Up For Docutils
+  Development".
+
+* spec/howto/rst-roles.txt: "Creating reStructuredText Interpreted
+  Text Roles", added to project.
 
 * spec/rst/reStructuredText.txt:
 
@@ -222,10 +463,21 @@ Changes Since 0.3
 
   - Added test/test_settings.py & test/data/config_*.txt support
     files.
+  - Added test/test_writers/test_htmlfragment.py.
+
+* test/DocutilsTestSupport.py:
+
+  - Refactored LaTeX publisher test suite/case class names to make
+    testing other writers easier.
+  - Added HtmlWriterPublishTestCase and HtmlFragmentTestSuite classes
+    to test the processing of HTML fragments which use the new
+    publish_parts convenience function.
 
 * tools/buildhtml.py:
 
   - Added support for the "--prune" option.
+  - Removed dependency on pep2html.py; plaintext PEPs no longer
+    supported.
 
 * tools/docutils.conf:
 
@@ -615,6 +867,9 @@ Specific:
 * docutils/transforms/__init__.py:
 
   - Added ``Transformer`` class and completed transform reform.
+  - Added unknown_reference_resolvers list for each transformer. This list holds
+    the list of functions provided by each component of the transformer that
+    help resolve references.
 
 * docutils/transforms/frontmatter.py:
 

@@ -216,7 +216,13 @@ class IndirectHyperlinks(Transform):
         refname = target['refname']
         reftarget_id = self.document.nameids.get(refname)
         if not reftarget_id:
-            self.nonexistent_indirect_target(target)
+            # Check the unknown_reference_resolvers
+            for resolver_function in (self.document.transformer
+                                      .unknown_reference_resolvers):
+                if resolver_function(target):
+                    break
+            else:
+                self.nonexistent_indirect_target(target)
             return
         reftarget = self.document.ids[reftarget_id]
         if isinstance(reftarget, nodes.target) \
@@ -248,7 +254,11 @@ class IndirectHyperlinks(Transform):
         reftarget.referenced = 1
 
     def nonexistent_indirect_target(self, target):
-        self.indirect_target_error(target, 'which does not exist')
+        if self.document.nameids.has_key(target['refname']):
+            self.indirect_target_error(target, 'which is a duplicate, and '
+                                       'cannot be used as a unique reference')
+        else:
+            self.indirect_target_error(target, 'which does not exist')
 
     def circular_indirect_reference(self, target):
         self.indirect_target_error(target, 'forming a circular reference')
@@ -353,7 +363,8 @@ class ExternalTargets(Transform):
                 try:
                     reflist = self.document.refnames[name]
                 except KeyError, instance:
-                    if target.referenced:
+                    # @@@ First clause correct???
+                    if not isinstance(target, nodes.target) or target.referenced:
                         continue
                     msg = self.document.reporter.info(
                           'External hyperlink target "%s" is not referenced.'

@@ -27,10 +27,10 @@ pattern::
 
     toolname [options] [<source> [<destination]]
 
-(The exceptions are buildhtml.py_ and pep2html.py_.)  See html.py_ for
-concrete examples.  Each tool has a "``--help``" option which lists
-the `command-line options`_ and arguments it supports.  Processing can
-also be customized with `configuration files`_.
+(The exceptions are buildhtml.py_ and pep2html.py_.)  See rst2html.py_
+for concrete examples.  Each tool has a "``--help``" option which
+lists the `command-line options`_ and arguments it supports.
+Processing can also be customized with `configuration files`_.
 
 The two arguments, "source" and "destination", are optional.  If only
 one argument (source) is specified, the standard output (stdout) is
@@ -86,45 +86,39 @@ where "X.Y" is the release version.  Alternatively::
 
 The current directory (and all subdirectories) is chosen by default if
 no directory is named.  Some files may generate system messages
-(tools/test.txt contains intentional errors); use the ``--quiet``
-option to suppress all warnings.  The ``--config`` option ensures that
-the correct stylesheets, templates, and settings are in place (a
-``docutils.conf`` configuration file in the current directory is
-picked up automatically).  Command-line options may be used to
+(docs/user/rst/demo.txt contains intentional errors); use the
+``--quiet`` option to suppress all warnings.  The ``--config`` option
+ensures that the correct stylesheets, templates, and settings are in
+place (a ``docutils.conf`` configuration file in the current directory
+is picked up automatically).  Command-line options may be used to
 override config file settings or replace them altogether.
 
 
-html.py
--------
+rst2html.py
+-----------
 
 :Reader: Standalone
 :Parser: reStructuredText
 :Writer: HTML
 
-The ``html.py`` front end reads standalone reStructuredText source
+The ``rst2html.py`` front end reads standalone reStructuredText source
 files and produces HTML 4 (XHTML 1) output compatible with modern
 browsers.  For example, to process a reStructuredText file
 "``test.txt``" into HTML::
 
-    html.py test.txt test.html
-
-In fact, there *is* a "``test.txt``" file in the "``tools``"
-directory.  It contains "at least one example of each reStructuredText
-construct", including several intentional errors (to test the error
-reporting system).  Use it to put the system through its paces and
-compare input to output.
+    rst2html.py test.txt test.html
 
 Now open the "``test.html``" file in your favorite browser to see the
 results.  To get a footer with a link to the source file, date & time
 of processing, and links to the Docutils projects, add some options::
 
-    html.py -stg test.txt test.html
+    rst2html.py -stg test.txt test.html
 
 
 Stylesheets
 ```````````
 
-``html.py`` inserts into the generated HTML a link to a cascading
+``rst2html.py`` inserts into the generated HTML a link to a cascading
 stylesheet, defaulting to "``default.css``" (override with a
 "``--stylesheet``" or "``--stylesheet-path``" command-line option or
 with configuration file settings).  The
@@ -142,7 +136,7 @@ following::
 
 Generate HTML with the following command::
 
-    html.py -stg --stylesheet my.css test.txt test.html
+    rst2html.py -stg --stylesheet my.css test.txt test.html
 
 When viewed in a browser, the new "wrapper" stylesheet will change the
 typeface family of titles to "sans serif", typically Helvetica or
@@ -166,12 +160,25 @@ be overridden by command-line options or configuration files.  The
 "``tools/stylesheets/pep.css``" stylesheet is intended specifically
 for PEP use.
 
-The "``docutils.conf``" `configuration file`_ in the "``spec``"
+The "``docutils.conf``" `configuration file`_ in the "``tools``"
 directory of Docutils contains a default setup for use in processing
-the PEP files there (``spec/pep-*.txt``) into HTML.  It specifies a
+the PEP files (``docs/peps/pep-*.txt``) into HTML.  It specifies a
 default template (``tools/pep-html-template``) and a default
 stylesheet (``tools/stylesheets/pep.css``).  See Stylesheets_ above
 for more information.
+
+``pep.py`` can be run from the ``tools`` directory or from the
+``docs/peps/`` directory, by adjusting the settings.  These two sets
+of commands are equivalent::
+
+    cd <path-to-docutils>/tools
+    # This will pick up the "docutils.conf" file automatically:
+    pep.py ../docs/peps/pep-0287.txt ../docs/peps/pep-0287.html
+
+    cd <path-to-docutils>/docs/peps
+    # Must tell the tool where to find the config file:
+    ../../tools/pep.py --config ../../tools/docutils.conf \
+        pep-0287.txt pep-0287.html
 
 
 pep2html.py
@@ -218,34 +225,32 @@ Some limitations and difference apply:
   ``latex``; use ``pdflatex`` instead.
 - Only the Latin-1 output encoding has been tested up to now (Latin-1
   has been made the default output encoding for LaTeX).
-- The generated file includes a file ``style.tex``, which allows the
-  inclusion of special packages or changes to settings made in the
-  header.
-- Not all constructs are possible (e.g. row/column spans in tables are
-  not).
+- The optional stylesheet file allows the inclusion of special packages 
+  or overwriting default settings for LaTeX.
+- Not all constructs are possible, see `Generating LaTeX with Docutils`_.
 
 
-docutils-xml.py
----------------
+rst2xml.py
+----------
 
 :Reader: Standalone
 :Parser: reStructuredText
 :Writer: XML (Docutils native)
 
-The ``docutils-xml.py`` front end produces Docutils-native XML output.
+The ``rst2xml.py`` front end produces Docutils-native XML output.
 This can be transformed with standard XML tools such as XSLT
 processors into arbitrary final forms.
 
 
-publish.py
-----------
+rst2pseudoxml.py
+----------------
 
 :Reader: Standalone
 :Parser: reStructuredText
 :Writer: Pseudo-XML
 
-``publish.py`` is used for debugging the Docutils "Reader to Transform
-to Writer" pipeline.  It produces a compact pretty-printed
+``rst2pseudoxml.py`` is used for debugging the Docutils "Reader to
+Transform to Writer" pipeline.  It produces a compact pretty-printed
 "pseudo-XML", where nesting is indicated by indentation (no end-tags).
 External attributes for all elements are output, and internal
 attributes for any leftover "pending" elements are also given.
@@ -300,7 +305,7 @@ set once and take effect every time you use a front-end tool.
 For details, see `Docutils Configuration Files`_.
 
 .. _Docutils Configuration Files: config.html
-
+.. _Generating LaTeX with Docutils: latex.html
 
 ..
    Local Variables:

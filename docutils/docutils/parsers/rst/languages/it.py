@@ -4,6 +4,11 @@
 # Date: $Date$
 # Copyright: This module has been placed in the public domain.
 
+# New language mappings are welcome.  Before doing a new translation, please
+# read <http://docutils.sf.net/docs/howto/i18n.html>.  Two files must be
+# translated for each language: one in docutils/languages, the other in
+# docutils/parsers/rst/languages.
+
 """
 Italian-language mappings for language-dependent features of
 reStructuredText.
@@ -29,12 +34,13 @@ directives = {
       'blocco-interpretato': 'parsed-literal',
       'rubrica': 'rubric',
       'epigrafe': 'epigraph',
-      'highlights (translation required)': 'highlights',
+      'evidenzia': 'highlights',
       'pull-quote (translation required)': 'pull-quote',
-      u'table (translation required)': 'table',
       #'questions': 'questions',
       #'qa': 'questions',
       #'faq': 'questions',
+      'tabella': 'table',
+      'csv-table (translation required)': 'csv-table',
       'meta': 'meta',
       #'imagemap': 'imagemap',
       'immagine': 'image',
@@ -44,6 +50,7 @@ directives = {
       'sostituisci': 'replace',
       'unicode': 'unicode',
       'classe': 'class',
+      'ruolo': 'role',
       'indice': 'contents',
       'seznum': 'sectnum',
       'sezioni-autonumerate': 'sectnum',

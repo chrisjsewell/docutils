@@ -18,7 +18,7 @@ is represented by abstract base classes (`Root`, `Structural`, `Body`,
 ``isinstance(node, base_class)`` to determine the position of the node in the
 hierarchy.
 
-.. _DTD: http://docutils.sourceforge.net/spec/docutils.dtd
+.. _DTD: http://docutils.sourceforge.net/docs/ref/docutils.dtd
 """
 
 __docformat__ = 'reStructuredText'
@@ -517,6 +517,9 @@ class TextElement(Element):
     its immediate parent is a `TextElement` instance (including subclasses).
     This is handy for nodes like `image` that can appear both inline and as
     standalone body elements.
+
+    If passing children to `__init__()`, make sure to set `text` to
+    ``''`` or some other suitable value.
     """
 
     child_text_separator = ''
@@ -598,6 +601,9 @@ class Referential(Resolvable): pass
 class Targetable(Resolvable):
 
     referenced = 0
+
+    indirect_reference_name = None
+    """Holds the whitespace_normalized_name (contains mixed case) of a target"""
 
 class Labeled:
     """Contains a `label` as its first element."""
@@ -820,6 +826,7 @@ class document(Root, Structural, Element):
     def has_name(self, name):
         return self.nameids.has_key(name)
 
+    # "note" here is an imperative verb: "take note of".
     def note_implicit_target(self, target, msgnode=None):
         id = self.set_id(target, msgnode)
         self.set_name_id_map(target, id, msgnode, explicit=None)
@@ -939,6 +946,7 @@ class rubric(Titular, TextElement): pass
 # ========================
 
 class docinfo(Bibliographic, Element): pass
+class info(Bibliographic, Element): pass
 class author(Bibliographic, TextElement): pass
 class authors(Bibliographic, Element): pass
 class organization(Bibliographic, TextElement): pass
@@ -1115,8 +1123,8 @@ class pending(Special, Invisible, PreBibliographic, Element):
 
     But the "contents" directive can't do its work until the entire document
     has been parsed and possibly transformed to some extent.  So the directive
-    code leaves a placeholder behind that will trigger the second phase of the
-    its processing, something like this::
+    code leaves a placeholder behind that will trigger the second phase of its
+    processing, something like this::
 
         <pending ...public attributes...> + internal attributes
 
@@ -1222,7 +1230,7 @@ node_class_names = """
         footnote footnote_reference
     generated
     header hint
-    image important inline
+    image important info inline
     label legend line_block list_item literal literal_block
     note
     option option_argument option_group option_list option_list_item
@@ -1295,16 +1303,6 @@ class SparseNodeVisitor(NodeVisitor):
     subclasses), subclass `NodeVisitor` instead.
     """
 
-def _nop(self, node):
-    pass
-
-# Save typing with dynamic assignments:
-for _name in node_class_names:
-    setattr(SparseNodeVisitor, "visit_" + _name, _nop)
-    setattr(SparseNodeVisitor, "depart_" + _name, _nop)
-del _name, _nop
-
-
 class GenericNodeVisitor(NodeVisitor):
 
     """
@@ -1337,12 +1335,18 @@ def _call_default_visit(self, node):
 def _call_default_departure(self, node):
     self.default_departure(node)
 
-# Save typing with dynamic assignments:
-for _name in node_class_names:
-    setattr(GenericNodeVisitor, "visit_" + _name, _call_default_visit)
-    setattr(GenericNodeVisitor, "depart_" + _name, _call_default_departure)
-del _name, _call_default_visit, _call_default_departure
+def _nop(self, node):
+    pass
 
+def _add_node_class_names(names):
+    """Save typing with dynamic assignments:"""
+    for _name in names:
+        setattr(GenericNodeVisitor, "visit_" + _name, _call_default_visit)
+        setattr(GenericNodeVisitor, "depart_" + _name, _call_default_departure)
+        setattr(SparseNodeVisitor, 'visit_' + _name, _nop)
+        setattr(SparseNodeVisitor, 'depart' + _name, _nop)
+
+_add_node_class_names(node_class_names)
 
 class TreeCopyVisitor(GenericNodeVisitor):
 

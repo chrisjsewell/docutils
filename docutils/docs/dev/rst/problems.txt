@@ -851,14 +851,15 @@ cleanly readable text.
 .. _Setext: http://docutils.sourceforge.net/mirror/setext.html
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _detailed description:
-   http://www.tibsnjoan.demon.co.uk/STNG-format.html
+   http://homepage.ntlworld.com/tibsnjoan/docutils/STNG-format.html
 .. _STMinus: http://www.cis.upenn.edu/~edloper/pydoc/stminus.html
 .. _StructuredTextNG:
    http://dev.zope.org/Members/jim/StructuredTextWiki/StructuredTextNG
 .. _README: http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/~checkout~/
    python/python/dist/src/README
 .. _Emacs table mode: http://table.sourceforge.net/
-.. _reStructuredText Markup Specification: reStructuredText.html
+.. _reStructuredText Markup Specification:
+   ../../ref/rst/restructuredtext.html
 
 
 ..

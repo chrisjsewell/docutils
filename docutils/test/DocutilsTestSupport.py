@@ -17,20 +17,24 @@ Exports the following:
     - `tableparser` is 'docutils.parsers.rst.tableparser'
 
 :Classes:
-    - `CustomTestSuite`
     - `CustomTestCase`
-    - `TransformTestSuite`
+    - `CustomTestSuite`
     - `TransformTestCase`
-    - `ParserTestSuite`
+    - `TransformTestSuite`
     - `ParserTestCase`
-    - `PEPParserTestSuite`
+    - `ParserTestSuite`
     - `PEPParserTestCase`
-    - `GridTableParserTestSuite`
+    - `PEPParserTestSuite`
     - `GridTableParserTestCase`
-    - `SimpleTableParserTestSuite`
+    - `GridTableParserTestSuite`
     - `SimpleTableParserTestCase`
-    - 'LatexPublishTestSuite'
-    - 'LatexPublishTestCase'
+    - `SimpleTableParserTestSuite`
+    - `WriterPublishTestCase`
+    - `LatexWriterPublishTestCase`
+    - `PseudoXMLWriterPublishTestCase`
+    - `HtmlWriterPublishTestCase`
+    - `PublishTestSuite`
+    - `HtmlFragmentTestSuite`
     - `DevNull` (output sink)
 """
 __docformat__ = 'reStructuredText'
@@ -38,7 +42,7 @@ __docformat__ = 'reStructuredText'
 import sys
 import os
 import unittest
-import difflib
+import docutils_difflib
 import inspect
 from pprint import pformat
 from types import UnicodeType
@@ -48,13 +52,15 @@ import docutils.core
 from docutils import frontend, nodes, statemachine, urischemes, utils
 from docutils.transforms import universal
 from docutils.parsers import rst
-from docutils.parsers.rst import states, tableparser, directives, languages
-from docutils.readers import standalone, pep, python
+from docutils.parsers.rst import states, tableparser, roles, languages
+from docutils.readers import standalone, pep
 from docutils.statemachine import StringList, string2lines
 
 try:
     from docutils.readers.python import moduleparser
-except:
+    from tokenize import generate_tokens
+    del generate_tokens
+except ImportError:      # moduleparser depends on modules added in Python 2.2
     moduleparser = None
 
 try:
@@ -75,11 +81,81 @@ class DevNull:
         pass
 
 
+class CustomTestCase(unittest.TestCase):
+    
+    """
+    Helper class, providing extended functionality over unittest.TestCase.
+
+    This isn't specific to Docutils but of general use when dealing
+    with large amounts of text. In particular, see the compare_output
+    method and the parameter list of __init__.
+    """
+
+    compare = docutils_difflib.Differ().compare
+    """Comparison method shared by all subclasses."""
+
+    def __init__(self, method_name, input, expected, id,
+                 run_in_debugger=0, short_description=None):
+        """
+        Initialise the CustomTestCase.
+
+        Arguments:
+
+        method_name -- name of test method to run.
+        input -- input to the parser.
+        expected -- expected output from the parser.
+        id -- unique test identifier, used by the test framework.
+        run_in_debugger -- if true, run this test under the pdb debugger.
+        short_description -- override to default test description.
+        """
+        self.id = id
+        self.input = input
+        self.expected = expected
+        self.run_in_debugger = run_in_debugger
+        
+        # XXX What do we do with short_description?  It isn't used at
+        # all.
+        
+        # Ring your mother.
+        unittest.TestCase.__init__(self, method_name)
+
+    def __str__(self):
+        """
+        Return string conversion. Overridden to give test id, in addition to
+        method name.
+        """
+        return '%s; %s' % (self.id, unittest.TestCase.__str__(self))
+
+    def __repr__(self):
+        return "<%s %s>" % (self.id, unittest.TestCase.__repr__(self))
+
+    def compare_output(self, input, output, expected):
+        """`input`, `output`, and `expected` should all be strings."""
+        if type(input) == UnicodeType:
+            input = input.encode('raw_unicode_escape')
+        if type(output) == UnicodeType:
+            output = output.encode('raw_unicode_escape')
+        if type(expected) == UnicodeType:
+            expected = expected.encode('raw_unicode_escape')
+        try:
+            self.assertEquals('\n' + output, '\n' + expected)
+        except AssertionError:
+            print >>sys.stderr, '\n%s\ninput:' % (self,)
+            print >>sys.stderr, input
+            print >>sys.stderr, '-: expected\n+: output'
+            print >>sys.stderr, ''.join(self.compare(expected.splitlines(1),
+                                                     output.splitlines(1)))
+            raise
+
+
 class CustomTestSuite(unittest.TestSuite):
 
     """
-    A collection of custom TestCases.
+    A collection of CustomTestCases.
 
+    Provides test suite ID generation.
+    
+    XXX Any other reason why we need this class?
     """
 
     id = ''
@@ -124,13 +200,13 @@ class CustomTestSuite(unittest.TestSuite):
                     id=None, run_in_debugger=0, short_description=None,
                     **kwargs):
         """
-        Create a custom TestCase in the CustomTestSuite.
+        Create a CustomTestCase in the CustomTestSuite.
         Also return it, just in case.
 
         Arguments:
 
-        test_case_class --
-        method_name --
+        test_case_class -- the CustomTestCase to add
+        method_name -- a string; CustomTestCase.method_name is the test
         input -- input to the parser.
         expected -- expected output from the parser.
         id -- unique test identifier, used by the test framework.
@@ -150,108 +226,8 @@ class CustomTestSuite(unittest.TestSuite):
         self.addTest(tc)
         return tc
 
-
-class CustomTestCase(unittest.TestCase):
-
-    compare = difflib.Differ().compare
-    """Comparison method shared by all subclasses."""
-
-    def __init__(self, method_name, input, expected, id,
-                 run_in_debugger=0, short_description=None):
-        """
-        Initialise the CustomTestCase.
-
-        Arguments:
-
-        method_name -- name of test method to run.
-        input -- input to the parser.
-        expected -- expected output from the parser.
-        id -- unique test identifier, used by the test framework.
-        run_in_debugger -- if true, run this test under the pdb debugger.
-        short_description -- override to default test description.
-        """
-        self.id = id
-        self.input = input
-        self.expected = expected
-        self.run_in_debugger = run_in_debugger
-        # Ring your mother.
-        unittest.TestCase.__init__(self, method_name)
-
-    def __str__(self):
-        """
-        Return string conversion. Overridden to give test id, in addition to
-        method name.
-        """
-        return '%s; %s' % (self.id, unittest.TestCase.__str__(self))
-
-    def __repr__(self):
-        return "<%s %s>" % (self.id, unittest.TestCase.__repr__(self))
-
-    def compare_output(self, input, output, expected):
-        """`input`, `output`, and `expected` should all be strings."""
-        if type(input) == UnicodeType:
-            input = input.encode('raw_unicode_escape')
-        if type(output) == UnicodeType:
-            output = output.encode('raw_unicode_escape')
-        if type(expected) == UnicodeType:
-            expected = expected.encode('raw_unicode_escape')
-        try:
-            self.assertEquals('\n' + output, '\n' + expected)
-        except AssertionError:
-            print >>sys.stderr, '\n%s\ninput:' % (self,)
-            print >>sys.stderr, input
-            print >>sys.stderr, '-: expected\n+: output'
-            print >>sys.stderr, ''.join(self.compare(expected.splitlines(1),
-                                                     output.splitlines(1)))
-            raise
-
-    def skip_test(self):
-        print >>sys.stderr, '%s: Test skipped' % self
-
-
-class TransformTestSuite(CustomTestSuite):
-
-    """
-    A collection of TransformTestCases.
-
-    A TransformTestSuite instance manufactures TransformTestCases,
-    keeps track of them, and provides a shared test fixture (a-la
-    setUp and tearDown).
-    """
-
-    def __init__(self, parser):
-        self.parser = parser
-        """Parser shared by all test cases."""
-
-        CustomTestSuite.__init__(self)
-
-    def generateTests(self, dict, dictname='totest',
-                      testmethod='test_transforms'):
-        """
-        Stock the suite with test cases generated from a test data dictionary.
-
-        Each dictionary key (test type's name) maps to a list of transform
-        classes and list of tests. Each test is a list: input, expected
-        output, optional modifier. The optional third entry, a behavior
-        modifier, can be 0 (temporarily disable this test) or 1 (run this test
-        under the pdb debugger). Tests should be self-documenting and not
-        require external comments.
-        """
-        for name, (transforms, cases) in dict.items():
-            for casenum in range(len(cases)):
-                case = cases[casenum]
-                run_in_debugger = 0
-                if len(case)==3:
-                    if case[2]:
-                        run_in_debugger = 1
-                    else:
-                        continue
-                self.addTestCase(
-                      TransformTestCase, testmethod,
-                      transforms=transforms, parser=self.parser,
-                      input=case[0], expected=case[1],
-                      id='%s[%r][%s]' % (dictname, name, casenum),
-                      run_in_debugger=run_in_debugger)
+    def generate_no_tests(self, *args, **kwargs):
+        pass
 
 
 class TransformTestCase(CustomTestCase):
@@ -270,6 +246,7 @@ class TransformTestCase(CustomTestCase):
     settings.halt_level = 5
     settings.debug = package_unittest.debug
     settings.warning_stream = DevNull()
+    unknown_reference_resolvers = ()
 
     def __init__(self, *args, **kwargs):
         self.transforms = kwargs['transforms']
@@ -316,6 +293,52 @@ class TransformTestCase(CustomTestCase):
         self.compare_output(self.input, output, self.expected)
 
 
+class TransformTestSuite(CustomTestSuite):
+
+    """
+    A collection of TransformTestCases.
+
+    A TransformTestSuite instance manufactures TransformTestCases,
+    keeps track of them, and provides a shared test fixture (a-la
+    setUp and tearDown).
+    """
+
+    def __init__(self, parser):
+        self.parser = parser
+        """Parser shared by all test cases."""
+
+        CustomTestSuite.__init__(self)
+
+    def generateTests(self, dict, dictname='totest',
+                      testmethod='test_transforms'):
+        """
+        Stock the suite with test cases generated from a test data dictionary.
+
+        Each dictionary key (test type's name) maps to a tuple, whose
+        first item is a list of transform classes and whose second
+        item is a list of tests. Each test is a list: input, expected
+        output, optional modifier. The optional third entry, a
+        behavior modifier, can be 0 (temporarily disable this test) or
+        1 (run this test under the pdb debugger). Tests should be
+        self-documenting and not require external comments.
+        """
+        for name, (transforms, cases) in dict.items():
+            for casenum in range(len(cases)):
+                case = cases[casenum]
+                run_in_debugger = 0
+                if len(case)==3:
+                    if case[2]:
+                        run_in_debugger = 1
+                    else:
+                        continue
+                self.addTestCase(
+                      TransformTestCase, testmethod,
+                      transforms=transforms, parser=self.parser,
+                      input=case[0], expected=case[1],
+                      id='%s[%r][%s]' % (dictname, name, casenum),
+                      run_in_debugger=run_in_debugger)
+
+
 class ParserTestCase(CustomTestCase):
 
     """
@@ -329,7 +352,7 @@ class ParserTestCase(CustomTestCase):
     parser = rst.Parser()
     """Parser shared by all ParserTestCases."""
 
-    option_parser = frontend.OptionParser(components=(parser,))
+    option_parser = frontend.OptionParser(components=(rst.Parser,))
     settings = option_parser.get_default_values()
     settings.report_level = 5
     settings.halt_level = 5
@@ -339,6 +362,8 @@ class ParserTestCase(CustomTestCase):
         if self.run_in_debugger:
             pdb.set_trace()
         document = utils.new_document('test data', self.settings)
+        # Remove any additions made by "role" directives:
+        roles._roles = {}
         self.parser.parse(self.input, document)
         output = document.pformat()
         self.compare_output(self.input, output, self.expected)
@@ -386,10 +411,10 @@ class PEPParserTestCase(ParserTestCase):
 
     """PEP-specific parser test case."""
 
-    parser = rst.Parser(rfc2822=1, inliner=pep.Inliner())
+    parser = rst.Parser(rfc2822=1, inliner=rst.states.Inliner())
     """Parser shared by all PEPParserTestCases."""
 
-    option_parser = frontend.OptionParser(components=(parser, pep.Reader))
+    option_parser = frontend.OptionParser(components=(rst.Parser, pep.Reader))
     settings = option_parser.get_default_values()
     settings.report_level = 5
     settings.halt_level = 5
@@ -514,11 +539,11 @@ class PythonModuleParserTestCase(CustomTestCase):
     def test_parser(self):
         if self.run_in_debugger:
             pdb.set_trace()
-        module = moduleparser.parse_module(self.input, 'test data')
+        module = moduleparser.parse_module(self.input, 'test data').pformat()
         output = str(module)
         self.compare_output(self.input, output, self.expected)
 
-    def test_token_parser_rhs(self): 
+    def test_token_parser_rhs(self):
         if self.run_in_debugger:
             pdb.set_trace()
         tr = moduleparser.TokenParser(self.input)
@@ -532,10 +557,16 @@ class PythonModuleParserTestSuite(CustomTestSuite):
     A collection of PythonModuleParserTestCase.
     """
 
-    if moduleparser is None:
-        PythonModuleParserTestCase.test_parser = CustomTestCase.skip_test
-        PythonModuleParserTestCase.test_token_parser_rhs = \
-            CustomTestCase.skip_test
+    notified = None
+
+    def __init__(self, *args, **kwargs):
+        if moduleparser is None:
+            if not self.notified:
+                print ('Tests of docutils.readers.python skipped; '
+                       'Python 2.2 or higher required.')
+                PythonModuleParserTestSuite.notified = 1
+            self.generateTests = self.generate_no_tests
+        CustomTestSuite.__init__(self, *args, **kwargs)
 
     def generateTests(self, dict, dictname='totest',
                       testmethod='test_parser'):
@@ -564,15 +595,14 @@ class PythonModuleParserTestSuite(CustomTestSuite):
                       run_in_debugger=run_in_debugger)
 
 
-# @@@ These should be generalized to WriterPublishTestCase/Suite or
-# just PublishTestCase/Suite, as per TransformTestCase/Suite.
-class LatexPublishTestCase(CustomTestCase, docutils.SettingsSpec):
+class WriterPublishTestCase(CustomTestCase, docutils.SettingsSpec):
 
     """
     Test case for publish.
     """
 
     settings_default_overrides = {'_disable_config': 1}
+    writer_name = '' # override in subclasses
 
     def test_publish(self):
         if self.run_in_debugger:
@@ -581,15 +611,35 @@ class LatexPublishTestCase(CustomTestCase, docutils.SettingsSpec):
               source=self.input,
               reader_name='standalone',
               parser_name='restructuredtext',
-              writer_name='latex',
+              writer_name=self.writer_name,
               settings_spec=self)
         self.compare_output(self.input, output, self.expected)
 
 
-class LatexPublishTestSuite(CustomTestSuite):
+class LatexWriterPublishTestCase(WriterPublishTestCase):
+    """Test case for Latex writer."""
+    writer_name = 'latex'
 
-    def __init__(self):
+
+class PseudoXMLWriterPublishTestCase(WriterPublishTestCase):
+    """Test case for pseudo-XML writer."""
+    writer_name = 'pseudoxml'
+
+
+class PublishTestSuite(CustomTestSuite):
+
+    TEST_CLASSES = {
+        'latex': LatexWriterPublishTestCase,
+        'pseudoxml': PseudoXMLWriterPublishTestCase,
+    }
+
+    def __init__(self, writer_name):
+        """
+        `writer_name` is the name of the writer
+        to use.  It must be a key in `TEST_CLASSES`.
+        """
         CustomTestSuite.__init__(self)
+        self.test_class = self.TEST_CLASSES[writer_name]
 
     def generateTests(self, dict, dictname='totest'):
         for name, cases in dict.items():
@@ -602,10 +652,92 @@ class LatexPublishTestSuite(CustomTestSuite):
                     else:
                         continue
                 self.addTestCase(
-                      LatexPublishTestCase, 'test_publish',
+                      self.test_class, 'test_publish',
                       input=case[0], expected=case[1],
                       id='%s[%r][%s]' % (dictname, name, casenum),
                       run_in_debugger=run_in_debugger)
+
+
+class HtmlPublishPartsTestSuite(CustomTestSuite):
+
+    def generateTests(self, dict, dictname='totest'):
+        for name, (settings_overrides, cases) in dict.items():
+            for casenum in range(len(cases)):
+                case = cases[casenum]
+                run_in_debugger = 0
+                if len(case)==3:
+                    if case[2]:
+                        run_in_debugger = 1
+                    else:
+                        continue
+                self.addTestCase(
+                      HtmlWriterPublishPartsTestCase, 'test_publish',
+                      settings_overrides=settings_overrides,
+                      input=case[0], expected=case[1],
+                      id='%s[%r][%s]' % (dictname, name, casenum),
+                      run_in_debugger=run_in_debugger)
+
+
+class HtmlWriterPublishPartsTestCase(WriterPublishTestCase):
+
+    """
+    Test case for HTML writer via the publish_parts interface.
+    """
+
+    writer_name = 'html'
+
+    def __init__(self, *args, **kwargs):
+        self.settings_overrides = kwargs['settings_overrides']
+        """Settings overrides to use for this test case."""
+
+        del kwargs['settings_overrides'] # only wanted here
+        CustomTestCase.__init__(self, *args, **kwargs)
+
+    def test_publish(self):
+        if self.run_in_debugger:
+            pdb.set_trace()
+        parts = docutils.core.publish_parts(
+            source=self.input,
+            reader_name='standalone',
+            parser_name='restructuredtext',
+            writer_name=self.writer_name,
+            settings_spec=self,
+            settings_overrides=self.settings_overrides)
+        output = self.format_output(parts)
+        # interpolate standard variables:
+        expected = self.expected % {'version': docutils.__version__}
+        self.compare_output(self.input, output, expected)
+
+    standard_meta_value = """\
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils %s: http://docutils.sourceforge.net/" />
+""" % docutils.__version__
+    standard_stylesheet_value = ('<link rel="stylesheet" href="default.css" '
+                                 'type="text/css" />\n')
+
+    def format_output(self, parts):
+        """Minimize & standardize the output."""
+        # remove redundant bits:
+        del parts['whole']
+        del parts['body']
+        # remove standard bits:
+        parts['meta'] = parts['meta'].replace(self.standard_meta_value, '')
+        if parts['stylesheet'] == self.standard_stylesheet_value:
+            del parts['stylesheet']
+        # remove empty values:
+        for key in parts.keys():
+            if not parts[key]:
+                del parts[key]
+        # standard output format:
+        keys = parts.keys()
+        keys.sort()
+        output = []
+        for key in keys:
+            output.append("%r: '''%s'''"
+                          % (key, parts[key].encode('raw_unicode_escape')))
+            if output[-1].endswith("\n'''"):
+                output[-1] = output[-1][:-4] + "\\n'''"
+        return '{' + ',\n '.join(output) + '}\n'
 
 
 def exception_data(code):

@@ -14,6 +14,7 @@ __docformat__ = 'reStructuredText'
 import sys
 from docutils import nodes, utils
 from docutils.parsers.rst import directives, states
+from docutils.nodes import whitespace_normalize_name
 
 try:
     import Image                        # PIL
@@ -27,6 +28,7 @@ def align(argument):
 
 def image(name, arguments, options, content, lineno,
           content_offset, block_text, state, state_machine):
+    messages = []
     reference = ''.join(arguments[0].split('\n'))
     if reference.find(' ') != -1:
         error = state_machine.reporter.error(
@@ -34,22 +36,26 @@ def image(name, arguments, options, content, lineno,
               nodes.literal_block(block_text, block_text), line=lineno)
         return [error]
     options['uri'] = reference
+    reference_node = None
     if options.has_key('target'):
         block = states.escape2null(options['target']).splitlines()
         block = [line for line in block]
         target_type, data = state.parse_target(block, block_text, lineno)
         if target_type == 'refuri':
-            node_list = nodes.reference(refuri=data)
+            reference_node = nodes.reference(refuri=data)
         elif target_type == 'refname':
-            node_list = nodes.reference(refname=data)
-            state.document.note_refname(node_list)
+            reference_node = nodes.reference(
+                refname=data, name=whitespace_normalize_name(options['target']))
+            state.document.note_refname(reference_node)
         else:                           # malformed target
-            node_list = [data]          # data is a system message
+            messages.append(data)       # data is a system message
         del options['target']
+    image_node = nodes.image(block_text, **options)
+    if reference_node:
+        reference_node += image_node
+        return messages + [reference_node]
     else:
-        node_list = []
-    node_list.append(nodes.image(block_text, **options))
-    return node_list
+        return messages + [image_node]
 
 image.arguments = (1, 0, 1)
 image.options = {'alt': directives.unchanged,

@@ -40,7 +40,7 @@ goes something like this:
    - merge hyperlinks
    - merge namespaces
    - create various sections like "Module Attributes", "Functions",
-     "Classes", "Class Attributes", etc.; see spec/ppdi.dtd
+     "Classes", "Class Attributes", etc.; see pysource.dtd_
    - convert the above special sections to ordinary doctree nodes
 
 4. Run transforms on the combined doctree.  Examples: resolving
@@ -118,8 +118,8 @@ The role may be one of 'package', 'module', 'class', 'method',
 'exception_class', 'exception', 'warning_class', or 'warning'.  Other
 roles may be defined.
 
-.. _pysource.dtd: http://docutils.sourceforge.net/spec/pysource.dtd
-.. _docutils.dtd: http://docutils.sourceforge.net/spec/docutils.dtd
+.. _pysource.dtd: pysource.dtd
+.. _docutils.dtd: ../ref/docutils.dtd
 
 
 ..

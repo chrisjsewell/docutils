@@ -1,7 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
 <html>
   <head>
     <title>Quick reStructuredText</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
 
     <style type="text/css"><!--
       a.backref { text-decoration: none ; color: black }
@@ -15,10 +18,10 @@
     <!-- Caveat: if you're reading the HTML for the examples, -->
     <!-- beware that it was hand-generated, not by Docutils/ReST.  -->
 
-    <p align="right"><em><a href="http://docutils.sourceforge.net/docs/rst/quickref.html"
-    >http://docutils.sourceforge.net/docs/rst/quickref.html</a></em>
-    <br align="right"><em>Being a cheat-sheet for reStructuredText</em>
-    <br align="right"><em>Updated 2003-12-20</em>
+    <p align="right"><em><a href="http://docutils.sourceforge.net/docs/user/rst/quickref.html"
+    >http://docutils.sourceforge.net/docs/user/rst/quickref.html</a></em>
+    <br><em>Being a cheat-sheet for reStructuredText</em>
+    <br><em>Updated $Date$</em>
 
     <blockquote>
       <p>Copyright: This document has been placed in the public domain.
@@ -31,10 +34,10 @@
 
     <p>Links that look like "(<a href="#details">details</a>)" point
       into the HTML version of the full <a
-      href="../../spec/rst/reStructuredText.html">reStructuredText
+      href="../../ref/rst/restructuredtext.html">reStructuredText
       specification</a> document.  These are relative links; if they
       don't work, please use the <a
-      href="http://docutils.sourceforge.net/docs/rst/quickref.html"
+      href="http://docutils.sourceforge.net/docs/user/rst/quickref.html"
       >master "Quick reStructuredText"</a> document.
 
     <h2><a name="contents">Contents</a></h2>
@@ -75,7 +78,7 @@
     <h2><a href="#contents" name="inline-markup" class="backref"
         >Inline Markup</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#inline-markup">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#inline-markup">details</a>)
 
     <p>Inline markup allows words and phrases within text to have
     character styles (like italics and boldface) and functionality
@@ -187,7 +190,7 @@
       <li>The end-string must end a text block (end of document or
     followed by a blank line) or be immediately followed by whitespace
     or any of&nbsp;<samp>' " . , : ; ! ? - ) ] } / \</samp> 
-	or&nbsp;<samp>&gt;</samp>.
+    or&nbsp;<samp>&gt;</samp>.
       <li>If a start-string is immediately preceded by one of&nbsp;
     <samp>' " ( [ {</samp> or&nbsp;<samp>&lt;</samp>, it must not be
     immediately followed by the corresponding character from&nbsp;
@@ -195,7 +198,7 @@
       <li>An end-string must be separated by at least one
     character from the start-string.
       <li>An <a href="#escaping">unescaped</a> backslash preceding a
-	start-string or end-string will disable markup recognition, except
+    start-string or end-string will disable markup recognition, except
     for the end-string of inline literals.
     </ol>
 
@@ -208,7 +211,7 @@
         >Escaping with Backslashes</a></h2>
 
     <p>(<a
-    href="../../spec/rst/reStructuredText.html#backslashes">details</a>)
+    href="../../ref/rst/restructuredtext.html#escaping-mechanism">details</a>)
 
     <p>reStructuredText uses backslashes ("\") to override the special
     meaning given to markup characters and get the literal characters
@@ -256,7 +259,7 @@
     <h2><a href="#contents" name="section-structure" class="backref"
         >Section Structure</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#sections">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#sections">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -279,6 +282,10 @@
 <br><samp>are&nbsp;"``=&nbsp;-&nbsp;`&nbsp;:&nbsp;'&nbsp;"&nbsp;~&nbsp;^&nbsp;_&nbsp;*&nbsp;+&nbsp;#&nbsp;&lt;&nbsp;&gt;``".</samp>
 <br><samp>The&nbsp;underline/overline&nbsp;must&nbsp;be&nbsp;at</samp>
 <br><samp>least&nbsp;as&nbsp;long&nbsp;as&nbsp;the&nbsp;title&nbsp;text.</samp>
+<br><samp></samp>
+<br><samp>A&nbsp;lone&nbsp;top-level&nbsp;(sub)section</samp>
+<br><samp>is&nbsp;lifted&nbsp;up&nbsp;to&nbsp;be&nbsp;the&nbsp;document's</samp>
+<br><samp>(sub)title.</samp>
 
       <td>
         <font size="+2"><strong>Title</strong></font>
@@ -290,12 +297,15 @@
           are "<samp>= - ` : ' " ~ ^ _ * + # &lt; &gt;</samp>".
           The underline/overline must be at
           least as long as the title text.
+        <p>A lone top-level (sub)section is
+          lifted up to be the document's
+          (sub)title.
     </table>
 
     <h2><a href="#contents" name="paragraphs" class="backref"
         >Paragraphs</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#paragraphs">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#paragraphs">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -323,7 +333,7 @@
     <h2><a href="#contents" name="bullet-lists" class="backref"
         >Bullet Lists</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#bullet-lists">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#bullet-lists">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -361,7 +371,7 @@
     <h2><a href="#contents" name="enumerated-lists" class="backref"
         >Enumerated Lists</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#enumerated-lists">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#enumerated-lists">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -397,7 +407,7 @@
     <h2><a href="#contents" name="definition-lists" class="backref"
         >Definition Lists</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#definition-lists">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#definition-lists">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -438,7 +448,7 @@
     <h2><a href="#contents" name="field-lists" class="backref"
         >Field Lists</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#field-lists">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#field-lists">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -477,7 +487,7 @@
     <h2><a href="#contents" name="option-lists" class="backref"
         >Option Lists</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#option-lists">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#option-lists">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -525,7 +535,7 @@
     <h2><a href="#contents" name="literal-blocks" class="backref"
         >Literal Blocks</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#literal-blocks">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#literal-blocks">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -569,8 +579,8 @@
 <br><samp>Per-line&nbsp;quoting&nbsp;can&nbsp;also&nbsp;be&nbsp;used&nbsp;on</samp>
 <br><samp>unindented&nbsp;literal&nbsp;blocks:</samp>
 <br>
-<br><samp>>&nbsp;Useful&nbsp;for&nbsp;quotes&nbsp;from&nbsp;email&nbsp;and</samp>
-<br><samp>>&nbsp;for&nbsp;Haskell&nbsp;literate&nbsp;programming.<samp>
+<br><samp>&gt;&nbsp;Useful&nbsp;for&nbsp;quotes&nbsp;from&nbsp;email&nbsp;and</samp>
+<br><samp>&gt;&nbsp;for&nbsp;Haskell&nbsp;literate&nbsp;programming.</samp>
 
       <td>
         <p>A paragraph containing only two colons
@@ -607,14 +617,14 @@ This means that something like this is possible:
 unindented literal blocks:
 
         <pre>
-  > Useful for quotes from email and
-  > for Haskell literate programming.</pre>
+  &gt; Useful for quotes from email and
+  &gt; for Haskell literate programming.</pre>
     </table>
 
     <h2><a href="#contents" name="block-quotes" class="backref"
         >Block Quotes</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#block-quotes">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#block-quotes">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -643,7 +653,7 @@ unindented literal blocks:
     <h2><a href="#contents" name="doctest-blocks" class="backref"
         >Doctest Blocks</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#doctest-blocks">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#doctest-blocks">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -679,7 +689,7 @@ unindented literal blocks:
     <h2><a href="#contents" name="tables" class="backref"
         >Tables</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#tables">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#tables">details</a>)
 
     <p>There are two syntaxes for tables in reStructuredText.  Grid
     tables are complete but cumbersome to create.  Simple tables are
@@ -710,28 +720,36 @@ unindented literal blocks:
       <td>
         <p>Grid table:</p>
         <table border="1">
-          <tr valign="top">
-        <th>Header 1
-        <th>Header 2
-        <th>Header 3
-          <tr>
-        <td>body row 1
-        <td>column 2
-        <td>column 3
-          <tr>
-        <td>body row 2
-        <td colspan="2">Cells may span columns.
-          <tr valign="top">
-        <td>body row 3
-        <td rowspan="2">Cells may<br>span rows.
-        <td rowspan="2">
-          <ul>
-            <li>Cells
-            <li>contain
-            <li>blocks.
-          </ul>
-          <tr valign="top">
-        <td>body row 4
+          <thead valign="bottom">
+            <tr>
+              <th>Header 1
+              <th>Header 2
+              <th>Header 3
+            </tr>
+          </thead>
+          <tbody valign="top">
+            <tr>
+              <td>body row 1
+              <td>column 2
+              <td>column 3
+            </tr>
+            <tr>
+              <td>body row 2
+              <td colspan="2">Cells may span columns.
+            </tr>
+            <tr>
+              <td>body row 3
+              <td rowspan="2">Cells may<br>span rows.
+              <td rowspan="2">
+                <ul>
+                  <li>Cells
+                  <li>contain
+                  <li>blocks.
+                </ul>
+            </tr>
+            <tr>
+              <td>body row 4
+            </tr>
         </table>
     <tr valign="top">
       <td>
@@ -750,11 +768,11 @@ unindented literal blocks:
 
       <td>
         <p>Simple table:</p>
-        <table frame="border" rules="all">
+        <table border="1">
           <colgroup>
-            <col colwidth="31%" />
-            <col colwidth="31%" />
-            <col colwidth="38%" />
+            <col width="31%">
+            <col width="31%">
+            <col width="38%">
           </colgroup>
           <thead valign="bottom">
             <tr>
@@ -788,7 +806,7 @@ unindented literal blocks:
     <h2><a href="#contents" name="transitions" class="backref"
         >Transitions</a></h2>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#transitions">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#transitions">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -838,7 +856,7 @@ A&nbsp;transition&nbsp;marker&nbsp;is&nbsp;a&nbsp;horizontal&nbsp;line
     <h3><a href="#contents" name="footnotes" class="backref"
         >Footnotes</a></h3>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#footnotes">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#footnotes">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -931,7 +949,7 @@ A&nbsp;transition&nbsp;marker&nbsp;is&nbsp;a&nbsp;horizontal&nbsp;line
     <h3><a href="#contents" name="citations" class="backref"
         >Citations</a></h3>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#citations">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#citations">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -984,7 +1002,7 @@ A&nbsp;transition&nbsp;marker&nbsp;is&nbsp;a&nbsp;horizontal&nbsp;line
     <h3><a href="#contents" name="hyperlink-targets" class="backref"
         >Hyperlink Targets</a></h3>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#hyperlink-targets">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#hyperlink-targets">details</a>)
 
     <h4><a href="#contents" name="external-hyperlink-targets" class="backref"
         >External Hyperlink Targets</a></h4>
@@ -1064,7 +1082,7 @@ A&nbsp;transition&nbsp;marker&nbsp;is&nbsp;a&nbsp;horizontal&nbsp;line
     <h4><a href="#contents" name="indirect-hyperlink-targets" class="backref"
         >Indirect Hyperlink Targets</a></h4>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#indirect-hyperlink-targets">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#indirect-hyperlink-targets">details</a>)
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
       <thead>
@@ -1104,13 +1122,14 @@ A&nbsp;transition&nbsp;marker&nbsp;is&nbsp;a&nbsp;horizontal&nbsp;line
     <h4><a href="#contents" name="implicit-hyperlink-targets" class="backref"
         >Implicit Hyperlink Targets</a></h4>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#implicit-hyperlink-targets">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#implicit-hyperlink-targets">details</a>)
 
     <p>Section titles, footnotes, and citations automatically generate
     hyperlink targets (the title text or footnote/citation label is
     used as the hyperlink name).
 
-    <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">    <tr align="left" bgcolor="#99CCFF">
+    <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
+       <thead><tr align="left" bgcolor="#99CCFF">
       <th width="50%">Plain text
       <th width="50%">Typical result
       </thead>
@@ -1124,19 +1143,19 @@ A&nbsp;transition&nbsp;marker&nbsp;is&nbsp;a&nbsp;horizontal&nbsp;line
         <br><samp>targets,&nbsp;too`_.</samp>
       <td>
         <font size="+2"><strong><a name="title">Titles are targets, too</a></strong></font>
-        <p>Implict references, like <a href="#Title">Titles are
+        <p>Implict references, like <a href="#title">Titles are
         targets, too</a>.
     </table>
 
     <h3><a href="#contents" name="directives" class="backref"
         >Directives</a></h3>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#directives">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#directives">details</a>)
 
     <p>Directives are a general-purpose extension mechanism, a way of
     adding support for new constructs without adding new syntax.  For
     a description of all standard directives, see <a
-    href="../../spec/rst/directives.html" >reStructuredText
+    href="../../ref/rst/directives.html" >reStructuredText
     Directives</a>.
 
     <p><table border="1" width="100%" bgcolor="#ffffcc" cellpadding="3">
@@ -1159,7 +1178,7 @@ A&nbsp;transition&nbsp;marker&nbsp;is&nbsp;a&nbsp;horizontal&nbsp;line
     <h3><a href="#contents" name="substitution-references-and-definitions"
         class="backref" >Substitution References and Definitions</a></h3>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#substitution-definitions">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#substitution-definitions">details</a>)
 
     <p>Substitutions are like inline directives, allowing graphics and
     arbitrary constructs within text.
@@ -1190,7 +1209,7 @@ dispose&nbsp;of&nbsp;medical&nbsp;waste.</samp>
     <h3><a href="#contents" name="comments" class="backref"
         >Comments</a></h3>
 
-    <p>(<a href="../../spec/rst/reStructuredText.html#comments">details</a>)
+    <p>(<a href="../../ref/rst/restructuredtext.html#comments">details</a>)
 
     <p>Any text which begins with an explicit markup start but doesn't
     use the syntax of any of the constructs above, is a comment.

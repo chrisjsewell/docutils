@@ -5,7 +5,7 @@
 # Copyright: This module has been placed in the public domain.
 
 # New language mappings are welcome.  Before doing a new translation, please
-# read <http://docutils.sf.net/spec/howto/i18n.html>.  Two files must be
+# read <http://docutils.sf.net/docs/howto/i18n.html>.  Two files must be
 # translated for each language: one in docutils/languages, the other in
 # docutils/parsers/rst/languages.
 
@@ -38,10 +38,11 @@ directives = {
       u'\u00E9pigraphe': 'epigraph',
       u'chapeau': 'highlights',
       u'accroche': 'pull-quote',
-      u'tableau': 'table',
       #u'questions': 'questions',
       #u'qr': 'questions',
       #u'faq': 'questions',
+      u'tableau': 'table',
+      u'csv-table (translation required)': 'csv-table',
       u'm\u00E9ta': 'meta',
       #u'imagemap (translation required)': 'imagemap',
       u'image': 'image',
@@ -52,6 +53,7 @@ directives = {
       u'remplace': 'replace',
       u'unicode': 'unicode',
       u'classe': 'class',
+      u'role (translation required)': 'role',
       u'sommaire': 'contents',
       u'table-des-mati\u00E8res': 'contents',
       u'sectnum': 'sectnum',
