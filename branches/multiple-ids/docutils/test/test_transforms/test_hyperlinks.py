@@ -562,7 +562,7 @@ Testing an `indirect reference to the table of contents`_.
 """,
 """\
 <document source="test data">
-    <topic class="contents" ids="table-of-contents" names="table of contents">
+    <topic classes="contents" ids="table-of-contents" names="table of contents">
         <title>
             Table of Contents
         <bullet_list>

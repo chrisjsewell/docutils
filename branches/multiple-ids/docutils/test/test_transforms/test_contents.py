@@ -46,7 +46,7 @@ Paragraph 4.
 """,
 """\
 <document source="test data">
-    <topic class="contents" ids="contents" names="contents">
+    <topic classes="contents" ids="contents" names="contents">
         <title>
             Contents
         <bullet_list>
@@ -108,7 +108,7 @@ Paragraph 2.
 """,
 """\
 <document source="test data">
-    <topic class="contents" ids="table-of-contents" names="table of contents">
+    <topic classes="contents" ids="table-of-contents" names="table of contents">
         <title>
             Table of Contents
         <bullet_list>
@@ -147,7 +147,7 @@ Paragraph 2.
 """,
 """\
 <document source="test data">
-    <topic class="contents" ids="there-s-an-image-in-title-2" names="there's an image in title 2">
+    <topic classes="contents" ids="there-s-an-image-in-title-2" names="there's an image in title 2">
         <title>
             There's an image in Title 2
         <bullet_list>
@@ -194,7 +194,7 @@ Paragraph 4.
 """,
 """\
 <document source="test data">
-    <topic class="contents" ids="contents" names="contents">
+    <topic classes="contents" ids="contents" names="contents">
         <title>
             Contents
         <bullet_list>
@@ -258,7 +258,7 @@ Paragraph 4.
     <section ids="title-1" names="title 1">
         <title>
             Title 1
-        <topic class="contents" ids="contents" names="contents">
+        <topic classes="contents" ids="contents" names="contents">
             <bullet_list>
                 <list_item>
                     <paragraph>
@@ -303,7 +303,7 @@ Paragraph.
 """,
 """\
 <document source="test data">
-    <topic class="contents" ids="contents" names="contents">
+    <topic classes="contents" ids="contents" names="contents">
         <bullet_list>
             <list_item>
                 <paragraph>
@@ -327,7 +327,7 @@ Paragraph.
 """,
 """\
 <document source="test data">
-    <topic class="contents" ids="contents" names="contents">
+    <topic classes="contents" ids="contents" names="contents">
         <title>
             Contents
         <bullet_list>
@@ -351,7 +351,7 @@ Paragraph.
 """,
 """\
 <document source="test data">
-    <topic class="contents" ids="contents" names="contents">
+    <topic classes="contents" ids="contents" names="contents">
         <title>
             Contents
         <bullet_list>

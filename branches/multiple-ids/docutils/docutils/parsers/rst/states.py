@@ -2241,7 +2241,7 @@ class RFC2822Body(Body):
 
     def rfc2822(self, match, context, next_state):
         """RFC2822-style field list item."""
-        fieldlist = nodes.field_list(CLASS='rfc2822')
+        fieldlist = nodes.field_list(classes=['rfc2822'])
         self.parent += fieldlist
         field, blank_finish = self.rfc2822_field(match)
         fieldlist += field

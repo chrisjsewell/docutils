@@ -51,7 +51,7 @@ document by the test framework.)
     <paragraph>
         (A second copy of the system message is tacked on to the end of the
         document by the test framework.)
-    <section class="system-messages">
+    <section classes="system-messages">
         <title>
             Docutils System Messages
         <system_message backrefs="id2" ids="id1" level="3" line="1" source="test data" type="ERROR">

@@ -103,7 +103,7 @@ class Messages(Transform):
             if msg['level'] >= threshold and not msg.parent:
                 messages.append(msg)
         if messages:
-            section = nodes.section(CLASS='system-messages')
+            section = nodes.section(classes=['system-messages'])
             # @@@ get this from the language module?
             section += nodes.title('', 'Docutils System Messages')
             section += messages

@@ -305,7 +305,7 @@ class AttributeDict(dict):
         self.defaults = defaults
         self.checks = 1
 
-    forbidden = ['id', 'name', 'dupname']
+    forbidden = ['id', 'name', 'dupname', 'class']
 
     def has_key(self, key):
         if self.checks and key in (self.forbidden + self.defaults.keys()):
@@ -589,6 +589,9 @@ class Element(Node):
     def index(self, item):
         return self.children.index(item)
 
+    def is_not_default(self, key):
+        return self.attributes.is_not_default(key)
+
     def clear(self):
         self.children = []
 
@@ -652,8 +655,7 @@ class Element(Node):
 
     def set_class(self, name):
         """Add a new name to the "class" attribute."""
-        self.attributes['class'] = (self.attributes.get('class', '') + ' '
-                                    + name.lower()).strip()
+        self['classes'].append(name.lower())
 
 
 class TextElement(Element):

@@ -174,7 +174,7 @@ def set_implicit_options(role_fn):
     if not hasattr(role_fn, 'options') or role_fn.options is None:
         role_fn.options = {'class': directives.class_option}
     elif not role_fn.options.has_key('class'):
-        role_fn.options['class'] = directives.class_option    
+        role_fn.options['class'] = directives.class_option
 
 def register_generic_role(canonical_name, node_class):
     """For roles which simply wrap a given `node_class` around the text."""
@@ -195,6 +195,7 @@ class GenericRole:
 
     def __call__(self, role, rawtext, text, lineno, inliner,
                  options={}, content=[]):
+        options['classes'] = options.pop('class', '').split()
         return [self.node_class(rawtext, utils.unescape(text), **options)], []
 
 
@@ -233,6 +234,7 @@ def generic_custom_role(role, rawtext, text, lineno, inliner,
     """"""
     # Once nested inline markup is implemented, this and other methods should
     # recursively call inliner.nested_parse().
+    options['classes'] = options.pop('class', '').split()
     return [nodes.inline(rawtext, utils.unescape(text), **options)], []
 
 generic_custom_role.options = {'class': directives.class_option}
@@ -265,6 +267,7 @@ def pep_reference_role(role, rawtext, text, lineno, inliner,
         return [prb], [msg]
     # Base URL mainly used by inliner.pep_reference; so this is correct:
     ref = inliner.document.settings.pep_base_url + inliner.pep_url % pepnum
+    options['classes'] = options.pop('class', '').split()
     return [nodes.reference(rawtext, 'PEP ' + utils.unescape(text), refuri=ref,
                             **options)], []
 
@@ -284,6 +287,7 @@ def rfc_reference_role(role, rawtext, text, lineno, inliner,
         return [prb], [msg]
     # Base URL mainly used by inliner.rfc_reference, so this is correct:
     ref = inliner.document.settings.rfc_base_url + inliner.rfc_url % rfcnum
+    options['classes'] = options.pop('class', '').split()
     node = nodes.reference(rawtext, 'RFC ' + utils.unescape(text), refuri=ref,
                            **options)
     return [node], []
@@ -299,6 +303,7 @@ def raw_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
             'an associated format.' % role, line=lineno)
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
+    options['classes'] = options.pop('class', '').split()
     node = nodes.raw(rawtext, utils.unescape(text, 1), **options)
     return [node], []
 

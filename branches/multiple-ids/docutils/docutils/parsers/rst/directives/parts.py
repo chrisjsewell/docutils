@@ -41,7 +41,7 @@ def contents(name, arguments, options, content, lineno,
         else:
             title = nodes.title('', language.labels['contents'])
 
-    topic = nodes.topic(CLASS='contents')
+    topic = nodes.topic(classes=['contents'])
 
     cls = options.get('class')
     if cls:

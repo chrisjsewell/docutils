@@ -48,28 +48,28 @@ u"""\
 <document source="test data">
     <section ids="title-1" names="title 1">
         <title auto="1">
-            <generated class="sectnum">
+            <generated classes="sectnum">
                 1\u00a0\u00a0\u00a0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title 2">
             <title auto="1">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     1.1\u00a0\u00a0\u00a0
                 Title 2
             <paragraph>
                 Paragraph 2.
             <section ids="title-3" names="title 3">
                 <title auto="1">
-                    <generated class="sectnum">
+                    <generated classes="sectnum">
                         1.1.1\u00a0\u00a0\u00a0
                     Title 3
                 <paragraph>
                     Paragraph 3.
         <section ids="title-4" names="title 4">
             <title auto="1">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     1.2\u00a0\u00a0\u00a0
                 Title 4
             <paragraph>
@@ -86,7 +86,7 @@ u"""\
 <document source="test data">
     <section ids="bold-title" names="bold title">
         <title auto="1">
-            <generated class="sectnum">
+            <generated classes="sectnum">
                 1\u00a0\u00a0\u00a0
             <strong>
                 Bold Title
@@ -116,14 +116,14 @@ u"""\
 <document source="test data">
     <section ids="title-1" names="title 1">
         <title auto="1">
-            <generated class="sectnum">
+            <generated classes="sectnum">
                 1\u00a0\u00a0\u00a0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title 2">
             <title auto="1">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     1.1\u00a0\u00a0\u00a0
                 Title 2
             <paragraph>
@@ -135,7 +135,7 @@ u"""\
                     Paragraph 3.
         <section ids="title-4" names="title 4">
             <title auto="1">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     1.2\u00a0\u00a0\u00a0
                 Title 4
             <paragraph>
@@ -163,21 +163,21 @@ Paragraph 4.
 """,
 u"""\
 <document source="test data">
-    <topic class="contents" ids="contents" names="contents">
+    <topic classes="contents" ids="contents" names="contents">
         <title>
             Contents
-        <bullet_list class="auto-toc">
+        <bullet_list classes="auto-toc">
             <list_item>
                 <paragraph>
                     <reference ids="id1" refid="title-1">
-                        <generated class="sectnum">
+                        <generated classes="sectnum">
                             1\u00a0\u00a0\u00a0
                         Title 1
-                <bullet_list class="auto-toc">
+                <bullet_list classes="auto-toc">
                     <list_item>
                         <paragraph>
                             <reference ids="id2" refid="title-2">
-                                <generated class="sectnum">
+                                <generated classes="sectnum">
                                     1.1\u00a0\u00a0\u00a0
                                 Title 2
                         <bullet_list>
@@ -188,19 +188,19 @@ u"""\
                     <list_item>
                         <paragraph>
                             <reference ids="id4" refid="title-4">
-                                <generated class="sectnum">
+                                <generated classes="sectnum">
                                     1.2\u00a0\u00a0\u00a0
                                 Title 4
     <section ids="title-1" names="title 1">
         <title auto="1" refid="id1">
-            <generated class="sectnum">
+            <generated classes="sectnum">
                 1\u00a0\u00a0\u00a0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title 2">
             <title auto="1" refid="id2">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     1.1\u00a0\u00a0\u00a0
                 Title 2
             <paragraph>
@@ -212,7 +212,7 @@ u"""\
                     Paragraph 3.
         <section ids="title-4" names="title 4">
             <title auto="1" refid="id4">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     1.2\u00a0\u00a0\u00a0
                 Title 4
             <paragraph>
@@ -242,28 +242,28 @@ u"""\
 <document source="test data">
     <section ids="title-1" names="title 1">
         <title auto="1">
-            <generated class="sectnum">
+            <generated classes="sectnum">
                 Arbitrary-1\u00a0\u00a0\u00a0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title 2">
             <title auto="1">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     Arbitrary-1.1\u00a0\u00a0\u00a0
                 Title 2
             <paragraph>
                 Paragraph 2.
             <section ids="title-3" names="title 3">
                 <title auto="1">
-                    <generated class="sectnum">
+                    <generated classes="sectnum">
                         Arbitrary-1.1.1\u00a0\u00a0\u00a0
                     Title 3
                 <paragraph>
                     Paragraph 3.
         <section ids="title-4" names="title 4">
             <title auto="1">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     Arbitrary-1.2\u00a0\u00a0\u00a0
                 Title 4
             <paragraph>
@@ -293,28 +293,28 @@ u"""\
 <document source="test data">
     <section ids="title-1" names="title 1">
         <title auto="1">
-            <generated class="sectnum">
+            <generated classes="sectnum">
                 3\u00a0\u00a0\u00a0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title 2">
             <title auto="1">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     3.1\u00a0\u00a0\u00a0
                 Title 2
             <paragraph>
                 Paragraph 2.
             <section ids="title-3" names="title 3">
                 <title auto="1">
-                    <generated class="sectnum">
+                    <generated classes="sectnum">
                         3.1.1\u00a0\u00a0\u00a0
                     Title 3
                 <paragraph>
                     Paragraph 3.
         <section ids="title-4" names="title 4">
             <title auto="1">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     3.2\u00a0\u00a0\u00a0
                 Title 4
             <paragraph>
@@ -346,28 +346,28 @@ u"""\
 <document source="test data">
     <section ids="title-1" names="title 1">
         <title auto="1">
-            <generated class="sectnum">
+            <generated classes="sectnum">
                 (5.9.3)\u00a0\u00a0\u00a0
             Title 1
         <paragraph>
             Paragraph 1.
         <section ids="title-2" names="title 2">
             <title auto="1">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     (5.9.3.1)\u00a0\u00a0\u00a0
                 Title 2
             <paragraph>
                 Paragraph 2.
             <section ids="title-3" names="title 3">
                 <title auto="1">
-                    <generated class="sectnum">
+                    <generated classes="sectnum">
                         (5.9.3.1.1)\u00a0\u00a0\u00a0
                     Title 3
                 <paragraph>
                     Paragraph 3.
         <section ids="title-4" names="title 4">
             <title auto="1">
-                <generated class="sectnum">
+                <generated classes="sectnum">
                     (5.9.3.2)\u00a0\u00a0\u00a0
                 Title 4
             <paragraph>

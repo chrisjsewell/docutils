@@ -215,7 +215,7 @@ class HTMLTranslator(nodes.NodeVisitor):
         # A heterogenous stack used in conjunction with the tree traversal.
         # Make sure that the pops correspond to the pushes:
         self.context = []
-        self.topic_class = ''
+        self.topic_class = []
         self.colspecs = []
         self.compact_p = 1
         self.compact_simple = None
@@ -259,10 +259,11 @@ class HTMLTranslator(nodes.NodeVisitor):
         atts = {}
         for (name, value) in attributes.items():
             atts[name.lower()] = value
-        for att in ('class',):          # append to node attribute
-            if node.has_key(att) or atts.has_key(att):
-                atts[att] = \
-                      (node.get(att, '') + ' ' + atts.get(att, '')).strip()
+        classes = node.get('classes', [])
+        if atts.has_key('class'):
+            classes.append(atts['class'])
+        if classes:
+            atts['class'] = ' '.join(classes)
         assert not atts.has_key('id')
         if node.get('ids'):
             atts['id'] = ' '.join(node['ids'])
@@ -389,7 +390,7 @@ class HTMLTranslator(nodes.NodeVisitor):
         self.compact_p = None
         self.compact_simple = (self.settings.compact_lists and
                                (self.compact_simple
-                                or self.topic_class == 'contents'
+                                or self.topic_classes == ['contents']
                                 or self.check_simple_list(node)))
         if self.compact_simple and not old_compact_simple:
             atts['class'] = 'simple'
@@ -629,7 +630,7 @@ class HTMLTranslator(nodes.NodeVisitor):
         self.compact_p = None
         self.compact_simple = (self.settings.compact_lists and
                                (self.compact_simple
-                                or self.topic_class == 'contents'
+                                or self.topic_classes == ['contents']
                                 or self.check_simple_list(node)))
         if self.compact_simple and not old_compact_simple:
             atts['class'] = (atts.get('class', '') + ' simple').strip()
@@ -833,9 +834,8 @@ class HTMLTranslator(nodes.NodeVisitor):
         self.body.append(self.emptytag(node, 'img', '', **atts))
 
     def image_div_atts(self, image_node):
-        div_atts = {'class': 'image'}
-        if image_node.attributes.has_key('class'):
-            div_atts['class'] += ' ' + image_node.attributes['class']
+        div_atts = {}
+        div_atts['class'] = ' '.join(['image'] + image_node['classes'])
         if image_node.attributes.has_key('align'):
             div_atts['align'] = self.attval(image_node.attributes['align'])
             div_atts['class'] += ' align-%s' % div_atts['align']
@@ -1004,13 +1004,16 @@ class HTMLTranslator(nodes.NodeVisitor):
             isinstance(node.parent, nodes.compound)):
             # Never compact paragraphs in document or compound.
             return 0
-        if ((dict(node.attlist()) in ({}, {'class': 'first'},
-                                      {'class': 'last'},
-                                      {'class': 'first last'})) and
-            (self.compact_simple or
-             self.compact_p and (len(node.parent) == 1 or
-                                 len(node.parent) == 2 and
-                                 isinstance(node.parent[0], nodes.label)))):
+        for key, value in node.attlist():
+            if (node.is_not_default(key) and
+                not (key == 'classes' and value in
+                     ([], ['first'], ['last'], ['first', 'last']))):
+                # Attribute which needs to survive.
+                return 0
+        if (self.compact_simple or
+            self.compact_p and (len(node.parent) == 1 or
+                                len(node.parent) == 2 and
+                                isinstance(node.parent[0], nodes.label))):
             return 1
         return 0
 
@@ -1039,12 +1042,11 @@ class HTMLTranslator(nodes.NodeVisitor):
 
     def visit_raw(self, node):
         if 'html' in node.get('format', '').split():
-            add_class = node.attributes.get('class') is not None
             t = isinstance(node.parent, nodes.TextElement) and 'span' or 'div'
-            if add_class:
+            if node['classes']:
                 self.body.append(self.starttag(node, t, suffix=''))
             self.body.append(node.astext())
-            if add_class:
+            if node['classes']:
                 self.body.append('</%s>' % t)
         # Keep non-HTML raw text out of output:
         raise nodes.SkipNode
@@ -1321,11 +1323,11 @@ class HTMLTranslator(nodes.NodeVisitor):
 
     def visit_topic(self, node):
         self.body.append(self.starttag(node, 'div', CLASS='topic'))
-        self.topic_class = node.get('class')
+        self.topic_classes = node['classes']
 
     def depart_topic(self, node):
         self.body.append('</div>\n')
-        self.topic_class = ''
+        self.topic_classes = []
 
     def visit_transition(self, node):
         self.body.append(self.emptytag(node, 'hr', CLASS='docutils'))

@@ -45,7 +45,7 @@ totest['table'] = [
 """,
 """\
 <document source="test data">
-    <table class="custom">
+    <table classes="custom">
         <title>
             Truth table for "not"
         <tgroup cols="2">

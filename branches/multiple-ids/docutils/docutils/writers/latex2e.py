@@ -678,7 +678,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
         self.body_suffix = ['\n']
         self.section_level = 0
         self.context = []
-        self.topic_class = ''
+        self.topic_classes = []
         # column specification for tables
         self.table_caption = None
         
@@ -946,14 +946,14 @@ class LaTeXTranslator(nodes.NodeVisitor):
         self.body.append( '\\end{quote}\n')
 
     def visit_bullet_list(self, node):
-        if self.topic_class == 'contents':
+        if self.topic_classes == ['contents']:
             if not self.use_latex_toc:
                 self.body.append( '\\begin{list}{}{}\n' )
         else:
             self.body.append( '\\begin{itemize}\n' )
 
     def depart_bullet_list(self, node):
-        if self.topic_class == 'contents':
+        if self.topic_classes == ['contents']:
             if not self.use_latex_toc:
                 self.body.append( '\\end{list}\n' )
         else:
@@ -1705,7 +1705,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def visit_paragraph(self, node):
         index = node.parent.index(node)
-        if not (self.topic_class == 'contents' or
+        if not (self.topic_classes == ['contents'] or
                 (isinstance(node.parent, nodes.compound) and
                  index > 0 and
                  not isinstance(node.parent[index - 1], nodes.paragraph) and
@@ -1973,10 +1973,10 @@ class LaTeXTranslator(nodes.NodeVisitor):
         self.body.append(self.context.pop())
 
     def visit_topic(self, node):
-        self.topic_class = node.get('class')
+        self.topic_classes = node['classes']
         if self.use_latex_toc:
             self.body.append('\\tableofcontents\n\n\\bigskip\n')
-            self.topic_class = ''
+            self.topic_classes = []
             raise nodes.SkipNode
 
     def visit_inline(self, node): # titlereference
@@ -1986,7 +1986,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
         self.body.append( '}' )
 
     def depart_topic(self, node):
-        self.topic_class = ''
+        self.topic_classes = []
         self.body.append('\n')
 
     def visit_rubric(self, node):

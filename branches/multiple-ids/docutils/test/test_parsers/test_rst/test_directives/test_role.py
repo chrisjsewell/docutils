@@ -30,10 +30,10 @@ totest['role'] = [
 """\
 <document source="test data">
     <paragraph>
-        <inline class="custom">
+        <inline classes="custom">
             interpreted
          and \n\
-        <inline class="special">
+        <inline classes="special">
             interpreted
 """],
 ["""\
@@ -47,10 +47,10 @@ totest['role'] = [
 """\
 <document source="test data">
     <paragraph>
-        <inline class="custom-class">
+        <inline classes="custom-class">
             interpreted
          and \n\
-        <inline class="special-class">
+        <inline classes="special-class">
             interpreted
 """],
 ["""\
@@ -76,7 +76,7 @@ Now that it's defined, :custom:`interpreted` works.
             Unknown interpreted text role "custom".
     <paragraph>
         Now that it's defined, \n\
-        <inline class="custom">
+        <inline classes="custom">
             interpreted
          works.
 """],
@@ -88,7 +88,7 @@ Now that it's defined, :custom:`interpreted` works.
 """\
 <document source="test data">
     <paragraph>
-        <emphasis class="custom">
+        <emphasis classes="custom">
             text
 """],
 ["""\
@@ -99,7 +99,7 @@ Now that it's defined, :custom:`interpreted` works.
 """\
 <document source="test data">
     <paragraph>
-        <emphasis class="custom">
+        <emphasis classes="custom">
             text
 """],
 ["""\
@@ -111,7 +111,7 @@ Now that it's defined, :custom:`interpreted` works.
 """\
 <document source="test data">
     <paragraph>
-        <emphasis class="special">
+        <emphasis classes="special">
             text
 """],
 ["""\
@@ -171,7 +171,7 @@ Testing a :fileref:`role` in a nested parse.
             Test
         <paragraph>
             Testing a \n\
-            <emphasis class="fileref">
+            <emphasis classes="fileref">
                 role
              in a nested parse.
 """],
@@ -188,7 +188,7 @@ Here's some :html:`<i>raw HTML data</i>`.
 <document source="test data">
     <paragraph>
         Here's some \n\
-        <raw class="html" format="html" xml:space="preserve">
+        <raw classes="html" format="html" xml:space="preserve">
             <i>raw HTML data</i>
         .
 """],
@@ -202,7 +202,7 @@ Here's some itex markup: :itex:`$x^\\infty$`.
 <document source="test data">
     <paragraph>
         Here's some itex markup: \n\
-        <raw class="itex" format="latex html" xml:space="preserve">
+        <raw classes="itex" format="latex html" xml:space="preserve">
             $x^\\infty$
         .
 """],

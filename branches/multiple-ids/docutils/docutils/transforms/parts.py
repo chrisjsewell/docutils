@@ -54,7 +54,7 @@ class SectNum(Transform):
                 generated = nodes.generated(
                     '', (self.prefix + '.'.join(numbers) + self.suffix
                          +  u'\u00a0' * 3),
-                    CLASS='sectnum')
+                    classes=['sectnum'])
                 title.insert(0, generated)
                 title['auto'] = 1
                 if depth < self.maxdepth:
