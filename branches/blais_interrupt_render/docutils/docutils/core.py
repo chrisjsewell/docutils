@@ -446,6 +446,12 @@ def publish_doctree(source, source_path=None,
         config_section=config_section,
         enable_exit_status=enable_exit_status)
 
+    # Note: clean up the document tree object by removing some things that are
+    # not needed anymore and that would not pickled well (this is the primary
+    # intended use of this publish method).
+    pub.document.transformer = None
+    pub.document.reporter = None
+
     return pub.document, pub.writer.parts
 
 
