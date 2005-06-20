@@ -345,3 +345,4 @@ class NullOutput(Output):
     def write(self, data):
         """Do nothing ([don't even] send data to the bit bucket)."""
         pass
+
