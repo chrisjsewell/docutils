@@ -177,4 +177,4 @@ class Transformer(TransformSpec):
             priority, transform_class, pending = self.transforms.pop()
             transform = transform_class(self.document, startnode=pending)
             transform.apply()
-            self.applied.append((priority, transform_class, pending))
+            self.applied.append((transform, priority, transform_class, pending))
