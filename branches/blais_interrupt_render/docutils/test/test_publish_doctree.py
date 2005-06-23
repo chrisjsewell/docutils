@@ -50,7 +50,8 @@ class PublishDoctreeTestCase(unittest.TestCase):
         doctree, parts = docutils.core.publish_doctree(
             source=test_document,
             reader_name='standalone',
-            parser_name='restructuredtext')
+            parser_name='restructuredtext',
+            settings_overrides={'_disable_config': 1})
         
         assert isinstance(doctree, docutils.nodes.document)
         assert isinstance(parts, dict)
