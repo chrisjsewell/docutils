@@ -12,6 +12,7 @@ Perform tests with publishing to a tree, and running a writer on that tree later
 
 import unittest
 import cPickle as pickle
+from types import DictType, StringType
 import docutils.core
 import docutils.nodes
 
@@ -43,7 +44,7 @@ class PublishDoctreeTestCase(unittest.TestCase):
     
     def test_document_pickle(self):
         """
-        Produce document tree, pickle, unpickle, write.
+        Produce document tree and write.
         """
 
         # produce the document tree.
@@ -54,21 +55,12 @@ class PublishDoctreeTestCase(unittest.TestCase):
             settings_overrides={'_disable_config': 1})
         
         assert isinstance(doctree, docutils.nodes.document)
-        assert isinstance(parts, dict)
-        
-        # pickle the document
-        pickled_document = pickle.dumps(doctree)
-        assert isinstance(pickled_document, str)
-        del doctree
-        
-        # unpickle the document
-        doctree2 = pickle.loads(pickled_document)
-        assert isinstance(doctree2, docutils.nodes.document)
+        assert isinstance(parts, DictType)
 
         # write out the document
-        output = docutils.core.publish_from_doctree(doctree2,
+        output = docutils.core.publish_from_doctree(doctree,
                                                     writer_name='pseudoxml')
-        assert isinstance(output, str)
+        assert isinstance(output, StringType)
 
 if __name__ == '__main__':
     unittest.main()
