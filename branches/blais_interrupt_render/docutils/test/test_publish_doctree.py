@@ -11,56 +11,38 @@ Perform tests with publishing to a tree, and running a writer on that tree later
 """
 
 import unittest
-import cPickle as pickle
 from types import DictType, StringType
 import docutils.core
 import docutils.nodes
 
 
-datadir = 'publish_doctree'
-"""The directory to store the data needed for the functional tests."""
+test_document = """\
+Test Document
+=============
 
-
-test_document = """
-========================
-  Simple Test Document
-========================
-
-:Author: The Man
-
-This is a silly test document to produce a document tree for.
-
-Uncertainty
------------
-
-- yes
-- no
-- I'm sure.
+This is a test document.
 """
+
 
 class PublishDoctreeTestCase(unittest.TestCase):
 
-    """Simplistic test case for publishing as a document tree."""
-    
-    def test_document_pickle(self):
-        """
-        Produce document tree and write.
-        """
-
-        # produce the document tree.
+    def test_publish_doctree(self):
+        """Test publish_doctree and publish_from_doctree."""
+        # Produce the document tree.
         doctree, parts = docutils.core.publish_doctree(
             source=test_document,
             reader_name='standalone',
             parser_name='restructuredtext',
             settings_overrides={'_disable_config': 1})
-        
-        assert isinstance(doctree, docutils.nodes.document)
-        assert isinstance(parts, DictType)
 
-        # write out the document
+        self.assert_(isinstance(doctree, docutils.nodes.document))
+        self.assert_(isinstance(parts, DictType))
+
+        # Write out the document.
         output = docutils.core.publish_from_doctree(doctree,
                                                     writer_name='pseudoxml')
-        assert isinstance(output, StringType)
+        self.assert_(isinstance(output, StringType))
+
 
 if __name__ == '__main__':
     unittest.main()
