@@ -224,7 +224,7 @@ class Publisher:
         if self.settings.dump_transforms:
             print >>sys.stderr, '\n::: Transforms applied:'
             print >>sys.stderr, pprint.pformat(
-                self.document.transformer.applied[1:])
+                [a[1:] for a in self.document.transformer.applied])
         if self.settings.dump_pseudo_xml:
             print >>sys.stderr, '\n::: Pseudo-XML:'
             print >>sys.stderr, self.document.pformat().encode(
@@ -515,8 +515,8 @@ def publish_from_doctree(doctree, source_path=None, destination_path=None,
     """
 
     Set up & run a `Publisher` to render from an existing document tree data
-    structure, for programmatic use with string I/O.  Return the encoded string
-    or Unicode string output.
+    structure, for programmatic use with string I/O.  Return a pair of encoded
+    string output and document parts.
 
     For encoded string output, be sure to set the 'output_encoding' setting to
     the desired encoding.  Set it to 'unicode' for unencoded Unicode string
@@ -538,7 +538,7 @@ def publish_from_doctree(doctree, source_path=None, destination_path=None,
         config_section=config_section,
         enable_exit_status=enable_exit_status)
 
-    return output
+    return output, pub.writer.parts
 
 def publish_programmatically(source_class, source, source_path,
                             destination_class, destination, destination_path,

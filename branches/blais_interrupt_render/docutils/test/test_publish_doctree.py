@@ -39,9 +39,11 @@ class PublishDoctreeTestCase(unittest.TestCase):
         self.assert_(isinstance(parts, DictType))
 
         # Write out the document.
-        output = docutils.core.publish_from_doctree(doctree,
-                                                    writer_name='pseudoxml')
+        output, parts = docutils.core.publish_from_doctree(
+            doctree, writer_name='pseudoxml')
+
         self.assert_(isinstance(output, StringType))
+        assert isinstance(parts, dict)
 
 
 if __name__ == '__main__':
