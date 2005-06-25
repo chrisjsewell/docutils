@@ -187,4 +187,4 @@ class Transformer(TransformSpec):
             transform = transform_class(self.document,
                                         startnode=pending, data=data)
             transform.apply()
-            self.applied.append((transform, priority, transform_class, pending))
+            self.applied.append((priority, transform_class, pending))
