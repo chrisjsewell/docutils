@@ -368,10 +368,11 @@ def new_reporter(source_path, settings):
         `settings` : optparse.Values object
             Runtime settings.  If none provided, a default set will be used.
     """
-    reporter = Reporter(source_path, settings.report_level, settings.halt_level,
-                        stream=settings.warning_stream, debug=settings.debug,
-                        encoding=settings.error_encoding,
-                        error_handler=settings.error_encoding_error_handler)
+    reporter = Reporter(
+        source_path, settings.report_level, settings.halt_level,
+        stream=settings.warning_stream, debug=settings.debug,
+        encoding=settings.error_encoding,
+        error_handler=settings.error_encoding_error_handler)
     return reporter
 
 def new_document(source_path, settings=None):
