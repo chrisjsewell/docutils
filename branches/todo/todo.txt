@@ -917,9 +917,8 @@ when used in a document.
 
   - _`parts.citations`: See `Footnote & Citation Gathering`_.
 
-  - _`misc.language`: Specify the language of a document.  There is a
-    problem similar to the first problem listed for misc.encoding_,
-    although to a lesser degree.
+  - _`misc.language`: Specify (= change) the language of a document at
+    parse time.
 
   - _`misc.settings`: Set any Docutils runtime setting from within a
     document?
