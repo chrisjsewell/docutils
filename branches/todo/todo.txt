@@ -294,9 +294,6 @@ General
 
 * Changes to sandbox/davidg/infrastructure/docutils-update?
 
-  - Modify the script to only update the snapshots if files have
-    actually changed in CVS (saving some SourceForge server cycles).
-
   - Make passing the test suite a prerequisite to snapshot update,
     but only if the process is completely automatic.
 
