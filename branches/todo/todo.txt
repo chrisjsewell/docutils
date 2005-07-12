@@ -405,13 +405,6 @@ General
 
 * Add support for _`plugins`.
 
-* Add support for document decorations other than headers & footers?
-  For example, top/bottom/side navigation bars for web pages.  Generic
-  decorations?
-
-  Seems like a bad idea as long as it isn't independent from the ouput
-  format (for example, navigation bars are only useful for web pages).
-
 
 Documentation
 =============
