@@ -716,10 +716,6 @@ __ rst/alternatives.html#or-not-to-do
   Some pragma directives could be local-scope unless explicitly
   specified as global/pragma using ":global:" options.
 
-* Remove leading numbers from section titles for implicit link names?
-  A section titled "3. Conclusion" could then be referred to by
-  "``Conclusion_``" (i.e., without the "3.").
-
 * Support whitespace in angle-bracketed standalone URLs according to
   Appendix E ("Recommendations for Delimiting URI in Context") of `RFC
   2396`_.
