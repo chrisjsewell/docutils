@@ -741,6 +741,16 @@ __ rst/alternatives.html#or-not-to-do
 
   Decimal justification?
 
+  All this shouldn't be done automatically.  Only when it's requested
+  by the user, e.g. with something like this::
+
+      .. table::
+         :auto-indent:
+
+         (Table goes here.)
+
+  Otherwise it will break existing documents.
+
 * Make enumerated list parsing more strict, so that this would parse
   as a paragraph with an info message::
 
