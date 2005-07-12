@@ -2999,6 +2999,20 @@ Page Or Line Breaks
   we have the line block syntax for line breaks.
 
 
+Superscript Markup
+==================
+
+Add ``^superscript^`` inline markup?  The only common non-markup uses
+of "^" I can think of are as short hand for "superscript" itself and
+for describing control characters ("^C to cancel").  The former
+supports the proposed syntax, and it could be argued that the latter
+ought to be literal text anyhow (e.g. "``^C`` to cancel").
+
+However, superscripts are seldom needed, and new syntax would break
+existing documents.  We it's needed, the ``:superscript:`` (``:sup:``)
+role can we used as well.
+
+
 
 ..
    Local Variables:
