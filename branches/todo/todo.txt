@@ -20,10 +20,15 @@ require more thought and debate; they are potential to-do's.
 
 Many of these items are awaiting champions.  If you see something
 you'd like to tackle, please do!  If there's something you'd like to
-see done but are unable to implement it yourself, `please consider
-contributing`__ in other ways.
+see done but are unable to implement it yourself, please consider
+donating to Docutils: |donate|
 
-__ http://docutils.sf.net/#please-contribute
+.. |donate| image:: http://images.sourceforge.net/images/project-support.jpg
+   :target: http://sourceforge.net/donate/index.php?group_id=38414
+   :align: middle
+   :width: 88
+   :height: 32
+   :alt: Support the Docutils project!
 
 
 Priorities
