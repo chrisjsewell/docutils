@@ -82,9 +82,6 @@ General
     file supplied with the ``--config`` option.  Should it?  (If yes,
     error or warning?)
 
-  - Is a user-specific configuration file (``~/.docutils``) really
-    necessary?  Maybe the name (``.docutils``) needs discussion, too.
-
 * Language modules: in accented languages it may be useful to have
   both accented and unaccented entries in the ``bibliographic_fields``
   mapping for versatility.
