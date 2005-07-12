@@ -917,9 +917,6 @@ when used in a document.
 
   - _`parts.citations`: See `Footnote & Citation Gathering`_.
 
-  - _`misc.exec`: Execute Python code & insert the results.  Perhaps
-    dangerous?  Call it "python" to allow for other languages?
-
   - _`misc.system`?: Execute an ``os.system()`` call, and insert the
     results (possibly as a literal block).  Definitely dangerous!  How
     to make it safe?  Perhaps such processing  should be left outside
