@@ -82,16 +82,18 @@ General
     file supplied with the ``--config`` option.  Should it?  (If yes,
     error or warning?)
 
-* Language modules: in accented languages it may be useful to have
-  both accented and unaccented entries in the ``bibliographic_fields``
-  mapping for versatility.
+* Internationalization:
 
-* Add a "--strict-language" option & setting: no English fallback for
-  language-dependent features.
+  - Language modules: in accented languages it may be useful to have
+    both accented and unaccented entries in the
+    ``bibliographic_fields`` mapping for versatility.
 
-* Add internationalization to _`footer boilerplate text` (resulting
-  from "--generator", "--source-link", and "--date" etc.), allowing
-  translations.
+  - Add a "--strict-language" option & setting: no English fallback
+    for language-dependent features.
+
+  - Add internationalization to _`footer boilerplate text` (resulting
+    from "--generator", "--source-link", and "--date" etc.), allowing
+    translations.
 
 * Add validation?  See http://pytrex.sourceforge.net, RELAX NG, pyRXP.
 
