@@ -791,10 +791,6 @@ __ rst/alternatives.html#or-not-to-do
 
   Probably not worth the trouble.
 
-* Add an option to allow arbitrary URI schemes (not just those in
-  urischemes.py)?  This would make text like "signal:noise" into a
-  URI.
-
 * Add an option to add URI schemes at runtime.
 
 * _`Segmented lists`::
