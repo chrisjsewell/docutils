@@ -917,23 +917,6 @@ when used in a document.
 
   - _`parts.citations`: See `Footnote & Citation Gathering`_.
 
-  - _`misc.system`?: Execute an ``os.system()`` call, and insert the
-    results (possibly as a literal block).  Definitely dangerous!  How
-    to make it safe?  Perhaps such processing  should be left outside
-    of the document, in the user's production system (a makefile or a
-    script or whatever).  Or, the directive could be disabled by
-    default and only enabled with an explicit command-line option or
-    config file setting.  Even then, an interactive prompt may be
-    useful, such as:
-
-        The file.txt document you are processing contains a "system"
-        directive requesting that the ``sudo rm -rf /`` command be
-        executed.  Allow it to execute?  (y/N)
-
-  - _`misc.eval`: Evaluate an expression & insert the text.  At parse
-    time or at substitution time?  Dangerous?  Perhaps limit to canned
-    macros; see text.date_ below.
-
   - _`misc.encoding`: Specify the character encoding of the input
     data.  But there are problems:
 
