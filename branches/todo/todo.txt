@@ -1252,17 +1252,6 @@ HTML Writer
 * Add a tool tip ("title" attribute?) to footnote back-links
   identifying them as such.  Text in Docutils language module.
 
-* Insert a comment at the top of HTML files that describes how to deal
-  with the broken servers w.r.t. encodings?  Perhaps something like
-  this:
-
-      <!--
-      If your browser is showing gibberish, the server may be broken.
-      Try manually setting the character coding to "UTF-8".  In
-      Mozilla/Firefox, do ...  In Internet Explorer, do ...
-      For details, see <URL>.
-      -->
-
 
 LaTeX writer
 ============
