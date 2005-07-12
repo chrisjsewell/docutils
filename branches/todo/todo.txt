@@ -1246,8 +1246,6 @@ Unimplemented Transforms
 HTML Writer
 ===========
 
-* Make the admonitions more distinctive and varied.
-
 * Make the "class" attributes optional?  Implies no stylesheet?
 
 * Base list compaction on the spacing of source list?  Would require
