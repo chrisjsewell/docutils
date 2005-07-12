@@ -672,10 +672,6 @@ __ rst/alternatives.html#or-not-to-do
   support for "=====" header rows.  On 2001-08-17 he replied, saying
   he'd put it on his to-do list, but "don't hold your breath".)
 
-* Tony says inline markup rule 7 could do with a *little* more
-  exposition in the spec, to make clear what is going on for people
-  with head colds.
-
 * Fix the parser's indentation handling to conform with the stricter
   definition in the spec.  (Explicit markup blocks should be strict or
   forgiving?)
