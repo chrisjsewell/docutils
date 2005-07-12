@@ -1112,17 +1112,6 @@ which will be transformed into standard hyperlink references, which
 will be processed by the various Writers.  No Writer will need to have
 any knowledge of the Python-Reader origin of these elements.
 
-* Alan Jaffray suggested (and I agree) that it would be sensible to:
-
-  - have a directive and/or command-line option to specify a default
-    role for interpreted text (done)
-  - allow the reST processor to take an argument for the default role
-    (this will be subsumed by the above via the runtime settings
-    mechanism)
-  - issue a warning when processing documents with no default role
-    which contain interpreted text with no explicitly specified role
-    (there will always be a default role, so this won't happen)
-
 * Add explicit interpreted text roles for the rest of the implicit
   inline markup constructs: named-reference, anonymous-reference,
   footnote-reference, citation-reference, substitution-reference,
