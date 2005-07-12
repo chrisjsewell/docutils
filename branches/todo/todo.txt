@@ -631,12 +631,6 @@ __ rst/alternatives.html#or-not-to-do
 
 * Add motivation sections for constructs in spec.
 
-* Support generic hyperlink references to _`targets in other
-  documents`?  Not in an HTML-centric way, though (it's trivial to say
-  ``http://www.example.com/doc#name``, and useless in non-HTML
-  contexts).  XLink/XPointer?  ``.. baseref::``?  See Doc-SIG
-  2001-08-10.
-
 * .. _adaptable file extensions:
 
   In target URLs, it would be useful to not explicitly specify the
