@@ -751,8 +751,8 @@ __ rst/alternatives.html#or-not-to-do
 
   Otherwise it will break existing documents.
 
-* Make enumerated list parsing more strict, so that this would parse
-  as a paragraph with an info message::
+* Generate a warning or info message for paragraphs which should have
+  been lists, like this one::
 
       1. line one
       3. line two
