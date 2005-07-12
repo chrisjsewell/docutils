@@ -791,22 +791,6 @@ __ rst/alternatives.html#or-not-to-do
 
   Probably not worth the trouble.
 
-* How about a syntax for alternative hyperlink behavior, such as "open
-  in a new window" (as in HTML's ``<a target="_blank">``)?  Double
-  angle brackets might work for inline targets::
-
-      The `reference docs <<url>>`__ may be handy.
-
-  But what about explicit targets?
-
-  The MoinMoin wiki uses a caret ("^") at the beginning of the URL
-  ("^" is not a legal URI character).  That could work for both inline
-  and explicit targets::
-
-      The `reference docs <^url>`__ may be handy.
-
-      .. _name: ^url
-
 * Add an option to allow arbitrary URI schemes (not just those in
   urischemes.py)?  This would make text like "signal:noise" into a
   URI.
