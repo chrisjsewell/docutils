@@ -631,9 +631,6 @@ __ rst/alternatives.html#or-not-to-do
 
 * Add motivation sections for constructs in spec.
 
-* And for the sake of completeness, should definition list terms be
-  allowed to be very long (two or more lines) also?
-
 * Support generic hyperlink references to _`targets in other
   documents`?  Not in an HTML-centric way, though (it's trivial to say
   ``http://www.example.com/doc#name``, and useless in non-HTML
