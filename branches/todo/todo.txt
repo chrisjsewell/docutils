@@ -382,11 +382,6 @@ General
   could be used by any writer, and applying such classes to all tables
   in a document with writer options is too broad.
 
-* Make the csv-table directive work with Python 2.1/2.2.  (See the
-  discussion_ on the mailing list.)
-
-  .. _discussion: http://thread.gmane.org/gmane.text.docutils.user/1319
-
 * Simplify the docutils.nodes.Element implementation?  ``node[x]`` is
   convenient but can be considered ambiguous (different results if
   ``x`` is a string or an integer).  Replace with ``node[int]`` and
