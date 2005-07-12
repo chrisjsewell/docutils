@@ -312,9 +312,6 @@ General
   Writers now), and thus have associated option/setting specs and
   transforms.
 
-* Multiple file I/O suggestion from Michael Hudson: use a file-like
-  object or something you can iterate over to get file-like objects.
-
 * Add an "--input-language" option & setting?  Specify a different
   language module for input (bibliographic fields, directives) than
   for output.  The "--language" option would set both input & output
