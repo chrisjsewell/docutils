@@ -908,9 +908,6 @@ when used in a document.
           .. include::
              :url: http://www.example.org/inclusion.txt
 
-  - _`body.sidebar`: Allow internal section structure?  Adornment
-    styles would be independent of the main document.
-
 * Implement directives.  Each of the list items below begins with an
   identifier of the form, "module_name.directive_function_name".  The
   directive name itself could be the same as the
