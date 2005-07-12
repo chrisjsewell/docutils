@@ -908,16 +908,6 @@ when used in a document.
           .. include::
              :url: http://www.example.org/inclusion.txt
 
-  - _`misc.raw`: add a "destination" option to the "raw" directive? ::
-
-        .. raw:: html
-           :destination: head
-
-           <link ...>
-
-    It needs thought & discussion though, to come up with a consistent
-    set of destination labels and consistent behavior.
-
   - _`body.sidebar`: Allow internal section structure?  Adornment
     styles would be independent of the main document.
 
