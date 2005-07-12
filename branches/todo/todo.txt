@@ -328,10 +328,6 @@ General
 
 * Rationalize Writer settings (HTML/LaTeX/PEP) -- share settings.
 
-* The "docutils.conf" included with Docutils should become complete,
-  with examples of every setting (many/most commented out).  It's
-  currently sparse, requiring doc lookups.
-
 * Merge docs/user/latex.txt info into tools.txt and config.txt.
 
 * Add an "--include file" command-line option (config setting too?),
