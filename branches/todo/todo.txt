@@ -678,36 +678,6 @@ __ rst/alternatives.html#or-not-to-do
 
   .. XXX What does this mean?  Can you elaborate, David?
 
-* Tighten up the spec for indentation of "constructs using complex
-  markers": field lists and option lists?  Bodies may begin on the
-  same line as the marker or on a subsequent line (with blank lines
-  optional).  Require that for bodies beginning on the same line as
-  the marker, all lines be in strict alignment.  Currently, this is
-  acceptable::
-
-      :Field-name-of-medium-length: Field body beginning on the same
-          line as the field name.
-
-  This proposal would make the above example illegal, instead
-  requiring strict alignment.  A field body may either begin on the
-  same line::
-
-      :Field-name-of-medium-length: Field body beginning on the same
-                                    line as the field name.
-
-  Or it may begin on a subsequent line::
-
-      :Field-name-of-medium-length:
-          Field body beginning on a line subsequent to that of the
-          field name.
-
-  This would be especially relevant in degenerate cases like this::
-
-      :Number-of-African-swallows-requried-to-carry-a-coconut:
-          It would be very difficult to align the field body with
-          the left edge of the first line if it began on the same
-          line as the field name.
-
 * Allow for variant styles by interpreting _`indented lists` as if
   they weren't indented?  For example, currently the list below will
   be parsed as a list within a block quote::
