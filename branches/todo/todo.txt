@@ -723,7 +723,8 @@ __ rst/alternatives.html#or-not-to-do
   __ http://sf.net/mailarchive/forum.php?thread_id=2957175&forum_id=11444
 
 * Make the parser modular.  Allow syntax constructs to be added or
-  disabled at run-time.  Or is subclassing enough?
+  disabled at run-time.  Subclassing is probably not enough because it
+  makes it difficult to apply multiple extensions.
 
 * Continue to report (info, level 1) enumerated lists whose start
   value is not ordinal-1?
