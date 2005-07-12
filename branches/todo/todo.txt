@@ -72,14 +72,8 @@ for inclusion in the Python standard library.
 General
 =======
 
-* Refactor
-
-  - Rename methods & variables according to the `Python coding
-    conventions <policies.html#python-coding-conventions>`_.
-
-  - The name-to-id conversion and hyperlink resolution code needs to be
-    checked for correctness and refactored.  I'm afraid it's a bit of
-    a spaghetti mess now.
+* Rename methods & variables according to the `Python coding
+  conventions <policies.html#python-coding-conventions>`_.
 
 * Configuration file handling needs discussion:
 
