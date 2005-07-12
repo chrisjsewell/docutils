@@ -857,8 +857,7 @@ when used in a document.
   - Allow the _`:trim:` option for all directives when they occur in a
     substitution definition, not only the unicode_ directive.
 
-    .. _unicode:
-       http://docutils.sf.net/docs/ref/rst/directives.html#unicode-character-codes
+    .. _unicode: ../ref/rst/directives.html#unicode-character-codes
 
   - _`images.figure`: "title" and "number", to indicate a formal
     figure?
