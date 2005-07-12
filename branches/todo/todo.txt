@@ -1246,9 +1246,6 @@ Unimplemented Transforms
 HTML Writer
 ===========
 
-* Add more support for <link> elements, especially for navigation
-  bars.
-
 * Make the admonitions more distinctive and varied.
 
 * Make the "class" attributes optional?  Implies no stylesheet?
