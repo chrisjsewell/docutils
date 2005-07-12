@@ -894,10 +894,6 @@ when used in a document.
     "contents" directive" could have an "include-topics" option.  See
     docutils-develop 2003-01-29.
 
-  - _`parts.header` & _`parts.footer`: Support multiple, named headers
-    & footers?  For example, separate headers & footers for odd, even,
-    and the first page of a document.
-
   - _`misc.include`:
 
     - Option to select a range of lines?
