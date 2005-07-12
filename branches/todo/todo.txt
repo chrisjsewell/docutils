@@ -920,9 +920,6 @@ when used in a document.
   - _`misc.language`: Specify (= change) the language of a document at
     parse time.
 
-  - _`misc.settings`: Set any Docutils runtime setting from within a
-    document?
-
   - _`misc.charents`: Equivalent to::
 
         .. include:: {includepath}/charents.txt
