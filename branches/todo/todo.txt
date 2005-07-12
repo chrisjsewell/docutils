@@ -913,9 +913,6 @@ when used in a document.
   directive name itself could be the same as the
   directive_function_name, or it could differ.
 
-  - _`html.imagemap` (Useful outside of HTML?  If not, replace with
-    image only in non-HTML writers?)
-
   - _`parts.endnotes` (or "footnotes"): See `Footnote & Citation Gathering`_.
 
   - _`parts.citations`: See `Footnote & Citation Gathering`_.
