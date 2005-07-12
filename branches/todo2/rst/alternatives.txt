@@ -1,6 +1,7 @@
 ==================================================
  A Record of reStructuredText Syntax Alternatives
 ==================================================
+
 :Author: David Goodger
 :Contact: goodger@users.sourceforge.net
 :Revision: $Revision$
@@ -2561,6 +2562,53 @@ Compound Enumerated Lists
 
 Allow for compound enumerators, such as "1.1." or "1.a." or "1(a)", to
 allow for nested enumerated lists without indentation?
+
+
+Indented Lists
+==============
+
+Allow for variant styles by interpreting indented lists as if they
+weren't indented?  For example, currently the list below will be
+parsed as a list within a block quote::
+
+    paragraph
+
+      * list item 1
+      * list item 2
+
+But a lot of people seem to write that way, and HTML browsers make it
+look as if that's the way it should be.  The parser could check the
+contents of block quotes, and if they contain only a single list,
+remove the block quote wrapper.  There would be two problems:
+
+1. What if we actually *do* want a list inside a block quote?
+
+2. What if such a list comes immediately after an indented construct,
+   such as a literal block?
+
+Both could be solved using empty comments (problem 2 already exists
+for a block quote after a literal block).  But that's a hack.
+
+Perhaps a runtime setting, allowing or disabling this convenience,
+would be appropriate.  But that raises issues too:
+
+    User A, who writes lists indented (and their config file is set up
+    to allow it), sends a file to user B, who doesn't (and their
+    config file disables indented lists).  The result of processing by
+    the two users will be different.
+
+It may seem minor, but it adds ambiguity to the parser, which is bad.
+
+See the `Doc-SIG discussion starting 2001-04-18`__ with Ed Loper's
+"Structuring: a summary; and an attempt at EBNF", item 4 (and
+follow-ups, here__ and here__).  Also `docutils-users, 2003-02-17`__
+and `beginning 2003-08-04`__.
+
+__ http://mail.python.org/pipermail/doc-sig/2001-April/001776.html
+__ http://mail.python.org/pipermail/doc-sig/2001-April/001789.html
+__ http://mail.python.org/pipermail/doc-sig/2001-April/001793.html
+__ http://sourceforge.net/mailarchive/message.php?msg_id=3838913
+__ http://sf.net/mailarchive/forum.php?thread_id=2957175&forum_id=11444
 
 
 Sloppy Indentation of List Items
