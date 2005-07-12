@@ -100,11 +100,6 @@ General
 
 * Add validation?  See http://pytrex.sourceforge.net, RELAX NG, pyRXP.
 
-* Ask Python-dev for opinions (GvR for a pronouncement) on special
-  variables (__author__, __version__, etc.): convenience vs. namespace
-  pollution.  Ask opinions on whether or not Docutils should recognize
-  & use them.
-
 * In ``docutils.readers.get_reader_class`` (& ``parsers`` &
   ``writers`` too), should we be importing "standalone" or
   "docutils.readers.standalone"?  (This would avoid importing
@@ -547,6 +542,11 @@ General:
 * Take the best ideas and integrate them into Docutils.
 
 Miscellaneous ideas:
+
+* Ask Python-dev for opinions (GvR for a pronouncement) on special
+  variables (__author__, __version__, etc.): convenience vs. namespace
+  pollution.  Ask opinions on whether or not Docutils should recognize
+  & use them.
 
 * If we can detect that a comment block begins with ``##``, a la
   JavaDoc, it might be useful to indicate interspersed section headers
