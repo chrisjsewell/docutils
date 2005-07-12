@@ -1246,8 +1246,6 @@ Unimplemented Transforms
 HTML Writer
 ===========
 
-* Make the "class" attributes optional?  Implies no stylesheet?
-
 * Base list compaction on the spacing of source list?  Would require
   parser support.  (Idea: fantasai, 16 Dec 2002, doc-sig.)
 
