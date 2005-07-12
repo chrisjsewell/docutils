@@ -84,6 +84,9 @@ General
 
 * Internationalization:
 
+  - I18n needs refactoring, the language dictionaries are difficult to
+    maintain.  Maybe have a look at gettext or similar tools.
+
   - Language modules: in accented languages it may be useful to have
     both accented and unaccented entries in the
     ``bibliographic_fields`` mapping for versatility.
