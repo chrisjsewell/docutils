@@ -82,9 +82,6 @@ General
     file supplied with the ``--config`` option.  Should it?  (If yes,
     error or warning?)
 
-  - Is a system-wide configuration file (in ``/etc/docutils.conf``) a
-    good idea?
-
   - Is a user-specific configuration file (``~/.docutils``) really
     necessary?  Maybe the name (``.docutils``) needs discussion, too.
 
