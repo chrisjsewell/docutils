@@ -106,10 +106,6 @@ General
   top-level modules if the module name is not in docutils/readers.
   Potential nastiness.)
 
-* Perhaps store a _`name-to-id mapping file`?  This could be stored
-  permanently, read by subsequent processing runs, and updated with
-  new entries.  ("Persistent ID mapping"?)
-
 * Perhaps the ``Component.supports`` method should deal with
   individual features ("meta" etc.) instead of formats ("html" etc.)?
 
