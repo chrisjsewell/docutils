@@ -629,8 +629,6 @@ __ rst/alternatives.html#or-not-to-do
   We need to use the ``unicodedata.east_asian_width`` function,
   introduced in Python 2.4.
 
-* Clean up the code; refactor as required.
-
 * Add motivation sections for constructs in spec.
 
 * Allow very long titles (on two or more lines)?
