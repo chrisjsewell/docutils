@@ -30,21 +30,9 @@ donating to Docutils: |donate|
    :height: 32
    :alt: Support the Docutils project!
 
+Please see also the Bugs_ document for a list of bugs in Docutils.
 
-Priorities
-==========
-
-* Always high priority: `FIX BUGS!`__
-
-  __ ../../BUGS.html
-
-* A Python Source Reader component (Python auto-documentation) will be
-  added.  See the document `"Plan for Enthought API Documentation
-  Tool"`__ for details.  If you'd like to help, let me know!
-
-  __ enthought-plan.html
-
-* `Nested inline markup`_.
+.. _bugs: ../../BUGS.html
 
 
 Minimum Requirements for Python Standard Library Candidacy
