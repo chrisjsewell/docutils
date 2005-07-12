@@ -631,8 +631,6 @@ __ rst/alternatives.html#or-not-to-do
 
 * Add motivation sections for constructs in spec.
 
-* Allow very long titles (on two or more lines)?
-
 * And for the sake of completeness, should definition list terms be
   allowed to be very long (two or more lines) also?
 
