@@ -1524,7 +1524,9 @@ Front-End Tools
 
 * Disable common options that don't apply?
 
-* Implement the "sectnum" directive as a command-line option also?
+* Add ``--section-numbering`` command line option.  The "sectnum"
+  directive should override the ``--no-section-numbering`` command
+  line option then.
 
 * Create a single dynamic_ or unqualified_ front end that can be
   installed?
