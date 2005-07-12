@@ -920,10 +920,6 @@ when used in a document.
   - _`misc.language`: Specify (= change) the language of a document at
     parse time.
 
-  - _`misc.charents`: Equivalent to::
-
-        .. include:: {includepath}/charents.txt
-
   - .. _conditional directives:
 
     Docutils already has the ability to say "use this content for
