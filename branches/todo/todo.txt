@@ -791,12 +791,6 @@ __ rst/alternatives.html#or-not-to-do
 
   Probably not worth the trouble.
 
-* Add ``^superscript^`` inline markup?  The only common non-markup
-  uses of "^" I can think of are as short hand for "superscript"
-  itself and for describing control characters ("^C to cancel").  The
-  former supports the proposed syntax, and it could be argued that the
-  latter ought to be literal text anyhow (e.g. "``^C`` to cancel").
-
 * Add _`math markup`.  We should try for a general solution, that's
   applicable to any output format.  Using a standard, such as MathML_,
   would be best.  TeX (or itex_) would be acceptable as a *front-end*
