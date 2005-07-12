@@ -726,9 +726,6 @@ __ rst/alternatives.html#or-not-to-do
   disabled at run-time.  Subclassing is probably not enough because it
   makes it difficult to apply multiple extensions.
 
-* Continue to report (info, level 1) enumerated lists whose start
-  value is not ordinal-1?
-
 * Generalize the "doctest block" construct (which is overly
   Python-centric) to other interactive sessions?  "Doctest block"
   could be renamed to "I/O block" or "interactive block", and each of
