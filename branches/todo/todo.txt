@@ -1154,13 +1154,6 @@ Unimplemented Transforms
   Collect and move footnotes & citations to the end of a document.
   (Separate transforms.)
 
-* _`Hyperlink Target Gathering`
-
-  It probably comes in two phases, because in a Python context we need
-  to *resolve* them on a per-docstring basis [do we? --DG], but if the
-  user is trying to do the callout form of presentation, they would
-  then want to group them all at the end of the document.
-
 * _`Reference Merging`
 
   When merging two or more subdocuments (such as docstrings),
