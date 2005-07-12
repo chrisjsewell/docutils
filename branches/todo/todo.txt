@@ -917,16 +917,6 @@ when used in a document.
 
   - _`parts.citations`: See `Footnote & Citation Gathering`_.
 
-  - _`misc.encoding`: Specify the character encoding of the input
-    data.  But there are problems:
-
-    - When it sees the directive, the parser will already have read
-      the input data, and encoding determination will already have
-      been done.
-
-    - If a file with an "encoding" directive is edited and saved with
-      a different encoding, the directive may cause data corruption.
-
   - _`misc.language`: Specify the language of a document.  There is a
     problem similar to the first problem listed for misc.encoding_,
     although to a lesser degree.
