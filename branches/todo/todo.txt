@@ -896,8 +896,6 @@ when used in a document.
 
   - _`misc.include`:
 
-    - Option to select a range of lines?
-
     - Option to label lines?
 
     - How about an environment variable, say RSTINCLUDEPATH or
