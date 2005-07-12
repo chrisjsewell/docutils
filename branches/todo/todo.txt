@@ -382,12 +382,6 @@ General
   could be used by any writer, and applying such classes to all tables
   in a document with writer options is too broad.
 
-* Simplify the docutils.nodes.Element implementation?  ``node[x]`` is
-  convenient but can be considered ambiguous (different results if
-  ``x`` is a string or an integer).  Replace with ``node[int]`` and
-  ``node.attributes[string]``?  See
-  <http://thread.gmane.org/gmane.text.docutils.devel/2844>.
-
 * Add file-specific settings support to config files, like::
 
       [file index.txt]
