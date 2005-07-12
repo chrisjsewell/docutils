@@ -760,14 +760,6 @@ __ rst/alternatives.html#or-not-to-do
 * Generalize the "target-notes" directive into a command-line option
   somehow?  See docutils-develop 2003-02-13.
 
-* Could the "break" concept above be extended to inline forms?
-  E.g. "^L" in the middle of a sentence could cause a line break.
-  Only recognize it at the end of a line (i.e., ``\f\n``)?
-
-  Or is formfeed inappropriate?  Perhaps vertical tab (``\v``), but
-  even that's a stretch.  Can't use carriage returns, since they're
-  commonly used for line endings.
-
 * Allow a "::"-only paragraph (first line, actually) to introduce a
   _`literal block without a blank line`?  (Idea from Paul Moore.) ::
 
