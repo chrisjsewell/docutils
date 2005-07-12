@@ -680,6 +680,8 @@ __ rst/alternatives.html#or-not-to-do
   definition in the spec.  (Explicit markup blocks should be strict or
   forgiving?)
 
+  .. XXX What does this mean?  Can you elaborate, David?
+
 * Tighten up the spec for indentation of "constructs using complex
   markers": field lists and option lists?  Bodies may begin on the
   same line as the marker or on a subsequent line (with blank lines
