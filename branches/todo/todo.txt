@@ -862,7 +862,7 @@ when used in a document.
   - _`images.figure`: "title" and "number", to indicate a formal
     figure?
 
-  - _`parts.sectnum`: "local"?, "start", "refnum"
+  - _`parts.sectnum`: "local"?, "refnum"
 
     A "local" option could enable numbering for sections from a
     certain point down, and sections in the rest of the document are
@@ -870,32 +870,12 @@ when used in a document.
     be numbered, but not the rest.  OTOH, an all-or-nothing approach
     would probably be enough.
 
-    The "start" option will specify the sequence set to use at the
-    same time as the starting value, for the first part of the section
-    number (i.e., section, not subsection).  For example::
-
-        .. sectnum: :start: 1
-
-        .. sectnum: :start: A
-
-        .. sectnum: :start: 5
-
-        .. sectnum: :start: I
-
-    The first one is the default: start at 1, numbered.  The second
-    one specifies letters, and start at "A".  The third specifies
-    numbers, start at 5.  The last example could signal Roman
-    numerals, although I don't know if they'd be applicable here.
-    Enumerated lists already do all this; perhaps that code could be
-    reused.
-
-    Here comes the tricky part.  The "sectnum" directive should be
-    usable multiple times in a single document.  For example, in a
-    long document with "chapter" and "appendix" sections, there could
-    be a second "sectnum" before the first appendix, changing the
-    sequence used (from 1,2,3... to A,B,C...).  This is where the
-    "local" concept comes in.  This part of the implementation can be
-    left for later.
+    The "sectnum" directive should be usable multiple times in a
+    single document.  For example, in a long document with "chapter"
+    and "appendix" sections, there could be a second "sectnum" before
+    the first appendix, changing the sequence used (from 1,2,3... to
+    A,B,C...).  This is where the "local" concept comes in.  This part
+    of the implementation can be left for later.
 
     A "refnum" option (better name?) would insert reference names
     (targets) consisting of the reference number.  Then a URL could be
