@@ -301,6 +301,8 @@ General
       As I said earlier in chapter :chapter:`objects`, the
       reference count gets increased every time a binding is made.
 
+* Add support for _`multiple output files`.
+
 * Add testing for Docutils' front end tools?
 
 * Publisher: "Ordinary setup" shouldn't requre specific ordering; at
@@ -854,6 +856,9 @@ __ rst/alternatives.html#or-not-to-do
 
       .. _name: ^url
 
+  This may be too specific to HTML.  It hasn't been requested very
+  often either.
+
 * Add an option to add URI schemes at runtime.
 
 * _`Segmented lists`::
@@ -885,8 +890,8 @@ __ rst/alternatives.html#or-not-to-do
   LaTeX writer (which might very well happen when using configuration
   files), the spaces in front of footnote references aren't trimmed.
 
-* Enable _`tables inside XML comments`, where "--" ends comments.  I
-  see three implementation possibilities:
+* Enable grid _`tables inside XML comments`, where "--" ends comments.
+  I see three implementation possibilities:
 
   1. Make the table syntax characters into "table" directive options.
      This is the most flexible but most difficult, and we probably
@@ -902,6 +907,11 @@ __ rst/alternatives.html#or-not-to-do
   Directive options are preferable to configuration settings, because
   tables are document-specific.  A pragma directive would be another
   approach, to set the syntax once for a whole document.
+
+  In the meantime, the list-table_ directive is a good replacement for
+  grid tables inside XML comments.
+
+  .. _list-table: ../ref/rst/directives.html#list-table
 
 
 Directives
@@ -979,6 +989,9 @@ when used in a document.
     & footers?  For example, separate headers & footers for odd, even,
     and the first page of a document.
 
+    This may be too specific to output formats which have a notion of
+    "pages".
+
   - _`misc.include`:
 
     - Option to select a range of lines?
@@ -1005,16 +1018,27 @@ when used in a document.
     It needs thought & discussion though, to come up with a consistent
     set of destination labels and consistent behavior.
 
+    And placing HTML code inside the <head> element of an HTML
+    document is rather the job of a templating system.
+
   - _`body.sidebar`: Allow internal section structure?  Adornment
     styles would be independent of the main document.
+
+    That is really complicated, however, and the document model
+    greatly benefits from its simplicity.
 
 * Implement directives.  Each of the list items below begins with an
   identifier of the form, "module_name.directive_function_name".  The
   directive name itself could be the same as the
   directive_function_name, or it could differ.
 
-  - _`html.imagemap` (Useful outside of HTML?  If not, replace with
-    image only in non-HTML writers?)
+  - _`html.imagemap`
+
+    It has the disadvantage that it's only easily implementable for
+    HTML, so it's specific to one output format.
+
+    (For non-HTML writers, the imagemap would have to be replaced with
+    the image only.)
 
   - _`parts.endnotes` (or "footnotes"): See `Footnote & Citation Gathering`_.
 
@@ -1023,8 +1047,8 @@ when used in a document.
   - _`misc.language`: Specify (= change) the language of a document at
     parse time.
 
-  - _`misc.settings`: Set any Docutils runtime setting from within a
-    document?
+  - _`misc.settings`: Set any(?) Docutils runtime setting from within
+    a document?  Needs much thought and discussion.
 
   - .. _conditional directives:
 
@@ -1336,6 +1360,14 @@ any knowledge of the Python-Reader origin of these elements.
 
        __ ../ref/rst/restructuredtext.html#implicit-hyperlink-targets
 
+    4. Using substitutions? ::
+
+           .. |reST| acronym:: reST
+              :text: reStructuredText
+
+    What do we do for other formats than HTML which do not support
+    tool tips?  Put the full text in parentheses?
+
   - "figure", "table", "listing", "chapter", "page", etc: See `object
     numbering and object references`_ above.
 
@@ -1456,6 +1488,15 @@ HTML Writer
 
 * Add more support for <link> elements, especially for navigation
   bars.
+
+  The framework does not have a notion of document relationships, so
+  probably raw.destination_ should be used.
+
+  We'll have framework support for document relationships when support
+  for `multiple output files`_ is added.  The HTML writer could
+  automatically generate <link> elements then.
+
+  .. _raw.destination: misc.raw_
 
 * Base list compaction on the spacing of source list?  Would require
   parser support.  (Idea: fantasai, 16 Dec 2002, doc-sig.)
