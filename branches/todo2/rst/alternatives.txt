@@ -3009,8 +3009,70 @@ supports the proposed syntax, and it could be argued that the latter
 ought to be literal text anyhow (e.g. "``^C`` to cancel").
 
 However, superscripts are seldom needed, and new syntax would break
-existing documents.  We it's needed, the ``:superscript:`` (``:sup:``)
-role can we used as well.
+existing documents.  When it's needed, the ``:superscript:``
+(``:sup:``) role can we used as well.
+
+
+Code Execution
+==============
+
+Add the following directives?
+
+- "exec": Execute Python code & insert the results.  Call it
+  "python" to allow for other languages?
+
+- "system": Execute an ``os.system()`` call, and insert the results
+  (possibly as a literal block).  Definitely dangerous!  How to make
+  it safe?  Perhaps such processing should be left outside of the
+  document, in the user's production system (a makefile or a script or
+  whatever).  Or, the directive could be disabled by default and only
+  enabled with an explicit command-line option or config file setting.
+  Even then, an interactive prompt may be useful, such as:
+
+      The file.txt document you are processing contains a "system"
+      directive requesting that the ``sudo rm -rf /`` command be
+      executed.  Allow it to execute?  (y/N)
+
+- "eval": Evaluate an expression & insert the text.  At parse
+  time or at substitution time?  Dangerous?  Perhaps limit to canned
+  macros; see text.date_ below.
+
+It's too dangerous (or too complicated in the case of "eval").  We do
+not want to have such things in the core.
+
+
+``encoding`` Directive
+======================
+
+Add an "encoding" directive to specify the character encoding of the
+input data?  Not a good idea for the following reasons:
+
+- When it sees the directive, the parser will already have read the
+  input data, and encoding determination will already have been done.
+
+- If a file with an "encoding" directive is edited and saved with
+  a different encoding, the directive may cause data corruption.
+
+
+Support for Annotations
+=======================
+
+Add an "annotation" role, as the equivalent of the HTML "title"
+attribute?  This is secondary information that may "pop up" when the
+pointer hovers over the main text.  A corresponding directive would be
+required to associate annotations with the original text (by name, or
+positionally as in anonymous targets?).
+
+There have not been many requests for such feature, though.  Also,
+cluttering WYSIWYG plaintext with annotations may not seem like a good
+idea, and there is no "tool tip" in formats other than HTML.
+
+
+``term`` Role
+=============
+
+Add a "term" role for unfamiliar or specialized terminology?  Probably
+not; there is no real use case, and emphasis is enough for most cases.
 
 
 
