@@ -854,10 +854,6 @@ __ rst/alternatives.html#or-not-to-do
 
       .. _name: ^url
 
-* Add an option to allow arbitrary URI schemes (not just those in
-  urischemes.py)?  This would make text like "signal:noise" into a
-  URI.
-
 * Add an option to add URI schemes at runtime.
 
 * _`Segmented lists`::
@@ -942,13 +938,12 @@ when used in a document.
   - Allow the _`:trim:` option for all directives when they occur in a
     substitution definition, not only the unicode_ directive.
 
-    .. _unicode:
-       http://docutils.sf.net/docs/ref/rst/directives.html#unicode-character-codes
+    .. _unicode: ../ref/rst/directives.html#unicode-character-codes
 
   - _`images.figure`: "title" and "number", to indicate a formal
     figure?
 
-  - _`parts.sectnum`: "local"?, "start", "refnum"
+  - _`parts.sectnum`: "local"?, "refnum"
 
     A "local" option could enable numbering for sections from a
     certain point down, and sections in the rest of the document are
@@ -956,32 +951,12 @@ when used in a document.
     be numbered, but not the rest.  OTOH, an all-or-nothing approach
     would probably be enough.
 
-    The "start" option will specify the sequence set to use at the
-    same time as the starting value, for the first part of the section
-    number (i.e., section, not subsection).  For example::
-
-        .. sectnum: :start: 1
-
-        .. sectnum: :start: A
-
-        .. sectnum: :start: 5
-
-        .. sectnum: :start: I
-
-    The first one is the default: start at 1, numbered.  The second
-    one specifies letters, and start at "A".  The third specifies
-    numbers, start at 5.  The last example could signal Roman
-    numerals, although I don't know if they'd be applicable here.
-    Enumerated lists already do all this; perhaps that code could be
-    reused.
-
-    Here comes the tricky part.  The "sectnum" directive should be
-    usable multiple times in a single document.  For example, in a
-    long document with "chapter" and "appendix" sections, there could
-    be a second "sectnum" before the first appendix, changing the
-    sequence used (from 1,2,3... to A,B,C...).  This is where the
-    "local" concept comes in.  This part of the implementation can be
-    left for later.
+    The "sectnum" directive should be usable multiple times in a
+    single document.  For example, in a long document with "chapter"
+    and "appendix" sections, there could be a second "sectnum" before
+    the first appendix, changing the sequence used (from 1,2,3... to
+    A,B,C...).  This is where the "local" concept comes in.  This part
+    of the implementation can be left for later.
 
     A "refnum" option (better name?) would insert reference names
     (targets) consisting of the reference number.  Then a URL could be
@@ -1045,46 +1020,11 @@ when used in a document.
 
   - _`parts.citations`: See `Footnote & Citation Gathering`_.
 
-  - _`misc.exec`: Execute Python code & insert the results.  Perhaps
-    dangerous?  Call it "python" to allow for other languages?
-
-  - _`misc.system`?: Execute an ``os.system()`` call, and insert the
-    results (possibly as a literal block).  Definitely dangerous!  How
-    to make it safe?  Perhaps such processing  should be left outside
-    of the document, in the user's production system (a makefile or a
-    script or whatever).  Or, the directive could be disabled by
-    default and only enabled with an explicit command-line option or
-    config file setting.  Even then, an interactive prompt may be
-    useful, such as:
-
-        The file.txt document you are processing contains a "system"
-        directive requesting that the ``sudo rm -rf /`` command be
-        executed.  Allow it to execute?  (y/N)
-
-  - _`misc.eval`: Evaluate an expression & insert the text.  At parse
-    time or at substitution time?  Dangerous?  Perhaps limit to canned
-    macros; see text.date_ below.
-
-  - _`misc.encoding`: Specify the character encoding of the input
-    data.  But there are problems:
-
-    - When it sees the directive, the parser will already have read
-      the input data, and encoding determination will already have
-      been done.
-
-    - If a file with an "encoding" directive is edited and saved with
-      a different encoding, the directive may cause data corruption.
-
-  - _`misc.language`: Specify the language of a document.  There is a
-    problem similar to the first problem listed for misc.encoding_,
-    although to a lesser degree.
+  - _`misc.language`: Specify (= change) the language of a document at
+    parse time.
 
   - _`misc.settings`: Set any Docutils runtime setting from within a
     document?
-
-  - _`misc.charents`: Equivalent to::
-
-        .. include:: {includepath}/charents.txt
 
   - .. _conditional directives:
 
@@ -1314,17 +1254,6 @@ which will be transformed into standard hyperlink references, which
 will be processed by the various Writers.  No Writer will need to have
 any knowledge of the Python-Reader origin of these elements.
 
-* Alan Jaffray suggested (and I agree) that it would be sensible to:
-
-  - have a directive and/or command-line option to specify a default
-    role for interpreted text (done)
-  - allow the reST processor to take an argument for the default role
-    (this will be subsumed by the above via the runtime settings
-    mechanism)
-  - issue a warning when processing documents with no default role
-    which contain interpreted text with no explicitly specified role
-    (there will always be a default role, so this won't happen)
-
 * Add explicit interpreted text roles for the rest of the implicit
   inline markup constructs: named-reference, anonymous-reference,
   footnote-reference, citation-reference, substitution-reference,
@@ -1407,16 +1336,8 @@ any knowledge of the Python-Reader origin of these elements.
 
        __ ../ref/rst/restructuredtext.html#implicit-hyperlink-targets
 
-  - "annotation": The equivalent of the HTML "title" attribute.  This
-    is secondary information that may "pop up" when the pointer hovers
-    over the main text.  A corresponding directive would be required
-    to associate annotations with the original text (by name, or
-    positionally as in anonymous targets?).
-
   - "figure", "table", "listing", "chapter", "page", etc: See `object
     numbering and object references`_ above.
-
-  - "term"?: Unfamiliar or specialized terminology.
 
   - "glossary-term": This would establish a link to a glossary.  It
     would require an associated "glossary-entry" directive, whose
@@ -1440,13 +1361,6 @@ Unimplemented Transforms
 
   Collect and move footnotes & citations to the end of a document.
   (Separate transforms.)
-
-* _`Hyperlink Target Gathering`
-
-  It probably comes in two phases, because in a Python context we need
-  to *resolve* them on a per-docstring basis [do we? --DG], but if the
-  user is trying to do the callout form of presentation, they would
-  then want to group them all at the end of the document.
 
 * _`Reference Merging`
 
@@ -1540,37 +1454,14 @@ Unimplemented Transforms
 HTML Writer
 ===========
 
-* Test with modern browsers if it's possible to remove the "name"
-  attributes, which currently serve only for backwards-compatibility
-  to browsers which aren't XHTML compliant.  For a starting point, see
-  http://www.python.org/dev/doc/idtest.html.
-
-  If enough browsers support the "id" attribute, remove the "name"
-  attributes.
-
 * Add more support for <link> elements, especially for navigation
   bars.
-
-* Make the admonitions more distinctive and varied.
-
-* Make the "class" attributes optional?  Implies no stylesheet?
 
 * Base list compaction on the spacing of source list?  Would require
   parser support.  (Idea: fantasai, 16 Dec 2002, doc-sig.)
 
 * Add a tool tip ("title" attribute?) to footnote back-links
   identifying them as such.  Text in Docutils language module.
-
-* Insert a comment at the top of HTML files that describes how to deal
-  with the broken servers w.r.t. encodings?  Perhaps something like
-  this:
-
-      <!--
-      If your browser is showing gibberish, the server may be broken.
-      Try manually setting the character coding to "UTF-8".  In
-      Mozilla/Firefox, do ...  In Internet Explorer, do ...
-      For details, see <URL>.
-      -->
 
 
 LaTeX writer
@@ -1844,7 +1735,9 @@ Front-End Tools
 
 * Disable common options that don't apply?
 
-* Implement the "sectnum" directive as a command-line option also?
+* Add ``--section-numbering`` command line option.  The "sectnum"
+  directive should override the ``--no-section-numbering`` command
+  line option then.
 
 * Create a single dynamic_ or unqualified_ front end that can be
   installed?
