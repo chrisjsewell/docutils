@@ -445,11 +445,10 @@ class LaTeXTranslator(nodes.SparseNodeVisitor):
     before_line = before_list_item
 
     def before_raw(self, node):
-        if 'latex' in node.get('format', '').split():
-            # We're inserting the text in before_raw and thus outside
-            # of \DN... and \Dattr in order to make grouping with
-            # curly brackets work.
-            self.append(node.astext())
+        # We're inserting the text in before_raw and thus outside
+        # of \DN... and \Dattr in order to make grouping with
+        # curly brackets work.
+        self.append(node.astext())
         raise nodes.SkipChildren
 
     def process_backlinks(self, node, type):

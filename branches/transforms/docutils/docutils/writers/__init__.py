@@ -14,7 +14,7 @@ __docformat__ = 'reStructuredText'
 import sys
 import docutils
 from docutils import languages, Component
-from docutils.transforms import universal
+from docutils.transforms import universal, components
 
 
 class Writer(Component):
@@ -36,6 +36,7 @@ class Writer(Component):
         return Component.get_transforms(self) + [
             universal.Messages,
             universal.FilterMessages,
+            components.WriterFilter,
             ]
 
     document = None

@@ -203,7 +203,7 @@ class Node:
         r = []
         if ascend:
             siblings=1
-        if isinstance(condition, ClassType) and issubclass(condition, Node):
+        if isinstance(condition, ClassType):
             node_class = condition
             def condition(node, node_class=node_class):
                 return isinstance(node, node_class)
@@ -727,6 +727,19 @@ class Targetable(Resolvable):
 
 class Labeled:
     """Contains a `label` as its first element."""
+
+class FormatSpecific:
+
+    """Specific to one or several formats."""
+
+    def requires_formats(self):
+        """
+        Return a list of format names of which at least one must be
+        supported by the writer handling this node.
+
+        Override in subclass.
+        """
+        raise NotImplementedError
 
 
 # ==============
@@ -1332,13 +1345,14 @@ class pending(Special, Invisible, Element):
                               **self.attributes)
 
 
-class raw(Special, Inline, PreBibliographic, FixedTextElement):
+class raw(Special, Inline, PreBibliographic, FixedTextElement, FormatSpecific):
 
     """
     Raw data that is to be passed untouched to the Writer.
     """
 
-    pass
+    def requires_formats(self):
+        return self['format'].split()
 
 
 # =================
