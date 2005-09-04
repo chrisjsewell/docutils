@@ -86,36 +86,56 @@ This is useful for filling list item paragraphs."
 ;;
 ;; The following functions implement a smart automatic title sectioning feature.
 ;; The idea is that with the cursor sitting on a section title, we try to get as
-;; much information from context and do the best thing. This function can be
-;; invoked many time and/or with prefix argument to rotate between the various
-;; options.
+;; much information from context and try to do the best thing automatically.
+;; This function can be invoked many times and/or with prefix argument to rotate
+;; between the various sectioning decorations.
 ;;
-;; There are two styles of sectioning:
+;; Definitions: the two forms of sectioning define semantically separate section
+;; levels.  A sectioning DECORATION consists in:
 ;;
-;; 1. simple-underline, e.g.      |Some Title
-;;                                |----------
+;;   - a CHARACTER
 ;;
-;; 2. overline-and-underline, e.g.  |------------
-;;                                  | Some Title
-;;                                  |------------
+;;   - a STYLE which can be either of 'simple' or 'over-and-under'.
+;;
+;;   - an INDENT (meaningful for the over-and-under style only) which determines
+;;     how many characters and over-and-under style is hanging outside of the
+;;     title at the beginning and ending.
+;;
+;; Here are two examples of decorations (| represents the window border, column
+;; 0):
+;;
+;;                                  |
+;; 1. char: '-'   e                 |Some Title
+;;    style: simple                 |----------
+;;                                  |
+;; 2. char: '='                     |==============
+;;    style: over-and-under         |  Some Title
+;;    indent: 2                     |==============
+;;                                  |
 ;;
 ;; Some notes:
 ;;
-;; - the underlining character that is used depends on context. The file is
+;; - The underlining character that is used depends on context. The file is
 ;;   scanned to find other sections and an appropriate character is selected.
-;;   If the function is invoked on a section that is complete, the character
-;;   is rotated among the existing ones.
+;;   If the function is invoked on a section that is complete, the character is
+;;   rotated among the existing section decorations.
 ;;
-;;   Note that when rotating the underlining characters, if we come to the end
-;;   of the hierarchy of characters, the variable rest-preferred-characters
-;;   is consulted to propose a new underline char, and if continued, we cycle
-;;   the underline characters all over again.  Set this variable to nil if 
-;;   you want to limit the underlining character propositions to the existing
-;;   underlines in the file.
+;;   Note that when rotating the characters, if we come to the end of the
+;;   hierarchy of decorations, the variable rest-preferred-decorations is
+;;   consulted to propose a new underline decoration, and if continued, we cycle
+;;   the decorations all over again.  Set this variable to nil if you want to
+;;   limit the underlining character propositions to the existing decorations in
+;;   the file.
 ;;
-;; - prefix argument is used to alternate the sectioning style.
+;; - A prefix argument can be used to alternate the style.
 ;;
-;; Examples:
+;; - An underline/overline that is not extended to the column at which it should
+;;   be hanging is dubbed INCOMPLETE.  For example::
+;;
+;;      |Some Title
+;;      |-------
+;;
+;; Examples of default invocation:
 ;;
 ;;   |Some Title       --->    |Some Title
 ;;   | 			       |----------
@@ -127,13 +147,14 @@ This is useful for filling list item paragraphs."
 ;;   | Some Title      --->    | Some Title
 ;;   | 			       |------------
 ;;
-;; In overline-and-underline style, a variable is available to select how much
-;; space to leave before and after the title (it can be zero) when alternating
-;; the style.  Note that if the title already has some whitespace in front of
-;; it, we don't adjust it to the variable setting, we use the whitespace that is
-;; already there for adjustment.
+;; In over-and-under style, when alternating the style, a variable is available
+;; to select how much default indent to use (it can be zero).  Note that if the
+;; current section decoration already has an indent, we don't adjust it to the
+;; default, we rather use the current indent that is already there for
+;; adjustment (unless we cycle, in which case we use the indent that has been
+;; found previously).
 
-(defun rest-line-single-char-p (&optional accept-special)
+(defun rest-line-homogeneous-p (&optional accept-special)
   "Predicate return the unique char if the current line is
   composed only of a single repeated non-whitespace
   character. This returns the char even if there is whitespace at
@@ -147,32 +168,33 @@ This is useful for filling list item paragraphs."
     (back-to-indentation)
     (if (not (looking-at "\n"))
 	(let ((c (thing-at-point 'char)))
-	  (if (and (looking-at (format "[%s]+\\s-*$" c))
+	  (if (and (looking-at (format "[%s]+[ \t]*$" c))
 		   (or accept-special
 		       (and
-			;; common patterns
-			(not (looking-at "::\\s-*$"))
-			(not (looking-at "\\.\\.\\.\\s-*$"))
-			;; discard one char line
-			(not (looking-at ".\\s-*$")) 
+			;; Common patterns.
+			(not (looking-at "::[ \t]*$"))
+			(not (looking-at "\\.\\.\\.[ \t]*$"))
+			;; Discard one char line
+			(not (looking-at ".[ \t]*$"))
 			)))
 	      (string-to-char c))
 	  ))
     ))
 
 (defun rest-find-last-section-char ()
-  "Looks backward for the last section char found in the file."
-
+  "Looks backward in the file for the character from the last
+decoration before point."
   (let (c)
-    (save-excursion 
+    (save-excursion
       (while (and (not c) (not (bobp)))
 	(forward-line -1)
-	(setq c (rest-line-single-char-p))
+	(setq c (rest-line-homogeneous-p))
 	))
     c))
 
 (defun rest-current-section-char (&optional point)
-  "Gets the section char around the current point."
+  "Gets the character from the decoration around the current
+point."
   (save-excursion
     (if point (goto-char point))
     (let ((offlist '(0 1 -2))
@@ -181,7 +203,7 @@ This is useful for filling list item paragraphs."
 	  c)
       (while offlist
 	(forward-line (car offlist))
-	(setq c (rest-line-single-char-p 1))
+	(setq c (rest-line-homogeneous-p 1))
 	(if c
 	    (progn (setq offlist nil
 			 rval c))
@@ -191,9 +213,9 @@ This is useful for filling list item paragraphs."
       )))
 
 (defun rest-initial-sectioning-style (&optional point)
-  "Looks around point and attempts to determine the sectioning
-  style, between simple-underline and overline-and-underline.  If
-  there aren't any existing over/underlines, return nil."
+  "Looks around point and attempts to determine the sectioning style,
+  between simple and over-and-under.  If a decoration cannot be
+  found, return nil."
   (save-excursion
     (if point (goto-char point))
     (let (ou)
@@ -201,7 +223,7 @@ This is useful for filling list item paragraphs."
 	(setq ou (mapcar
 		  (lambda (x)
 		    (forward-line x)
-		    (rest-line-single-char-p))
+		    (rest-line-homogeneous-p))
 		  '(-1 2))))
       (beginning-of-line)
       (cond
@@ -212,14 +234,15 @@ This is useful for filling list item paragraphs."
       )))
 
 (defun rest-all-section-chars (&optional ignore-lines)
-  "Finds all the section chars in the entire file and orders them
-  hierarchically, removing duplicates.  Basically, returns a list
-  of the section underlining characters.
+  ;; FIXME this is insufficient
+  "Finds all the section characters in the entire file and orders
+  them hierarchically, removing duplicates.  Basically, returns a
+  list of the section underlining characters.
 
   Optional parameters IGNORE-AROUND can be a list of lines to
   ignore."
 
-  (let (chars 
+  (let (chars
 	c
 	(curline 1))
     (save-excursion
@@ -227,7 +250,7 @@ This is useful for filling list item paragraphs."
       (while (< (point) (buffer-end 1))
 	(if (not (memq curline ignore-lines))
 	    (progn
-	      (setq c (rest-line-single-char-p))
+	      (setq c (rest-line-homogeneous-p))
 	      (if c
 		  (progn
 		    (add-to-list 'chars c t)
@@ -236,25 +259,29 @@ This is useful for filling list item paragraphs."
 	))
     chars))
 
+
 (defun rest-suggest-new-char (allchars)
-  "Given the last char that has been seen, suggest a new,
-  different character, different from all that have been seen."
-  (let ((potentials (copy-sequence rest-preferred-characters)))
+;; FIXME this is insufficient too
+  "Suggest a new, different character, different from all that
+have been seen."
+  (let ((potentials (copy-sequence rest-preferred-decorations)))
     (dolist (x allchars)
       (setq potentials (delq x potentials))
       )
     (car potentials)
     ))
 
-(defun rest-update-section (underlinechar style &optional indent)
-  "Unconditionally updates the overline/underline of a section
-  title using the given character CHAR, with STYLE 'simple or
-  'over-and-under, in which case with title whitespace separation
-  on each side with INDENT whitespaces.  If the style is 'simple,
-  whitespace before the title is removed.
 
-  If there are existing overline and/or underline, they are
-  removed before adding the requested adornments."
+(defun rest-update-section (char style &optional indent)
+  "Unconditionally updates the style of a section decoration
+  using the given character CHAR, with STYLE 'simple or
+  'over-and-under, and with indent INDENT.  If the STYLE is
+  'simple, whitespace before the title is removed (indent is
+  always assume to be 0).
+
+  If there are existing overline and/or underline from the
+  existing decoration, they are removed before adding the
+  requested decoration."
 
   (interactive)
   (let (marker
@@ -281,13 +308,14 @@ This is useful for filling list item paragraphs."
       ;; Remove previous line if it consists only of a single repeated character
       (save-excursion
 	(forward-line -1)
-	(and (rest-line-single-char-p 1)
+	(and (rest-line-homogeneous-p 1)
 	     (kill-line 1)))
 
-      ;; Remove following line if it consists only of a single repeated character
+      ;; Remove following line if it consists only of a single repeated
+      ;; character
       (save-excursion
 	(forward-line +1)
-	(and (rest-line-single-char-p 1)
+	(and (rest-line-homogeneous-p 1)
 	     (kill-line 1))
 	;; Add a newline if we're at the end of the buffer, for the subsequence
 	;; inserting of the underline
@@ -299,155 +327,282 @@ This is useful for filling list item paragraphs."
 	  (save-excursion
 	    (beginning-of-line)
 	    (open-line 1)
-	    (insert (make-string len underlinechar))))
+	    (insert (make-string len char))))
 
       ;; Insert underline
       (forward-line +1)
       (open-line 1)
-      (insert (make-string len underlinechar))
+      (insert (make-string len char))
 
       (forward-line +1)
       (goto-char marker)
       ))
 
-(defvar rest-preferred-characters '(?= ?- ?~ ?+ ?` ?# ?@)
-  "Preferred ordering of underline characters.  This sequence is
-  consulted to offer a new underline character when we rotate the 
-  underlines at the end of the existing hierarchy of characters.")
 
-(defvar rest-default-under-and-over-indent 1
+
+
+
+(defvar rest-preferred-decorations
+  '( (?= 'over-and-under 1)
+     (?= 'simple 0)
+     (?- 'simple 0)
+     (?~ 'simple 0)
+     (?+ 'simple 0)
+     (?` 'simple 0)
+     (?# 'simple 0)
+     (?@ 'simple 0) )
+  "Preferred ordering of section title decorations.  This
+  sequence is consulted to offer a new decoration suggestion when
+  we rotate the underlines at the end of the existing hierarchy
+  of characters, or when there is no existing section title in
+  the file.")
+
+
+(defvar rest-default-indent 1
   "Number of characters to indent the section title when toggling
-  sectioning styles.  This is used when switching from a simple 
-  section style to a over-and-under style.")
+  decoration styles.  This is used when switching from a simple
+  decoration style to a over-and-under decoration style.")
 
-(defun rest-adjust-section-title ()
-  "Adjust/rotate the section underlining for the section around
-  point.
 
-  This function is the main entry point of this module and is a
-  bit of a swiss knife.  It is meant as the single function to
-  invoke to adjust the underlines (and possibly overlines) of a
-  section title in restructuredtext.  The next action it takes
-  depends on context around the point, and it is meant to be
-  invoked possibly more than once. Basically, this function deals
-  with:
+(defun rest-adjust-section-decoration ()
+  "Adjust/rotate the section decoration for the section title around point.
 
-  - underlining a title if it does not have an underline;
-  - adjusting the length of the underline characters to fit a
-    modified title;
-  - rotating the underlines/overlines in the set of already
-    existing underline chars used in the file;
-  - switching between simple underline and over-and-under style
-    sectioning (or box style).
+This function is the main focus of this module and is a bit of a
+swiss knife.  It is meant as the single function to invoke to
+adjust the decorations of a section title in restructuredtext.
 
-  Here are the gory details:
+General Behaviour
+=================
 
-  - If the current line has no underline character around it,
-    search backwards for a previously used underlining character,
-    and underline the current line as a section title (also see
-    prefix argument below).
+The next action it takes depends on context around the point, and
+it is meant to be invoked possibly more than once to rotate among
+the various possibilities. Basically, this function deals with:
 
-    If no pre-existing underlining character is found in the on
-    the line, we use the last seen underline char or consult the
-    first element of rest-preferred-characters if this is the
-    first title in the entire file.
+- adding a decoration if the title does not have one;
 
-  - If the current line does have an underline or overline, and
-    if
+- adjusting the length of the underline characters to fit a
+  modified title;
 
-    - the underline do not extend to exactly the end of the
-      title line, this changes the length of the under(over)lines
-      to fit exactly the section title;
+- rotating the decoration in the set of already existing
+  sectioning decorations used in the file;
 
-    - the underline length is already adjusted to the end of the
-      title line, we search the file for the underline chars, and
-      we rotate the current title's underline character with that
-      list (going down the hierarchy that is present in the
-      file);
+- switching between simple and over-and-under styles.
 
-    If there is a prefix argument, switch the style between the
-    initial sectioning style and the other sectioning style.  The
-    two styles are overline-and-underline and simple-underline.
-    
-    If however, you are on a complete section title and you
-    specify a negative argument, the effect of the prefix
-    argument is to change the direction of rotation of the
-    underline characters. Thus using a prefix argument and a
-    negative prefix argument achieves a different result in the
-    case of rotation.
+You should normally not have to read all the following, just
+invoke the method and it will do the most obvious thing that you
+would expect.
 
-    Note that the initial style of underlining (simple underline
-    or box-style) depends on if there is whitespace at the start
-    of the line.  If there are already underlines/overlines,
-    those are used to select the style, otherwise if there is
-    whitespace at the front of the title overline-and-underline
-    style is chosen, and otherwise simple underline.
 
-    Also, note that this should work on the section title line as
-    well as on a complete or incomplete underline for a
-    title (first thing we check for that case and move the cursor
-    up a line if needed)."
+Decoration Definitions
+======================
+
+The decorations consist in
+
+1. a CHARACTER
+
+2. a STYLE which can be either of 'simple' or 'over-and-under'.
+
+3. an INDENT (meaningful for the over-and-under style only)
+   which determines how many characters and over-and-under
+   style is hanging outside of the title at the beginning and
+   ending.
+
+See source code for mode details.
+
+
+Prefix Arguments
+================
+
+The method can take either (but not both) of
+
+a. a (non-negative) prefix argument, which generally means to
+   toggle the decoration style.  Invoke with C-u prefix for
+   example;
+
+b. a negative numerical argument, which generally inverts the
+   direction of search in the file or hierarchy.  Invoke with C--
+   prefix for example.
+
+
+Detailed Behaviour Description
+==============================
+
+Here are the gory details of the algorithm (it seems quite
+complicated, but really, it does the most obvious thing in all
+the particular cases):
+
+Case 1: No Decoration
+---------------------
+
+If the current line has no decoration around it,
+
+- search backwards for the last previous decoration, and apply
+  the decoration to the current (or preceding, if current is
+  empty) line.  If a negative prefix argument is specified, we
+  search forward instead.
+
+- if there is no decoration found in the given direction, we
+  use the first of rest-preferred-decorations.
+
+Special note (existing indent): if there is an existing indent
+in front of the section title (without existing decoration),
+the over-and-under style is forced (using that indent).  If a
+prefix argument is used in the case, the simple style is
+forced.
+
+Otherwise, if there is no existing indent, the prefix argument
+forces a toggle of the prescribed decoration style.
+
+Case 2: Incomplete Decoration
+-----------------------------
+
+If the current line does have an existing decoration, but the
+decoration is incomplete, that is, the underline/overline does
+not extend to exactly the end of the title line (it is either too
+short or too long), we simply extend the length of the
+underlines/overlines to fit exactly the section title.
+
+If the prefix argument is given, we toggle the style of the
+decoration as well.
+
+A negative argument has no effect in this case.
+
+Case 3: Complete Existing Decoration
+------------------------------------
+
+If the decoration is complete (i.e. the underline (overline)
+length is already adjusted to the end of the title line), we
+search/parse the file to establish the hierarchy of all the
+decorations (making sure not to include the decoration around
+point), and we rotate the current title's decoration from within
+that list (by default, going *down* the hierarchy that is present
+in the file, i.e. to a lower section level).  This is meant to be
+used potentially multiple times, until the desired decoration is
+found around the title.
+
+If we hit the boundary of the hierarchy, exactly one choice from
+the list of preferred decorations is suggested/chosen, the first
+of those decoration that has not been seen in the file yet (and
+not including the decoration around point), and the next
+invocation rolls over to the other end of the hierarchy (i.e. it
+cycles).  This allows you to avoid having to set which character
+to use by always using the
+
+If a negative argument is specified, the effect is to change the
+direction of rotation in the hierarchy of decorations, thus
+instead going *up* the hierarchy.
+
+However, if there is a non-negative prefix argument, we do not
+rotate the decoration, but instead simply toggle the style of the
+current decoration (this should be the most common way to toggle
+the style of an existing complete decoration).
+
+
+Point Location
+==============
+
+The invocation of this function can be carried out anywhere
+within the section title line, on an existing underline or
+overline, as well as on an empty line following a section title.
+This is meant to be as convenient as possible.
+
+
+Indented Sections
+=================
+
+Indented section titles such as ::
+
+   My Title
+   --------
+
+are illegal in restructuredtext and thus not recognized by the
+parser.  This code will thus not work in a way that would support
+indented sections (it would be ambiguous anyway).
+
+
+Joint Sections
+==============
+
+Section titles that are right next to each other may not be
+treated well.  More work might be needed to support those, and
+special conditions on the completeness of existing decorations
+might be required to make it non-ambiguous.
+
+For now we assume that the decorations are disjoint, that is,
+there is at least a single line between the titles/decoration
+lines.
+
+
+Suggested Binding
+=================
+
+We suggest that you bind this function on C-=.  It is close to
+C-- so a negative argument can be easily specified with a flick
+of the right hand fingers and the binding is unused in text-mode.
+"
+;; FIXME: you need to re-implement the algorithm to match the new description
+;; above
 
   (interactive)
 
   (let* (
-	 ;; check if we're on an underline under a title line, and move the
-	 ;; cursor up if it is so.
-	 (moved
-	  (if (and (or (rest-line-single-char-p 1) 
-		       (looking-at "^\\s-*$"))
-		   (save-excursion
-		     (forward-line -1)
-		     (beginning-of-line)
-		     (looking-at "^.+$")))
-	      (progn (forward-line -1) t)
-	    ))
+	 ;; Check if we're on an underline around a section title, and move the
+	 ;; cursor to the title if this is the case.
+	 (moved (rest-normalize-cursor-position))
 
-	 ;; find current sectioning character
+	 ;; Find the decoration and completeness around point.
+	 )))
+;; FIXME todo
+
+
+
+(defun the-rest ()
+  ((
+	 ;; Find current sectioning character.
 	 (curchar (rest-current-section-char))
-	 ;; find current sectioning style
+	 ;; Find current sectioning style.
 	 (init-style (rest-initial-sectioning-style))
-	 ;; find current indentation of title line
+	 ;; Find current indentation of title line.
 	 (curindent (save-excursion
 		      (back-to-indentation)
 		      (current-column)))
 
-	 ;; ending column
-	(endcol (- (save-excursion
-		     (end-of-line)
-		     (current-column))
-                   (save-excursion
-		     (back-to-indentation)
-                     (current-column))))
+	 ;; Ending column.
+	 (endcol (- (save-excursion
+		      (end-of-line)
+		      (current-column))
+		    (save-excursion
+		      (back-to-indentation)
+		      (current-column))))
 	 )
 
-    ;; if there is no current style found...
+    ;; If there is no current style found...
     (if (eq init-style nil)
-	;; select based on the whitespace at the beginning of the line
+	;; Select style based on the whitespace at the beginning of the line.
 	(save-excursion
 	  (beginning-of-line)
 	  (setq init-style
 		(if (looking-at "^\\s-+") 'over-and-under 'simple))))
 
-    ;; if we're switching characters, we're going to simply change the
+    ;; If we're switching characters, we're going to simply change the
     ;; sectioning style.  this branch is also taken if there is no current
     ;; sectioning around the title.
     (if (or (and current-prefix-arg
 		 (not (< (prefix-numeric-value current-prefix-arg) 0)))
 	    (eq curchar nil))
-	
-	;; we're switching characters or there is currently no sectioning
+
+	;; We're switching characters or there is currently no sectioning.
 	(progn
-	  (setq curchar 
+	  (setq curchar
 		(or curchar
 		    (rest-find-last-section-char)
 		    (car (rest-all-section-chars))
-		    (car rest-preferred-characters)
+		    (car rest-preferred-decorations)
 		    ?=))
 
-	  ;; if there is a current indent, reuse it, otherwise use default
+	  ;; If there is a current indent, reuse it, otherwise use default.
 	  (if (= curindent 0)
-	      (setq curindent rest-default-under-and-over-indent))
+	      (setq curindent rest-default-indent))
 
 	  (rest-update-section
 	   curchar
@@ -458,12 +613,12 @@ This is useful for filling list item paragraphs."
 	   curindent)
 	  )
 
-      ;; else we're not switching characters, and there is some sectioning
+      ;; Else we're not switching characters, and there is some sectioning
       ;; already present, so check if the current sectioning is complete and
       ;; correct.
-      (let ((exps (concat "^" 
-			  (regexp-quote (make-string 
-					 (+ endcol curindent) curchar)) 
+      (let ((exps (concat "^"
+			  (regexp-quote (make-string
+					 (+ endcol curindent) curchar))
 			  "$")))
 	(if (or
 	     (not (save-excursion (forward-line +1)
@@ -474,26 +629,26 @@ This is useful for filling list item paragraphs."
 				       (beginning-of-line)
 				       (looking-at exps)))))
 
-	    ;; the current sectioning needs to be fixed/updated!
+	    ;; The current sectioning needs to be fixed/updated!
 	    (rest-update-section curchar init-style curindent)
 
-	  ;; the current sectioning is complete, rotate characters
+	  ;; The current sectioning is complete, rotate characters.
 	  (let* ( (curline (+ (count-lines (point-min) (point))
 			      (if (bolp) 1 0)))
-		  (allchars (rest-all-section-chars 
+		  (allchars (rest-all-section-chars
 			     (list (- curline 1) curline (+ curline 1))))
 
-		  (rotchars 
-		   (append allchars 
+		  (rotchars
+		   (append allchars
 			   (filter 'identity
-				   (list 
+				   (list
 				    ;; suggest a new char
 				    (rest-suggest-new-char allchars)
 				    ;; rotate to first char
 				    (car allchars)))))
-		  (nextchar 
-		   (or (cadr (memq curchar 
-				   (if (< (prefix-numeric-value 
+		  (nextchar
+		   (or (cadr (memq curchar
+				   (if (< (prefix-numeric-value
 					   current-prefix-arg) 0)
 				       (reverse rotchars) rotchars)))
 		       (car allchars)) ) )
@@ -504,9 +659,289 @@ This is useful for filling list item paragraphs."
 	    )))
       )
 
-    (if moved 
-	(progn (forward-line 1) (end-of-line)))
+
+
+    ;; Correct the position of the cursor to more accurately reflect where it
+    ;; was located when the function was invoked.
+    (if (!= moved 0)
+	(progn (forward-line (- moved)) 
+	       (end-of-line)))
+
     ))
+
+
+;; =============================================================================
+
+(defun rest-normalize-cursor-position ()
+  "If the cursor is on a decoration line or an empty line , place
+  it on the section title line (at the end).  Returns the line
+  offset by which the cursor was moved. This works both over or
+  under a line."
+  (if (or (rest-line-homogeneous-p 1)
+	  (looking-at "^[ \t]*$"))
+      (cond
+       ((save-excursion (forward-line -1)
+			(beginning-of-line)
+			(looking-at "^[ \t]*\\w+"))
+	(progn (forward-line -1) -1))
+       ((save-excursion (forward-line +1)
+			(beginning-of-line)
+			(looking-at "^[ \t]*\\w+"))
+	(progn (forward-line +1) +1))
+       (t 0))
+    ))
+
+
+(defun rest-find-all-decorations ()
+  "Finds all the decorations in the file, and returns a list of
+  (line, decoration) pairs.  Each decoration consists in a (char,
+  style, indent) triple."
+
+  (let (positions
+	(curline 1))
+    ;; Iterate over all the section titles/decorations in the file.
+    (save-excursion
+      (beginning-of-buffer)
+      (while (< (point) (buffer-end 1))
+	(if (rest-line-homogeneous-p)
+	    (progn
+	      (setq curline (+ curline (rest-normalize-cursor-position)))
+
+	      ;; Here we have found a potential site for a decoration,
+	      ;; characterize it.
+	      (let ((deco (rest-get-decoration)))
+		(if (cadr deco) ;; Style is existing.
+		    ;; Found a real decoration site.
+		    (progn
+		      (push (cons curline (list deco)) positions)
+		      ;; Push beyond the underline.
+		      (forward-line 1) 
+		      (setq curline (+ curline 1))
+		      )))
+	      ))
+	(forward-line 1)
+	(setq curline (+ curline 1))
+	))
+    positions))
+
+(defun rest-get-decoration (&optional point)
+  "Looks around point and finds the characteristics of the
+  decoration that is found there.  We assume that the cursor is
+  already placed on the title line (and not on the overline or
+  underline).
+
+  This function returns a (char, style, indent) triple.  If the
+  characters of overline and underline are different, we return
+  the underline character.  The indent is always calculated.  A
+  decoration can be said to exist if the style is not nil.
+
+  A point can be specified to go to the given location before
+  extracting the decoration."
+ 
+  (let (char style indent)
+    (save-excursion
+      (if point (goto-char point))
+      (let (ou)
+	(save-excursion
+	  (setq ou (mapcar
+		    (lambda (x)
+		      (forward-line x)
+		      (rest-line-homogeneous-p))
+		    '(-1 2))))
+	(beginning-of-line)
+	(cond
+	 ;; No decoration found, leave all return values nil.
+	 ((equal ou '(nil nil))) 
+
+	 ;; Overline only, leave all return values nil.
+	 ;;
+	 ;; Note: we don't return the overline character, but it could perhaps
+	 ;; in some cases be used to do something.
+	 ((and (car ou) (eq (cadr ou) nil)))
+
+	 ;; Underline only.
+	 ((and (cadr ou) (eq (car ou) nil))
+	  (setq char (cadr ou)
+		style 'simple))
+
+	 ;; Both overline and underline.
+	 (t
+	  (setq char (cadr ou)
+		style 'over-and-under))
+	 )
+	)
+      ;; Find indentation.
+      (setq indent (save-excursion
+		     (back-to-indentation)
+		     (current-column)))
+      )
+    ;; Return values.
+    (list char style indent)))
+
+
+
+
+
+(global-set-key [(meta ?[)]
+		 (lambda () (interactive)
+		   (message (prin1-to-string 
+;			     (rest-line-homogeneous-p)
+;			     (rest-normalize-cursor-position)
+;			     (rest-get-decoration)
+			     (rest-find-all-decorations)
+			     )))))
+
+
+    chars))
+
+  (let (chars
+	c
+	(curline 1))
+    (save-excursion
+      (beginning-of-buffer)
+      (while (< (point) (buffer-end 1))
+	(if (not (memq curline ignore-lines))
+	    (progn
+	      (setq c (rest-line-homogeneous-p))
+	      (if c
+		  (progn
+		    (add-to-list 'chars c t)
+		    ))) )
+	(forward-line 1) (setq curline (+ curline 1))
+	))
+    chars))
+
+
+
+
+
+
+;; (defun rest-adjust-section-decoration-old ()
+;;   "Older version of rest-adjust-section-decoration with looser
+;; semantic and some bugs."
+;;
+;;   (interactive)
+;;
+;;   (let* (
+;; 	 ;; Check if we're on an underline under a title line, and move the
+;; 	 ;; cursor up if it is so.
+;; 	 (moved
+;; 	  (if (and (or (rest-line-homogeneous-p 1)
+;; 		       (looking-at "^\\s-*$"))
+;; 		   (save-excursion
+;; 		     (forward-line -1)
+;; 		     (beginning-of-line)
+;; 		     (looking-at "^.+$")))
+;; 	      (progn (forward-line -1) t)
+;; 	    ))
+;;
+;; 	 ;; Find current sectioning character.
+;; 	 (curchar (rest-current-section-char))
+;; 	 ;; Find current sectioning style.
+;; 	 (init-style (rest-initial-sectioning-style))
+;; 	 ;; Find current indentation of title line.
+;; 	 (curindent (save-excursion
+;; 		      (back-to-indentation)
+;; 		      (current-column)))
+;;
+;; 	 ;; Ending column.
+;; 	 (endcol (- (save-excursion
+;; 		      (end-of-line)
+;; 		      (current-column))
+;; 		    (save-excursion
+;; 		      (back-to-indentation)
+;; 		      (current-column))))
+;; 	 )
+;;
+;;     ;; If there is no current style found...
+;;     (if (eq init-style nil)
+;; 	;; Select style based on the whitespace at the beginning of the line.
+;; 	(save-excursion
+;; 	  (beginning-of-line)
+;; 	  (setq init-style
+;; 		(if (looking-at "^\\s-+") 'over-and-under 'simple))))
+;;
+;;     ;; If we're switching characters, we're going to simply change the
+;;     ;; sectioning style.  this branch is also taken if there is no current
+;;     ;; sectioning around the title.
+;;     (if (or (and current-prefix-arg
+;; 		 (not (< (prefix-numeric-value current-prefix-arg) 0)))
+;; 	    (eq curchar nil))
+;;
+;; 	;; We're switching characters or there is currently no sectioning.
+;; 	(progn
+;; 	  (setq curchar
+;; 		(or curchar
+;; 		    (rest-find-last-section-char)
+;; 		    (car (rest-all-section-chars))
+;; 		    (car rest-preferred-decorations)
+;; 		    ?=))
+;;
+;; 	  ;; If there is a current indent, reuse it, otherwise use default.
+;; 	  (if (= curindent 0)
+;; 	      (setq curindent rest-default-indent))
+;;
+;; 	  (rest-update-section
+;; 	   curchar
+;; 	   (if (and current-prefix-arg
+;; 		    (not (< (prefix-numeric-value current-prefix-arg) 0)))
+;; 	       (if (eq init-style 'over-and-under) 'simple 'over-and-under)
+;; 	     init-style)
+;; 	   curindent)
+;; 	  )
+;;
+;;       ;; Else we're not switching characters, and there is some sectioning
+;;       ;; already present, so check if the current sectioning is complete and
+;;       ;; correct.
+;;       (let ((exps (concat "^"
+;; 			  (regexp-quote (make-string
+;; 					 (+ endcol curindent) curchar))
+;; 			  "$")))
+;; 	(if (or
+;; 	     (not (save-excursion (forward-line +1)
+;; 				  (beginning-of-line)
+;; 				  (looking-at exps)))
+;; 	     (and (eq init-style 'over-and-under)
+;; 		  (not (save-excursion (forward-line -1)
+;; 				       (beginning-of-line)
+;; 				       (looking-at exps)))))
+;;
+;; 	    ;; The current sectioning needs to be fixed/updated!
+;; 	    (rest-update-section curchar init-style curindent)
+;;
+;; 	  ;; The current sectioning is complete, rotate characters.
+;; 	  (let* ( (curline (+ (count-lines (point-min) (point))
+;; 			      (if (bolp) 1 0)))
+;; 		  (allchars (rest-all-section-chars
+;; 			     (list (- curline 1) curline (+ curline 1))))
+;;
+;; 		  (rotchars
+;; 		   (append allchars
+;; 			   (filter 'identity
+;; 				   (list
+;; 				    ;; suggest a new char
+;; 				    (rest-suggest-new-char allchars)
+;; 				    ;; rotate to first char
+;; 				    (car allchars)))))
+;; 		  (nextchar
+;; 		   (or (cadr (memq curchar
+;; 				   (if (< (prefix-numeric-value
+;; 					   current-prefix-arg) 0)
+;; 				       (reverse rotchars) rotchars)))
+;; 		       (car allchars)) ) )
+;;
+;;
+;; 	    (if nextchar
+;; 		(rest-update-section nextchar init-style curindent))
+;; 	    )))
+;;       )
+;;
+;;     (if moved
+;; 	(progn (forward-line 1) (end-of-line)))
+;;     ))
+
+;; Maintain an alias for compatibility.
+(defalias 'rest-adjust-section-title 'rest-adjust-section-decoration)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
