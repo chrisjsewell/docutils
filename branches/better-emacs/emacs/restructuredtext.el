@@ -154,6 +154,10 @@ This is useful for filling list item paragraphs."
 ;; adjustment (unless we cycle, in which case we use the indent that has been
 ;; found previously).
 
+(defun rest-current-line ()
+  "Returns the current line number."
+  (+ (count-lines (point-min) (point)) (if (bolp) 1 0)))
+
 (defun rest-line-homogeneous-p (&optional accept-special)
   "Predicate return the unique char if the current line is
   composed only of a single repeated non-whitespace
@@ -544,14 +548,20 @@ of the right hand fingers and the binding is unused in text-mode.
 ;; above
 
   (interactive)
-
-  (let* (
-	 ;; Check if we're on an underline around a section title, and move the
+  
+  (let* (;; Check if we're on an underline around a section title, and move the
 	 ;; cursor to the title if this is the case.
 	 (moved (rest-normalize-cursor-position))
 
 	 ;; Find the decoration and completeness around point.
-	 )))
+	 (curdeco (rest-get-decoration))
+	 )
+
+    (princ (rest-decoration-complete-p curdeco))
+
+
+
+	 ))
 ;; FIXME todo
 
 
@@ -664,7 +674,7 @@ of the right hand fingers and the binding is unused in text-mode.
     ;; Correct the position of the cursor to more accurately reflect where it
     ;; was located when the function was invoked.
     (if (!= moved 0)
-	(progn (forward-line (- moved)) 
+	(progn (forward-line (- moved))
 	       (end-of-line)))
 
     ))
@@ -682,20 +692,25 @@ of the right hand fingers and the binding is unused in text-mode.
       (cond
        ((save-excursion (forward-line -1)
 			(beginning-of-line)
-			(looking-at "^[ \t]*\\w+"))
+			(and (looking-at "^[ \t]*\\S-+")
+			     (not (rest-line-homogeneous-p 1))))
 	(progn (forward-line -1) -1))
        ((save-excursion (forward-line +1)
 			(beginning-of-line)
-			(looking-at "^[ \t]*\\w+"))
+			(and (looking-at "^[ \t]*\\S-+")
+			     (not (rest-line-homogeneous-p 1))))
 	(progn (forward-line +1) +1))
        (t 0))
     ))
 
-
 (defun rest-find-all-decorations ()
   "Finds all the decorations in the file, and returns a list of
   (line, decoration) pairs.  Each decoration consists in a (char,
-  style, indent) triple."
+  style, indent) triple.
+
+  This function does not detect the hierarchy of decorations, it
+  just finds all of them in a file.  You can then invoke another
+  function to remove redundancies and inconsistencies."
 
   (let (positions
 	(curline 1))
@@ -713,16 +728,54 @@ of the right hand fingers and the binding is unused in text-mode.
 		(if (cadr deco) ;; Style is existing.
 		    ;; Found a real decoration site.
 		    (progn
-		      (push (cons curline (list deco)) positions)
+		      (push (cons curline deco) positions)
 		      ;; Push beyond the underline.
-		      (forward-line 1) 
+		      (forward-line 1)
 		      (setq curline (+ curline 1))
 		      )))
 	      ))
 	(forward-line 1)
 	(setq curline (+ curline 1))
 	))
-    positions))
+    (reverse positions)))
+
+(defun rest-get-hierarchy (&optional ignore)
+  "Returns a list of decorations that represents the hierarchy of
+  section titles in the file.
+ 
+  If the line number in IGNORE is specified, the decoration found
+  on that line (if there is one) is not taken into account when
+  building the hierarchy."
+  (let ((all (rest-find-all-decorations)))
+    (setq all (assq-delete-all ignore all))
+    (rest-infer-hierarchy (mapcar 'cdr all))))
+
+(defun rest-infer-hierarchy (decorations)
+  "Build a hierarchy of decorations using the list of given decorations.
+
+  This function expects a list of (char, style, indent)
+  decoration specifications, in order that they appear in a file,
+  and will infer a hierarchy of section levels by removing
+  decorations that have already been seen in a forward traversal of the 
+  decorations, comparing just the character and style.
+
+  Similarly returns a list of (char, style, indent), where each
+  list element should be unique."
+
+  (let ((hierarchy-alist (list)))
+    (dolist (x decorations)
+      (let ((char (car x))
+	    (style (cadr x))
+	    (indent (caddr x)))
+	(if (not (assoc (cons char style) hierarchy-alist))
+	    (progn
+	      (setq hierarchy-alist 
+		    (append hierarchy-alist 
+			    (list (cons (cons char style) x))))
+	      ))
+	))
+    (mapcar 'cdr hierarchy-alist)
+    ))
 
 (defun rest-get-decoration (&optional point)
   "Looks around point and finds the characteristics of the
@@ -737,7 +790,7 @@ of the right hand fingers and the binding is unused in text-mode.
 
   A point can be specified to go to the given location before
   extracting the decoration."
- 
+
   (let (char style indent)
     (save-excursion
       (if point (goto-char point))
@@ -751,7 +804,7 @@ of the right hand fingers and the binding is unused in text-mode.
 	(beginning-of-line)
 	(cond
 	 ;; No decoration found, leave all return values nil.
-	 ((equal ou '(nil nil))) 
+	 ((equal ou '(nil nil)))
 
 	 ;; Overline only, leave all return values nil.
 	 ;;
@@ -779,38 +832,66 @@ of the right hand fingers and the binding is unused in text-mode.
     (list char style indent)))
 
 
+(defun rest-display-sections-hierarchy (&optional decorations)
+  "Display the current file's section title decorations hierarchy.
+  This function expects a list of (char, style, indent) triples."
+  (interactive)
+  
+  (if (not decorations) 
+      (setq decorations (rest-get-hierarchy)))
+  (with-output-to-temp-buffer "*rest section hierarchy*"
+    (let ((level 1))
+      (with-current-buffer standard-output
+	(dolist (x decorations)
+	  (insert (format "\nSection Level %d" level))
+	  (apply 'rest-update-section x)
+	  (end-of-buffer)
+	  (insert "\n")
+	  (incf level)
+	  ))
+    )))
 
 
+(defun rest-decoration-complete-p (deco &optional point)
+  "Return true if the decoration DECO around POINT is complete."
 
-(global-set-key [(meta ?[)]
-		 (lambda () (interactive)
-		   (message (prin1-to-string 
-;			     (rest-line-homogeneous-p)
-;			     (rest-normalize-cursor-position)
-;			     (rest-get-decoration)
-			     (rest-find-all-decorations)
-			     )))))
+  ;; There is some sectioning
+  ;; already present, so check if the current sectioning is complete and
+  ;; correct.
+  (let* ((char (car deco))
+	 (style (cadr deco))
+	 (indent (caddr deco))
+	 (endcol (save-excursion (end-of-line) (current-column)))
+	 )
+    (if char
+	(let ((exps (concat "^" 
+			    (regexp-quote (make-string (+ endcol indent) char))
+			    "$")))
+	  (and
+	   (save-excursion (forward-line +1)
+			   (beginning-of-line)
+			   (looking-at exps))
+	   (or (not (eq style 'over-and-under))
+	       (save-excursion (forward-line -1)
+			       (beginning-of-line)
+			       (looking-at exps))))
+	  ))
+    ))
 
 
-    chars))
+(setq debug-on-error t)
 
-  (let (chars
-	c
-	(curline 1))
-    (save-excursion
-      (beginning-of-buffer)
-      (while (< (point) (buffer-end 1))
-	(if (not (memq curline ignore-lines))
-	    (progn
-	      (setq c (rest-line-homogeneous-p))
-	      (if c
-		  (progn
-		    (add-to-list 'chars c t)
-		    ))) )
-	(forward-line 1) (setq curline (+ curline 1))
-	))
-    chars))
+(global-set-key 
+ [(control x) (control ?=)]
+ (lambda () (interactive)
+   (message (prin1-to-string
+	     (progn 
+	     (rest-decoration-complete-p)
+	     )))))
 
+
+(global-set-key [(control ?=)] 'rest-adjust-section-decoration)
+(global-set-key [(control x) (control ?=)] 'rest-display-sections-hierarchy)
 
 
 
@@ -944,6 +1025,25 @@ of the right hand fingers and the binding is unused in text-mode.
 (defalias 'rest-adjust-section-title 'rest-adjust-section-decoration)
 
 
+
+;; FIXME: we need a function to display the hierarchical levels in the file
+
+;; FIXME: we should separate the underlining behaviour from the rest
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Generic character repeater function.
@@ -1002,6 +1102,10 @@ column is used (fill-column vs. end of previous/next line)."
 ;; Section movement commands.
 ;;
 
+;; FIXME: these should be using the new decoration detection functions
+
+
+
 ;; Note: this is not quite correct, the definition is any non alpha-numeric
 ;; character.
 (defun rest-title-char-p (c)
@@ -1054,3 +1158,6 @@ column is used (fill-column vs. end of previous/next line)."
 
 
 (provide 'restructuredtext)
+
+
+

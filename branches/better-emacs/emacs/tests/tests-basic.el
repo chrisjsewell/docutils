@@ -148,6 +148,46 @@ Du bon vin tous les jours.
 "
 )
 
+;;------------------------------------------------------------------------------
+(between
+"
+Line 1
+@
+Line 2
+
+"
+"
+@Line 1
+
+Line 2
+
+"
+)
+
+;;------------------------------------------------------------------------------
+(between-2
+"
+=====================================
+   Project Idea: Panorama Stitcher
+====================================
+
+:Author: Martin Blais <blais@furius.ca>
+@
+Another Title
+=============
+"
+"
+=====================================
+   Project Idea: Panorama Stitcher
+====================================
+
+@:Author: Martin Blais <blais@furius.ca>
+
+Another Title
+=============
+"
+)
+
 ))
 
 
@@ -314,6 +354,111 @@ Du bon vin to@us les jours
 
 
 
+(setq text-1
+"===============================
+   Project Idea: My Document
+===============================
+
+:Author: Martin Blais
+
+Introduction
+============
+
+This is the introduction.
+
+Notes
+-----
+
+Some notes.
+
+Main Points
+===========
+
+Yep.
+
+Super Point
+-----------
+
+~~~~~~~~~~~
+@ Sub Point
+~~~~~~~~~~~
+
+Isn't this fabulous?
+
+Conclusion
+==========
+
+That's it, really.
+
+")
+
+;; ~~~~~~~~~~~~~~~~~~
+;;  Buggy Decoration
+;; ~~~~~~
+;;
+;; ~~~~~~~~~~~~
+;;  Decoration
+;;
+;;
+;; ==========
+
+(setq rest-find-all-decorations-tests
+      `(
+ ;;------------------------------------------------------------------------------
+	(basic-1 ,text-1
+		 ((2 61 over-and-under 3)
+		  (7 61 simple 0)
+		  (12 45 simple 0)
+		  (17 61 simple 0)
+		  (22 45 simple 0)
+		  (26 126 over-and-under 1)
+		  (31 61 simple 0))
+		 )
+	))
+
+
+(progn
+  (regression-test-compare-expect-values
+   "Test finding all the decorations in a file."
+   rest-find-all-decorations-tests 'rest-find-all-decorations nil))
+
+
+
+
+(setq rest-get-hierarchy-tests
+      `(
+ ;;------------------------------------------------------------------------------
+	(basic-1 ,text-1
+		 ((61 over-and-under 3)
+		  (61 simple 0)
+		  (45 simple 0)
+		  (126 over-and-under 1))
+		 )
+	))
+
+(progn
+  (regression-test-compare-expect-values
+   "Test finding the hierarchy of sections in a file."
+   rest-get-hierarchy-tests 'rest-get-hierarchy nil))
+
+
+
+
+(setq rest-get-hierarchy-ignore-tests
+      `(
+ ;;------------------------------------------------------------------------------
+	(basic-1 ,text-1
+		 ((61 over-and-under 3)
+		  (61 simple 0)
+		  (45 simple 0))
+		 )
+	))
+
+(progn
+  (regression-test-compare-expect-values
+   "Test finding the hierarchy of sections in a file, ignoring lines."
+   rest-get-hierarchy-ignore-tests
+   (lambda () (rest-get-hierarchy (rest-current-line))) nil))
 
 
 
@@ -321,12 +466,20 @@ Du bon vin to@us les jours
 
 
 
+(setq rest-decoration-complete-p-tests
+  '(
+;;------------------------------------------------------------------------------
+(complete
+"
+@Vaudou
+======
+" t (?= simple 0))
+))
 
-
-
-
-
-
+(progn
+  (regression-test-compare-expect-values
+   "Tests for predicate for one char line."
+   rest-decoration-complete-p-tests 'rest-decoration-complete-p nil))
 
 
 
