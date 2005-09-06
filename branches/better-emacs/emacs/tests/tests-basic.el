@@ -321,8 +321,6 @@ Du bon vin tous les jours
 (?~ over-and-under 0))
 
 
-
-
 ;;------------------------------------------------------------------------------
 (not-beginning
 "
@@ -332,6 +330,17 @@ Du bon vin to@us les jours
 
 "
 (?= simple 0))
+
+;;------------------------------------------------------------------------------
+(over-over-and-under
+"
+@
+=========================
+Du bon vin tous les jours
+=========================
+"
+(nil nil 0))
+
 
 ))
 
@@ -469,16 +478,158 @@ That's it, really.
 (setq rest-decoration-complete-p-tests
   '(
 ;;------------------------------------------------------------------------------
-(complete
+(nodec
+"
+
+@Vaudou
+
+" nil ((?= simple 0)))
+
+;;------------------------------------------------------------------------------
+(complete-simple
 "
 @Vaudou
 ======
-" t (?= simple 0))
+" t ((?= simple 0)))
+
+;;------------------------------------------------------------------------------
+(complete-over-and-under
+"
+======
+@Vaudou
+======
+" t ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(complete-over-and-under-indent
+"
+==========
+@  Vaudou
+==========
+" t ((?= over-and-under 2)))
+
+;;------------------------------------------------------------------------------
+(incomplete-simple-short
+"
+@Vaudou
+=====
+" nil ((?= simple 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-simple-long
+"
+@Vaudou
+=======
+" nil ((?= simple 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-simple-mixed
+"
+@Vaudou
+===-==
+" nil ((?= simple 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-over-and-under-1
+"
+======
+@Vaudou
+=====
+" nil ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-over-and-under-2
+"
+=====
+@Vaudou
+======
+" nil ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-over-and-under-mixed-1
+"
+======
+@Vaudou
+===-==
+" nil ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-over-and-under-mixed-2
+"
+===-==
+@Vaudou
+======
+" nil ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-over-only
+"
+======
+@Vaudou
+
+" nil ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-mixed
+"
+======
+@Vaudou
+------
+" nil ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-over-and-under-1
+"
+==========
+  @Vaudou
+=========
+" nil ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-over-and-under-2
+"
+=========
+  @Vaudou
+==========
+" nil ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-over-and-under-mixed-1
+"
+==========
+  @Vaudou
+===-======
+" nil ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-over-and-under-mixed-2
+"
+===-======
+  @Vaudou
+==========
+" nil ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-over-only
+"
+==========
+  @Vaudou
+
+" nil ((?= over-and-under 0)))
+
+;;------------------------------------------------------------------------------
+(incomplete-mixed
+"
+==========
+  @Vaudou
+----------
+" nil ((?= over-and-under 0)))
+
 ))
 
 (progn
   (regression-test-compare-expect-values
-   "Tests for predicate for one char line."
+   "Tests for completeness predicate."
    rest-decoration-complete-p-tests 'rest-decoration-complete-p nil))
 
 
@@ -498,66 +649,68 @@ That's it, really.
 
 
 
-(setq rest-find-last-section-char-tests
-  '(
-;;------------------------------------------------------------------------------
-(simple "
-Simple Title
-------------
-@
-" ?-)
-;;------------------------------------------------------------------------------
-(simple2 "
-Simple Title1
-=============
-
-Simple Title
-------------
-@
-" ?-)
-))
-
-(progn
-  (regression-test-compare-expect-values
-   "Tests for predicate for one char line."
-   rest-find-last-section-char-tests
-   'rest-find-last-section-char)
-   nil)
 
 
-
-
-(setq rest-current-section-char-tests
-  '(
-;;------------------------------------------------------------------------------
-(simple "
-Simple Title
-------------
-@
-" ?-)
-;;------------------------------------------------------------------------------
-(incomplete "
-Simple Title
----------
-@
-" ?-)
-;;------------------------------------------------------------------------------
-(over-and-under "
-================
-  Simple Title
-================
-@
-" ?=)
-))
-
-(progn
-  (regression-test-compare-expect-values
-   "Tests for predicate for one char line."
-   rest-current-section-char-tests
-   (lambda () (rest-current-section-char (point)))
-   t))
-
-
+; (setq rest-find-last-section-char-tests
+;   '(
+; ;;------------------------------------------------------------------------------
+; (simple "
+; Simple Title
+; ------------
+; @
+; " ?-)
+; ;;------------------------------------------------------------------------------
+; (simple2 "
+; Simple Title1
+; =============
+; 
+; Simple Title
+; ------------
+; @
+; " ?-)
+; ))
+; 
+; (progn
+;   (regression-test-compare-expect-values
+;    "Tests finding the last decoration."
+;    rest-find-last-section-char-tests
+;    'rest-find-last-section-char)
+;    nil)
+; 
+; 
+; 
+; 
+; (setq rest-current-section-char-tests
+;   '(
+; ;;------------------------------------------------------------------------------
+; (simple "
+; Simple Title
+; ------------
+; @
+; " ?-)
+; ;;------------------------------------------------------------------------------
+; (incomplete "
+; Simple Title
+; ---------
+; @
+; " ?-)
+; ;;------------------------------------------------------------------------------
+; (over-and-under "
+; ================
+;   Simple Title
+; ================
+; @
+; " ?=)
+; ))
+; 
+; (progn
+;   (regression-test-compare-expect-values
+;    "Tests finding the current decoration."
+;    rest-current-section-char-tests
+;    (lambda () (rest-current-section-char (point)))
+;    t))
+; 
+; 
 
 ;;; FIXME continue here, write more tests.
 

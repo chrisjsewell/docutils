@@ -93,7 +93,7 @@ contents if they do not match."
 
   (let (actual)
     ;; Run the section title update command n times.
-    (setq actual (funcall fun))
+    (setq actual (apply fun testargs))
     
     ;; Compare the buffer output with the expected text.
     (if (not (equal actual expected))
