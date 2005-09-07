@@ -17,9 +17,9 @@
 ;; hook. Something like this::
 ;;
 ;;   (defun user-rst-mode-hook ()
-;;      (local-set-key [(control ?=)] 
+;;      (local-set-key [(control ?=)]
 ;;                     'rest-adjust-section-decoration)
-;;      (local-set-key [(control x) (control ?=)] 
+;;      (local-set-key [(control x) (control ?=)]
 ;;                     'rest-display-sections-hierarchy)
 ;;     )
 ;;   (add-hook 'text-mode-hook 'user-rst-mode-hook)
@@ -182,13 +182,34 @@ the style are compared, the indentation does not matter."
        (eq (cadr deco1) (cadr deco2))))
 
 
-(defun rest-suggest-new-decoration (alldecos)
-  "Suggest a new, different decoration, different from all that
-have been seen."
+(defun rest-get-decoration-match (hier deco)
+  "Returns the index (level) of the decoration in the given hierarchy.
+This basically just searches for the item using the appropriate
+comparison and returns the index.  We return nil if the item is
+not found."
+  (let ((cur hier))
+    (while (and cur (not (rest-compare-decorations (car cur) deco)))
+      (setq cur (cdr cur)))
+    cur))
 
+
+(defun rest-suggest-new-decoration (alldecos &optional prev)
+  "Suggest a new, different decoration, different from all that
+have been seen.
+
+   ALLDECOS is the set of all decorations, including the line
+   numbers.  PREV is the optional previous decoration, in order
+   to suggest a better match."
+  
   ;; For all the preferred decorations...
-  (let ((curpotential rest-preferred-decorations))
-    (while 
+  (let* (
+	 ;; If 'prev' is given, reorder the list to start searching after the match.
+	 (fplist 
+	  (cdr (rest-get-decoration-match rest-preferred-decorations prev)))
+	 
+	 ;; List of candidates to search.
+	 (curpotential (append fplist rest-preferred-decorations)))
+    (while
 	;; For all the decorations...
 	(let ((cur alldecos)
 	      found)
@@ -198,7 +219,7 @@ have been seen."
 		(setq found (car curpotential))
 	      (setq cur (cdr cur))))
 	  found)
-      
+
       (setq curpotential (cdr curpotential)))
 
     (copy-list (car curpotential))))
@@ -240,7 +261,12 @@ have been seen."
       ;; Remove previous line if it consists only of a single repeated character
       (save-excursion
         (forward-line -1)
-        (and (rest-line-homogeneous-p 1)
+	(print (save-excursion (forward-line -1)
+			       (rest-get-decoration)))
+	(and (rest-line-homogeneous-p 1)
+	     ;; Avoid removing the underline of a title right above us.
+	     (save-excursion (forward-line -1)
+			     (not (car (rest-get-decoration))))
              (kill-line 1)))
 
       ;; Remove following line if it consists only of a single repeated
@@ -339,7 +365,7 @@ have been seen."
   This function expects a list of (char, style, indent)
   decoration specifications, in order that they appear in a file,
   and will infer a hierarchy of section levels by removing
-  decorations that have already been seen in a forward traversal of the 
+  decorations that have already been seen in a forward traversal of the
   decorations, comparing just the character and style.
 
   Similarly returns a list of (char, style, indent), where each
@@ -352,8 +378,8 @@ have been seen."
             (indent (caddr x)))
         (if (not (assoc (cons char style) hierarchy-alist))
             (progn
-              (setq hierarchy-alist 
-                    (append hierarchy-alist 
+              (setq hierarchy-alist
+                    (append hierarchy-alist
                             (list (cons (cons char style) x))))
               ))
         ))
@@ -364,7 +390,7 @@ have been seen."
 (defun rest-get-hierarchy (&optional alldecos ignore)
   "Returns a list of decorations that represents the hierarchy of
   section titles in the file.
- 
+
   If the line number in IGNORE is specified, the decoration found
   on that line (if there is one) is not taken into account when
   building the hierarchy."
@@ -431,8 +457,8 @@ have been seen."
 
 
 (defun rest-get-decorations-around (&optional alldecos)
-  "Given the list of all decorations (with positions), 
-find the decorations before and after the given point.  
+  "Given the list of all decorations (with positions),
+find the decorations before and after the given point.
 A list of the previous and next decorations is returned."
   (let* ((all (or alldecos (rest-find-all-decorations)))
 	 (curline (rest-current-line))
@@ -464,7 +490,7 @@ A list of the previous and next decorations is returned."
          (endcol (save-excursion (end-of-line) (current-column)))
          )
     (if char
-        (let ((exps (concat "^" 
+        (let ((exps (concat "^"
                             (regexp-quote (make-string (+ endcol indent) char))
                             "$")))
           (and
@@ -546,18 +572,24 @@ Here are the gory details of the algorithm (it seems quite
 complicated, but really, it does the most obvious thing in all
 the particular cases):
 
+Before applying the decoration change, the cursor is placed on
+the closest line that could contain a section title.
+
 Case 1: No Decoration
 ---------------------
 
 If the current line has no decoration around it,
 
 - search backwards for the last previous decoration, and apply
-  the decoration to the current (or preceding, if current is
-  empty) line.  If a negative prefix argument is specified, we
-  search forward instead.
+  the decoration one level lower to the current line.  If there
+  is no defined level below this previous decoration, we suggest
+  the most appropriate of the rest-preferred-decorations.
 
-- if there is no decoration found in the given direction, we
-  use the first of rest-preferred-decorations.
+  If a negative argument is used, we simply use the previous
+  decoration found directly.
+
+- if there is no decoration found in the given direction, we use
+  the first of rest-preferred-decorations.
 
 The prefix argument forces a toggle of the prescribed decoration
 style.
@@ -650,8 +682,14 @@ C-- so a negative argument can be easily specified with a flick
 of the right hand fingers and the binding is unused in text-mode.
 "
   (interactive)
-  
-  (let* ( ;; Check if we're on an underline around a section title, and move the
+
+  (let* (;; Types of prefix arguments
+	 (neg-prefix-arg
+	  (and current-prefix-arg
+	       (< (prefix-numeric-value current-prefix-arg) 0)))
+	 (pos-prefix-arg (and current-prefix-arg (not neg-prefix-arg)))
+
+	 ;; Check if we're on an underline around a section title, and move the
          ;; cursor to the title if this is the case.
          (moved (rest-normalize-cursor-position))
 
@@ -667,61 +705,58 @@ of the right hand fingers and the binding is unused in text-mode.
 
     ;; We've moved the cursor... if we're not looking at some text, we have
     ;; nothing to do.
-    (if (save-excursion (beginning-of-line) 
+    (if (save-excursion (beginning-of-line)
                         (looking-at rest-section-text-regexp))
 	(progn
-	  (cond 
-
+	  (cond
 	   ;;---------------------------------------------------------------------
 	   ;; Case 1: No Decoration
 	   ((and (eq char nil) (eq style nil))
+	    
+	    (let* ((alldecos (rest-find-all-decorations))
 
-	    (let* ((around (rest-get-decorations-around))
+		   (around (rest-get-decorations-around alldecos))
 		   (prev (car around))
-		   (next (cadr around))
-		   cur)
-	      
-	      ;; Choose between the next or prefix.
-	      (setq cur 
-		    (if (not (and current-prefix-arg
-				  (< (prefix-numeric-value current-prefix-arg) 0)))
-			;; Choose the preceding decoration.
-			prev
-		      next))
-	      
-	      (if (not cur)
-		  ;; We could not find the preceding/following decoration,
-		  ;; use the first of the defaults.
-		  (setq cur (copy-list (car rest-preferred-decorations))))
-	      
+		   cur
+
+		   (hier (rest-get-hierarchy alldecos))
+		   )
+
+	      ;; Advance one level down.
+	      (setq cur
+		    (if prev
+			(if (not neg-prefix-arg)
+			    (or (cadr (rest-get-decoration-match hier prev))
+				(rest-suggest-new-decoration hier prev))
+			  prev)
+		      (copy-list (car rest-preferred-decorations))
+		      ))
+
 	      ;; Invert the style if requested.
-	      (if (and current-prefix-arg
-		       (not (< (prefix-numeric-value current-prefix-arg) 0)))
-		  (setcar (cdr cur) (if (eq (cadr cur) 'simple) 
+	      (if pos-prefix-arg
+		  (setcar (cdr cur) (if (eq (cadr cur) 'simple)
 					'over-and-under 'simple)) )
-	      
+
 	      (setq char-new (car cur)
 		    style-new (cadr cur)
 		    indent-new (caddr cur))
 	      ))
-         
+
 	   ;;---------------------------------------------------------------------
 	   ;; Case 2: Incomplete Decoration
 	   ((not (rest-decoration-complete-p curdeco))
 
-	    (if (and current-prefix-arg
-		     (not (< (prefix-numeric-value current-prefix-arg) 0)))
+	    (if pos-prefix-arg
 		(setq style (if (eq style 'simple) 'over-and-under 'simple)))
 
             (setq char-new char
-		  style-new style 
+		  style-new style
 		  indent-new indent))
 
 	   ;;---------------------------------------------------------------------
 	   ;; Case 3: Complete Existing Decoration
 	   (t
-	    (if (and current-prefix-arg
-		     (not (< (prefix-numeric-value current-prefix-arg) 0)))
+	    (if pos-prefix-arg
 
 		;; Simply switch the style of the current decoration.
 		(setq char-new char
@@ -730,40 +765,40 @@ of the right hand fingers and the binding is unused in text-mode.
 
 	      ;; Else, we rotate, ignoring the decoration around the current
 	      ;; line...
-	      (let* ((alldecos (rest-get-hierarchy nil (rest-current-line)))
+	      (let* ((alldecos (rest-find-all-decorations))
+
+		     (hier (rest-get-hierarchy alldecos (rest-current-line)))
+		     
+		     ;; Suggestion, in case we need to come up with something
+		     ;; new
+		     (suggestion (rest-suggest-new-decoration
+				  hier
+				  (car (rest-get-decorations-around alldecos))))
 
 		     ;; Build a new list of decorations for the rotation.
 		     (rotdecos
-		      (append alldecos
-			      (filter 'identity
-				      (list
-				       ;; Suggest a new decoration.
-;;FIXME use previous decoration to find better suggestion
+		      (append
+		       hier
+		       (filter 'identity
+			       (list
+				;; Suggest a new decoration.
+				suggestion
+				;; If nothing to suggest, use first decoration.
+				(car hier)))))
 
-				       (rest-suggest-new-decoration alldecos)
-
-				       ;; If nothing to suggest, use first
-				       ;; decoration.
-				       (car alldecos)))))
-
-		     (negarg 
-		      (and current-prefix-arg
-			   (< (prefix-numeric-value current-prefix-arg) 0)))
-		   
 		     (nextdeco (or
 				;; Search for next decoration.
-				(cadr 
-				 (let ((cur (if negarg (reverse rotdecos) rotdecos))
+				(cadr
+				 (let ((cur (if neg-prefix-arg rotdecos (reverse rotdecos)))
 				       found)
 				   (while (and cur
 					       (not (and (eq char (caar cur))
 							 (eq style (cadar cur)))))
 				     (setq cur (cdr cur)))
 				   cur))
-			      
+
 				;; If not found, take the first of all decorations.
-;;FIXME use previous decoration to find better suggestion
-				(rest-suggest-new-decoration alldecos)
+				suggestion
 				))
 		     )
 
@@ -774,7 +809,7 @@ of the right hand fingers and the binding is unused in text-mode.
 
 		)))
 	   )
-		 
+
 	  ;; Override indent with present indent!
 	  (setq indent-new (if (> indent 0) indent indent-new))
 
@@ -789,7 +824,7 @@ of the right hand fingers and the binding is unused in text-mode.
     (if (not (= moved 0))
         (progn (forward-line (- moved))
                (end-of-line)))
-    
+
     ))
 
 ;; Maintain an alias for compatibility.
@@ -800,8 +835,8 @@ of the right hand fingers and the binding is unused in text-mode.
   "Display the current file's section title decorations hierarchy.
   This function expects a list of (char, style, indent) triples."
   (interactive)
-  
-  (if (not decorations) 
+
+  (if (not decorations)
       (setq decorations (rest-get-hierarchy)))
   (with-output-to-temp-buffer "*rest section hierarchy*"
     (let ((level 1))
@@ -978,4 +1013,9 @@ column is used (fill-column vs. end of previous/next line)."
 
 
 (provide 'restructuredtext)
+
+
+
+;; FIXME: allow promoting or downgrading entire regions of the code, this should
+;; be easy now.
 

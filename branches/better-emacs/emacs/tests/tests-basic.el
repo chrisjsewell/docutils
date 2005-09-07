@@ -703,4 +703,3 @@ Next
    "Tests getting the decorations around a point."
    rest-get-decorations-around-tests 'rest-get-decorations-around nil))
 
-
