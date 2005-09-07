@@ -82,7 +82,6 @@ Du bon vin tous les jours.
 
 @Du bon vin tous les jours.
 -----------
-
 "
 )
 
@@ -401,6 +400,21 @@ That's it, really.
 
 ")
 
+
+(setq text-2
+"
+
+Previous
+--------
+
+Current@
+~~~~~~~
+
+Next
+++++
+
+")
+
 ;; ~~~~~~~~~~~~~~~~~~
 ;;  Buggy Decoration
 ;; ~~~~~~
@@ -423,6 +437,13 @@ That's it, really.
 		  (26 126 over-and-under 1)
 		  (31 61 simple 0))
 		 )
+
+	(basic-2 ,text-2
+		 ((3 45 simple 0)
+		  (6 126 simple 0)
+		  (9 43 simple 0))
+		 )
+
 	))
 
 
@@ -467,7 +488,7 @@ That's it, really.
   (regression-test-compare-expect-values
    "Test finding the hierarchy of sections in a file, ignoring lines."
    rest-get-hierarchy-ignore-tests
-   (lambda () (rest-get-hierarchy (rest-current-line))) nil))
+   (lambda () (rest-get-hierarchy nil (rest-current-line))) nil))
 
 
 
@@ -618,7 +639,7 @@ That's it, really.
 " nil ((?= over-and-under 0)))
 
 ;;------------------------------------------------------------------------------
-(incomplete-mixed
+(incomplete-mixed-2
 "
 ==========
   @Vaudou
@@ -644,73 +665,42 @@ That's it, really.
 
 
 
+(setq rest-get-decorations-around-tests
+  '(
+;;------------------------------------------------------------------------------
+(simple
+"
 
+Previous
+--------
 
+@Current
 
+Next
+++++
 
+" ((?- simple 0) (?+ simple 0)))
 
+;;------------------------------------------------------------------------------
+(simple-2
+"
 
+Previous
+--------
 
-; (setq rest-find-last-section-char-tests
-;   '(
-; ;;------------------------------------------------------------------------------
-; (simple "
-; Simple Title
-; ------------
-; @
-; " ?-)
-; ;;------------------------------------------------------------------------------
-; (simple2 "
-; Simple Title1
-; =============
-; 
-; Simple Title
-; ------------
-; @
-; " ?-)
-; ))
-; 
-; (progn
-;   (regression-test-compare-expect-values
-;    "Tests finding the last decoration."
-;    rest-find-last-section-char-tests
-;    'rest-find-last-section-char)
-;    nil)
-; 
-; 
-; 
-; 
-; (setq rest-current-section-char-tests
-;   '(
-; ;;------------------------------------------------------------------------------
-; (simple "
-; Simple Title
-; ------------
-; @
-; " ?-)
-; ;;------------------------------------------------------------------------------
-; (incomplete "
-; Simple Title
-; ---------
-; @
-; " ?-)
-; ;;------------------------------------------------------------------------------
-; (over-and-under "
-; ================
-;   Simple Title
-; ================
-; @
-; " ?=)
-; ))
-; 
-; (progn
-;   (regression-test-compare-expect-values
-;    "Tests finding the current decoration."
-;    rest-current-section-char-tests
-;    (lambda () (rest-current-section-char (point)))
-;    t))
-; 
-; 
+Current@
+~~~~~~~
 
-;;; FIXME continue here, write more tests.
+Next
+++++
+
+" ((?- simple 0) (?+ simple 0)))
+
+))
+
+(progn
+  (regression-test-compare-expect-values
+   "Tests getting the decorations around a point."
+   rest-get-decorations-around-tests 'rest-get-decorations-around nil))
+
 

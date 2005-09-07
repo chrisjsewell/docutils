@@ -61,8 +61,9 @@ Some Tit@le
 
 "
 "
-Some Title
-==========
+============
+ Some Title
+============
 
 ")
 
@@ -122,7 +123,7 @@ Some Title
 )
 
 ;;------------------------------------------------------------------------------
-(nodec-first-forced
+(nodec-first-forced-2
 "
    Some Title@
 
@@ -170,7 +171,7 @@ Previous Title
 --------------
 
 Some Title
-~~~~~~~~~~
+----------
 
 Next Title
 ~~~~~~~~~~
@@ -191,9 +192,9 @@ Some Title@
 Previous Title
 --------------
 
-------------
- Some Title
-------------
+----------
+Some Title
+----------
 
 "
 (t))
@@ -211,8 +212,9 @@ Previous Title
 Previous Title
 --------------
 
-Some Title
-----------
+--------------
+  Some Title
+--------------
 
 "
 (t))
@@ -231,9 +233,8 @@ Previous Title
 Previous Title
 --------------
 
----------------
-   Some Title
----------------
+Some Title
+----------
 
 "
 )
@@ -270,6 +271,7 @@ Previous Title@
 "
 Previous Title
 --------------
+
 "
 )
 
@@ -282,6 +284,7 @@ Previous Title
 "
 Previous Title
 --------------
+
 "
 )
 
@@ -292,8 +295,10 @@ Previous Title
 -@
 "
 "
-Previous Title
---------------
+================
+ Previous Title
+================
+
 "
 )
 
@@ -306,6 +311,7 @@ Previous Title
 "
 Previous Title
 --------------
+
 "
 )
 
@@ -320,6 +326,7 @@ Previous Title
 ----------------
  Previous Title
 ----------------
+
 "
 )
 
@@ -334,6 +341,7 @@ Previous Title
 ----------------
  Previous Title
 ----------------
+
 "
 )
 
@@ -348,6 +356,7 @@ Previous Title
 ----------------
  Previous Title
 ----------------
+
 "
 )
 
@@ -358,9 +367,10 @@ Previous Title
 ----------@
 "
 "
-----------------
- Previous Title
-----------------
+--------------
+Previous Title
+--------------
+
 "
 (t))
 
@@ -374,6 +384,7 @@ Previous Title
 "
 Previous Title
 --------------
+
 "
 (t))
 
@@ -387,6 +398,7 @@ Previous Title
 "
 Previous Title
 --------------
+
 "
 (t))
 
@@ -507,7 +519,7 @@ My Title@
 ================
 
 SubTitle
---------
+========
 
 ==========
  My Title
@@ -527,7 +539,7 @@ SubTitle
 ========
 
 ==========
- My Title
+ My Title@
 ==========
 
 "
@@ -546,7 +558,7 @@ My Title
 (-1))
 
 ;;------------------------------------------------------------------------------
-(complete-simple-boundary-up
+(complete-simple-boundary-up ;; Note: boundary-up does not exist.
 "
 ================
  Document Title
@@ -566,9 +578,8 @@ My Title@
 SubTitle
 ========
 
-==========
- My Title
-==========
+My Title
+========
 
 "
 (-1))
@@ -629,6 +640,7 @@ Document Title@
 ================
  Document Title@
 ================
+
 "
 )
 
@@ -641,7 +653,8 @@ Document Title@"
 
 ================
  Document Title@
-================"
+================
+"
 )
 
 ;;
@@ -812,5 +825,5 @@ Some Title
    rest-adjust-section-tests
    (lambda ()
      (call-interactively 'rest-adjust-section-title))
-   t))
+   nil))
 

@@ -65,20 +65,31 @@ contents if they do not match."
       (funcall fun)))
 
   ;; Compare the buffer output with the expected text.
-  (let (;; Get the actual buffer contents.
-	(actual (buffer-string))
-	;; Get the expected location of point
-	(exppoint 
-	 (+ (string-match regression-point-char expected) 1))
-	)
-    (if (not (string= expected actual))
+  (let* (;; Get the actual buffer contents.
+	 (actual (buffer-string))
+	 ;; Get the expected location of point
+	 (exppoint (string-match regression-point-char expected))
+	 
+	 (expected-clean (if exppoint
+			     (concat (substring expected 0 exppoint)
+				     (substring expected (+ 1 exppoint)))
+			   expected))
+
+	 ;; Adjust position of point vs. string index.
+	 (exppoint (and exppoint (+ exppoint 1)))
+
+	 )
+
+    (if (not (string= expected-clean actual))
 	;; Error! Test failed.
-	(format "Error: Test %s failed: expected\n%sgot\n%s"
-		testname expected actual))
-    (if (and exppoint (not (equal exppoint (point))))
-	;; Error! Test failed, final position of cursor is not the same.
-	(format "Error: Test %s failed: cursor badly placed." testname))
-    ))
+	(format "Error: Test %s failed: \nexpected\n%s\ngot\n%s"
+		testname 
+		(prin1-to-string expected-clean) 
+		(prin1-to-string actual))
+      (if (and exppoint (not (equal exppoint (point))))
+	  ;; Error! Test failed, final position of cursor is not the same.
+	  (format "Error: Test %s failed: cursor badly placed." testname))
+    )))
 
 (defun regression-test-compare-expect-buffer 
   (suitename testlist fun &optional continue)
