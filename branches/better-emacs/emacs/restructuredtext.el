@@ -9,25 +9,28 @@
 ;; Installation instructions
 ;; -------------------------
 ;;
-;; Add this line to your .emacs file::
+;; Add this line to your .emacs file and bind the versatile sectioning commands
+;; in text mode, like this::
 ;;
 ;;   (require 'restructuredtext)
+;;   (add-hook 'text-mode-hook 'rest-text-mode-hook)
 ;;
-;; You should bind the versatile sectioning command to some key in the text-mode
-;; hook. Something like this::
+;; The keys it defines are:
 ;;
-;;   (defun user-rst-mode-hook ()
-;;      (local-set-key [(control ?=)]
-;;                     'rest-adjust-section-decoration)
-;;      (local-set-key [(control x) (control ?=)]
-;;                     'rest-display-sections-hierarchy)
-;;     )
-;;   (add-hook 'text-mode-hook 'user-rst-mode-hook)
+;;    C-= : updates or rotates the section title around point or
+;;          promotes/demotes the decorations within the region (see full details
+;;          below).
 ;;
-;; Other specialized and more generic functions are also available.
-;; Note that C-= is a good binding, since it allows you to specify a negative
-;; arg easily with C-- C-= (easy to type), as well as ordinary prefix arg with
-;; C-u C-=.
+;;          Note that C-= is a good binding, since it allows you to specify a
+;;          negative arg easily with C-- C-= (easy to type), as well as ordinary
+;;          prefix arg with C-u C-=.
+;;
+;;    C-x C-= : displays the hierarchy of title decorations from this file.
+;;
+;;    C-M-{, C-M-} : navigate between section titles.
+;;
+;; Other specialized and more generic functions are also available (see source
+;; code).
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generic Filter function.
@@ -116,6 +119,14 @@ is for which (pred elem) is true)"
 ;; adjustment (unless we cycle, in which case we use the indent that has been
 ;; found previously).
 
+(defun rest-text-mode-hook ()
+  "Default text mode hook for rest."
+  (local-set-key [(control ?=)] 'rest-adjust-section-title)
+  (local-set-key [(control x)(control ?=)] 'rest-display-sections-hierarchy)
+  (local-set-key [(control meta ?{)] 'rest-backward-section)
+  (local-set-key [(control meta ?})] 'rest-forward-section)
+  )
+
 (defcustom rest-preferred-decorations '( (?= over-and-under 1)
 					 (?= simple 0)
 					 (?- simple 0)
@@ -137,7 +148,7 @@ is for which (pred elem) is true)"
   decoration style to a over-and-under decoration style.")
 
 
-(defcustom rest-section-text-regexp "^[ \t]*\\S-+"
+(defcustom rest-section-text-regexp "^[ \t]*\\S-*\\w\\S-*"
   "Regular expression for valid section title text.")
 
 
@@ -222,7 +233,7 @@ have been seen.
 
       (setq curpotential (cdr curpotential)))
 
-    (copy-list (car curpotential))))
+    (copy-list (car curpotential)) ))
 
 
 (defun rest-update-section (char style &optional indent)
@@ -261,12 +272,10 @@ have been seen.
       ;; Remove previous line if it consists only of a single repeated character
       (save-excursion
         (forward-line -1)
-	(print (save-excursion (forward-line -1)
-			       (rest-get-decoration)))
 	(and (rest-line-homogeneous-p 1)
 	     ;; Avoid removing the underline of a title right above us.
 	     (save-excursion (forward-line -1)
-			     (not (car (rest-get-decoration))))
+			     (not (looking-at rest-section-text-regexp)))
              (kill-line 1)))
 
       ;; Remove following line if it consists only of a single repeated
@@ -418,33 +427,41 @@ have been seen.
       (if point (goto-char point))
       (beginning-of-line)
       (if (looking-at rest-section-text-regexp)
-          (let (ou)
-            (save-excursion
-              (setq ou (mapcar
-                        (lambda (x)
-                          (forward-line x)
-                          (rest-line-homogeneous-p))
-                        '(-1 2))))
+          (let* ((over (save-excursion 
+			 (forward-line -1)
+			 (rest-line-homogeneous-p)))
 
-            (beginning-of-line)
+		(under (save-excursion 
+			 (forward-line +1)
+			 (rest-line-homogeneous-p)))
+	        )
+
+	    ;; Check that the line above the overline is not part of a title
+	    ;; above it.
+	    (if (and over
+		     (save-excursion 
+		       (and (equal (forward-line -2) 0)
+			    (looking-at rest-section-text-regexp))))
+		(setq over nil))
+
             (cond
              ;; No decoration found, leave all return values nil.
-             ((equal ou '(nil nil)))
+             ((and (eq over nil) (eq under nil)))
 
              ;; Overline only, leave all return values nil.
              ;;
              ;; Note: we don't return the overline character, but it could perhaps
              ;; in some cases be used to do something.
-             ((and (car ou) (eq (cadr ou) nil)))
+             ((and over (eq under nil)))
 
              ;; Underline only.
-             ((and (cadr ou) (eq (car ou) nil))
-              (setq char (cadr ou)
+             ((and under (eq over nil))
+              (setq char under
                     style 'simple))
 
              ;; Both overline and underline.
              (t
-              (setq char (cadr ou)
+              (setq char under
                     style 'over-and-under))
              )
             )
@@ -480,10 +497,12 @@ A list of the previous and next decorations is returned."
 
 (defun rest-decoration-complete-p (deco &optional point)
   "Return true if the decoration DECO around POINT is complete."
+  ;; Note: we assume that the detection of the overline as being the underline
+  ;; of a preceding title has already been detected, and has been eliminated
+  ;; from the decoration that is given to us.
 
-  ;; There is some sectioning
-  ;; already present, so check if the current sectioning is complete and
-  ;; correct.
+  ;; There is some sectioning already present, so check if the current
+  ;; sectioning is complete and correct.
   (let* ((char (car deco))
          (style (cadr deco))
          (indent (caddr deco))
@@ -851,66 +870,56 @@ of the right hand fingers and the binding is unused in text-mode.
     )))
 
 
-
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Section movement commands.
 ;;
 
-;; FIXME: these should be using the new decoration detection functions
-
-
-;; Note: this is not quite correct, the definition is any non alpha-numeric
-;; character.
-(defun rest-title-char-p (c)
-  "Returns true if the given character is a valid title char."
-  (and (string-match "[-=`:\\.'\"~^_*+#<>!$%&(),/;?@\\\|]"
-                     (char-to-string c)) t))
-
-(defun rest-forward-section ()
-  "Skip to the next restructured text section title."
+(defun rest-forward-section (&optional offset)
+  "Skip to the next restructured text section title.
+  OFFSET specifies how many titles to skip.  Use a negative OFFSET to move
+  backwards in the file (default is to use 1)."
   (interactive)
-  (let* ( (newpoint
-           (save-excursion
-             (forward-char) ;; in case we're right on a title
-             (while
-               (not
-                (and (re-search-forward "^[A-Za-z0-9].*[ \t]*$" nil t)
-                     (reST-title-char-p (char-after (+ (point) 1)))
-                     (looking-at (format "\n%c\\{%d,\\}[ \t]*$"
-                                         (char-after (+ (point) 1))
-                                         (current-column))))))
-             (beginning-of-line)
-             (point))) )
-    (if newpoint (goto-char newpoint)) ))
+  (let* (;; Default value for offset.
+	 (offset (or offset 1)) 
+	 
+	 ;; Get all the decorations in the file, with their line numbers.
+	 (alldecos (rest-find-all-decorations))
+	 
+	 ;; Get the current line.
+	 (curline (rest-current-line))
+	 
+	 (cur alldecos)
+	 (idx 0)
+	 line
+	 )
+
+    ;; Find the index of the "next" decoration w.r.t. to the current line.
+    (while (and cur (< (caar cur) curline))
+      (setq cur (cdr cur))
+      (incf idx))
+    ;; 'cur' is the decoration on or following the current line.
+
+    (if (and (> offset 0) cur (= (caar cur) curline))
+  	(incf idx))
+
+    ;; Find the final index.
+    (setq idx (+ idx (if (> offset 0) (- offset 1) offset)))
+    (setq cur (nth idx alldecos))
+
+    ;; If the index is positive, goto the line, otherwise go to the buffer
+    ;; boundaries.
+    (if (and cur (>= idx 0)) 
+	(goto-line (car cur))
+      (if (> offset 0) (end-of-buffer) (beginning-of-buffer)))
+    ))
 
 (defun rest-backward-section ()
-  "Skip to the previous restructured text section title."
+  "Like rest-forward-section, except move back one title."
   (interactive)
-  (let* ( (newpoint
-           (save-excursion
-             ;;(forward-char) ;; in case we're right on a title
-             (while
-               (not
-                (and (or (backward-char) t)
-                     (re-search-backward "^[A-Za-z0-9].*[ \t]*$" nil t)
-                     (or (end-of-line) t)
-                     (reST-title-char-p (char-after (+ (point) 1)))
-                     (looking-at (format "\n%c\\{%d,\\}[ \t]*$"
-                                         (char-after (+ (point) 1))
-                                         (current-column))))))
-             (beginning-of-line)
-             (point))) )
-    (if newpoint (goto-char newpoint)) ))
+  (rest-forward-section -1))
 
 
-;;------------------------------------------------------------------------------
-;; For backwards compatibility.  Remove at some point.
-(defalias 'reST-title-char-p 'rest-title-char-p)
-(defalias 'reST-forward-title 'rest-forward-section)
-(defalias 'reST-backward-title 'rest-backward-section)
 
 
 
@@ -1017,5 +1026,11 @@ column is used (fill-column vs. end of previous/next line)."
 
 
 ;; FIXME: allow promoting or downgrading entire regions of the code, this should
-;; be easy now.
+;; be easy now.  It should be the same binding, except that if a region is
+;; enabled it should upgrade or downgrade all the decorations within the region.
+
+
+
+;; FIXME: add an option to forego using the file structure in order to make
+;; suggestion, and to always use the preferred decorations to do that.
 
