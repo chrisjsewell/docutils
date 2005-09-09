@@ -30,7 +30,13 @@
 ;;    C-M-{, C-M-} : navigate between section titles.
 ;;
 ;; Other specialized and more generic functions are also available (see source
-;; code).
+;; code).  The most important function provided by this file for section title
+;; adjustments is rest-adjust.
+;;
+;; TODO: 
+;; - Add an option to forego using the file structure in order to make
+;;   suggestion, and to always use the preferred decorations to do that.
+;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generic Filter function.
@@ -121,7 +127,7 @@ is for which (pred elem) is true)"
 
 (defun rest-text-mode-hook ()
   "Default text mode hook for rest."
-  (local-set-key [(control ?=)] 'rest-adjust-section-title)
+  (local-set-key [(control ?=)] 'rest-adjust)
   (local-set-key [(control x)(control ?=)] 'rest-display-sections-hierarchy)
   (local-set-key [(control meta ?{)] 'rest-backward-section)
   (local-set-key [(control meta ?})] 'rest-forward-section)
@@ -148,13 +154,8 @@ is for which (pred elem) is true)"
   decoration style to a over-and-under decoration style.")
 
 
-(defcustom rest-section-text-regexp "^[ \t]*\\S-*\\w\\S-*"
+(defcustom rest-section-text-regexp "^[ \t]*\\S-*[a-zA-Z0-9]\\S-*"
   "Regular expression for valid section title text.")
-
-
-(defun rest-current-line ()
-  "Returns the current line number."
-  (+ (count-lines (point-min) (point)) (if (bolp) 1 0)))
 
 
 (defun rest-line-homogeneous-p (&optional accept-special)
@@ -208,16 +209,16 @@ not found."
   "Suggest a new, different decoration, different from all that
 have been seen.
 
-   ALLDECOS is the set of all decorations, including the line
-   numbers.  PREV is the optional previous decoration, in order
-   to suggest a better match."
-  
+  ALLDECOS is the set of all decorations, including the line
+  numbers.  PREV is the optional previous decoration, in order to
+  suggest a better match."
+
   ;; For all the preferred decorations...
   (let* (
 	 ;; If 'prev' is given, reorder the list to start searching after the match.
-	 (fplist 
+	 (fplist
 	  (cdr (rest-get-decoration-match rest-preferred-decorations prev)))
-	 
+
 	 ;; List of candidates to search.
 	 (curpotential (append fplist rest-preferred-decorations)))
     (while
@@ -427,11 +428,11 @@ have been seen.
       (if point (goto-char point))
       (beginning-of-line)
       (if (looking-at rest-section-text-regexp)
-          (let* ((over (save-excursion 
+          (let* ((over (save-excursion
 			 (forward-line -1)
 			 (rest-line-homogeneous-p)))
 
-		(under (save-excursion 
+		(under (save-excursion
 			 (forward-line +1)
 			 (rest-line-homogeneous-p)))
 	        )
@@ -439,7 +440,7 @@ have been seen.
 	    ;; Check that the line above the overline is not part of a title
 	    ;; above it.
 	    (if (and over
-		     (save-excursion 
+		     (save-excursion
 		       (and (equal (forward-line -2) 0)
 			    (looking-at rest-section-text-regexp))))
 		(setq over nil))
@@ -478,7 +479,7 @@ have been seen.
 find the decorations before and after the given point.
 A list of the previous and next decorations is returned."
   (let* ((all (or alldecos (rest-find-all-decorations)))
-	 (curline (rest-current-line))
+	 (curline (line-number-at-pos))
 	 prev next
 	 (cur all))
 
@@ -524,12 +525,93 @@ A list of the previous and next decorations is returned."
     ))
 
 
-(defun rest-adjust-section-decoration ()
-  "Adjust/rotate the section decoration for the section title around point.
+(defun rest-get-next-decoration 
+  (curdeco hier &optional suggestion reverse-direction)
+  "Get the next decoration for CURDECO, in given hierarchy HIER,
+and suggesting for new decoration SUGGESTION."
+
+  (let* (
+	 (char (car curdeco))
+	 (style (cadr curdeco))
+
+	 ;; Build a new list of decorations for the rotation.
+	 (rotdecos
+	  (append hier
+		  ;; Suggest a new decoration.
+		  (list suggestion
+			;; If nothing to suggest, use first decoration.
+			(car hier)))) )
+    (or
+     ;; Search for next decoration.
+     (cadr
+      (let ((cur (if reverse-direction rotdecos
+		   (reverse rotdecos)))
+	    found)
+	(while (and cur
+		    (not (and (eq char (caar cur))
+			      (eq style (cadar cur)))))
+	  (setq cur (cdr cur)))
+	cur))
+		    
+     ;; If not found, take the first of all decorations.
+     suggestion
+     )))
+
+
+(defun rest-adjust ()
+  "Adjust/rotate the section decoration for the section title
+around point or promote/demote the decorations inside the region,
+depending on if the region is active.  This function is meant to
+be invoked possibly multiple times, and can vary its behaviour
+with a positive prefix argument (toggle style), or with a
+negative prefix argument (alternate behaviour).
 
 This function is the main focus of this module and is a bit of a
-swiss knife.  It is meant as the single function to invoke to
-adjust the decorations of a section title in restructuredtext.
+swiss knife.  It is meant as the single most essential function
+to be bound to invoke to adjust the decorations of a section
+title in restructuredtext.  It tries to deal with all the
+possible cases gracefully and to do `the right thing' in all
+cases.
+
+See the documentations of rest-adjust-decoration and
+rest-promote-region for full details.
+
+Prefix Arguments
+================
+
+The method can take either (but not both) of
+
+a. a (non-negative) prefix argument, which means to toggle the
+   decoration style.  Invoke with C-u prefix for example;
+
+b. a negative numerical argument, which generally inverts the
+   direction of search in the file or hierarchy.  Invoke with C--
+   prefix for example.
+
+"
+  (interactive)
+
+  (let* ( ;; Parse the positive and negative prefix arguments.
+	 (reverse-direction
+	  (and current-prefix-arg
+	       (< (prefix-numeric-value current-prefix-arg) 0)))
+	 (toggle-style
+	  (and current-prefix-arg (not reverse-direction))))
+
+    (if mark-active
+	;; Adjust decorations within region.
+	(rest-promote-region current-prefix-arg)
+      ;; Adjust decoration around point.
+      (rest-adjust-decoration toggle-style reverse-direction))
+    ))
+
+
+(defun rest-adjust-decoration (&optional toggle-style reverse-direction)
+"Adjust/rotate the section decoration for the section title around point.
+
+This function is meant to be invoked possibly multiple times, and
+can vary its behaviour with a true TOGGLE-STYLE argument, or with
+a REVERSE-DIRECTION argument.
 
 General Behaviour
 =================
@@ -570,20 +652,6 @@ The decorations consist in
 See source code for mode details.
 
 
-Prefix Arguments
-================
-
-The method can take either (but not both) of
-
-a. a (non-negative) prefix argument, which generally means to
-   toggle the decoration style.  Invoke with C-u prefix for
-   example;
-
-b. a negative numerical argument, which generally inverts the
-   direction of search in the file or hierarchy.  Invoke with C--
-   prefix for example.
-
-
 Detailed Behaviour Description
 ==============================
 
@@ -604,7 +672,7 @@ If the current line has no decoration around it,
   is no defined level below this previous decoration, we suggest
   the most appropriate of the rest-preferred-decorations.
 
-  If a negative argument is used, we simply use the previous
+  If REVERSE-DIRECTION is true, we simply use the previous
   decoration found directly.
 
 - if there is no decoration found in the given direction, we use
@@ -625,7 +693,7 @@ underlines/overlines to fit exactly the section title.
 If the prefix argument is given, we toggle the style of the
 decoration as well.
 
-A negative argument has no effect in this case.
+REVERSE-DIRECTION has no effect in this case.
 
 Case 3: Complete Existing Decoration
 ------------------------------------
@@ -648,7 +716,7 @@ invocation rolls over to the other end of the hierarchy (i.e. it
 cycles).  This allows you to avoid having to set which character
 to use by always using the
 
-If a negative argument is specified, the effect is to change the
+If REVERSE-DIRECTION is true, the effect is to change the
 direction of rotation in the hierarchy of decorations, thus
 instead going *up* the hierarchy.
 
@@ -698,17 +766,20 @@ Suggested Binding
 
 We suggest that you bind this function on C-=.  It is close to
 C-- so a negative argument can be easily specified with a flick
-of the right hand fingers and the binding is unused in text-mode.
-"
+of the right hand fingers and the binding is unused in text-mode."
   (interactive)
 
-  (let* (;; Types of prefix arguments
-	 (neg-prefix-arg
-	  (and current-prefix-arg
-	       (< (prefix-numeric-value current-prefix-arg) 0)))
-	 (pos-prefix-arg (and current-prefix-arg (not neg-prefix-arg)))
+  ;; If we were invoked directly, parse the prefix arguments into the
+  ;; arguments of the function.
+  (if current-prefix-arg
+      (setq reverse-direction
+	    (and current-prefix-arg
+		 (< (prefix-numeric-value current-prefix-arg) 0))
 
-	 ;; Check if we're on an underline around a section title, and move the
+	    toggle-style
+	    (and current-prefix-arg (not reverse-direction))))
+
+  (let* (;; Check if we're on an underline around a section title, and move the
          ;; cursor to the title if this is the case.
          (moved (rest-normalize-cursor-position))
 
@@ -731,7 +802,7 @@ of the right hand fingers and the binding is unused in text-mode.
 	   ;;---------------------------------------------------------------------
 	   ;; Case 1: No Decoration
 	   ((and (eq char nil) (eq style nil))
-	    
+
 	    (let* ((alldecos (rest-find-all-decorations))
 
 		   (around (rest-get-decorations-around alldecos))
@@ -744,7 +815,7 @@ of the right hand fingers and the binding is unused in text-mode.
 	      ;; Advance one level down.
 	      (setq cur
 		    (if prev
-			(if (not neg-prefix-arg)
+			(if (not reverse-direction)
 			    (or (cadr (rest-get-decoration-match hier prev))
 				(rest-suggest-new-decoration hier prev))
 			  prev)
@@ -752,7 +823,7 @@ of the right hand fingers and the binding is unused in text-mode.
 		      ))
 
 	      ;; Invert the style if requested.
-	      (if pos-prefix-arg
+	      (if toggle-style
 		  (setcar (cdr cur) (if (eq (cadr cur) 'simple)
 					'over-and-under 'simple)) )
 
@@ -765,7 +836,8 @@ of the right hand fingers and the binding is unused in text-mode.
 	   ;; Case 2: Incomplete Decoration
 	   ((not (rest-decoration-complete-p curdeco))
 
-	    (if pos-prefix-arg
+	    ;; Invert the style if requested.
+	    (if toggle-style
 		(setq style (if (eq style 'simple) 'over-and-under 'simple)))
 
             (setq char-new char
@@ -775,7 +847,7 @@ of the right hand fingers and the binding is unused in text-mode.
 	   ;;---------------------------------------------------------------------
 	   ;; Case 3: Complete Existing Decoration
 	   (t
-	    (if pos-prefix-arg
+	    (if toggle-style
 
 		;; Simply switch the style of the current decoration.
 		(setq char-new char
@@ -786,39 +858,17 @@ of the right hand fingers and the binding is unused in text-mode.
 	      ;; line...
 	      (let* ((alldecos (rest-find-all-decorations))
 
-		     (hier (rest-get-hierarchy alldecos (rest-current-line)))
-		     
+		     (hier (rest-get-hierarchy alldecos (line-number-at-pos)))
+
 		     ;; Suggestion, in case we need to come up with something
 		     ;; new
 		     (suggestion (rest-suggest-new-decoration
 				  hier
 				  (car (rest-get-decorations-around alldecos))))
 
-		     ;; Build a new list of decorations for the rotation.
-		     (rotdecos
-		      (append
-		       hier
-		       (filter 'identity
-			       (list
-				;; Suggest a new decoration.
-				suggestion
-				;; If nothing to suggest, use first decoration.
-				(car hier)))))
+		     (nextdeco (rest-get-next-decoration 
+				curdeco hier suggestion reverse-direction))
 
-		     (nextdeco (or
-				;; Search for next decoration.
-				(cadr
-				 (let ((cur (if neg-prefix-arg rotdecos (reverse rotdecos)))
-				       found)
-				   (while (and cur
-					       (not (and (eq char (caar cur))
-							 (eq style (cadar cur)))))
-				     (setq cur (cdr cur)))
-				   cur))
-
-				;; If not found, take the first of all decorations.
-				suggestion
-				))
 		     )
 
 		;; Indent, if present, always overrides the prescribed indent.
@@ -832,7 +882,6 @@ of the right hand fingers and the binding is unused in text-mode.
 	  ;; Override indent with present indent!
 	  (setq indent-new (if (> indent 0) indent indent-new))
 
-	  ;;;(print (list char-new style-new indent-new))
 	  (if (and char-new style-new)
 	      (rest-update-section char-new style-new indent-new))
 	  ))
@@ -847,7 +896,63 @@ of the right hand fingers and the binding is unused in text-mode.
     ))
 
 ;; Maintain an alias for compatibility.
-(defalias 'rest-adjust-section-title 'rest-adjust-section-decoration)
+(defalias 'rest-adjust-section-title 'rest-adjust)
+
+
+(defun rest-promote-region (&optional demote)
+  "Promote the section titles within the region.
+
+With argument DEMOTE or a prefix argument, demote the
+section titles instead.  The algorithm used at the boundaries of
+the hierarchy is similar to that used by rest-adjust-decoration."
+  (interactive)
+
+  (let* ((demote (or current-prefix-arg demote))
+	 (alldecos (rest-find-all-decorations))
+	 (cur alldecos)
+	 
+	 (hier (rest-get-hierarchy alldecos))
+	 (suggestion (rest-suggest-new-decoration hier))
+
+	 (region-begin-line (line-number-at-pos (region-beginning)))
+	 (region-end-line (line-number-at-pos (region-end)))
+
+	 marker-list
+	 )
+
+    ;; Skip the markers that come before the region beginning
+    (while (and cur (< (caar cur) region-begin-line))
+      (setq cur (cdr cur)))
+    
+    ;; Create a list of markers for all the decorations which are found within
+    ;; the region.
+    (save-excursion
+      (let (m line)
+	(while (and cur (< (setq line (caar cur)) region-end-line))
+	  (setq m (make-marker))
+	  (goto-line line)
+	  (push (list (set-marker m (point)) (cdar cur)) marker-list)
+	  (setq cur (cdr cur)) ))
+
+      ;; Apply modifications.
+      (let (nextdeco)
+	(dolist (p marker-list)
+	  ;; Go to the decoration to promote.
+	  (goto-char (car p))
+	  
+	  ;; Rotate the next decoration.
+	  (setq nextdeco (rest-get-next-decoration 
+			  (cadr p) hier suggestion demote))
+	  
+	  ;; Update the decoration.
+	  (apply 'rest-update-section nextdeco)
+	  
+	  ;; Clear marker to avoid slowing down the editing after we're done.
+	  (set-marker (car p) nil)
+	  ))
+      (setq deactivate-mark nil) 
+    )))
+
 
 
 (defun rest-display-sections-hierarchy (&optional decorations)
@@ -881,14 +986,14 @@ of the right hand fingers and the binding is unused in text-mode.
   backwards in the file (default is to use 1)."
   (interactive)
   (let* (;; Default value for offset.
-	 (offset (or offset 1)) 
-	 
+	 (offset (or offset 1))
+
 	 ;; Get all the decorations in the file, with their line numbers.
 	 (alldecos (rest-find-all-decorations))
-	 
+
 	 ;; Get the current line.
-	 (curline (rest-current-line))
-	 
+	 (curline (line-number-at-pos))
+
 	 (cur alldecos)
 	 (idx 0)
 	 line
@@ -909,7 +1014,7 @@ of the right hand fingers and the binding is unused in text-mode.
 
     ;; If the index is positive, goto the line, otherwise go to the buffer
     ;; boundaries.
-    (if (and cur (>= idx 0)) 
+    (if (and cur (>= idx 0))
 	(goto-line (car cur))
       (if (> offset 0) (end-of-buffer) (beginning-of-buffer)))
     ))
@@ -1022,15 +1127,3 @@ column is used (fill-column vs. end of previous/next line)."
 
 
 (provide 'restructuredtext)
-
-
-
-;; FIXME: allow promoting or downgrading entire regions of the code, this should
-;; be easy now.  It should be the same binding, except that if a region is
-;; enabled it should upgrade or downgrade all the decorations within the region.
-
-
-
-;; FIXME: add an option to forego using the file structure in order to make
-;; suggestion, and to always use the preferred decorations to do that.
-

@@ -10,7 +10,7 @@
 ;;
 
 ;; Define tests.
-(setq rest-adjust-section-tests 
+(setq rest-adjust-decoration-tests
   '(
 ;;------------------------------------------------------------------------------
 (nodec-first-simple-1
@@ -415,6 +415,18 @@ Previous Title
 "
 )
 
+;;------------------------------------------------------------------------------
+(incomplete-top-2
+"=======
+Document Title@
+==============
+"
+"==============
+Document Title
+==============
+
+"
+)
 
 ;;------------------------------------------------------------------------------
 (complete-simple
@@ -761,8 +773,8 @@ Document Title2
 (progn
   (regression-test-compare-expect-buffer
    "Test interactive adjustment of sections."
-   rest-adjust-section-tests
+   rest-adjust-decoration-tests
    (lambda ()
-     (call-interactively 'rest-adjust-section-title))
+     (call-interactively 'rest-adjust))
    nil))
 

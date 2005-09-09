@@ -545,7 +545,7 @@ Next
   (regression-test-compare-expect-values
    "Test finding the hierarchy of sections in a file, ignoring lines."
    rest-get-hierarchy-ignore-tests
-   (lambda () (rest-get-hierarchy nil (rest-current-line))) nil))
+   (lambda () (rest-get-hierarchy nil (line-number-at-pos))) nil))
 
 
 
