@@ -19,20 +19,36 @@ from docutils import ApplicationError, DataError
 from docutils.transforms import Transform, TransformError
 
 
-class WriterFilter(Transform):
+class Filter(Transform):
 
     """
-    Remove elements which are specific to a format not supported by
-    the current writer.
+    Include or exclude elements which depend on a specific Docutils component.
+
+    For use with `nodes.pending` elements.  A "pending" element's dictionary
+    attribute ``details`` must contain the keys "component" and "format".  The
+    value of ``details['component']`` must match the type name of the
+    component the elements depend on (e.g. "writer").  The value of
+    ``details['format']`` is the name of a specific format or context of that
+    component (e.g. "html").  If the matching Docutils component supports that
+    format or context, the "pending" element is replaced by the contents of
+    ``details['nodes']`` (a list of nodes); otherwise, the "pending" element
+    is removed.
+
+    For example, the reStructuredText "meta" directive creates a "pending"
+    element containing a "meta" element (in ``pending.details['nodes']``).
+    Only writers (``pending.details['component'] == 'writer'``) supporting the
+    "html" format (``pending.details['format'] == 'html'``) will include the
+    "meta" element; it will be deleted from the output of all other writers.
     """
 
     default_priority = 780
 
     def apply(self):
-        writer = self.document.transformer.components['writer']
-        for node in self.document.traverse(nodes.FormatSpecific):
-            for format in node.requires_formats():
-                if writer.supports(format):
-                    break
-            else:
-                node.parent.remove(node)
+        pending = self.startnode
+        component_type = pending.details['component'] # 'reader' or 'writer'
+        format = pending.details['format']
+        component = self.document.transformer.components[component_type]
+        if component.supports(format):
+            pending.parent.replace(pending, pending.details['nodes'])
+        else:
+            pending.parent.remove(pending)

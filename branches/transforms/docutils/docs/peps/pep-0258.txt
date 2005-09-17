@@ -209,7 +209,7 @@ Transformer responsibilities:
 
 * Store a mapping of component type name ('reader', 'writer', etc.) to
   component objects.  These are used by certain transforms (such as
-  "components.WriterFilter") to determine suitability.
+  "components.Filter") to determine suitability.
 
 Transform responsibilities:
 
@@ -235,8 +235,8 @@ Examples of transforms (in the ``docutils/transforms/`` package):
   references appropriately.  (Neither implemented not remotely
   understood.)
 
-* components.WriterFilter: Excludes elements specific to a format not
-  supported by the writer.
+* components.Filter: Includes or excludes elements which depend on a
+  specific Docutils component.
 
 
 Writers
@@ -486,18 +486,18 @@ Project Model`_ above.
 
 Custom node types are allowed, provided that either (a) a transform
 converts them to standard Docutils nodes before they reach the Writer
-proper, or (b) **XXX UPDATE ME BEFORE MERGING** the custom node is
-explicitly supported by certain Writers, and is wrapped in a filtered
-"pending" node.  An example of condition (a) is the `Python Source
-Reader`_ (see below), where a "stylist" transform converts custom
-nodes.  The HTML ``<meta>`` tag is an example of condition (b); it is
-supported by the HTML Writer but not by others.  The reStructuredText
-"meta" directive creates a "pending" node, which contains knowledge
-that the embedded "meta" node can only be handled by HTML-compatible
-writers.  The "pending" node is resolved by the
-``docutils.transforms.components.Filter`` transform, which checks that
-the calling writer supports HTML; if it doesn't, the "pending" node
-(and enclosed "meta" node) is removed from the document.
+proper, or (b) the custom node is explicitly supported by certain
+Writers, and is wrapped in a filtered "pending" node.  An example of
+condition (a) is the `Python Source Reader`_ (see below), where a
+"stylist" transform converts custom nodes.  The HTML ``<meta>`` tag is
+an example of condition (b); it is supported by the HTML Writer but
+not by others.  The reStructuredText "meta" directive creates a
+"pending" node, which contains knowledge that the embedded "meta" node
+can only be handled by HTML-compatible writers.  The "pending" node is
+resolved by the ``docutils.transforms.components.Filter`` transform,
+which checks that the calling writer supports HTML; if it doesn't, the
+"pending" node (and enclosed "meta" node) is removed from the
+document.
 
 The document tree data structure is similar to a DOM tree, but with
 specific node names (classes) instead of DOM's generic nodes. The

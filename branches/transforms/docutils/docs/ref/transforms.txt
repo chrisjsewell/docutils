@@ -69,17 +69,17 @@ parts.Contents                  "contents" (d/p),             720
 
 peps.PEPZero                    peps.Headers (t/p)            760
 
-components.WriterFilter         writers (w)                   780
+components.Filter               "meta" (d/p)                  780
 
-universal.Decorations           readers (r)                   820
+universal.Decorations           Reader (r)                    820
 
 misc.Transitions                standalone (r), pep (r)       830
 
-universal.ExposeInternals       readers (r)                   840
+universal.ExposeInternals       Reader (r)                    840
 
-universal.Messages              writers (w)                   860
+universal.Messages              Writer (w)                    860
 
-universal.FilterMessages        writers (w)                   870
+universal.FilterMessages        Writer (w)                    870
 
 universal.TestMessages          DocutilsTestSupport           880
 

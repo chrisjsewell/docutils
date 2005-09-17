@@ -83,13 +83,13 @@ class Reader(Component):
         return document
 
 
-class ReusingReader(Reader):
+class ReReader(Reader):
 
     """
-    A reader which reuses an existing document tree (often a
+    A reader which rereads an existing document tree (e.g. a
     deserializer).
 
-    Often used in conjunction with `writers.NonConsumingWriter`.
+    Often used in conjunction with `writers.UnfilteredWriter`.
     """
 
     def get_transforms(self):

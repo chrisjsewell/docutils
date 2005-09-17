@@ -15,7 +15,7 @@ import docutils
 from docutils import frontend, writers
 
 
-class Writer(writers.NonConsumingWriter):
+class Writer(writers.Writer):
 
     supported = ('xml',)
     """Formats this writer supports."""

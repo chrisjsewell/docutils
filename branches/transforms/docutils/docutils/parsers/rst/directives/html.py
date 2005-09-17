@@ -45,12 +45,9 @@ def imagemap(name, arguments, options, content, lineno,
 
 class MetaBody(states.SpecializedBody):
 
-    class meta(nodes.Special, nodes.PreBibliographic, nodes.Element, nodes.FormatSpecific):
-
+    class meta(nodes.Special, nodes.PreBibliographic, nodes.Element):
         """HTML-specific "meta" element."""
-
-        def requires_formats(self):
-            return ['html']
+        pass
 
     def field_marker(self, match, context, next_state):
         """Meta element."""
@@ -63,6 +60,10 @@ class MetaBody(states.SpecializedBody):
         indented, indent, line_offset, blank_finish = \
               self.state_machine.get_first_known_indented(match.end())
         node = self.meta()
+        pending = nodes.pending(components.Filter,
+                                {'component': 'writer',
+                                 'format': 'html',
+                                 'nodes': [node]})
         node['content'] = ' '.join(indented)
         if not indented:
             line = self.state_machine.line
@@ -88,7 +89,8 @@ class MetaBody(states.SpecializedBody):
                       % (token, detail), nodes.literal_block(line, line),
                       line=self.state_machine.abs_line_number())
                 return msg, blank_finish
-        return node, blank_finish
+        self.document.note_pending(pending)
+        return pending, blank_finish
 
 
 metaSMkwargs = {'state_classes': (MetaBody,)}

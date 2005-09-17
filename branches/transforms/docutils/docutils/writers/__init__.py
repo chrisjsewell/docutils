@@ -14,7 +14,7 @@ __docformat__ = 'reStructuredText'
 import sys
 import docutils
 from docutils import languages, Component
-from docutils.transforms import universal, components
+from docutils.transforms import universal
 
 
 class Writer(Component):
@@ -36,7 +36,6 @@ class Writer(Component):
         return Component.get_transforms(self) + [
             universal.Messages,
             universal.FilterMessages,
-            components.WriterFilter,
             ]
 
     document = None
@@ -99,14 +98,14 @@ class Writer(Component):
         self.parts['whole'] = self.output
 
 
-class NonConsumingWriter(Writer):
+class UnfilteredWriter(Writer):
 
     """
-    A writer that does not "consume" the document tree (often a
+    A writer that passes the document tree on unchanged (e.g. a
     serializer.)
 
-    Documents written by NonConsumingWriters are typically reused at a
-    later date using a subclass of `readers.ReusingReader`.
+    Documents written by UnfilteredWriters are typically reused at a
+    later date using a subclass of `readers.ReReader`.
     """
 
     def get_transforms(self):

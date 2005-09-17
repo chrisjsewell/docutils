@@ -728,19 +728,6 @@ class Targetable(Resolvable):
 class Labeled:
     """Contains a `label` as its first element."""
 
-class FormatSpecific:
-
-    """Specific to one or several formats."""
-
-    def requires_formats(self):
-        """
-        Return a list of format names of which at least one must be
-        supported by the writer handling this node.
-
-        Override in subclass.
-        """
-        raise NotImplementedError
-
 
 # ==============
 #  Root Element
@@ -1345,7 +1332,7 @@ class pending(Special, Invisible, Element):
                               **self.attributes)
 
 
-class raw(Special, Inline, PreBibliographic, FixedTextElement, FormatSpecific):
+class raw(Special, Inline, PreBibliographic, FixedTextElement):
 
     """
     Raw data that is to be passed untouched to the Writer.
