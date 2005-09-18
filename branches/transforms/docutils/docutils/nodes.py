@@ -1338,8 +1338,7 @@ class raw(Special, Inline, PreBibliographic, FixedTextElement):
     Raw data that is to be passed untouched to the Writer.
     """
 
-    def requires_formats(self):
-        return self['format'].split()
+    pass
 
 
 # =================

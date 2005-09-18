@@ -54,16 +54,16 @@ class Reader(readers.Reader):
 
     def get_transforms(self):
         return readers.Reader.get_transforms(self) + [
-                          references.Substitutions,
-                          references.PropagateTargets,
-                          frontmatter.DocTitle,
-                          frontmatter.SectionSubTitle,
-                          frontmatter.DocInfo,
-                          references.AnonymousHyperlinks,
-                          references.IndirectHyperlinks,
-                          references.Footnotes,
-                          references.ExternalTargets,
-                          references.InternalTargets,
-                          references.DanglingReferences,
-                          misc.Transitions,
-                          ]
+            references.Substitutions,
+            references.PropagateTargets,
+            frontmatter.DocTitle,
+            frontmatter.SectionSubTitle,
+            frontmatter.DocInfo,
+            references.AnonymousHyperlinks,
+            references.IndirectHyperlinks,
+            references.Footnotes,
+            references.ExternalTargets,
+            references.InternalTargets,
+            references.DanglingReferences,
+            misc.Transitions,
+            ]

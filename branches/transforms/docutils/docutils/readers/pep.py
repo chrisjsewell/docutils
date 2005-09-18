@@ -36,11 +36,7 @@ class Reader(standalone.Reader):
         transforms.remove(frontmatter.DocTitle)
         transforms.remove(frontmatter.SectionSubTitle)
         transforms.remove(frontmatter.DocInfo)
-        transforms.extend([
-                          peps.Headers,
-                          peps.Contents,
-                          peps.TargetNotes,
-                          ])
+        transforms.extend([peps.Headers, peps.Contents, peps.TargetNotes])
         return transforms
 
     settings_default_overrides = {'pep_references': 1, 'rfc_references': 1}
