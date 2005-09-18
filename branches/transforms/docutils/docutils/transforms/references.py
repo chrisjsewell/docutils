@@ -780,7 +780,7 @@ class DanglingReferences(Transform):
     unreferenced targets.
     """
 
-    default_priority = 850
+    default_priority = 680
 
     def apply(self):
         visitor = DanglingReferencesVisitor(
