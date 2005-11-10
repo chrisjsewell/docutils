@@ -7,37 +7,10 @@
 :Authors: David Goodger, Chris Liechti,
 :Date:    $Date$
 
-.. 1   Introduction
-   2   Basic Usage
-   3   Caveats
-     3.1  2. Subsections ...
-   4   Features (1)
-   5   Features (2): Handouts
-   6   Examples (1)
-   7   Examples (2): Incremental Text
-   8   Examples (3): Incr. Graphics
-   9   Generating a Slide Show (1)
-   10  Generating a Slide Show (2)
-   11  Themes
-   12  Example Themes
-   13  S5 Theme Files
-   14  Custom Themes
-   15  Supported Classes: Incremental
-   16  Supported Classes: Text Size
-   17  Supported Classes: Alignment
-   18  Supported Classes: Text Colours
-   19  Supported Classes: Borders
-   20  Supported Classes: Print-Only
-   21  Chained Presentations (1)
-   22  Chained Presentations (2)
-   23  Chained Presentations (3)
-   24  To Do
-   25  That's All, Folks!
-
 .. class:: handout
 
-   This document serves as both manual and example of the s5_html.py
-   writer and the rst2s5.py front end.
+   This document serves both as a user manual and as a usage example
+   of the s5_html.py writer and the rst2s5.py front end.
 
 An introduction to presentations (slide shows) with
 Docutils/reStructuredText and S5.
@@ -482,7 +455,7 @@ To Do
   - two views stay in sync
   - presentation controlled from either display
 
-  This will require some serious JavaScript-foo!
+  This will require some serious JavaScript-fu!
 
 
 That's All, Folks!
