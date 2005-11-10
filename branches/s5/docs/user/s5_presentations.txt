@@ -1,26 +1,54 @@
-=======================================
- S5 Slide Shows Using reStructuredText
-=======================================
+.. include:: <s5roles.txt>
 
-:Authors: David Goodger <goodger@python.org>,
-          Chris Liechti <cliechti@gmx.net>,
+=============================================
+ Easy Slide Shows With reStructuredText & S5
+=============================================
+
+:Authors: David Goodger, Chris Liechti,
 :Date:    $Date$
+
+.. 1   Introduction
+   2   Basic Usage
+   3   Caveats
+     3.1  2. Subsections ...
+   4   Features (1)
+   5   Features (2): Handouts
+   6   Examples (1)
+   7   Examples (2): Incremental Text
+   8   Examples (3): Incr. Graphics
+   9   Generating a Slide Show (1)
+   10  Generating a Slide Show (2)
+   11  Themes
+   12  Example Themes
+   13  S5 Theme Files
+   14  Custom Themes
+   15  Supported Classes: Incremental
+   16  Supported Classes: Text Size
+   17  Supported Classes: Alignment
+   18  Supported Classes: Text Colours
+   19  Supported Classes: Borders
+   20  Supported Classes: Print-Only
+   21  Chained Presentations (1)
+   22  Chained Presentations (2)
+   23  Chained Presentations (3)
+   24  To Do
+   25  That's All, Folks!
 
 .. class:: handout
 
-   This document serves as both manual and example of the s5.py writer
-   and rst2s5.py front end.
+   This document serves as both manual and example of the s5_html.py
+   writer and the rst2s5.py front end.
 
-An introduction to generating S5 slide shows with Docutils and
-reStructuredText.
+An introduction to presentations (slide shows) with
+Docutils/reStructuredText and S5.
 
 *(Hit the space bar or click the mouse button to proceed.)*
 
 .. container:: handout
 
-   The first slide consists of all visible text between the document
-   title and the first section title.  The document title is also
-   added to the footer of all slides.
+   The first slide of a presentation consists of all visible text up
+   to the first section title.  The document title is also added to
+   the footer of all slides.
 
    The "footer" directive is used to specify part of the slide footer
    text.  It is currently limited to one short line (one paragraph).
@@ -35,26 +63,12 @@ Introduction
 ``rst2s5.py`` is a Docutils_ front end that outputs HTML for use with
 S5_, a "Simple Standards-based Slide Show System" by Eric Meyer.
 
-* A simple reStructuredText-format text file serves as input.
+* Uses reStructuredText as input.
 
 * Presentations can be viewed using any modern web browser that
   supports CSS, JavaScript, and XHTML.  (It even works with IE!)
 
-* Several themes are available, and they're easy to adapt.
-
-  .. container:: handout
-
-     Some sites with S5 slide shows or themes:
-
-     * http://meyerweb.com/eric/tools/s5/themes/
-     * http://mozilla.wikicities.com/wiki/Firefox_S5:Designs
-
-     And a short tutorial on how to create themes:
-     http://yatil.de/s5/dokumentation/9/ (german text)
-
-* The slides and extra handout material can be combined in one
-  document.  The handout can be printed directly from the browser, and
-  it will contain more than just silly framed slides.
+* A variety of themes are available.
 
 .. _Docutils: http://docutils.sourceforge.net/
 .. _S5: http://meyerweb.com/eric/tools/s5/
@@ -63,28 +77,26 @@ S5_, a "Simple Standards-based Slide Show System" by Eric Meyer.
 Basic Usage
 ===========
 
-Based on Docutils, normal reStructuredText documents are supported.
-Each first-level section is converted to a single slide.
-
 .. topic:: Installation
    :class: handout
 
-   Prerequisites: Python and the docutils package have to be
-   installed.
+   Prerequisites: Python and the Docutils_ package have to be
+   installed.  See the `Docutils README`__ file for installation
+   instructions.
 
-   Install ``s5.py`` in docutils/writers, ``rst2s5.py`` to a directory
-   in the ``$PATH``.  (Or copy both files to the same folder,
-   e.g. ``/usr/local/bin`` on un*x).
+   __ http://docutils.sourceforge.net/README.html
 
-An S5 slide show HTML file is generated with the following command::
+Normal reStructuredText documents are supported.  Each first-level
+section is converted into a single slide.  An S5 slide show HTML file
+is generated with the following command::
 
     rst2s5.py presentation.txt presentation.html
 
-Open ``presentation.html`` in any modern graphical browser.
+Open ``presentation.html`` in any modern graphical web browser.
 
-Click the "|mode|" button to switch between presentation & handout
+(Click the "|mode|" button to switch between presentation & handout
 modes.  In presentation mode, mouse over to the lower right-hand
-corner to display the controls.
+corner to display the controls.)
 
 .. topic:: UI Details
    :class: handout
@@ -92,14 +104,16 @@ corner to display the controls.
    Details of the S5 user interface can be found at `Eric Meyer's S5
    page`__.
 
+   TBD: all UI controls   
+
 .. |mode| unicode:: U+00D8 .. capital o with stroke
 __ S5_
 
 
-Features
-========
+Features (1)
+============
 
-The S5 Writer supports all the standard Docutils HTML features.
+The S5/HTML Writer supports all the standard Docutils HTML features.
 S5-specific features:
 
 .. class:: incremental
@@ -119,39 +133,54 @@ S5-specific features:
 
          .. footer:: Location - Date
 
-* The contents of any element with a "class" attribute value of
-  "handout" are only visible when the presentation is printed.
-  "Handout"-class contents are hidden in the screen presentation.
-
-  .. container:: handout
-
-     Handout contents are also visible on the screen if the S5 "raw
-     view mode" is active.
-
-     The text in "handout"-class elements are hidden in the slide show
-     on the screen.  This can be used to provide more detailed
-     information in a handout.
-
-     "Handout"-class elements can appear anywhere in the text, as
-     often as needed.
-
-     Arbitrary handout blocks can be created using the ``container``
-     directive::
-
-         .. container:: handout
-
-            Put anything you like here...
-
 * An "incremental" class can be assigned to lists and other elements
   to get one-item-at-a-time behavior (like this list).
 
 
-Feature Examples
-================
+Features (2): Handouts
+======================
 
-.. sidebar:: Images too!
+The contents of any element with a "class" attribute value of
+"handout" are hidden in the slide presentation, and are only visible
+when the presentation is printed or viewed in outline mode.
+"Handout"-class elements can appear anywhere in the text, as often as
+needed.
 
-    .. image:: happy_monkey.png
+This means that the slides and extra handout material can be combined
+in one document.  The handout can be printed directly from the
+browser, and it will contain more than just silly framed slides.  This
+can be used to provide more detailed information, or for speaker's
+notes.
+
+.. container:: handout
+
+   The ``.. class:: handout`` directive can be used to tag single
+   paragraphs and other elements.
+
+   Elements only visible in the handout can also be generated using a
+   ``:class: handout`` option with ``sidebar``, ``compound`` and other
+   directives.
+
+   Handout contents are also visible on the screen if the S5 "raw
+   view mode" is active.
+
+   Arbitrary handout blocks can be created using the ``container``
+   directive::
+
+       .. container:: handout
+
+          Put anything you like here...
+
+
+Examples (1)
+============
+
+.. sidebar:: Hint
+
+   Admonitions, tables, sidebars, and other elements can be used in
+   on-screen presentations in handouts.  Images too!
+
+   .. image:: images/happy_monkey.png
        :alt: sample image
 
 =====  =====  ======
@@ -163,26 +192,9 @@ False  True   True
 True   True   True
 =====  =====  ======
 
-.. Hint:: Admonitions, tables, sidebars, and other elements can be
-   used in on-screen presentations in handouts.
 
-.. topic:: Handout only
-   :class: handout
-
-   Elements only visible in the handout can also be generated using a
-   ``:class: handout`` option with ``sidebar``, ``compound`` and other
-   directives.
-
-.. class:: handout
-
-The ``.. class:: handout`` directive can be used to tag single
-paragraphs and other elements.
-
-
-Incremental Examples (1)
-========================
-
-*(Press the space bar to proceed.)*
+Examples (2): Incremental Text
+==============================
 
 .. class:: incremental
 
@@ -195,28 +207,60 @@ Incremental Examples (1)
       This second paragraph is displayed together with the previous
       one by grouping them with the "container" directive.
 
-.. role:: incremental
 .. default-role:: incremental
 
 | `We can also display` `one` `word` `at` `a` `time,`
 | `or a phrase` `at a time,`
 | `or even` `o`\ `n`\ `e` `l`\ `e`\ `t`\ `t`\ `e`\ `r` `at a time!`
 |
-| `(But it ain't pretty.)`
+| `(But the markup ain't pretty.)`
 
 
-Incremental Examples (2)
-========================
+Examples (3): Incr. Graphics
+============================
 
-(TODO: insert an example of animation here)
+TBD (insert an example of animation here)
+
+
+Generating a Slide Show (1)
+===========================
+
+.. class:: incremental
+
+1. Open a console (terminal, command shell) and go to the folder
+   containing your file, say ``presentation.txt``.
+
+2. Run the command::
+
+       rst2s5.py presentation.txt \
+                 presentation.html
+
+3. Normally the default Docutils stylesheet, ``html4css1.css``, will
+   be embedded in the output HTML.  If you choose to link to a
+   stylesheet instead of embedding, you must include a copy.
+
+
+Generating a Slide Show (2)
+===========================
+
+.. class:: incremental
+
+4. TBD: describe copying of S5 files.  [In the same folder as
+   ``presentation.txt``, extract the sample theme from
+   http://meyerweb.com/eric/tools/s5/s5blank.zip (this should create a
+   ``ui`` folder).]
+
+5. Open ``presentation.html`` in a web browser.
+
+6. Expand the browser window to full-screen mode, and speak.
+
+7. Profit!
 
 
 Themes
 ======
 
-The presentation theme consists of several additional files:
-stylesheets, JavaScript, and graphics.  These go into a subdirectory
-of the ``ui`` directory beside ``presentation.html``.
+Several themes are available, and they're easy to adapt.
 
 .. container:: handout
 
@@ -226,9 +270,16 @@ of the ``ui`` directory beside ``presentation.html``.
    These themes are in the public domain and may be redistributed
    freely.
 
-The S5 theme (``ui/`` subdirectory name) can be specified with the
-``--theme`` command-line option or the ``theme`` configuration file
-setting.
+   Some sites with S5 slide shows or themes:
+
+   * http://meyerweb.com/eric/tools/s5/themes/
+   * http://mozilla.wikicities.com/wiki/Firefox_S5:Designs
+
+   And a short tutorial on how to create themes:
+   http://yatil.de/s5/dokumentation/9/ (in German)
+
+The S5 theme can be specified with the ``--theme`` command-line option
+or the ``theme`` configuration file setting.
 
 .. container:: handout
 
@@ -247,12 +298,28 @@ setting.
 Example Themes
 ==============
 
-(TODO: insert some screenshots here)
+TBD (insert some screenshots below)
 
 * default (simplified version of S5's default theme)
 * inverse (white text on a black background)
 * big (very large text, no footers)
 * big_inverse
+
+
+S5 Theme Files
+==============
+
+An S5 theme consists of a directory containing several files:
+stylesheets, JavaScript, and graphics.  These go into a subdirectory
+of a ``ui`` directory beside the generated HTML.
+
+TBD
+
+
+Custom Themes
+=============
+
+TBD
 
 
 Caveats
@@ -273,48 +340,166 @@ Caveats
 support.  Subsections work just fine in handouts though.
 
 
-Generating a Slide Show (1)
-===========================
+Supported Classes: Incremental
+==============================
+
+TBD
 
 .. class:: incremental
 
-1. Open a console (terminal, command shell) and go to the folder
-   containing your file, say ``presentation.txt``.
-
-2. Run the command::
-
-       rst2s5.py presentation.txt presentation.html
-
-3. Normally the Docutils default stylesheet, ``html4css1.css``, will
-   be embedded in the output HTML.  If you choose to link to a
-   stylesheet instead of embedding, you must include a copy.
+Useful definition: "``.. default-role:: incremental``".
 
 
-Generating a Slide Show (2)
-===========================
+Supported Classes: Text Size
+============================
+
+| :tiny:`tiny` (class & role name: "tiny")
+| :small:`small` ("small")
+| normal (unstyled)
+| :big:`big` ("big")
+| :huge:`huge` ("huge")
 
 .. class:: incremental
 
-4. In the same folder as ``presentation.txt``, extract the sample
-   theme from http://meyerweb.com/eric/tools/s5/s5blank.zip (this
-   should create a ``ui`` folder).
+Requires "``.. include:: <s5roles.txt>``".
 
-5. Open ``presentation.html`` in a web browser.
 
-6. Make the browser window full-screen and speak.
+Supported Classes: Alignment
+============================
 
-7. Profit!
+.. class:: left
+
+Left (class name: "left")
+
+.. class:: center
+
+Center ("center" & "centre")
+
+.. class:: right
+
+Right ("right")
+
+.. class:: incremental
+
+Requires "``.. include:: <s5roles.txt>``".
+
+
+Supported Classes: Text Colours
+===============================
+
+:black:`black` [black], :gray:`gray`, :silver:`silver`, :white:`white`
+[white], :maroon:`maroon`, :red:`red`, :magenta:`magenta`,
+:fuchsia:`fuchsia`, :pink:`pink`, :orange:`orange`, :yellow:`yellow`,
+:lime:`lime`, :green:`green`, :olive:`olive`, :teal:`teal`,
+:cyan:`cyan`, :aqua:`aqua`, :blue:`blue`, :navy:`navy`,
+:purple:`purple`
+
+The class names and role names are the same as the colour names.  For
+example, "``:teal:`text```" produces ":teal:`text`".
+
+.. class:: incremental
+
+Requires "``.. include:: <s5roles.txt>``".
+
+
+Supported Classes: Borders
+==========================
+
+TBD
+
+An ordinary, unstyled table:
+
+=========  =======
+Sometimes  borders
+---------  -------
+are        useful.
+=========  =======
+
+A table after applying "``.. class:: borderless``":
+
+.. class:: borderless
+
+=======  ==========
+But      sometimes,
+-------  ----------
+they're  not.
+=======  ==========
+
+
+Supported Classes: Print-Only
+=============================
+
+TBD (print-block, print-inline)
+
+(add example with target-notes directive)
+
+.. class:: incremental
+
+May require "``.. include:: <s5roles.txt>``".
+
+
+Chained Presentations (1)
+=========================
+
+Presentation slide shows can be chained together.  This is useful for
+including all or part of one presentation in another, and for changing
+themes.  Slide numbers are not carried over though.  But there's an
+easy way to fake a continuous multi-themed presentation:
+
+1. Generate slide show HTML files with two different names from
+   different themes but from the same source text.
+
+2. Include a link to the *next* slide in the *second* theme, `like
+   this <default.html#slide22>`__.  Don't forget to
+   click the link!
+
+
+Chained Presentations (2)
+=========================
+
+3. To return to the first theme, include a link back to the following
+   slide in the *first* theme, `like this
+   <inverse.html#slide23>`__.  Again, be sure to click
+   the link!
+
+
+Chained Presentations (3)
+=========================
+
+4. Now we're back where we started from, back in the first theme, but
+   two slides further on.
+
+In this way, any number of themes can be chained together.
 
 
 To Do
 =====
 
-S5 files
+* Multi-display support:
 
-Customizing CSS
+  - speaker's notes on the laptop screen
+  - slides on the projector
+  - two views stay in sync
+  - presentation controlled from either display
 
-Chaining slide shows (different themes)
+  This will require some serious JavaScript-foo!
 
-    block quote
 
-    text here
+That's All, Folks!
+==================
+
+.. class:: huge
+
+   Any questions?
+
+   Further information:
+   http://docutils.sf.net
+
+   Docutils users' mailing list:
+   docutils-users@lists.sf.net
+
+
+.. topic:: Links
+   :class: print-block
+
+   .. target-notes:: :class: print-inline
