@@ -24,6 +24,9 @@ p.example {display: none;}
 
 .handout {border-left: solid #BBB; padding-left: 0.5em;}
 
+.print-block {display: block !important;}
+.print-inline {display: inline !important;}
+
 /* The following rule keeps the layout stuff out of print.
    Remove at your own risk! */
 .layout, .layout * {display: none !important;}

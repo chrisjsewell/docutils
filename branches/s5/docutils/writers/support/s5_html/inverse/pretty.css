@@ -1,24 +1,27 @@
 /* Following are the presentation styles -- edit away! */
 
-body {background: black; color: white; font-size: 2em;}
+html, body {margin: 0; padding: 0;}
+body {background: black; color: white;}
 :link, :visited {text-decoration: none; color: #AAF;}
 #controls :active {color: #888 !important;}
 #controls :focus {outline: 1px dotted #CCC;}
 h1, h2, h3, h4 {font-size: 100%; margin: 0; padding: 0; font-weight: inherit;}
-ul, pre {margin: 0; line-height: 1em;}
-html, body {margin: 0; padding: 0;}
+/* ul, pre {margin: 0; line-height: 1em;} */
 
-blockquote {padding: 0 2em 0.5em; margin: 0 1.5em 0.5em; font-size: 1em;}
+blockquote {padding: 0 2em 0.5em; margin: 0 1.5em 0.5em;}
 blockquote p {margin: 0;}
 
 kbd {font-weight: bold; font-size: 1em;}
 sup {font-size: smaller; line-height: 1px;}
 
-.slide pre {padding: 0; margin: 0.25em 0 0.5em 0.5em; font-size: 90%;}
+.slide pre {padding: 0; margin: 0 0 0.5em 0.5em; font-size: 90%;}
+/*
 .slide ul {margin-left: 5%; margin-right: 7%; list-style: disc;}
 .slide li {margin-top: 0.75em; margin-right: 0;}
 .slide ul ul {line-height: 1;}
 .slide ul ul li {margin: .2em; font-size: 85%; list-style: square;}
+*/
+.slide ul ul li {list-style: square;}
 .slide img.leader {display: block; margin: 0 auto;}
 .slide tt {font-size: 90%;}
 
@@ -26,13 +29,12 @@ div#header, div#footer {font-family: sans-serif; color: #AAA;}
 /* line-height: 1px;} */
 div#footer {font-size: 0.5em; font-weight: bold; padding: 1em 0;}
 #footer h1, #footer h2 {display: block; padding: 0 1em;}
-#footer h2 {font-style: italic;}
+/*#footer h2 {font-style: italic;}*/
 
-div.long {font-size: 0.75em;}
-
+.slide {font-size: 1.2em;}
 .slide h1 {position: absolute; top: 0.5em; z-index: 1;
-  margin: 0; padding-left: 1.0em; white-space: nowrap;
-  font: bold 150%/1em sans-serif;}
+  margin: 0; padding-left: 0.7em; white-space: nowrap;
+  font: bold 150% sans-serif;}
 .slide h2 {font: bold 120%/1em sans-serif;}
 .slide h3 {font: bold 100% sans-serif;}
 h1 abbr {font-variant: small-caps;}
@@ -51,7 +53,7 @@ div#controls form {position: absolute; bottom: 0; right: 0; width: 100%;
 #currentSlide {text-align: center; font-size: 0.5em; color: #AAA;
   font-family: sans-serif; font-weight: bold;}
 
-#slide0 {padding-top: 1.5em}
+#slide0 {padding-top: 0em}
 #slide0 h1 {position: static; margin: 1em 0 0; padding: 0;
   font: bold 2em sans-serif; white-space: normal; background: transparent;}
 #slide0 h2 {font: bold italic 1em sans-serif; margin: 0.25em;}
@@ -67,24 +69,59 @@ html>body .external {border-bottom: none;}
 .incremental, .incremental *, .incremental *:after {
   color: black; visibility: visible;}
 img.incremental {visibility: hidden;}
-.slide .current {color: #FAA;}
+.slide .current {color: lime;}
+
+.print-block, .print-inline {display: none;}
+
+.huge {font-family: sans-serif; font-weight: bold; font-size: 150%;}
+.big {font-family: sans-serif; font-weight: bold; font-size: 120%;}
+.small {font-size: 75%;}
+.tiny {font-size: 50%;}
+.huge tt, .big tt, .small tt, .tiny tt {font-size: 115%;}
+.huge pre, .big pre, .small pre, .tiny pre {font-size: 115%;}
+
+.maroon {color: maroon;}
+.red {color: red;}
+.magenta {color: magenta;}
+.fuchsia {color: fuchsia;}
+.pink {color: #FAA;}
+.orange {color: orange;}
+.yellow {color: yellow;}
+.lime {color: lime;}
+.green {color: green;}
+.olive {color: olive;}
+.teal {color: teal;}
+.cyan {color: cyan;}
+.aqua {color: aqua;}
+.blue {color: blue;}
+.navy {color: navy;}
+.purple {color: purple;}
+.black {color: black;}
+.gray {color: gray;}
+.silver {color: silver;}
+.white {color: white;}
+
+.left {text-align: left ! important;}
+.center {text-align: center ! important;}
+.right {text-align: right ! important;}
+
+.borderless, .borderless td {border: 0;}
 
 /* Docutils-specific overrides */
 
-.big {font-family: sans-serif; font-weight: bold; font-size: 120%;}
-
 .slide table.docinfo {margin-top: 1em; margin-bottom: 0.5em;}
 
-div.sidebar {
-  background-color: black }
+div.sidebar {background-color: black;}
 
-pre.literal-block, pre.doctest-block {
-  background-color: #111 }
+.incremental pre.literal-block, .incremental pre.doctest-block {
+  background-color: black;}
 
-tt.docutils {
-  background-color: black }
+pre.literal-block, pre.doctest-block {background-color: #111;}
 
-/* diagnostics
+tt.docutils {background-color: black;}
+
+/* diagnostics */
+/*
 li:after {content: " [" attr(class) "]"; color: #F88;}
 div:before {content: "[" attr(class) "]"; color: #F88;}
 */
