@@ -12,12 +12,17 @@ __docformat__ = 'reStructuredText'
 
 
 import sys
-from docutils import nodes
+import os
+from docutils import frontend, nodes, utils, writers
 from docutils.writers import html4css1
 from docutils.parsers.rst import directives
 
 
 class Writer(html4css1.Writer):
+
+    support_path = utils.relative_path(
+        os.path.join(os.getcwd(), 'dummy'),
+        os.path.join(writers.support_path, 's5_html'))
 
     settings_spec = html4css1.Writer.settings_spec + (
         'S5 Slideshow Specific Options',
@@ -26,7 +31,18 @@ class Writer(html4css1.Writer):
         (('Specify an S5 theme directory (typically a subdirectory of "ui") '
           'or URL (if it contains a slash).  The default is "default".',
           ['--theme'],
-          {'default': 'default', 'metavar': '<path>'}),))
+          {'default': 'default', 'metavar': '<path>'}),
+         ('Copy the S5 theme files into the same directory as the output.  '
+          'This is the default.  Note that existing theme files will not be '
+          'overwritten.',
+          ['--copy-theme'],
+          {'default': 1, 'action': 'store_true',
+           'validator': frontend.validate_boolean}),
+         ('Link the S5 theme files into the same directory as the output.'
+          'Default: copy the theme files, do not link to them.',
+          ['--link-theme'],
+          {'dest': 'copy_theme', 'action': 'store_false',
+           'validator': frontend.validate_boolean}),))
 
     settings_default_overrides = {'compact_lists': 0}
 
@@ -63,11 +79,11 @@ class HTMLTranslator(html4css1.HTMLTranslator):
 <div id="footer">
 %(title)s%(footer)s
 </div>
-<div class="topleft"></div>
-<div class="topright"></div>
-<div class="bottomleft"></div>
-<div class="bottomright"></div>
 </div>\n'''
+# <div class="topleft"></div>
+# <div class="topright"></div>
+# <div class="bottomleft"></div>
+# <div class="bottomright"></div>
         
     def __init__(self, *args):
         html4css1.HTMLTranslator.__init__(self, *args)
