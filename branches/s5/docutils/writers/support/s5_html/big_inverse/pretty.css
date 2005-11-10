@@ -1,13 +1,11 @@
 /* Following are the presentation styles -- edit away! */
 
+html, body {margin: 0; padding: 0;}
 body {background: black; color: white;}
 /* font-size: 3em; */
 :link, :visited {text-decoration: none; color: #AAF;}
 #controls :active {color: #888 !important;}
 #controls :focus {outline: 1px dotted #CCC;}
-/*h1, h2, h3, h4 {font-size: 100%; margin: 0; padding: 0; font-weight: inherit;}*/
-ul, pre {margin: 0; line-height: 1em;}
-html, body {margin: 0; padding: 0;}
 
 blockquote {padding: 0 2em 0.5em; margin: 0 1.5em 0.5em;}
 blockquote p {margin: 0;}
@@ -16,10 +14,7 @@ kbd {font-weight: bold; font-size: 1em;}
 sup {font-size: smaller; line-height: 1px;}
 
 .slide pre {padding: 0; margin: 0 0 0.5em 0.5em; font-size: 90%;}
-.slide ul {margin-left: 5%; margin-right: 7%; list-style: disc;}
-.slide li {margin-top: 0.75em; margin-right: 0;}
-.slide ul ul {line-height: 1;}
-.slide ul ul li {margin: .2em; font-size: 85%; list-style: square;}
+.slide ul ul li {list-style: square;}
 .slide img.leader {display: block; margin: 0 auto;}
 .slide tt {font-size: 90%;}
 
@@ -44,10 +39,10 @@ div#controls form {position: absolute; bottom: 0; right: 0; width: 100%;
 #currentSlide {text-align: center; font-size: 0.5em; color: #AAA;
   font-family: sans-serif; font-weight: bold;}
 
-#slide0 h1 {position: static; margin: 0; padding-top: 0.3em; top: 0;
+#slide0 h1 {position: static; margin: 0 0 0.5em; padding-top: 0.3em; top: 0;
   font: bold 150% sans-serif; white-space: normal;
   background: transparent;}
-#slide0 h2 {font: bold 110% sans-serif; margin: 0.25em;}
+#slide0 h2 {font: bold 110% sans-serif; color: gray;}
 #slide0 h3 {margin-top: 1.5em; font-size: 1.5em;}
 #slide0 h4 {margin-top: 0; font-size: 1em;}
 
