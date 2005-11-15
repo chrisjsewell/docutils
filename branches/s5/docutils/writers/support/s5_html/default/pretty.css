@@ -24,10 +24,11 @@ sup {font-size: smaller; line-height: 1px;}
 div#header, div#footer {background: #005; color: #AAB; font-family: sans-serif;}
 /* background: #005 url(bodybg.gif) -16px 0 no-repeat; */
 div#footer {font-size: 0.5em; font-weight: bold; padding: 1em 0;}
-#footer h1, #footer h2 {display: block; padding: 0 1em;}
+#footer h1 {display: block; padding: 0 1em;}
+#footer h2 {display: block; padding: 0.8em 1em 0;}
 
 .slide {font-size: 1.2em;}
-.slide h1 {position: absolute; top: 0.5em; z-index: 1;
+.slide h1 {position: absolute; top: 0.4em; z-index: 1;
   margin: 0; padding-left: 0.7em; white-space: nowrap;
   font: bold 150% sans-serif; color: #DDE; background: #005;}
 .slide h2 {font: bold 120%/1em sans-serif;}
@@ -104,7 +105,7 @@ img.incremental {visibility: hidden;}
 
 /* Docutils-specific overrides */
 
-.slide table.docinfo {margin-top: 1em; margin-bottom: 0.5em;}
+.slide table.docinfo {margin: 1em 0 0.5em 2em;}
 
 .incremental pre.literal-block, .incremental pre.doctest-block {
   background-color: white;}

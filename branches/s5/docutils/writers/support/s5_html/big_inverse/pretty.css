@@ -2,8 +2,7 @@
 
 html, body {margin: 0; padding: 0;}
 body {background: black; color: white;}
-/* font-size: 3em; */
-:link, :visited {text-decoration: none; color: #AAF;}
+:link, :visited {text-decoration: none; color: cyan;}
 #controls :active {color: #888 !important;}
 #controls :focus {outline: 1px dotted #CCC;}
 
@@ -19,10 +18,9 @@ sup {font-size: smaller; line-height: 1px;}
 .slide tt {font-size: 90%;}
 
 .slide {font-size: 3em; font-family: sans-serif; font-weight: bold;}
-.slide h1 {padding-top: 0.3em; z-index: 1;
-  margin: 0; font: bold 120% sans-serif;}
-.slide h2 {font: bold 110% sans-serif;}
-.slide h3 {font: bold 105% sans-serif;}
+.slide h1 {padding-top: 0; z-index: 1; margin: 0; font-size: 120%;}
+.slide h2 {font-size: 110%;}
+.slide h3 {font-size: 105%;}
 h1 abbr {font-variant: small-caps;}
 
 div#controls {position: absolute; left: 50%; bottom: 0;
@@ -36,13 +34,13 @@ div#controls form {position: absolute; bottom: 0; right: 0; width: 100%;
 #controls #navList #jumplist {position: absolute; bottom: 0; right: 0;
   background: black; color: #CCC;}
 
-#currentSlide {text-align: center; font-size: 0.5em; color: #AAA;
-  font-family: sans-serif; font-weight: bold;}
+#currentSlide {display: none;}
+/*#currentSlide {text-align: center; font-size: 0.5em; color: #AAA;
+  font-family: sans-serif; font-weight: bold;}*/
 
 #slide0 h1 {position: static; margin: 0 0 0.5em; padding-top: 0.3em; top: 0;
-  font: bold 150% sans-serif; white-space: normal;
-  background: transparent;}
-#slide0 h2 {font: bold 110% sans-serif; color: gray;}
+  font-size: 150%; white-space: normal; background: transparent;}
+#slide0 h2 {font: 110%; font-style: italic; color: gray;}
 #slide0 h3 {margin-top: 1.5em; font-size: 1.5em;}
 #slide0 h4 {margin-top: 0; font-size: 1em;}
 
@@ -95,7 +93,7 @@ img.incremental {visibility: hidden;}
 
 /* Docutils-specific overrides */
 
-.slide table.docinfo {margin-top: 1em; margin-bottom: 0.5em;}
+.slide table.docinfo {margin: 0.5em 0 0.5em 1em;}
 
 div.sidebar {background-color: black;}
 
