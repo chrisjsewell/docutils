@@ -1,10 +1,11 @@
 .. include:: <s5roles.txt>
+.. default-role:: incremental
 
 =============================================
  Easy Slide Shows With reStructuredText & S5
 =============================================
 
-:Authors: David Goodger, Chris Liechti,
+:Authors: David Goodger & Chris Liechti
 :Date:    $Date$
 
 .. class:: handout
@@ -12,7 +13,7 @@
    This document serves both as a user manual and as a usage example
    of the s5_html.py writer and the rst2s5.py front end.
 
-An introduction to presentations (slide shows) with
+An introduction to creating presentations (slide shows) with
 Docutils/reStructuredText and S5.
 
 *(Hit the space bar or click the mouse button to proceed.)*
@@ -180,8 +181,6 @@ Examples (2): Incremental Text
       This second paragraph is displayed together with the previous
       one by grouping them with the "container" directive.
 
-.. default-role:: incremental
-
 | `We can also display` `one` `word` `at` `a` `time,`
 | `or a phrase` `at a time,`
 | `or even` `o`\ `n`\ `e` `l`\ `e`\ `t`\ `t`\ `e`\ `r` `at a time!`
@@ -237,19 +236,18 @@ Several themes are available, and they're easy to adapt.
 
 .. container:: handout
 
-   The themes from the S5 tutorial can be used.  Get it here:
-   http://meyerweb.com/eric/tools/s5/s5blank.zip.
-
-   These themes are in the public domain and may be redistributed
-   freely.
+   Themes from the `S5 tutorial`__ can be used.  These themes are in
+   the public domain and may be redistributed freely.
 
    Some sites with S5 slide shows or themes:
 
    * http://meyerweb.com/eric/tools/s5/themes/
    * http://mozilla.wikicities.com/wiki/Firefox_S5:Designs
 
-   And a short tutorial on how to create themes:
-   http://yatil.de/s5/dokumentation/9/ (in German)
+   A short tutorial on how to create themes (in German):
+   http://yatil.de/s5/dokumentation/9/
+
+   __ http://meyerweb.com/eric/tools/s5/s5blank.zip.
 
 The S5 theme can be specified with the ``--theme`` command-line option
 or the ``theme`` configuration file setting.
@@ -274,9 +272,15 @@ Example Themes
 TBD (insert some screenshots below)
 
 * default (simplified version of S5's default theme)
-* inverse (white text on a black background)
-* big (very large text, no footers)
-* big_inverse
+* small-white (black text on a white background)
+* small-black (white text on a black background)
+* medium-white (large text)
+* medium-black
+* big-white (very large text, no footers)
+* big-black
+
+.. TODO: Rename inverse to small-black, big to big-white, big_inverse
+   to big-black.
 
 
 S5 Theme Files
@@ -286,7 +290,6 @@ An S5 theme consists of a directory containing several files:
 stylesheets, JavaScript, and graphics.  These go into a subdirectory
 of a ``ui`` directory beside the generated HTML.
 
-TBD
 
 
 Custom Themes
@@ -320,7 +323,8 @@ TBD
 
 .. class:: incremental
 
-Useful definition: "``.. default-role:: incremental``".
+| Requires "``.. include:: <s5roles.txt>``".
+| Useful definition: "``.. default-role:: incremental``".
 
 
 Supported Classes: Text Size
@@ -368,7 +372,7 @@ Supported Classes: Text Colours
 :purple:`purple`
 
 The class names and role names are the same as the colour names.  For
-example, "``:teal:`text```" produces ":teal:`text`".
+example, "``:orange:`text```" produces ":orange:`text`".
 
 .. class:: incremental
 
@@ -463,13 +467,13 @@ That's All, Folks!
 
 .. class:: huge
 
-   Any questions?
-
    Further information:
    http://docutils.sf.net
 
    Docutils users' mailing list:
    docutils-users@lists.sf.net
+
+   `Any questions?`
 
 
 .. topic:: Links
