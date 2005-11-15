@@ -13,62 +13,92 @@ __docformat__ = 'reStructuredText'
 
 import sys
 import os
+import shutil
+import docutils
 from docutils import frontend, nodes, utils, writers
 from docutils.writers import html4css1
 from docutils.parsers.rst import directives
 
+support_path = utils.relative_path(
+    os.path.join(os.getcwd(), 'dummy'),
+    os.path.join(writers.support_path, 's5_html'))
+
+def find_theme(name):
+    # Where else to look for a theme?
+    # Check working dir?  Destination dir?  Config dir?  Plugins dir?
+    path = os.path.join(support_path, name)
+    if not os.path.isdir(path):
+        raise docutils.ApplicationError('Theme directory not found: %r' % name)
+    return path
+
+def copy_file(name, source_dir, dest_dir, settings):
+    """
+    Copy file `name` (from `source_dir` to `dest_dir`) without overwriting.
+    Return 1 if the file exists in either `source_dir` or `dest_dir`.
+    """
+    source = os.path.join(source_dir, name)
+    dest = os.path.join(dest_dir, name)
+    if os.path.isfile(source):
+        if os.path.exists(dest):
+            settings.record_dependencies.add(dest)
+        else:
+            shutil.copyfile(source, dest)
+            settings.record_dependencies.add(source)
+        return 1
+    if os.path.isfile(dest):
+        return 1
+
 
 class Writer(html4css1.Writer):
-
-    support_path = utils.relative_path(
-        os.path.join(os.getcwd(), 'dummy'),
-        os.path.join(writers.support_path, 's5_html'))
 
     settings_spec = html4css1.Writer.settings_spec + (
         'S5 Slideshow Specific Options',
         'The --compact-lists option (defined in HTML-Specific Options above) '
         'is disabled by default for the S5/HTML writer.',
-        (('Specify an S5 theme directory (typically a subdirectory of "ui") '
-          'or URL (if it contains a slash).  The default is "default".',
+        (('Specify an installed S5 theme by name.  Overrides --theme-url.  '
+          'The default theme name is "default".  The theme files will be '
+          'copied into a "ui/<theme>" subdirectory, beside the destination '
+          'file (output HTML).  Note that existing theme files will not be '
+          'overwritten; you must manually delete the theme directory first.',
           ['--theme'],
-          {'default': 'default', 'metavar': '<path>'}),
-         ('Copy the S5 theme files into the same directory as the output.  '
-          'This is the default.  Note that existing theme files will not be '
-          'overwritten.',
-          ['--copy-theme'],
-          {'default': 1, 'action': 'store_true',
-           'validator': frontend.validate_boolean}),
-         ('Link the S5 theme files into the same directory as the output.'
-          'Default: copy the theme files, do not link to them.',
-          ['--link-theme'],
-          {'dest': 'copy_theme', 'action': 'store_false',
-           'validator': frontend.validate_boolean}),))
+          {'default': 'default', 'metavar': '<name>',
+           'overrides': 'theme_url'}),
+         ('Specify an S5 theme URL.  The destination file (output HTML) will '
+          'link to this theme; nothing will be copied.  Overrides --theme.',
+          ['--theme-url'],
+          {'metavar': '<URL>', 'overrides': 'theme'}),))
 
     settings_default_overrides = {'compact_lists': 0}
 
-    config_section = 's5 writer'
+    config_section = 's5_html writer'
     config_section_dependencies = ('writers', 'html4css1 writer')
 
     def __init__(self):
         html4css1.Writer.__init__(self)
-        self.translator_class = HTMLTranslator
+        self.translator_class = S5HTMLTranslator
 
 
-class HTMLTranslator(html4css1.HTMLTranslator):
+class S5HTMLTranslator(html4css1.HTMLTranslator):
 
     doctype = (
         '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"'
         ' "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n')
+
     s5_stylesheet_template = '''\
 <!-- configuration parameters -->
 <meta name="defaultView" content="slideshow" />
 <meta name="controlVis" content="hidden" />
 <!-- style sheet links -->
-<link rel="stylesheet" href="%(s5_theme_url)s/slides.css" type="text/css" media="projection" id="slideProj" />
-<link rel="stylesheet" href="%(s5_theme_url)s/outline.css" type="text/css" media="screen" id="outlineStyle" />
-<link rel="stylesheet" href="%(s5_theme_url)s/print.css" type="text/css" media="print" id="slidePrint" />
-<link rel="stylesheet" href="%(s5_theme_url)s/opera.css" type="text/css" media="projection" id="operaFix" />
-<script src="%(s5_theme_url)s/slides.js" type="text/javascript"></script>\n'''
+<link rel="stylesheet" href="%(path)s/slides.css"
+      type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="%(path)s/outline.css"
+      type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="%(path)s/print.css"
+      type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="%(path)s/opera.css"
+      type="text/css" media="projection" id="operaFix" />
+<script src="%(path)s/slides.js" type="text/javascript"></script>\n'''
+
     layout_template = '''\
 <div class="layout">
 <div id="controls"></div>
@@ -84,19 +114,103 @@ class HTMLTranslator(html4css1.HTMLTranslator):
 # <div class="topright"></div>
 # <div class="bottomleft"></div>
 # <div class="bottomright"></div>
-        
+
+    default_theme = 'default'
+    """Name of the default theme."""
+
+    base_theme_file = '__base__'
+    """Name of the file containing the name of the base theme."""
+
+    direct_theme_files = (
+        'slides.css', 'outline.css', 'print.css', 'opera.css', 'slides.js')
+    """Names of theme files directly linked to in the output HTML"""
+
+    indirect_theme_files = (
+        's5-core.css', 'framing.css', 'pretty.css', 'blank.gif', 'iepngfix.htc')
+    """Names of files used indirectly; imported or used by files in
+    `direct_theme_files`."""
+
+    required_theme_files = indirect_theme_files + direct_theme_files
+    """Names of mandatory theme files."""
+
     def __init__(self, *args):
         html4css1.HTMLTranslator.__init__(self, *args)
         #insert S5-specific stylesheet and script stuff:
-        theme = self.document.settings.theme
-        if '/' not in theme:
-            theme = 'ui/' + theme
+        self.theme_file_path = None
+        self.setup_theme()
         self.stylesheet.append(self.s5_stylesheet_template
-                               % {'s5_theme_url': theme})
+                               % {'path': self.theme_file_path})
         self.add_meta('<meta name="version" content="S5 1.1" />\n')
         self.s5_footer = []
         self.s5_header = []
         self.section_count = 0
+
+    def setup_theme(self):
+        if self.document.settings.theme:
+            self.copy_theme()
+        elif self.document.settings.theme_url:
+            self.theme_file_path = self.document.settings.theme_url
+        else:
+            raise docutils.ApplicationError(
+                'No theme specified for S5/HTML writer.')
+
+    def copy_theme(self):
+        """
+        Locate & copy theme files.
+
+        A theme may be explicitly based on another theme via a '__base__'
+        file.  The default base theme is 'default'.  Files are accumulated
+        from the specified theme, any base themes, and 'default'.
+        """
+        settings = self.document.settings
+        path = find_theme(settings.theme)
+        theme_paths = [path]
+        copied = {}
+        # This is a link (URL) in HTML, so we use "/", not os.sep:
+        self.theme_file_path = '%s/%s' % ('ui', settings.theme)
+        dest = os.path.join(
+            os.path.dirname(settings._destination), 'ui', settings.theme)
+        if not os.path.isdir(dest):
+            os.makedirs(dest)
+        default = 0
+        while path:
+            for f in os.listdir(path):  # copy all files from each theme
+                if ( copy_file(f, path, dest, settings)
+                     and f in self.required_theme_files):
+                    copied[f] = 1
+            if default:
+                break                   # "default" theme has no base theme
+            # Find __base__ file in theme directory:
+            base_theme_file = os.path.join(path, self.base_theme_file)
+            # If it exists, read it and record the theme path:
+            if os.path.isfile(base_theme_file):
+                lines = open(base_theme_file).readlines()
+                for line in lines:
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        path = find_theme(line)
+                        if path in theme_paths: # check for duplicates (cycles)
+                            path = None         # if found, use default base
+                        else:
+                            theme_paths.append(path)
+                        break
+                else:                   # no theme name found
+                    path = None         # use default base
+            else:                       # no base theme file found
+                path = None             # use default base
+            if not path:
+                path = find_theme(self.default_theme)
+                theme_paths.append(path)
+                default = 1
+        if len(copied) != len(self.required_theme_files):
+            # Some all required files weren't found & couldn't be copied.
+            required = list(self.required_theme_files)
+            for f in copied.keys():
+                required.remove(f)
+            raise docutils.ApplicationError(
+                'Theme files not found: %s'
+                % ', '.join(['%r' % f for f in required]))
+
 
     def depart_document(self, node):
         header = ''.join(self.s5_header)
@@ -116,9 +230,6 @@ class HTMLTranslator(html4css1.HTMLTranslator):
                               + self.docinfo + self.body
                               + self.body_suffix[:-1])
 
-#     def visit_footer(self, node):
-#         # check for one paragraph?
-        
     def depart_footer(self, node):
         start = self.context.pop()
         self.s5_footer.append('<h2>')
