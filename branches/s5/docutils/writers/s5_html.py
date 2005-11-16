@@ -1,5 +1,7 @@
 # Author: Chris Liechti
 # Contact: cliechti@gmx.net
+# Author: David Goodger
+# Contact: goodger@python.org
 # Revision: $Revision$
 # Date: $Date$
 # Copyright: This module has been placed in the public domain.
@@ -175,12 +177,14 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
         default = 0
         while path:
             for f in os.listdir(path):  # copy all files from each theme
+                if f == self.base_theme_file:
+                    continue            # ... except the "__base__" file
                 if ( copy_file(f, path, dest, settings)
                      and f in self.required_theme_files):
                     copied[f] = 1
             if default:
                 break                   # "default" theme has no base theme
-            # Find __base__ file in theme directory:
+            # Find the "__base__" file in theme directory:
             base_theme_file = os.path.join(path, self.base_theme_file)
             # If it exists, read it and record the theme path:
             if os.path.isfile(base_theme_file):
