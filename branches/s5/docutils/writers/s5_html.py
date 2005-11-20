@@ -59,9 +59,10 @@ class Writer(html4css1.Writer):
         'is disabled by default for the S5/HTML writer.',
         (('Specify an installed S5 theme by name.  Overrides --theme-url.  '
           'The default theme name is "default".  The theme files will be '
-          'copied into a "ui/<theme>" subdirectory, beside the destination '
-          'file (output HTML).  Note that existing theme files will not be '
-          'overwritten; you must manually delete the theme directory first.',
+          'copied into a "ui/<theme>" directory, in the same directory as the '
+          'destination file (output HTML).  Note that existing theme files '
+          'will not be overwritten; you must manually delete the theme '
+          'directory first.',
           ['--theme'],
           {'default': 'default', 'metavar': '<name>',
            'overrides': 'theme_url'}),
@@ -170,10 +171,14 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
         copied = {}
         # This is a link (URL) in HTML, so we use "/", not os.sep:
         self.theme_file_path = '%s/%s' % ('ui', settings.theme)
-        dest = os.path.join(
-            os.path.dirname(settings._destination), 'ui', settings.theme)
-        if not os.path.isdir(dest):
-            os.makedirs(dest)
+        if settings._destination:
+            dest = os.path.join(
+                os.path.dirname(settings._destination), 'ui', settings.theme)
+            if not os.path.isdir(dest):
+                os.makedirs(dest)
+        else:
+            # no destination, so we can't copy the theme
+            return
         default = 0
         while path:
             for f in os.listdir(path):  # copy all files from each theme
@@ -214,7 +219,6 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
             raise docutils.ApplicationError(
                 'Theme files not found: %s'
                 % ', '.join(['%r' % f for f in required]))
-
 
     def depart_document(self, node):
         header = ''.join(self.s5_header)
@@ -261,3 +265,14 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
         else:
             self.body.append(self.start_tag_with_title(
                 node, 'div', CLASS='slide'))
+
+    def visit_subtitle(self, node):
+        if isinstance(node.parent, nodes.section):
+            level = self.section_level + self.initial_header_level - 1
+            if level == 1:
+                level = 2
+            tag = 'h%s' % level
+            self.body.append(self.starttag(node, tag, ''))
+            self.context.append('</%s>\n' % tag)
+        else:
+            html4css1.HTMLTranslator.visit_subtitle(self, node)
