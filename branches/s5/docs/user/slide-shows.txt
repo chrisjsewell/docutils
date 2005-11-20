@@ -1,12 +1,13 @@
 .. include:: <s5roles.txt>
-.. default-role:: incremental
 
 =============================================
  Easy Slide Shows With reStructuredText & S5
 =============================================
 
-:Authors: David Goodger & Chris Liechti
-:Date:    $Date$
+:Authors:   David Goodger & Chris Liechti
+:Date:      $Date$
+
+.. This document has been placed in the public domain.
 
 .. class:: handout
 
@@ -26,6 +27,9 @@ Docutils/reStructuredText and S5.
 
    The "footer" directive is used to specify part of the slide footer
    text.  It is currently limited to one short line (one paragraph).
+
+   There is no support for the "header" directive in the themes
+   included with Docutils.
 
 .. |bullet| unicode:: U+02022
 .. footer:: Location |bullet| Date
@@ -72,13 +76,52 @@ Open ``presentation.html`` in any modern graphical web browser.
 modes.  In presentation mode, mouse over to the lower right-hand
 corner to display the controls.)
 
-.. topic:: UI Details
+.. topic:: Keyboard Controls
    :class: handout
+
+   The following apply in any supporting browser besides Opera, which
+   uses the default Opera Show controls instead.
+
+
+   .. list-table::
+      :header-rows: 1
+
+      * - Action
+        - Key(s)
+      * - Go to the next slide
+        - * [Space bar]
+          * [Return]
+          * [Enter]
+          * [Right arrow]
+          * [Down arrow]
+          * [Page down]
+          * Click the left mouse button outside of the control area,
+            Flash object, or movie
+      * - Go to the previous slide
+        - * [Left arrow]
+          * [Up arrow]
+          * [Page up]
+      * - Go to the title (first) slide
+        - [Home]
+      * - Go to the last slide
+        - [End]
+      * - Jump directly to a slide
+        - Type the slide number, then hit [Return] or [Enter]
+      * - Skip forward *n* slides
+        - Type the number of slides to skip, then hit any "go to next"
+          key (except [Return] or [Enter])
+      * - Skip backward *n* slides
+        - Type the number of slides to skip, then hit any "go to
+          previous" key
+      * - Switch between slideshow and outline view
+        - * [T]
+          * Click the |mode| button
+      * - Show/hide slide controls
+        - * [C]
+          * Move mouse pointer over control area
 
    Details of the S5 user interface can be found at `Eric Meyer's S5
    page`__.
-
-   TBD: all UI controls   
 
 .. |mode| unicode:: U+00D8 .. capital o with stroke
 __ S5_
@@ -114,36 +157,69 @@ S5-specific features:
 Features (2): Handouts
 ======================
 
-The contents of any element with a "class" attribute value of
-"handout" are hidden in the slide presentation, and are only visible
-when the presentation is printed or viewed in outline mode.
-"Handout"-class elements can appear anywhere in the text, as often as
-needed.
-
-This means that the slides and extra handout material can be combined
-in one document.  The handout can be printed directly from the
-browser, and it will contain more than just silly framed slides.  This
-can be used to provide more detailed information, or for speaker's
-notes.
+``<element class="handout">``
 
 .. container:: handout
 
-   The ``.. class:: handout`` directive can be used to tag single
-   paragraphs and other elements.
+   The contents of any element with a "class" attribute value of
+   "handout" are hidden in the slide presentation, and are only
+   visible when the presentation is printed, or viewed in outline
+   mode.  "Handout"-class elements can appear anywhere in the text, as
+   often as needed.
 
-   Elements only visible in the handout can also be generated using a
-   ``:class: handout`` option with ``sidebar``, ``compound`` and other
-   directives.
+   This means that the slides and extra handout material can be
+   combined in one document.  The handout can be printed directly from
+   the browser, and it will contain more than just silly framed
+   slides.  This can be used to provide more detailed information, or
+   for speaker's notes.
 
-   Handout contents are also visible on the screen if the S5 "raw
-   view mode" is active.
+.. class:: incremental
 
-   Arbitrary handout blocks can be created using the ``container``
-   directive::
+* Use the "class" directive::
 
-       .. container:: handout
+      .. class:: handout
 
-          Put anything you like here...
+  .. container:: handout
+
+     The ``.. class:: handout`` directive can be used to tag
+     individual paragraphs and other elements.  The "class" directive
+     applies to the first element immediately following::
+
+         .. class:: handout
+
+         This paragraph will get a ``class="handout"`` attribute.
+
+         This paragraph will not be affected.
+
+     It also applies to multiple elements in the directive content::
+
+         .. class:: handout
+
+            These paragraphs are the content of the "class" directive.
+            As such...
+
+            Both paragraphs will *individually* receive
+            ``class="handout"`` attributes.
+
+* Use the "container" directive::
+
+      .. container:: handout
+
+  .. container:: handout
+
+     Arbitrary handout blocks can be created using the ``container``
+     directive.  The content is treated as one.
+
+* Add a "class" option to certain directives, such as "sidebar" and
+  "topic"::
+
+      .. topic:: Extra Material For Handouts
+         :class: handout
+
+.. class:: handout
+
+   Handout contents are also visible on the screen if the S5 view mode
+   is toggled from "slide show" to "outline" mode.
 
 
 Examples (1)
@@ -194,76 +270,45 @@ Examples (3): Incr. Graphics
 TBD (insert an example of animation here)
 
 
-Generating a Slide Show (1)
-===========================
-
-.. class:: incremental
-
-1. Open a console (terminal, command shell) and go to the folder
-   containing your file, say ``presentation.txt``.
-
-2. Run the command::
-
-       rst2s5.py presentation.txt \
-                 presentation.html
-
-3. Normally the default Docutils stylesheet, ``html4css1.css``, will
-   be embedded in the output HTML.  If you choose to link to a
-   stylesheet instead of embedding, you must include a copy.
-
-
-Generating a Slide Show (2)
-===========================
-
-.. class:: incremental
-
-4. TBD: describe copying of S5 files.  [In the same folder as
-   ``presentation.txt``, extract the sample theme from
-   http://meyerweb.com/eric/tools/s5/s5blank.zip (this should create a
-   ``ui`` folder).]
-
-5. Open ``presentation.html`` in a web browser.
-
-6. Expand the browser window to full-screen mode, and speak.
-
-7. Profit!
-
-
 Themes
 ======
 
-Several themes are available, and they're easy to adapt.
+.. class:: incremental
 
-.. container:: handout
+* Several themes are available, and they're easy to adapt.
 
-   Themes from the `S5 tutorial`__ can be used.  These themes are in
-   the public domain and may be redistributed freely.
+  .. container:: handout
 
-   Some sites with S5 slide shows or themes:
+     Themes from the `S5 tutorial`__ can be used.  These themes are in
+     the public domain and may be redistributed freely.
 
-   * http://meyerweb.com/eric/tools/s5/themes/
-   * http://mozilla.wikicities.com/wiki/Firefox_S5:Designs
+     __ http://meyerweb.com/eric/tools/s5/s5blank.zip
 
-   A short tutorial on how to create themes (in German):
-   http://yatil.de/s5/dokumentation/9/
+     Sites with other S5 themes:
 
-   __ http://meyerweb.com/eric/tools/s5/s5blank.zip.
+     * http://meyerweb.com/eric/tools/s5/themes/
+     * http://mozilla.wikicities.com/wiki/Firefox_S5:Designs
+     * http://lachy.id.au/dev/mozilla/firefox/s5/
 
-The S5 theme can be specified with the ``--theme`` command-line option
-or the ``theme`` configuration file setting.
+     S5 is becoming more popular every day.  Do a web search for "S5
+     theme" and you're bound to find plenty of choices.
 
-.. container:: handout
+* The S5 theme can be specified with the ``--theme`` command-line
+  option or the ``theme`` configuration file setting.
 
-   Example::
+  .. container:: handout
 
-       rst2s5 --theme pixel presentation.txt presentation.html
+     Example::
 
-   The default theme is "default".
+         rst2s5 --theme big-black presentation.txt presentation.html
 
-   Usualy, themes are placed in a folder with the specified name,
-   inside a ``ui`` folder inside the folder containing the
-   presentation.  But it is also possible to use URLs and grab the
-   design from another website.
+     The default theme is "default".
+
+* Themes are copied into a ``ui/<theme>`` folder inside the folder
+  containing the presentation.
+
+* It is also possible to use URLs and grab the design from another
+  website, using the ``--theme-url`` option.
 
 
 Example Themes
@@ -279,17 +324,31 @@ TBD (insert some screenshots below)
 * big-white (very large text, no footers)
 * big-black
 
-.. TODO: Rename inverse to small-black, big to big-white, big_inverse
-   to big-black.
-
 
 S5 Theme Files
 ==============
 
 An S5 theme consists of a directory containing several files:
-stylesheets, JavaScript, and graphics.  These go into a subdirectory
-of a ``ui`` directory beside the generated HTML.
+stylesheets, JavaScript, and graphics.
 
+The generated HTML contains links to the following files:
+
+* slides.css
+
+  - s5-core.css: required to make the slide show run at all
+  - framing.css: sets basic placement and size of slide components
+  - pretty.css: stuff that makes the slides look good
+
+* outline.css
+
+* print.css
+
+* opera.css
+
+* slides.js
+
+  - iepngfix.htc
+  - blank.gif
 
 
 Custom Themes
@@ -297,17 +356,57 @@ Custom Themes
 
 TBD
 
+.. container:: handout
+
+   A short tutorial on how to create themes (in German):
+   http://yatil.de/s5/dokumentation/9/
+
+
+Generating a Slide Show (1)
+===========================
+
+.. class:: incremental
+
+1. Open a console (terminal, command shell) and go to the folder
+   containing your file, say ``presentation.txt``.
+
+2. Run the command::
+
+       rst2s5.py presentation.txt \
+                 presentation.html
+
+3. Specify an S5 theme with the ``--theme`` option.  The S5 theme
+   files will be copied into a ``ui/<theme>`` folder beside the
+   output, ``presentation.html``.  A slide show can also link to a
+   theme using the ``--theme-url`` option.
+
+
+Generating a Slide Show (2)
+===========================
+
+.. class:: incremental
+
+4. The default Docutils stylesheet, ``html4css1.css``, will normally
+   be embedded in the output HTML.  If you choose to link to a
+   stylesheet instead of embedding, you must include a copy.
+
+5. Open ``presentation.html`` in a web browser.
+
+6. Expand the browser window to full-screen mode, and speak.
+
+7. Profit!
+
 
 Caveats
 =======
+
+.. class:: incremental
 
 1. The ``contents`` (table of contents) directive must not be used.
    It changes the CSS class of headings and they won't show up
    correctly in the screen presentation.
 
-   .. TODO: Add a "disable table of contents" setting to the parser?
-      The S5 writer could set it as a default.
-
+.. class:: incremental
 
 2. Subsections ...
 ------------------
@@ -319,12 +418,23 @@ support.  Subsections work just fine in handouts though.
 Supported Classes: Incremental
 ==============================
 
-TBD
+As described earlier,
 
 .. class:: incremental
 
-| Requires "``.. include:: <s5roles.txt>``".
-| Useful definition: "``.. default-role:: incremental``".
+   * ``.. class:: incremental``
+
+   * ``.. container:: incremental``
+
+   * ::
+
+         .. sidebar:: title
+            :class: incremental
+
+   | Requires "``.. include:: <s5roles.txt>``".
+   |
+   | Includes the useful definition:
+   | "``.. default-role:: incremental``".
 
 
 Supported Classes: Text Size
@@ -344,21 +454,21 @@ Requires "``.. include:: <s5roles.txt>``".
 Supported Classes: Alignment
 ============================
 
-.. class:: left
-
-Left (class name: "left")
-
-.. class:: center
-
-Center ("center" & "centre")
-
-.. class:: right
-
-Right ("right")
-
 .. class:: incremental
 
-Requires "``.. include:: <s5roles.txt>``".
+   .. class:: left
+
+   Left (class name: "left")
+
+   .. class:: center
+
+   Center ("center" & "centre")
+
+   .. class:: right
+
+   Right ("right")
+
+   (Block elements only.)
 
 
 Supported Classes: Text Colours
@@ -382,37 +492,56 @@ Requires "``.. include:: <s5roles.txt>``".
 Supported Classes: Borders
 ==========================
 
-TBD
+.. class:: incremental
 
-An ordinary, unstyled table:
+   An ordinary, unstyled table:
 
-=========  =======
-Sometimes  borders
----------  -------
-are        useful.
-=========  =======
+   =========  =======
+   Sometimes  borders
+   ---------  -------
+   are        useful.
+   =========  =======
 
-A table after applying "``.. class:: borderless``":
+   And after applying "``.. class:: borderless``":
 
-.. class:: borderless
+   .. class:: borderless
 
-=======  ==========
-But      sometimes,
--------  ----------
-they're  not.
-=======  ==========
+   =======  ==========  =======
+   But      sometimes,  borders
+   -------  ----------  -------
+   are      **not**     wanted.
+   =======  ==========  =======
 
 
 Supported Classes: Print-Only
 =============================
 
-TBD (print-block, print-inline)
+.. class:: handout
 
-(add example with target-notes directive)
+   Two classes are provided that only display their contents in
+   hardcopy.
 
 .. class:: incremental
 
-May require "``.. include:: <s5roles.txt>``".
+   | "print-block" for block elements
+   | "print-inline" for inline text
+
+.. class:: handout
+
+   One example is the "target-notes" directive, where these classes
+   can be used to expand URLs in printed handouts only.
+
+.. class:: incremental
+
+   Example: the "target-notes" directive::
+
+       .. topic:: Links
+          :class: print-block
+
+          .. target-notes::
+             :class: print-inline
+
+   May require "``.. include:: <s5roles.txt>``".
 
 
 Chained Presentations (1)

@@ -36,17 +36,14 @@
 .. role:: tiny
 
 
-.. Alignment
-   =========
+.. Print-Only
+   ==========
 
-.. role:: left
-.. role:: center
-.. role:: centre
-   :class: center
-.. role:: right
+.. role:: print-inline
 
 
 .. Incremental Display
    ===================
 
 .. role:: incremental
+.. default-role:: incremental
