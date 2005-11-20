@@ -1,3 +1,4 @@
+/* This file has been placed in the public domain. */
 /* Following are the presentation styles -- edit away! */
 
 html, body {margin: 0; padding: 0;}
@@ -16,7 +17,7 @@ blockquote p {margin: 0;}
 kbd {font-weight: bold; font-size: 1em;}
 sup {font-size: smaller; line-height: 1px;}
 
-.slide pre {padding: 0; margin: 0 0 0.5em 0.5em; font-size: 90%;}
+.slide pre {padding: 0; margin: 0 0 0.5em 0; font-size: 90%;}
 .slide ul ul li {list-style: square;}
 .slide img.leader {display: block; margin: 0 auto;}
 .slide tt {font-size: 90%;}
@@ -31,8 +32,8 @@ div#footer {font-size: 0.5em; font-weight: bold; padding: 1em 0;}
 .slide h1 {position: absolute; top: 0.4em; z-index: 1;
   margin: 0; padding-left: 0.7em; white-space: nowrap;
   font: bold 150% sans-serif; color: #DDE; background: #005;}
-.slide h2 {font: bold 120%/1em sans-serif;}
-.slide h3 {font: bold 100% sans-serif;}
+.slide h2 {font: bold 120%/1em sans-serif; padding-top: 0.5em;}
+.slide h3 {font: bold 100% sans-serif; padding-top: 0.5em;}
 h1 abbr {font-variant: small-caps;}
 
 div#controls {position: absolute; left: 50%; bottom: 0;
@@ -63,7 +64,7 @@ html>body .external {border-bottom: none;}
 .external:after {content: " \274F"; font-size: smaller; color: #77B;}
 
 .incremental, .incremental *, .incremental *:after {visibility: visible;
-  color: white;}
+  color: white; border: 0;}
 img.incremental {visibility: hidden;}
 .slide .current {color: green;}
 
@@ -107,8 +108,7 @@ img.incremental {visibility: hidden;}
 
 .slide table.docinfo {margin: 1em 0 0.5em 2em;}
 
-.incremental pre.literal-block, .incremental pre.doctest-block {
-  background-color: white;}
+pre.literal-block, pre.doctest-block {background-color: white;}
 
 tt.docutils {background-color: white;}
 

@@ -1,3 +1,4 @@
+/* This file has been placed in the public domain. */
 /* The following rule is necessary to have all slides appear in print!
    DO NOT REMOVE IT! */
 .slide, ul {page-break-inside: avoid; visibility: visible !important;}
