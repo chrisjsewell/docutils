@@ -732,19 +732,34 @@ The S5/HTML Writer's default for the ``compact_lists`` setting differs
 from that of the standard HTML Writer: the default here is to disable
 compact lists.
 
+_`current_slide`
+
+    Enable or disable the current slide indicator ("1/15").
+
+    Default: disabled (None).  Options: ``--current-slide``,
+    ``--no-current-slide``.
+
+_`overwrite_theme_files`
+    Allow or prevent the overwriting of existing theme files in the
+    ``ui/<theme>`` directory.  This has no effect if "theme_url_" is
+    used.
+
+    Default: keep existing theme files (None).  Options:
+    ``--keep-theme-files``, ``--overwrite-theme-files``.
+
 _`theme`
     Name of an installed S5 theme, to be copied into a ``ui/<theme>``
     subdirectory, beside the destination file (output HTML).  Note
     that existing theme files will not be overwritten; the existing
     theme directory you must be deleted manually.  Overrides the
-    "theme_url" setting [#override]_.
+    "theme_url_" setting [#override]_.
 
     Default: "default".  Option: ``--theme``.
 
 _`theme-url`
     The URL of an S5 theme directory.  The destination file (output
     HTML) will link to this theme; nothing will be copied.  Overrides
-    the "theme" setting [#override]_.
+    the "theme_" setting [#override]_.
 
     Default: None.  Option: ``--theme-url``.
 

@@ -35,9 +35,8 @@ div#controls form {position: absolute; bottom: 0; right: 0; width: 100%;
 #controls #navList #jumplist {position: absolute; bottom: 0; right: 0;
   background: black; color: #CCC;}
 
-#currentSlide {display: none;}
-/*#currentSlide {text-align: center; font-size: 0.5em; color: #AAA;
-  font-family: sans-serif; font-weight: bold;}*/
+#currentSlide {text-align: center; font-size: 0.5em; color: #AAA;
+  font-family: sans-serif; font-weight: bold;}
 
 #slide0 h1 {position: static; margin: 0 0 0.5em; padding-top: 0.3em; top: 0;
   font-size: 150%; white-space: normal; background: transparent;}

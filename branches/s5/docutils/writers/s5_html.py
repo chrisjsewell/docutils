@@ -33,45 +33,39 @@ def find_theme(name):
         raise docutils.ApplicationError('Theme directory not found: %r' % name)
     return path
 
-def copy_file(name, source_dir, dest_dir, settings):
-    """
-    Copy file `name` (from `source_dir` to `dest_dir`) without overwriting.
-    Return 1 if the file exists in either `source_dir` or `dest_dir`.
-    """
-    source = os.path.join(source_dir, name)
-    dest = os.path.join(dest_dir, name)
-    if os.path.isfile(source):
-        if os.path.exists(dest):
-            settings.record_dependencies.add(dest)
-        else:
-            shutil.copyfile(source, dest)
-            settings.record_dependencies.add(source)
-        return 1
-    if os.path.isfile(dest):
-        return 1
-
 
 class Writer(html4css1.Writer):
 
     settings_spec = html4css1.Writer.settings_spec + (
         'S5 Slideshow Specific Options',
-        'The --compact-lists option (defined in HTML-Specific Options above) '
-        'is disabled by default for the S5/HTML writer.',
+        None,
         (('Specify an installed S5 theme by name.  Overrides --theme-url.  '
           'The default theme name is "default".  The theme files will be '
           'copied into a "ui/<theme>" directory, in the same directory as the '
           'destination file (output HTML).  Note that existing theme files '
-          'will not be overwritten; you must manually delete the theme '
-          'directory first.',
+          'will not be overwritten (unless --overwrite-theme-files is used).',
           ['--theme'],
           {'default': 'default', 'metavar': '<name>',
            'overrides': 'theme_url'}),
          ('Specify an S5 theme URL.  The destination file (output HTML) will '
           'link to this theme; nothing will be copied.  Overrides --theme.',
           ['--theme-url'],
-          {'metavar': '<URL>', 'overrides': 'theme'}),))
-
-    settings_default_overrides = {'compact_lists': 0}
+          {'metavar': '<URL>', 'overrides': 'theme'}),
+         ('Allow existing theme files in the ``ui/<theme>`` directory to be '
+          'overwritten.  The default is not to overwrite theme files.',
+          ['--overwrite-theme-files'],
+          {'action': 'store_true'}),
+         ('Keep existing theme files in the ``ui/<theme>`` directory; do not '
+          'overwrite any.  This is the default.',
+          ['--keep-theme-files'],
+          {'dest': 'overwrite_theme_files', 'action': 'store_false'}),
+         ('Enable the current slide indicator ("1 / 15").  '
+          'The default is to disable it.',
+          ['--current-slide'],
+          {'action': 'store_true'}),
+         ('Disable the current slide indicator.  This is the default.',
+          ['--no-current-slide'],
+          {'dest': 'current_slide', 'action': 'store_false'}),))
 
     config_section = 's5_html writer'
     config_section_dependencies = ('writers', 'html4css1 writer')
@@ -87,7 +81,7 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
         '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"'
         ' "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n')
 
-    s5_stylesheet_template = '''\
+    s5_stylesheet_template = """\
 <!-- configuration parameters -->
 <meta name="defaultView" content="slideshow" />
 <meta name="controlVis" content="hidden" />
@@ -100,9 +94,14 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
       type="text/css" media="print" id="slidePrint" />
 <link rel="stylesheet" href="%(path)s/opera.css"
       type="text/css" media="projection" id="operaFix" />
-<script src="%(path)s/slides.js" type="text/javascript"></script>\n'''
+<script src="%(path)s/slides.js" type="text/javascript"></script>\n"""
 
-    layout_template = '''\
+    disable_current_slide = """
+<style type="text/css">
+#currentSlide {display: none;}
+</style>\n"""
+
+    layout_template = """\
 <div class="layout">
 <div id="controls"></div>
 <div id="currentSlide"></div>
@@ -112,7 +111,7 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
 <div id="footer">
 %(title)s%(footer)s
 </div>
-</div>\n'''
+</div>\n"""
 # <div class="topleft"></div>
 # <div class="topright"></div>
 # <div class="bottomleft"></div>
@@ -143,10 +142,13 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
         self.setup_theme()
         self.stylesheet.append(self.s5_stylesheet_template
                                % {'path': self.theme_file_path})
+        if not self.document.settings.current_slide:
+            self.stylesheet.append(self.disable_current_slide)
         self.add_meta('<meta name="version" content="S5 1.1" />\n')
         self.s5_footer = []
         self.s5_header = []
         self.section_count = 0
+        self.theme_files_copied = None
 
     def setup_theme(self):
         if self.document.settings.theme:
@@ -168,6 +170,7 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
         settings = self.document.settings
         path = find_theme(settings.theme)
         theme_paths = [path]
+        self.theme_files_copied = {}
         copied = {}
         # This is a link (URL) in HTML, so we use "/", not os.sep:
         self.theme_file_path = '%s/%s' % ('ui', settings.theme)
@@ -184,7 +187,7 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
             for f in os.listdir(path):  # copy all files from each theme
                 if f == self.base_theme_file:
                     continue            # ... except the "__base__" file
-                if ( copy_file(f, path, dest, settings)
+                if ( self.copy_file(f, path, dest)
                      and f in self.required_theme_files):
                     copied[f] = 1
             if default:
@@ -219,6 +222,28 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
             raise docutils.ApplicationError(
                 'Theme files not found: %s'
                 % ', '.join(['%r' % f for f in required]))
+
+    def copy_file(self, name, source_dir, dest_dir):
+        """
+        Copy file `name` from `source_dir` to `dest_dir`.
+        Return 1 if the file exists in either `source_dir` or `dest_dir`.
+        """
+        source = os.path.join(source_dir, name)
+        dest = os.path.join(dest_dir, name)
+        if self.theme_files_copied.has_key(dest):
+            return 1
+        else:
+            self.theme_files_copied[dest] = 1
+        if os.path.isfile(source):
+            settings = self.document.settings
+            if os.path.exists(dest) and not settings.overwrite_theme_files:
+                settings.record_dependencies.add(dest)
+            else:
+                shutil.copyfile(source, dest)
+                settings.record_dependencies.add(source)
+            return 1
+        if os.path.isfile(dest):
+            return 1
 
     def depart_document(self, node):
         header = ''.join(self.s5_header)
