@@ -509,10 +509,11 @@ class HTMLTranslator(nodes.NodeVisitor):
         old_compact_simple = self.compact_simple
         self.context.append((self.compact_simple, self.compact_p))
         self.compact_p = None
-        self.compact_simple = (self.settings.compact_lists and
-                               (self.compact_simple
-                                or self.topic_classes == ['contents']
-                                or self.check_simple_list(node)))
+        self.compact_simple = (self.settings.compact_lists
+                               and 'expanded' not in node['classes']
+                               and (self.compact_simple
+                                    or self.topic_classes == ['contents']
+                                    or self.check_simple_list(node)))
         if self.compact_simple and not old_compact_simple:
             atts['class'] = 'simple'
         self.body.append(self.starttag(node, 'ul', **atts))
@@ -764,10 +765,11 @@ class HTMLTranslator(nodes.NodeVisitor):
         old_compact_simple = self.compact_simple
         self.context.append((self.compact_simple, self.compact_p))
         self.compact_p = None
-        self.compact_simple = (self.settings.compact_lists and
-                               (self.compact_simple
-                                or self.topic_classes == ['contents']
-                                or self.check_simple_list(node)))
+        self.compact_simple = (self.settings.compact_lists
+                               and 'expanded' not in node['classes']
+                               and (self.compact_simple
+                                    or self.topic_classes == ['contents']
+                                    or self.check_simple_list(node)))
         if self.compact_simple and not old_compact_simple:
             atts['class'] = (atts.get('class', '') + ' simple').strip()
         self.body.append(self.starttag(node, 'ol', **atts))
