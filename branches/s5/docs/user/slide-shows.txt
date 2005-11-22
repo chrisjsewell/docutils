@@ -48,6 +48,10 @@ S5_, a "Simple Standards-based Slide Show System" by Eric Meyer.
 
 * A variety of themes are available.
 
+  .. class:: handout
+
+  See `Example Themes`_, below.
+
 .. _Docutils: http://docutils.sourceforge.net/
 .. _S5: http://meyerweb.com/eric/tools/s5/
 
@@ -81,7 +85,6 @@ corner to display the controls.)
 
    The following apply in any supporting browser besides Opera, which
    uses the default Opera Show controls instead.
-
 
    .. list-table::
       :header-rows: 1
@@ -384,7 +387,7 @@ Generating a Slide Show (1)
 Generating a Slide Show (2)
 ===========================
 
-.. class:: incremental
+.. class:: expanded incremental
 
 4. The default Docutils stylesheet, ``html4css1.css``, will normally
    be embedded in the output HTML.  If you choose to link to a
@@ -406,13 +409,29 @@ Caveats
    It changes the CSS class of headings and they won't show up
    correctly in the screen presentation.
 
+2. Some Docutils features are not supported by some themes.  For
+   example, header rendering is not supported by the themes supplied
+   with Docutils.
+
+   .. class:: handout
+
+   The "header" directive is used to set header text.  S5
+   automatically inserts section/slide titles into the "header" area
+   of a slide.  If both Docutils headers and S5 headers (slide titles)
+   exist simultaneously, they interfere with each other.
+
 .. class:: incremental
 
-2. Subsections ...
+3. Subsections ...
 ------------------
 
 ... may be used, but you may have to provide your own stylesheet
-support.  Subsections work just fine in handouts though.
+support.  Subsections work normally in handouts though.
+
+.. class:: handout
+
+Add "``.. class:: handout``" before a subsection, and the entire
+subsection will only appear in the handout.
 
 
 Supported Classes: Incremental
@@ -468,7 +487,7 @@ Supported Classes: Alignment
 
    Right ("right")
 
-   (Block elements only.)
+   (These classes apply to block elements only.)
 
 
 Supported Classes: Text Colours
@@ -556,8 +575,11 @@ easy way to fake a continuous multi-themed presentation:
    different themes but from the same source text.
 
 2. Include a link to the *next* slide in the *second* theme, `like
-   this <default.html#slide22>`__.  Don't forget to
-   click the link!
+   this`__.
+
+   Don't forget to click the link!
+
+   __ default.html#slide22
 
 
 Chained Presentations (2)
