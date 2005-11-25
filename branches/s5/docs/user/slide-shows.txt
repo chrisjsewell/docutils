@@ -1,4 +1,4 @@
-.. include:: <s5roles.txt>
+.. include:: <s5defs.txt>
 
 =============================================
  Easy Slide Shows With reStructuredText & S5
@@ -648,7 +648,7 @@ The "incremental" interpreted text role is also supported:
        :incremental:`This will appear first,` `and
        this will appear second.`:incremental:
 
-   Requires "``.. include:: <s5roles.txt>``".
+   Requires "``.. include:: <s5defs.txt>``".
 
 .. container:: handout
 
@@ -656,7 +656,7 @@ The "incremental" interpreted text role is also supported:
 
 .. class:: incremental
 
-   | But s5roles.txt includes this useful definition:
+   | But ``s5defs.txt`` includes this useful definition:
    | "``.. default-role:: incremental``".  So:
 
    ::
@@ -678,7 +678,7 @@ Supported Classes: Text Size
 
 .. class:: incremental
 
-Requires "``.. include:: <s5roles.txt>``".
+Requires "``.. include:: <s5defs.txt>``".
 
 
 Supported Classes: Alignment
@@ -716,7 +716,7 @@ example, "``:orange:`text```" produces ":orange:`text`".
 
 .. class:: incremental
 
-Requires "``.. include:: <s5roles.txt>``".
+Requires "``.. include:: <s5defs.txt>``".
 
 
 Supported Classes: Borders
@@ -782,7 +782,7 @@ Supported Classes: Print-Only
 
 .. class:: incremental
 
-   Other uses may require "``.. include:: <s5roles.txt>``".
+   Other uses may require "``.. include:: <s5defs.txt>``".
 
 
 Chained Presentations (1)
