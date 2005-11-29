@@ -1443,7 +1443,7 @@ class HTMLTranslator(nodes.NodeVisitor):
     def depart_tip(self, node):
         self.depart_admonition()
 
-    def visit_title(self, node):
+    def visit_title(self, node, move_ids=1):
         """Only 6 section levels are supported by HTML."""
         check_id = 0
         close_tag = '</p>\n'
@@ -1478,14 +1478,18 @@ class HTMLTranslator(nodes.NodeVisitor):
             self.body.append(
                   self.starttag(node, 'h%s' % h_level, '', **atts))
             atts = {}
-            # !!! next 2 lines to be removed in Docutils 0.5:
-            if node.parent['ids']:
-                atts['ids'] = node.parent['ids']
+            # !!! conditional to be removed in Docutils 0.5:
+            if move_ids:
+                if node.parent['ids']:
+                    atts['ids'] = node.parent['ids']
             if node.hasattr('refid'):
                 atts['class'] = 'toc-backref'
                 atts['href'] = '#' + node['refid']
-            self.body.append(self.starttag({}, 'a', '', **atts))
-            self.context.append('</a></h%s>\n' % (h_level))
+            if atts:
+                self.body.append(self.starttag({}, 'a', '', **atts))
+                self.context.append('</a></h%s>\n' % (h_level))
+            else:
+                self.context.append('</h%s>\n' % (h_level))
         # !!! conditional to be removed in Docutils 0.5:
         if check_id:
             if node.parent['ids']:
