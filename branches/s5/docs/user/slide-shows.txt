@@ -600,9 +600,6 @@ stylesheets, JavaScript, and graphics:
      - iepngfix.htc
      - blank.gif
 
-     .. TODO: Alter paths in slides.js; currently hard-coded to
-        ui/default.
-
 
 Making a Custom Theme
 =====================
@@ -636,10 +633,10 @@ Making a Custom Theme
 
    Repeat from step 3 until you're satisfied.
 
-.. TBD: What to do next:
+.. TODO: What to do next:
 
    * add a ``__base__`` file
-   * create a personal reusable theme
+   * create a personal reusable theme (plugin)
    * submit the new theme to Docutils
 
   ``docutils/writers/support/s5_html/<theme>``

@@ -15,7 +15,6 @@ __docformat__ = 'reStructuredText'
 
 import sys
 import os
-import shutil
 import docutils
 from docutils import frontend, nodes, utils, writers
 from docutils.writers import html4css1
@@ -239,7 +238,13 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
             if os.path.exists(dest) and not settings.overwrite_theme_files:
                 settings.record_dependencies.add(dest)
             else:
-                shutil.copyfile(source, dest)
+                src_file = open(source, 'rb')
+                src_data = src_file.read()
+                src_file.close()
+                dest_file = open(dest, 'wb')
+                dest_file.write(src_data.replace(
+                    'ui/default', dest_dir[dest_dir.rfind('ui/'):]))
+                dest_file.close()
                 settings.record_dependencies.add(source)
             return 1
         if os.path.isfile(dest):
