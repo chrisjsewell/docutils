@@ -255,7 +255,8 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
         self.fragment.extend(self.body)
         self.body_prefix.extend(layout)
         self.body_prefix.append('<div class="presentation">\n')
-        self.body_prefix.append(self.starttag(node, 'div', CLASS='slide'))
+        self.body_prefix.append(
+            self.starttag({'classes': ['slide'], 'ids': ['slide0']}, 'div'))
         self.body_suffix.insert(0, '</div>\n')
         # skip content-type meta tag with interpolated charset value:
         self.html_head.extend(self.head[1:])
@@ -285,11 +286,9 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
         self.section_level += 1
         if self.section_level > 1:
             # dummy for matching div's
-            self.body.append(self.start_tag_with_title(
-                node, 'div', CLASS='section'))
+            self.body.append(self.starttag(node, 'div', CLASS='section'))
         else:
-            self.body.append(self.start_tag_with_title(
-                node, 'div', CLASS='slide'))
+            self.body.append(self.starttag(node, 'div', CLASS='slide'))
 
     def visit_subtitle(self, node):
         if isinstance(node.parent, nodes.section):
@@ -301,3 +300,6 @@ class S5HTMLTranslator(html4css1.HTMLTranslator):
             self.context.append('</%s>\n' % tag)
         else:
             html4css1.HTMLTranslator.visit_subtitle(self, node)
+
+    def visit_title(self, node, move_ids=0):
+        html4css1.HTMLTranslator.visit_title(self, node, move_ids=move_ids)
