@@ -14,12 +14,18 @@
    This document serves both as a user manual and as a usage example
    of the s5_html.py writer and the rst2s5.py front end.
 
-An introduction to creating presentations (slide shows) with
-Docutils/reStructuredText and S5.
+How to create quick, good-looking presentation slide shows with
+Docutils_/reStructuredText_ and S5_.
 
-*(Hit the space bar or click the mouse button to proceed.)*
+* Use the arrow keys to navigate.
+
+* Click the "|mode|" button to switch between presentation &
+  handout modes.
 
 .. container:: handout
+
+   In presentation mode, mouse over to the lower right-hand corner to
+   display the controls.
 
    The first slide of a presentation consists of all visible text up
    to the first section title.  The document title is also added to
@@ -31,37 +37,22 @@ Docutils/reStructuredText and S5.
    There is no support for the "header" directive in the themes
    included with Docutils.
 
+.. _Docutils: http://docutils.sourceforge.net/
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+.. _S5: http://meyerweb.com/eric/tools/s5/
 .. |bullet| unicode:: U+02022
+.. |mode| unicode:: U+00D8 .. capital o with stroke
 .. footer:: Location |bullet| Date
 
 
 Introduction
 ============
 
-``rst2s5.py`` is a Docutils_ front end that outputs HTML for use with
-S5_, a "Simple Standards-based Slide Show System" by Eric Meyer.
+.. class:: handout
 
-* Uses reStructuredText as input.
-
-* Presentations can be viewed using any modern graphical web browser.
-
-  .. class:: handout
-
-  The browser must support CSS, JavaScript, and XHTML.  S5 even works
-  with IE!
-
-* A variety of themes are available.
-
-  .. class:: handout
-
-  See `Example Themes`_, below.
-
-.. _Docutils: http://docutils.sourceforge.net/
-.. _S5: http://meyerweb.com/eric/tools/s5/
-
-
-Basic Usage
-===========
+   ``rst2s5.py`` is a Docutils_ front end that outputs HTML for use
+   with S5_, a "Simple Standards-based Slide Show System" by Eric
+   Meyer.
 
 .. topic:: Installation
    :class: handout
@@ -72,23 +63,37 @@ Basic Usage
 
    __ http://docutils.sourceforge.net/README.html
 
-* Normal reStructuredText documents are supported.
+* reStructuredText
 
-* Each first-level section is converted into a single slide.
+  .. class:: handout
 
-* Use the following command::
+  Uses normal reStructuredText as input.
 
-    rst2s5.py presentation.txt presentation.html
+* One section per slide
 
-* Open ``presentation.html`` in your browser.
+  .. class:: handout
 
-(Click the "|mode|" button to switch between presentation & handout
-modes.)
+  Each first-level section is converted into a single slide.
 
-.. class:: handout
+* (X)HTML output
 
-In presentation mode, mouse over to the lower right-hand corner to
-display the controls.
+  .. class:: handout
+
+  Presentations can be viewed using any modern graphical web browser.
+  The browser must support CSS, JavaScript, and XHTML.  S5 even works
+  with IE!
+
+* Themes
+
+  .. class:: handout
+
+  A variety of themes are available.  See `Example Themes`_, below.
+
+* ``rst2s5.py``
+
+  .. class:: handout
+
+  The front-end tool to generate S5 slide shows.
 
 .. topic:: Keyboard Controls
    :class: handout
@@ -136,8 +141,7 @@ display the controls.
    Further details of the S5 user interface can be found at `Eric
    Meyer's S5 page`__.
 
-.. |mode| unicode:: U+00D8 .. capital o with stroke
-__ S5_
+   __ S5_
 
 
 Features (1)
@@ -258,6 +262,98 @@ Features (2): Handouts
    is toggled from "slide show" to "outline" mode.
 
 
+Caveats
+=======
+
+.. class:: incremental
+
+1. Don't use the ``contents`` directive (table of contents).
+
+   .. class:: handout
+
+   It changes the CSS class of headings and they won't show up
+   correctly in the screen presentation.
+
+2. Some Docutils features are not supported by some themes.
+
+   .. container:: handout
+
+      For example, header rendering is not supported by the themes
+      supplied with Docutils.
+
+      The "header" directive is used to set header text.  S5
+      automatically inserts section/slide titles into the "header"
+      area of a slide.  If both Docutils headers and S5 headers (slide
+      titles) exist simultaneously, they interfere with each other.
+
+.. class:: incremental
+
+3. Subsections ...
+------------------
+
+... may be used, sparingly.
+
+.. container:: handout
+
+   You may have to provide your own stylesheet support.  Subsections
+   work normally in handouts though.
+
+   Add "``.. class:: handout``" before a subsection, and the entire
+   subsection will only appear in the handout.
+
+
+Generating a Slide Show (1)
+===========================
+
+.. class:: incremental
+
+1. Open a console (terminal, command shell) and go to the folder
+   containing your file, ``presentation.txt``.
+
+2. Run the command::
+
+       rst2s5.py presentation.txt \
+                 presentation.html
+
+3. Specify an S5 theme with the ``--theme`` option.
+
+   .. class:: handout
+
+   Docutils will copy the S5 theme files into a ``ui/<theme>`` folder
+   beside the output HTML file.  A slide show can also link to an
+   existing theme using the ``--theme-url`` option.
+
+
+Generating a Slide Show (2)
+===========================
+
+.. class:: incremental
+
+4. Include a copy of any linked stylesheet.
+
+   .. class:: handout
+
+   The default Docutils stylesheet, ``html4css1.css``, will normally
+   be embedded in the output HTML.  If you choose to link to a
+   stylesheet instead of embedding, you must include a copy (suggested
+   location: in the ``ui/`` directory).
+
+5. Open ``presentation.html`` in a web browser.
+
+6. Expand the browser window to full-screen mode, and speak.
+
+   .. class:: handout
+
+   The `Web Developer`__ extension for Firefox is very useful.  With
+   it, you can resize your browser window to the exact dimensions of
+   the projector you'll be using, so you can test beforehand.  There
+   are many other useful features as well.
+
+   __ http://chrispederick.com/work/webdeveloper/
+
+7. Profit!
+
+
 Examples (1)
 ============
 
@@ -303,7 +399,19 @@ Examples (2): Incremental Text
 Examples (3): Incr. Graphics
 ============================
 
-TBD (insert an example of animation here)
+Let's play... Rock, Scissors, Paper
+
+.. container:: animation
+
+   .. image:: images/rsp-empty.png
+
+   .. class:: incremental
+
+      .. image:: images/rsp-objects.png
+      .. image:: images/rsp-cuts.png
+      .. image:: images/rsp-covers.png
+      .. image:: images/rsp-breaks.png
+      .. image:: images/rsp-all.png
 
 
 Themes
@@ -329,10 +437,12 @@ Themes
      S5 is becoming more popular every day.  Do a web search for "S5
      theme" and you're bound to find plenty of choices.
 
-* The theme can be specified with the "``--theme``" command-line
-  option or the "``theme``" configuration file setting.
+* "``--theme``" option.
 
   .. container:: handout
+
+     The theme can be specified with the "``--theme``" command-line
+     option.
 
      Example::
 
@@ -340,11 +450,27 @@ Themes
 
      The default theme is "default".
 
-* Themes are copied into a ``ui/<theme>`` folder inside the folder
+* "``theme``" setting.
+
+  .. class:: handout
+
+  You can set the theme with the "``theme``" configuration file
+  setting.
+
+* Copied to ``./ui/<theme>/``.
+
+  .. class:: handout
+
+  Themes are copied into a ``ui/<theme>`` folder inside the folder
   containing the presentation.
 
-* Link to a theme on the same or another web site, using the
-  "``--theme-url``" option.
+* Link with "``--theme-url``" option.
+
+  .. class:: handout
+
+  Link to a theme on the same or another web site, using the
+  "``--theme-url``" option or "``theme_url``" configuration file
+  setting.
 
 
 Example Themes
@@ -361,7 +487,6 @@ Example Themes
 
    .. image:: images/default.png
       :align: center
-      :width: 550
 
 
 Example Themes: Small Text
@@ -380,12 +505,10 @@ Example Themes: Small Text
    * - "small-white"
 
        .. image:: images/small-white.png
-          :width: 367
 
      - "small-black"
 
        .. image:: images/small-black.png
-          :width: 367
 
 
 Example Themes: Large Text
@@ -403,12 +526,10 @@ Example Themes: Large Text
    * - "big-white"
 
        .. image:: images/big-white.png
-          :width: 367
 
      - "big-black"
 
        .. image:: images/big-black.png
-          :width: 367
 
 
 Example Themes: Medium Text
@@ -425,12 +546,10 @@ Example Themes: Medium Text
    * - "medium-white"
 
        .. image:: images/medium-white.png
-          :width: 367
 
      - "medium-black"
 
        .. image:: images/medium-black.png
-          :width: 367
 
 
 S5 Theme Files
@@ -441,7 +560,6 @@ stylesheets, JavaScript, and graphics:
 
 .. image:: images/s5-files.png
    :align: center
-   :width: 550
 
 .. container:: handout
 
@@ -489,21 +607,36 @@ stylesheets, JavaScript, and graphics:
 Making a Custom Theme
 =====================
 
-1. Run "``rst2s5.py --theme <base-theme> <doc>.txt <doc>.html``" to
-   initialize the ``ui`` directory with the base theme files.
+.. class:: incremental
 
-2. Copy ``ui/<base-theme>`` to a new theme directory,
-   ``ui/<new-theme>``.
+1. Run "``rst2s5.py --theme <base-theme> <doc>.txt <doc>.html``".
 
-3. Edit the styles.  Start with ``pretty.css``; edit ``framing.css``
-   if you need to make layout changes.
+   .. class:: handout
 
-4. Run "``rst2s5.py --theme <new-theme> <doc>.txt <doc>.html``"; open
-   your ``<doc>.html`` in a browser to test the new theme.
+   This initializes the ``ui`` directory with the base theme files.
 
-5. Repeat from step 3 until you're satisfied.
+2. Copy ``ui/<base-theme>`` to ``ui/<new-theme>``.
 
-.. TODO: What to do next:
+3. Edit the styles.
+
+   .. class:: handout
+
+   Start with ``pretty.css``; edit ``framing.css`` if you need to make
+   layout changes.
+
+4. Run "``rst2s5.py --theme <new-theme> <doc>.txt <doc>.html``".
+
+   .. class:: handout
+
+   Open your ``<doc>.html`` in a browser to test the new theme.
+
+5. Rinse & repeat.
+
+   .. class:: handout
+
+   Repeat from step 3 until you're satisfied.
+
+.. TBD: What to do next:
 
    * add a ``__base__`` file
    * create a personal reusable theme
@@ -523,99 +656,8 @@ Making a Custom Theme
      `Eigenes Theme erstellen <http://yatil.de/s5/dokumentation/9/>`__
 
 
-Generating a Slide Show (1)
-===========================
-
-.. class:: incremental
-
-1. Open a console (terminal, command shell) and go to the folder
-   containing your file, ``presentation.txt``.
-
-2. Run the command::
-
-       rst2s5.py presentation.txt \
-                 presentation.html
-
-3. Specify an S5 theme with the ``--theme`` option.
-
-   .. class:: handout
-
-   Docutils will copy the S5 theme files into a ``ui/<theme>`` folder
-   beside the output HTML file.  A slide show can also link to an
-   existing theme using the ``--theme-url`` option.
-
-
-Generating a Slide Show (2)
-===========================
-
-.. class:: incremental
-
-4. Include a copy of any linked stylesheet.
-
-   .. class:: handout
-
-   The default Docutils stylesheet, ``html4css1.css``, will normally
-   be embedded in the output HTML.  If you choose to link to a
-   stylesheet instead of embedding, you must include a copy.
-
-5. Open ``presentation.html`` in a web browser.
-
-6. Expand the browser window to full-screen mode, and speak.
-
-   .. class:: handout
-
-   The `Web Developer`__ extension for Firefox is very useful.  With
-   it, you can resize your browser window to the exact dimensions of
-   the projector you'll be using, so you can test beforehand.  There
-   are many other useful features as well.
-
-   __ http://chrispederick.com/work/webdeveloper/
-
-7. Profit!
-
-
-Caveats
-=======
-
-.. class:: incremental
-
-1. Don't use the ``contents`` directive (table of contents).
-
-   .. class:: handout
-
-   It changes the CSS class of headings and they won't show up
-   correctly in the screen presentation.
-
-2. Some Docutils features are not supported by some themes.
-
-   .. container:: handout
-
-      For example, header rendering is not supported by the themes
-      supplied with Docutils.
-
-      The "header" directive is used to set header text.  S5
-      automatically inserts section/slide titles into the "header"
-      area of a slide.  If both Docutils headers and S5 headers (slide
-      titles) exist simultaneously, they interfere with each other.
-
-.. class:: incremental
-
-3. Subsections ...
-------------------
-
-... may be used, sparingly.
-
-.. container:: handout
-
-   You may have to provide your own stylesheet support.  Subsections
-   work normally in handouts though.
-
-   Add "``.. class:: handout``" before a subsection, and the entire
-   subsection will only appear in the handout.
-
-
-Supported Classes: Incremental
-==============================
+Supported Classes: Incremental (1)
+==================================
 
 .. class:: handout
 
@@ -636,8 +678,8 @@ Supported Classes: Incremental
             :class: incremental
 
 
-Supported Classes: Incremental
-==============================
+Supported Classes: Incremental (2)
+==================================
 
 The "incremental" interpreted text role is also supported:
 
@@ -663,22 +705,54 @@ The "incremental" interpreted text role is also supported:
 
        `This` `is` `all` `we` `need`
 
-`This` `is` `all` `we` need` `to mark up incremental text.`
+`This` `is` `all` `we` `need` `to mark up incremental text.`
+
+
+Supported Classes: Incremental (3)
+==================================
+
+.. class:: handout
+
+   The "animation" class is provided to support incremental graphics.
+   This is how the example earlier was done:
+
+::
+
+    .. container:: animation
+
+       .. image:: images/rsp-empty.png
+
+       .. class:: incremental
+
+          .. image:: images/rsp-objects.png
+          .. image:: images/rsp-cuts.png
+          .. image:: images/rsp-covers.png
+          .. image:: images/rsp-breaks.png
+          .. image:: images/rsp-all.png
+
+.. admonition:: Caveat
+   :class: handout
+
+   The animation effects are caused by placing successive images at
+   the same location, laying each image over the last.  Absolute
+   positioning is used, which means that the images take up no space
+   in the flow.  If you want text to follow the images, you have to
+   specify the image sizes.  Otherwise, the images and any following
+   text will overlap.
 
 
 Supported Classes: Text Size
 ============================
 
-| :tiny:`tiny` (class & role name: "tiny",
-|     e.g. "``:tiny:`text```")
-| :small:`small` ("small")
-| normal (unstyled)
-| :big:`big` ("big")
-| :huge:`huge` ("huge")
-
 .. class:: incremental
 
-Requires "``.. include:: <s5defs.txt>``".
+   * :tiny:`tiny` (class & role name: "tiny", e.g. "``:tiny:`text```")
+   * :small:`small` ("small")
+   * normal (unstyled)
+   * :big:`big` ("big")
+   * :huge:`huge` ("huge")
+
+   Requires "``.. include:: <s5defs.txt>``".
 
 
 Supported Classes: Alignment
@@ -698,7 +772,18 @@ Supported Classes: Alignment
 
    Right ("right")
 
-   (These classes apply to block elements only.)
+.. class:: handout
+
+   These classes apply to block-level elements only.  They cannot be
+   used for inline text (i.e., they're not interpreted text roles).
+
+.. class:: incremental
+
+   Example::
+
+       .. class:: center
+
+       Text to be centered.
 
 
 Supported Classes: Text Colours
@@ -722,9 +807,11 @@ Requires "``.. include:: <s5defs.txt>``".
 Supported Classes: Borders
 ==========================
 
-.. class:: incremental
+.. class:: handout
 
-   An ordinary, unstyled table:
+   Here's an ordinary, unstyled table:
+
+.. class:: incremental
 
    =========  =======
    Sometimes  borders
@@ -785,43 +872,49 @@ Supported Classes: Print-Only
    Other uses may require "``.. include:: <s5defs.txt>``".
 
 
-Chained Presentations (1)
-=========================
+Chained Presentations
+=====================
 
 .. class:: handout
 
    Presentation slide shows can be chained together.  This is useful
    for including all or part of one presentation in another, and for
-   changing themes.  Slide numbers are not carried over though.  But
-   there's an easy way to fake a continuous multi-themed presentation:
+   changing themes.  Slide numbers are not carried over, unless you
+   fake a continuous multi-themed presentation:
 
-.. class:: incremental
+   1. Generate slide show HTML files with two different names from
+      different themes but from the same source text.
 
-1. Generate slide show HTML files with two different names from
-   different themes but from the same source text.
+   2. Include a link to the **next** slide, in the **second** theme's
+      file.
 
-2. Include `a link to the slide after this one, in the SECOND
-   theme`__.
+   3. To return to the first theme, include a link to the **next**
+      slide, in the **first** theme.
 
-   __ small-white.html#slide26
+From one theme, `to another...`__
+
+__ slide-shows-alt.html#chained-presentations-2
 
 
 Chained Presentations (2)
 =========================
 
-3. To return to the first theme, include `a link to the slide after
-   this, in the first theme`__.
+... and `back again...`__
 
-   __ small-black.html#slide27
+__ slide-shows.html#chained-presentations-3
 
 
 Chained Presentations (3)
 =========================
 
-4. Now we're back where we started from, back in the first theme, but
+... back to the first theme.
+
+.. class:: handout
+
+   Now we're back where we started from, back in the first theme, but
    two slides further on.
 
-In this way, any number of themes can be chained together.
+   In this way, any number of themes can be chained together.
 
 
 To Do
