@@ -104,6 +104,9 @@ img.incremental {visibility: hidden;}
 
 .borderless, .borderless td {border: 0;}
 
+.animation {position: relative; margin: 1em 0; padding: 0;}
+.animation img {position: absolute;}
+
 /* Docutils-specific overrides */
 
 .slide table.docinfo {margin: 1em 0 0.5em 2em;}
