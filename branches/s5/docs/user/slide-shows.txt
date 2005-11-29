@@ -9,6 +9,8 @@
 
 .. This document has been placed in the public domain.
 
+.. contents::
+
 .. class:: handout
 
    This document serves both as a user manual and as a usage example
@@ -17,10 +19,12 @@
 How to create quick, good-looking presentation slide shows with
 Docutils_/reStructuredText_ and S5_.
 
+.. class:: small
+
 * Use the arrow keys to navigate.
 
 * Click the "|mode|" button to switch between presentation &
-  handout modes.
+  handout/outline modes.
 
 .. container:: handout
 
@@ -267,14 +271,7 @@ Caveats
 
 .. class:: incremental
 
-1. Don't use the ``contents`` directive (table of contents).
-
-   .. class:: handout
-
-   It changes the CSS class of headings and they won't show up
-   correctly in the screen presentation.
-
-2. Some Docutils features are not supported by some themes.
+1. Some Docutils features are not supported by some themes.
 
    .. container:: handout
 
@@ -288,18 +285,19 @@ Caveats
 
 .. class:: incremental
 
-3. Subsections ...
+2. Subsections ...
 ------------------
 
 ... may be used, sparingly.
 
 .. container:: handout
 
-   You may have to provide your own stylesheet support.  Subsections
-   work normally in handouts though.
+   Only first-level sections become slides.  Not many levels of
+   subsections can fit on a slide.
 
-   Add "``.. class:: handout``" before a subsection, and the entire
-   subsection will only appear in the handout.
+   Subsections (of any level) work normally in handouts though.  Add
+   "``.. class:: handout``" before a subsection (or sub-subsection, or
+   ...), and the entire subsection will only appear in the handout.
 
 
 Generating a Slide Show (1)

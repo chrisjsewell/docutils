@@ -37,7 +37,9 @@ class Writer(html4css1.Writer):
 
     settings_spec = html4css1.Writer.settings_spec + (
         'S5 Slideshow Specific Options',
-        None,
+        'For the S5/HTML writer, the --no-table-of-contents option '
+        '(defined in HTML-Specific Options above) is the default, '
+        'and should not be changed.',
         (('Specify an installed S5 theme by name.  Overrides --theme-url.  '
           'The default theme name is "default".  The theme files will be '
           'copied into a "ui/<theme>" directory, in the same directory as the '
@@ -65,6 +67,8 @@ class Writer(html4css1.Writer):
          ('Disable the current slide indicator.  This is the default.',
           ['--no-current-slide'],
           {'dest': 'current_slide', 'action': 'store_false'}),))
+
+    settings_default_overrides = {'toc_xform': 0}
 
     config_section = 's5_html writer'
     config_section_dependencies = ('writers', 'html4css1 writer')

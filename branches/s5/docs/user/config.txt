@@ -346,7 +346,8 @@ _`sectnum_xform`
     Enable or disable the section numbering transform
     (docutils.transforms.parts.SectNum).
 
-    Default: enabled (1).  Options: ``--no-section-numbering``.
+    Default: enabled (1).  Options: ``--section-numbering``,
+    ``--no-section-numbering``.
 
 _`source_link`
     Include a "View document source" link in the document footer.  URL
@@ -383,6 +384,13 @@ _`toc_backlinks`
 
     Default: "entry".  Options: ``--toc-entry-backlinks,
     --toc-top-backlinks, --no-toc-backlinks``.
+
+_`toc_xform`
+    Enable or disable the table of contents transform
+    (docutils.transforms.parts.Contents).
+
+    Default: enabled (1).  Options: ``--table-of-contents``,
+    ``--no-table-of-contents``.
 
 _`traceback`
     Enable Python tracebacks when halt-level system messages and other
