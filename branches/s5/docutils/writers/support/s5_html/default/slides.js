@@ -110,23 +110,27 @@ function slideLabel() {
 
 function currentSlide() {
 	var cs;
+	var footer_nodes;
+	var vis = 'visible';
 	if (document.getElementById) {
 		cs = document.getElementById('currentSlide');
-		footer = document.getElementById('footer');
+		footer_nodes = document.getElementById('footer').childNodes;
 	} else {
 		cs = document.currentSlide;
-		cs = document.footer;
+		footer = document.footer.childNodes;
 	}
 	cs.innerHTML = '<span id="csHere">' + snum + '<\/span> ' + 
 		'<span id="csSep">\/<\/span> ' + 
 		'<span id="csTotal">' + (smax-1) + '<\/span>';
 	if (snum == 0) {
-		cs.style.visibility = 'hidden';
-		footer.style.visibility = 'hidden';
-	} else {
-		cs.style.visibility = 'visible';
-		footer.style.visibility = 'visible';
+		vis = 'hidden';
 	}
+	cs.style.visibility = vis;
+	for (var i = 0; i < footer_nodes.length; i++) {
+		if (footer_nodes[i].nodeType == 1) {
+			footer_nodes[i].style.visibility = vis;
+		}
+	}		
 }
 
 function go(step) {
