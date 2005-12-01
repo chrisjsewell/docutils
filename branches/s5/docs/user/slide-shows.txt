@@ -651,8 +651,8 @@ Making a Custom Theme
      `Eigenes Theme erstellen <http://yatil.de/s5/dokumentation/9/>`__
 
 
-Supported Classes: Incremental (1)
-==================================
+Classes: Incremental (1)
+========================
 
 .. class:: handout
 
@@ -673,8 +673,8 @@ Supported Classes: Incremental (1)
             :class: incremental
 
 
-Supported Classes: Incremental (2)
-==================================
+Classes: Incremental (2)
+========================
 
 The "incremental" interpreted text role is also supported:
 
@@ -703,8 +703,8 @@ The "incremental" interpreted text role is also supported:
 `This` `is` `all` `we` `need` `to mark up incremental text.`
 
 
-Supported Classes: Incremental (3)
-==================================
+Classes: Incremental (3)
+========================
 
 .. class:: handout
 
@@ -736,8 +736,8 @@ Supported Classes: Incremental (3)
    text will overlap.
 
 
-Supported Classes: Text Size
-============================
+Classes: Text Size
+==================
 
 .. class:: incremental
 
@@ -750,8 +750,8 @@ Supported Classes: Text Size
    Requires "``.. include:: <s5defs.txt>``".
 
 
-Supported Classes: Alignment
-============================
+Classes: Alignment
+==================
 
 .. class:: incremental
 
@@ -781,8 +781,8 @@ Supported Classes: Alignment
        Text to be centered.
 
 
-Supported Classes: Text Colours
-===============================
+Classes: Text Colours
+=====================
 
 :black:`black` [black], :gray:`gray`, :silver:`silver`, :white:`white`
 [white], :maroon:`maroon`, :red:`red`, :magenta:`magenta`,
@@ -799,7 +799,7 @@ example, "``:orange:`text```" produces ":orange:`text`".
 Requires "``.. include:: <s5defs.txt>``".
 
 
-Supported Classes: Borders
+Classes: Borderless Tables
 ==========================
 
 .. class:: handout
@@ -825,8 +825,8 @@ Supported Classes: Borders
    =======  ==========  =======
 
 
-Supported Classes: Print-Only
-=============================
+Classes: Print-Only
+===================
 
 .. class:: handout
 
@@ -904,25 +904,42 @@ Chained Presentations (3)
 
 ... back to the first theme.
 
-.. class:: handout
+.. container:: handout
 
    Now we're back where we started from, back in the first theme, but
    two slides further on.
 
    In this way, any number of themes can be chained together.
 
+`Or you could cheat.`
+
+.. container:: handout
+
+   Just prepare the browser in advance, with all the slide show files
+   set up at the right slide in separate tabs in your browser, in the
+   right order.  Closing one tab will reveal the next.
+
 
 To Do
 =====
 
-* Multi-display support:
+.. class:: incremental
 
-  - speaker's notes on the laptop screen
-  - slides on the projector
-  - two views stay in sync
-  - presentation controlled from either display
+   * Multi-display support:
 
-  This will require some serious JavaScript-fu!
+     - speaker's notes on the laptop screen
+     - slides on the projector
+     - two views stay in sync
+     - presentation controlled from either display
+
+   * Add timeout to incremental style.
+
+     .. class:: handout
+
+     I.e., incremental-specific style should go away (revert to
+     normal) after a certain interval.
+
+   These will require some serious JavaScript-fu!
 
 
 That's All, Folks!
