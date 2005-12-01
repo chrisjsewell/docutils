@@ -87,8 +87,8 @@ Changes Since 0.3.9
 
 * docutils/parsers/rst/include/: Directory added to project; contains
   standard data files for the "include" directive.  Initial contents:
-  character entity substitution definition sets, a set of roles for
-  S5/HTML presentations.
+  character entity substitution definition sets, and a set of
+  definitions for S5/HTML presentations.
 
 * docutils/readers/__init__.py:
 
@@ -211,6 +211,12 @@ Changes Since 0.3.9
 * test/DocutilsTestSupport.py:
 
   - Added support for specifying runtime settings at the suite level.
+
+* test/test_functional.py:
+
+  - Added the ``clear_output_directory`` function.
+  - Added support for ``_test_more`` functions in functional test
+    config files.
 
 * tools/rstpep2html.py: Renamed from pep.py.
 
