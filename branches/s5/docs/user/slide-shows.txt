@@ -729,11 +729,15 @@ Classes: Incremental (3)
    :class: handout
 
    The animation effects are caused by placing successive images at
-   the same location, laying each image over the last.  Absolute
-   positioning is used, which means that the images take up no space
-   in the flow.  If you want text to follow the images, you have to
-   specify the image sizes.  Otherwise, the images and any following
-   text will overlap.
+   the same location, laying each image over the last.  For best
+   results, all images should be the same size, and the positions of
+   image elements should be consistent.  Use image transparency (alpha
+   channels) to get overlay effects.
+
+   Absolute positioning is used, which means that the images take up
+   no space in the flow.  If you want text to follow the images, you
+   have to specify the image sizes.  Otherwise, the images and any
+   following text will overlap.
 
 
 Classes: Text Size
