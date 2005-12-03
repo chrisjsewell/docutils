@@ -9,12 +9,13 @@
 
 .. This document has been placed in the public domain.
 
-.. contents::
-
 .. class:: handout
 
    This document serves both as a user manual and as a usage example
    of the s5_html.py writer and the rst2s5.py front end.
+
+.. contents::
+   :class: handout
 
 How to create quick, good-looking presentation slide shows with
 Docutils_/reStructuredText_ and S5_.
@@ -283,9 +284,19 @@ Caveats
       area of a slide.  If both Docutils headers and S5 headers (slide
       titles) exist simultaneously, they interfere with each other.
 
+2. Care must be taken with the "contents" directive.
+
+   .. container:: handout
+
+      The ``--no-toc-backlinks`` option is the default for the S5/HTML
+      writer (``toc_backlinks=0`` setting).  Other values for this
+      setting will change the CSS class of headings such that they
+      won't show up correctly in the slide show.
+
+
 .. class:: incremental
 
-2. Subsections ...
+3. Subsections ...
 ------------------
 
 ... may be used, sparingly.

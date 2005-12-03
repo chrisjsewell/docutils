@@ -43,8 +43,6 @@ def contents(name, arguments, options, content, lineno,
               nodes.literal_block(block_text, block_text), line=lineno)
         return [error]
     document = state_machine.document
-    if not document.settings.toc_xform:
-        return []
     language = languages.get_language(document.settings.language_code)
     if arguments:
         title_text = arguments[0]

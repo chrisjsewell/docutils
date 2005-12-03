@@ -346,14 +346,6 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
           ['--no-section-numbering'],
           {'action': 'store_false', 'dest': 'sectnum_xform',
            'validator': validate_boolean}),
-         ('Enable the Docutils table of contents (default: enabled).',
-          ['--table-of-contents'],
-          {'action': 'store_true', 'dest': 'toc_xform',
-           'validator': validate_boolean}),
-         ('Disable the Docutils table of contents (default: enabled).',
-          ['--no-table-of-contents'],
-          {'action': 'store_false', 'dest': 'toc_xform',
-           'default': 1, 'validator': validate_boolean}),
          ('Set verbosity threshold; report system messages at or higher than '
           '<level> (by name or number: "info" or "1", warning/2, error/3, '
           'severe/4; also, "none" or "5").  Default is 2 (warning).',

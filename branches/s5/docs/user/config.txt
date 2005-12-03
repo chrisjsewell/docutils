@@ -385,13 +385,6 @@ _`toc_backlinks`
     Default: "entry".  Options: ``--toc-entry-backlinks,
     --toc-top-backlinks, --no-toc-backlinks``.
 
-_`toc_xform`
-    Enable or disable the table of contents transform
-    (docutils.transforms.parts.Contents).
-
-    Default: enabled (1).  Options: ``--table-of-contents``,
-    ``--no-table-of-contents``.
-
 _`traceback`
     Enable Python tracebacks when halt-level system messages and other
     exceptions occur.  Useful for debugging, and essential for issue

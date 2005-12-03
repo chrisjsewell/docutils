@@ -8,6 +8,7 @@
 :Date:   2005-11-28
 
 .. contents::
+   :class: handout
 
 .. class:: handout
 

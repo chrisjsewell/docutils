@@ -81,9 +81,6 @@ class Contents(Transform):
     default_priority = 720
 
     def apply(self):
-        if not self.document.settings.toc_xform:
-            self.startnode.parent.parent.remove(self.startnode.parent)
-            return
         details = self.startnode.details
         if details.has_key('local'):
             startnode = self.startnode.parent.parent
