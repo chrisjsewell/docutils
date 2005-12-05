@@ -37,6 +37,8 @@ Let's test the S5/HTML writer!
 Introduction
 ============
 
+.. class:: compact
+
 * reStructuredText
 
   .. class:: handout
@@ -97,7 +99,7 @@ Features (2)
 
 `Some` `incremental` `text.`
 
-.. class:: incremental
+.. class:: incremental open
 
    * :tiny:`tiny` (class & role name: "tiny", e.g. "``:tiny:`text```")
    * :small:`small` ("small")
