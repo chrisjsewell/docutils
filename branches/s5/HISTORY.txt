@@ -83,7 +83,7 @@ Changes Since 0.3.9
 * docutils/parsers/rst/directives/references.py:
 
   - Added "class" attribute to "target-notes" directive, for
-    footnote_reference classes (print-only functionality in S5/HTML).
+    footnote_reference classes.
 
 * docutils/parsers/rst/include/: Directory added to project; contains
   standard data files for the "include" directive.  Initial contents:
@@ -110,8 +110,7 @@ Changes Since 0.3.9
   - Added references.DanglingReferences transform, extracted from
     universal.FinalChecks.
   - Fixed bug with doubly-indirect substitutions.
-  - Added footnote_reference classes attribute to "TargetNotes", for
-    print-only functionality in S5/HTML.
+  - Added footnote_reference classes attribute to "TargetNotes".
 
 * docutils/transforms/universal.py:
 
@@ -157,7 +156,7 @@ Changes Since 0.3.9
     simple field lists.
   - Made cloaking of email addresses with ``--cloak-email-addresses``
     less obtrusive.
-  - Added support for class="expanded" lists.
+  - Added support for class="compact" & class="open" lists.
 
 * docutils/writers/latex2e.py:
 

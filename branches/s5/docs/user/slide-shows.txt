@@ -293,6 +293,13 @@ Caveats
       setting will change the CSS class of headings such that they
       won't show up correctly in the slide show.
 
+      Use the ``:class: handout`` option on the "contents" directive
+      to limit the table of contents to the handout/outline mode
+      only::
+
+          .. contents::
+             :class: handout
+
 
 .. class:: incremental
 
