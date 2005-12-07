@@ -200,10 +200,10 @@ Changes Since 0.3.9
   Docutils-related mailing lists and how to access them.
 
 * docs/user/slide-shows.txt: Added to project; example of and docs for
-  the S5/HTML writer (rst2s5.py front end).
+  the S5/HTML writer (``rst2s5.py`` front end).
 
-* docs/ref/rst/substitutions.txt: "reStructuredText Standard
-  Substitution Definition Sets", added to project.
+* docs/ref/rst/definitions.txt: "reStructuredText Standard Definition
+  Files", added to project.
 
 * test/coverage.sh: Added to project; test coverage script.
 
@@ -216,6 +216,8 @@ Changes Since 0.3.9
   - Added the ``clear_output_directory`` function.
   - Added support for ``_test_more`` functions in functional test
     config files.
+
+* tools/rst2s5.py: Added to project; front end for the S5/HTML writer.
 
 * tools/rstpep2html.py: Renamed from pep.py.
 
