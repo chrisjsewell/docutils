@@ -60,12 +60,12 @@ class DocformatVisitor(nodes.SparseNodeVisitor):
         if name != '__docformat__':
             return
         value = None
-        for child in children:
+        for child in node:
             if isinstance(child, pynodes.expression_value):
                 value = child[0].data
                 break
         assert value.startswith("'") or value.startswith('"'), "__docformat__ must be assigned a string literal (not %s); line: %s" % (value, node['lineno'])
-        name = name[1:-1]
+        name = value[1:-1]
         looking_in = node.parent
         while not isinstance(looking_in, (pynodes.module_section,
                                           pynodes.function_section,
