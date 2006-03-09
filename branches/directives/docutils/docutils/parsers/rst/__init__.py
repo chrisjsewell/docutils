@@ -77,9 +77,6 @@ import docutils.statemachine
 from docutils.parsers.rst import states
 from docutils import frontend
 
-False = 0
-True = 1
-
 
 class Parser(docutils.parsers.Parser):
 
