@@ -16,33 +16,6 @@ from docutils.parsers.rst import Directive, states
 from docutils.transforms import components
 
 
-class Meta(Directive):
-
-    content = 1
-
-    def run(self):
-        node = nodes.Element()
-        if self.content:
-            new_line_offset, blank_finish = self.state.nested_list_parse(
-                  self.content, self.content_offset, node,
-                  initial_state='MetaBody', blank_finish=1,
-                  state_machine_kwargs=metaSMkwargs)
-            if (new_line_offset - self.content_offset) != len(self.content):
-                # incomplete parse of block?
-                error = self.state_machine.reporter.error(
-                    'Invalid meta directive.',
-                    nodes.literal_block(self.block_text, self.block_text),
-                    line=self.lineno)
-                node += error
-        else:
-            error = self.state_machine.reporter.error(
-                'Empty meta directive.',
-                nodes.literal_block(self.block_text, self.block_text),
-                line=self.lineno)
-            node += error
-        return node.children
-
-
 class MetaBody(states.SpecializedBody):
 
     class meta(nodes.Special, nodes.PreBibliographic, nodes.Element):
@@ -93,4 +66,30 @@ class MetaBody(states.SpecializedBody):
         return pending, blank_finish
 
 
-metaSMkwargs = {'state_classes': (MetaBody,)}
+class Meta(Directive):
+
+    content = 1
+
+    SMkwargs = {'state_classes': (MetaBody,)}
+
+    def run(self):
+        node = nodes.Element()
+        if self.content:
+            new_line_offset, blank_finish = self.state.nested_list_parse(
+                self.content, self.content_offset, node,
+                initial_state='MetaBody', blank_finish=1,
+                state_machine_kwargs=SMkwargs)
+            if (new_line_offset - self.content_offset) != len(self.content):
+                # incomplete parse of block?
+                error = self.state_machine.reporter.error(
+                    'Invalid meta directive.',
+                    nodes.literal_block(self.block_text, self.block_text),
+                    line=self.lineno)
+                node += error
+        else:
+            error = self.state_machine.reporter.error(
+                'Empty meta directive.',
+                nodes.literal_block(self.block_text, self.block_text),
+                line=self.lineno)
+            node += error
+        return node.children
