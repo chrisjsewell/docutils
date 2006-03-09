@@ -42,10 +42,6 @@ class Meta(Directive):
             node += error
         return node.children
 
-def imagemap(name, arguments, options, content, lineno,
-             content_offset, block_text, state, state_machine):
-    return []
-
 
 class MetaBody(states.SpecializedBody):
 
