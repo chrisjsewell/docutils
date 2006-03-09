@@ -170,6 +170,8 @@ class Directive:
     final_argument_whitespace = False
     # Mapping of option names to validator functions.
     options = None
+    # Directive may have content.
+    content = False
 
     def __init__(self, name, arguments, options, content, lineno,
                  content_offset, block_text, state, state_machine):
