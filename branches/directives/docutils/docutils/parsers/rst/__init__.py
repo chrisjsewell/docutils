@@ -77,6 +77,9 @@ import docutils.statemachine
 from docutils.parsers.rst import states
 from docutils import frontend
 
+False = 0
+True = 1
+
 
 class Parser(docutils.parsers.Parser):
 
@@ -154,3 +157,34 @@ class Parser(docutils.parsers.Parser):
               convert_whitespace=1)
         self.statemachine.run(inputlines, document, inliner=self.inliner)
         self.finish_parse()
+
+
+class Directive:
+
+    """
+    Base class for reStructuredText directives.
+    """
+
+    # Number of required directive arguments.
+    required_arguments = 0
+    # Number of optional arguments after the required arguments.
+    optional_arguments = 0
+    # Final argument may contain whitespace.
+    final_argument_whitespace = False
+    # Mapping of option names to validator functions.
+    options = None
+
+    def __init__(self, name, arguments, options, content, lineno,
+                 content_offset, block_text, state, state_machine):
+        self.name = name
+        self.arguments = arguments
+        self.options = options
+        self.content = content
+        self.lineno = lineno
+        self.content_offset = content_offset
+        self.block_text = block_text
+        self.state = state
+        self.state_machine = state_machine
+
+    def run(self):
+        raise RuntimeError('Must override run() is subclass.')

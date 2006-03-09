@@ -108,7 +108,7 @@ __docformat__ = 'reStructuredText'
 import sys
 import re
 import roman
-from types import TupleType
+from types import TupleType, FunctionType
 from docutils import nodes, statemachine, utils, urischemes
 from docutils import ApplicationError, DataError
 from docutils.statemachine import StateMachineWS, StateWS
@@ -1975,15 +1975,14 @@ class Body(RSTState):
         else:
             return self.unknown_directive(type_name)
 
-    def run_directive(self, directive_fn, match, type_name, option_presets):
+    def run_directive(self, directive, match, type_name, option_presets):
         """
         Parse a directive then run its directive function.
 
         Parameters:
 
-        - `directive_fn`: The function implementing the directive.  Uses
-          function attributes ``arguments``, ``options``, and/or ``content``
-          if present.
+        - `directive`: The class implementing the directive.  Must be
+          a subclass of `rst.Directive`.
 
         - `match`: A regular expression match object which matched the first
           line of the directive.
@@ -2007,28 +2006,35 @@ class Body(RSTState):
         try:
             arguments, options, content, content_offset = (
                 self.parse_directive_block(indented, line_offset,
-                                           directive_fn, option_presets))
+                                           directive, option_presets))
         except MarkupError, detail:
             error = self.reporter.error(
                 'Error in "%s" directive:\n%s.' % (type_name,
                                                    ' '.join(detail.args)),
                 nodes.literal_block(block_text, block_text), line=lineno)
             return [error], blank_finish
-        result = directive_fn(type_name, arguments, options, content, lineno,
-                              content_offset, block_text, self,
-                              self.state_machine)
+        if isinstance(directive, FunctionType):
+            # For backwards-compatibility with previous functional interface.
+            result = directive(
+                type_name, arguments, options, content, lineno,
+                content_offset, block_text, self, self.state_machine)
+        else:
+            directive_instance = directive(
+                type_name, arguments, options, content, lineno,
+                content_offset, block_text, self, self.state_machine)
+            result = directive_instance.run()
         return (result,
                 blank_finish or self.state_machine.is_next_line_blank())
 
-    def parse_directive_block(self, indented, line_offset, directive_fn,
+    def parse_directive_block(self, indented, line_offset, directive,
                               option_presets):
         arguments = []
         options = {}
-        argument_spec = getattr(directive_fn, 'arguments', None)
+        argument_spec = getattr(directive, 'arguments', None)
         if argument_spec and argument_spec[:2] == (0, 0):
             argument_spec = None
-        option_spec = getattr(directive_fn, 'options', None)
-        content_spec = getattr(directive_fn, 'content', None)
+        option_spec = getattr(directive, 'options', None)
+        content_spec = getattr(directive, 'content', None)
         if indented and not indented[0].strip():
             indented.trim_start()
             line_offset += 1

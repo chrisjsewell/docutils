@@ -7,6 +7,7 @@
 """
 This package contains directive implementation modules.
 
+XXX UPDATE THE DOCUMENTATION
 The interface for directive functions is as follows::
 
     def directive_fn(name, arguments, options, content, lineno,
@@ -124,7 +125,7 @@ _directive_registry = {
       #'footnotes': ('parts', 'footnotes'),
       #'citations': ('parts', 'citations'),
       'target-notes': ('references', 'target_notes'),
-      'meta': ('html', 'meta'),
+      'meta': ('html', 'Meta'),
       #'imagemap': ('html', 'imagemap'),
       'raw': ('misc', 'raw'),
       'include': ('misc', 'include'),
