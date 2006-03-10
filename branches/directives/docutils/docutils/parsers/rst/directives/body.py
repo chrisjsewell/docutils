@@ -25,8 +25,8 @@ class TopicOrSidebarThingy(Directive):
     required_arguments = 1
     optional_arguments = 0
     final_argument_whitespace = True
-    has_content = True
     options = {'class': directives.class_option}
+    has_content = True
 
     # Must be set in subclasses.
     node_class = None
@@ -87,9 +87,8 @@ class Sidebar(TopicOrSidebarThingy):
 
 class LineBlock(Directive):
 
-    has_content = True
-
     options = {'class': directives.class_option}
+    has_content = True
 
     def run(self):
         if not self.content:

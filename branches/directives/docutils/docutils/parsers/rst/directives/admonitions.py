@@ -20,7 +20,6 @@ class GenericAdmonition(Directive):
     required_arguments = 0
     optional_arguments = 0
     final_argument_whitespace = True
-
     options = {}
     has_content = True
 

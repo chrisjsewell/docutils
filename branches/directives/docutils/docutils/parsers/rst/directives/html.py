@@ -68,7 +68,7 @@ class MetaBody(states.SpecializedBody):
 
 class Meta(Directive):
 
-    has_content = 1
+    has_content = True
 
     SMkwargs = {'state_classes': (MetaBody,)}
 
