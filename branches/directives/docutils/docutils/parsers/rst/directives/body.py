@@ -186,29 +186,33 @@ class Compound(Directive):
         return [node]
 
 
-def container(name, arguments, options, content, lineno,
-              content_offset, block_text, state, state_machine):
-    text = '\n'.join(content)
-    if not text:
-        error = state_machine.reporter.error(
-            'The "%s" directive is empty; content required.' % name,
-            nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    try:
-        if arguments:
-            classes = directives.class_option(arguments[0])
-        else:
-            classes = []
-    except ValueError:
-        error = state_machine.reporter.error(
-            'Invalid class attribute value for "%s" directive: "%s".'
-            % (name, arguments[0]),
-            nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    node = nodes.container(text)
-    node['classes'].extend(classes)
-    state.nested_parse(content, content_offset, node)
-    return [node]
+class Container(Directive):
 
-container.arguments = (0, 1, 1)
-container.content = 1
+    required_arguments = 0
+    optional_arguments = 1
+    final_argument_whitespace = True
+    has_content = True
+
+    def run(self):
+        text = '\n'.join(self.content)
+        if not text:
+            error = self.state_machine.reporter.error(
+                'The "%s" directive is empty; content required.' % self.name,
+                nodes.literal_block(self.block_text, self.block_text),
+                line=self.lineno)
+            return [error]
+        try:
+            if self.arguments:
+                classes = directives.class_option(self.arguments[0])
+            else:
+                classes = []
+        except ValueError:
+            error = self.state_machine.reporter.error(
+                'Invalid class attribute value for "%s" directive: "%s".'
+                % (self.name, self.arguments[0]), nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [error]
+        node = nodes.container(text)
+        node['classes'].extend(classes)
+        self.state.nested_parse(self.content, self.content_offset, node)
+        return [node]

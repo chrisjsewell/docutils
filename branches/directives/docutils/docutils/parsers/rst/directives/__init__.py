@@ -111,7 +111,7 @@ _directive_registry = {
       'highlights': ('body', 'Highlights'),
       'pull-quote': ('body', 'PullQuote'),
       'compound': ('body', 'Compound'),
-      'container': ('body', 'container'),
+      'container': ('body', 'Container'),
       #'questions': ('body', 'question_list'),
       'table': ('tables', 'table'),
       'csv-table': ('tables', 'csv_table'),
