@@ -26,6 +26,7 @@ class GenericAdmonition(Directive):
 
     # Subclasses must set node_class to the appropriate admonition
     # node class.
+    node_class = None
 
     def run(self):
         if not self.content:

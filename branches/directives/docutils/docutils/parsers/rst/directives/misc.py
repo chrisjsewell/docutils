@@ -322,9 +322,10 @@ def role(name, arguments, options, content, lineno,
         'Supplemental directive arguments for "%s" directive not supported'
         '(specified by "%r" role).' % (name, base_role))
     try:
+        converted_role = state.convert_old_style_directive(base_role)
         (arguments, options, content, content_offset) = (
-            state.parse_directive_block(content[1:], content_offset, base_role,
-                                        option_presets={}))
+            state.parse_directive_block(content[1:], content_offset,
+                                        converted_role, option_presets={}))
     except states.MarkupError, detail:
         error = state_machine.reporter.error(
             'Error in "%s" directive:\n%s.' % (name, detail),
