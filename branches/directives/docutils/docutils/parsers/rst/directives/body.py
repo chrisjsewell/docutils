@@ -132,15 +132,20 @@ class ParsedLiteral(Directive):
         return [node] + messages
 
 
-def rubric(name, arguments, options, content, lineno,
-             content_offset, block_text, state, state_machine):
-    rubric_text = arguments[0]
-    textnodes, messages = state.inline_text(rubric_text, lineno)
-    rubric = nodes.rubric(rubric_text, '', *textnodes, **options)
-    return [rubric] + messages
+class Rubric(Directive):
 
-rubric.arguments = (1, 0, 1)
-rubric.options = {'class': directives.class_option}
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = True
+    options = {'class': directives.class_option}
+
+    def run(self):
+        set_classes(self.options)
+        rubric_text = self.arguments[0]
+        textnodes, messages = self.state.inline_text(rubric_text, self.lineno)
+        rubric = nodes.rubric(rubric_text, '', *textnodes, **self.options)
+        return [rubric] + messages
+
 
 def epigraph(name, arguments, options, content, lineno,
              content_offset, block_text, state, state_machine):
