@@ -68,7 +68,7 @@ class MetaBody(states.SpecializedBody):
 
 class Meta(Directive):
 
-    content = 1
+    has_content = 1
 
     SMkwargs = {'state_classes': (MetaBody,)}
 
@@ -78,7 +78,7 @@ class Meta(Directive):
             new_line_offset, blank_finish = self.state.nested_list_parse(
                 self.content, self.content_offset, node,
                 initial_state='MetaBody', blank_finish=1,
-                state_machine_kwargs=SMkwargs)
+                state_machine_kwargs=self.SMkwargs)
             if (new_line_offset - self.content_offset) != len(self.content):
                 # incomplete parse of block?
                 error = self.state_machine.reporter.error(
