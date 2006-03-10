@@ -112,28 +112,25 @@ class LineBlock(Directive):
         return node_list
 
 
-def parsed_literal(name, arguments, options, content, lineno,
-                   content_offset, block_text, state, state_machine):
-    set_classes(options)
-    return block(name, arguments, options, content, lineno,
-                 content_offset, block_text, state, state_machine,
-                 node_class=nodes.literal_block)
+class ParsedLiteral(Directive):
 
-parsed_literal.options = {'class': directives.class_option}
-parsed_literal.content = 1
+    options = {'class': directives.class_option}
+    has_content = True
 
-def block(name, arguments, options, content, lineno,
-          content_offset, block_text, state, state_machine, node_class):
-    if not content:
-        warning = state_machine.reporter.warning(
-            'Content block expected for the "%s" directive; none found.'
-            % name, nodes.literal_block(block_text, block_text), line=lineno)
-        return [warning]
-    text = '\n'.join(content)
-    text_nodes, messages = state.inline_text(text, lineno)
-    node = node_class(text, '', *text_nodes, **options)
-    node.line = content_offset + 1
-    return [node] + messages
+    def run(self):
+        set_classes(self.options)
+        if not self.content:
+            warning = self.state_machine.reporter.warning(
+                'Content block expected for the "%s" directive; none found.'
+                % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [warning]
+        text = '\n'.join(self.content)
+        text_nodes, messages = self.state.inline_text(text, self.lineno)
+        node = nodes.literal_block(text, '', *text_nodes, **self.options)
+        node.line = self.content_offset + 1
+        return [node] + messages
+
 
 def rubric(name, arguments, options, content, lineno,
              content_offset, block_text, state, state_machine):

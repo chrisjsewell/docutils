@@ -105,7 +105,7 @@ _directive_registry = {
       'sidebar': ('body', 'Sidebar'),
       'topic': ('body', 'Topic'),
       'line-block': ('body', 'LineBlock'),
-      'parsed-literal': ('body', 'parsed_literal'),
+      'parsed-literal': ('body', 'ParsedLiteral'),
       'rubric': ('body', 'rubric'),
       'epigraph': ('body', 'epigraph'),
       'highlights': ('body', 'highlights'),
