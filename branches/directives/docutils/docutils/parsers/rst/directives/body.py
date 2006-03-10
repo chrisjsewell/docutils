@@ -15,61 +15,75 @@ __docformat__ = 'reStructuredText'
 
 import sys
 from docutils import nodes
-from docutils.parsers.rst import directives
+from docutils.parsers.rst import Directive, directives
 from docutils.parsers.rst.roles import set_classes
 
-              
-def topic(name, arguments, options, content, lineno,
-          content_offset, block_text, state, state_machine,
-          node_class=nodes.topic):
-    if not (state_machine.match_titles
-            or isinstance(state_machine.node, nodes.sidebar)):
-        error = state_machine.reporter.error(
-              'The "%s" directive may not be used within topics '
-              'or body elements.' % name,
-              nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    if not content:
-        warning = state_machine.reporter.warning(
-            'Content block expected for the "%s" directive; none found.'
-            % name, nodes.literal_block(block_text, block_text),
-            line=lineno)
-        return [warning]
-    title_text = arguments[0]
-    textnodes, messages = state.inline_text(title_text, lineno)
-    titles = [nodes.title(title_text, '', *textnodes)]
-    # sidebar uses this code
-    if options.has_key('subtitle'):
-        textnodes, more_messages = state.inline_text(options['subtitle'],
-                                                     lineno)
-        titles.append(nodes.subtitle(options['subtitle'], '', *textnodes))
-        messages.extend(more_messages)
-    text = '\n'.join(content)
-    node = node_class(text, *(titles + messages))
-    node['classes'] += options.get('class', [])
-    if text:
-        state.nested_parse(content, content_offset, node)
-    return [node]
 
-topic.arguments = (1, 0, 1)
-topic.options = {'class': directives.class_option}
-topic.content = 1
+# XXX David, can you think of a nice name for this?
+class TopicOrSidebarThingy(Directive):
 
-def sidebar(name, arguments, options, content, lineno,
-            content_offset, block_text, state, state_machine):
-    if isinstance(state_machine.node, nodes.sidebar):
-        error = state_machine.reporter.error(
-              'The "%s" directive may not be used within a sidebar element.'
-              % name, nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    return topic(name, arguments, options, content, lineno,
-                 content_offset, block_text, state, state_machine,
-                 node_class=nodes.sidebar)
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = True
+    has_content = True
+    options = {'class': directives.class_option}
 
-sidebar.arguments = (1, 0, 1)
-sidebar.options = {'subtitle': directives.unchanged_required,
-                   'class': directives.class_option}
-sidebar.content = 1
+    # Must be set in subclasses.
+    node_class = None
+
+    def run(self):
+        if not (self.state_machine.match_titles
+                or isinstance(self.state_machine.node, nodes.sidebar)):
+            error = self.state_machine.reporter.error(
+                'The "%s" directive may not be used within topics or body '
+                'elements.' % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [error]
+        if not self.content:
+            warning = self.state_machine.reporter.warning(
+                'Content block expected for the "%s" directive; none found.'
+                % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [warning]
+        title_text = self.arguments[0]
+        textnodes, messages = self.state.inline_text(title_text, self.lineno)
+        titles = [nodes.title(title_text, '', *textnodes)]
+        # Sidebar uses this code.
+        if self.options.has_key('subtitle'):
+            textnodes, more_messages = self.state.inline_text(
+                self.options['subtitle'], self.lineno)
+            titles.append(nodes.subtitle(self.options['subtitle'], '',
+                                         *textnodes))
+            messages.extend(more_messages)
+        text = '\n'.join(self.content)
+        node = self.node_class(text, *(titles + messages))
+        node['classes'] += self.options.get('class', [])
+        if text:
+            self.state.nested_parse(self.content, self.content_offset, node)
+        return [node]
+
+
+class Topic(TopicOrSidebarThingy):
+
+    node_class = nodes.topic
+
+
+class Sidebar(TopicOrSidebarThingy):
+
+    node_class = nodes.sidebar
+
+    options = TopicOrSidebarThingy.options.copy()
+    options['subtitle'] = directives.unchanged_required
+
+    def run(self):
+        if isinstance(self.state_machine.node, nodes.sidebar):
+            error = self.state_machine.reporter.error(
+                'The "%s" directive may not be used within a sidebar element.'
+                % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [error]
+        return TopicOrSidebarThingy.run(self)
+
 
 def line_block(name, arguments, options, content, lineno,
                content_offset, block_text, state, state_machine):
