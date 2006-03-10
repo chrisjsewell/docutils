@@ -7,7 +7,8 @@
 # Copyright: This module has been placed in the public domain.
 
 """
-Tests for the "epigraph" directive.
+Tests for the block quote directives "epigraph", "highlights", and
+"pull-quote".
 """
 
 from __init__ import DocutilsTestSupport
@@ -17,34 +18,37 @@ def suite():
     s.generateTests(totest)
     return s
 
-totest = {}
-
-totest['epigraphs'] = [
+generic_tests = [
 ["""\
-.. epigraph::
+.. %s::
 
-   This is an epigraph.
+   This is a block quote.
 
    -- Attribution
 """,
 """\
 <document source="test data">
-    <block_quote classes="epigraph">
+    <block_quote classes="%s">
         <paragraph>
-            This is an epigraph.
+            This is a block quote.
         <attribution>
             Attribution
 """],
 # TODO: Add class option.
 # BUG: No content required.
 ["""\
-.. epigraph::
+.. %s::
 """,
 """\
 <document source="test data">
-    <block_quote classes="epigraph">
+    <block_quote classes="%s">
 """],
 ]
+
+totest = {}
+for block_quote_type in ('epigraph', 'highlights', 'pull-quote'):
+   totest[block_quote_type] = [
+       [text % block_quote_type for text in pair] for pair in generic_tests]
 
 
 if __name__ == '__main__':
