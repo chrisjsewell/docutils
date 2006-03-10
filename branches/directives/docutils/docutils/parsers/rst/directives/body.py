@@ -147,13 +147,16 @@ class Rubric(Directive):
         return [rubric] + messages
 
 
-def epigraph(name, arguments, options, content, lineno,
-             content_offset, block_text, state, state_machine):
-    block_quote, messages = state.block_quote(content, content_offset)
-    block_quote['classes'].append('epigraph')
-    return [block_quote] + messages
+class Epigraph(Directive):
 
-epigraph.content = 1
+    has_content = True
+
+    def run(self):
+        block_quote, messages = self.state.block_quote(
+            self.content, self.content_offset)
+        block_quote['classes'].append('epigraph')
+        return [block_quote] + messages
+
 
 def highlights(name, arguments, options, content, lineno,
              content_offset, block_text, state, state_machine):
