@@ -147,32 +147,26 @@ class Rubric(Directive):
         return [rubric] + messages
 
 
-class Epigraph(Directive):
+class BlockQuote(Directive):
 
     has_content = True
+    classes = []
 
     def run(self):
         block_quote, messages = self.state.block_quote(
             self.content, self.content_offset)
-        block_quote['classes'].append('epigraph')
+        block_quote['classes'] += self.classes
         return [block_quote] + messages
 
+class Epigraph(BlockQuote):
+    classes = ['epigraph']
 
-def highlights(name, arguments, options, content, lineno,
-             content_offset, block_text, state, state_machine):
-    block_quote, messages = state.block_quote(content, content_offset)
-    block_quote['classes'].append('highlights')
-    return [block_quote] + messages
+class Highlights(BlockQuote):
+    classes = ['highlights']
 
-highlights.content = 1
+class PullQuote(BlockQuote):
+    classes = ['pull-quote']
 
-def pull_quote(name, arguments, options, content, lineno,
-             content_offset, block_text, state, state_machine):
-    block_quote, messages = state.block_quote(content, content_offset)
-    block_quote['classes'].append('pull-quote')
-    return [block_quote] + messages
-
-pull_quote.content = 1
 
 def compound(name, arguments, options, content, lineno,
              content_offset, block_text, state, state_machine):
