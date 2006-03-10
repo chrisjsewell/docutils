@@ -11,80 +11,74 @@ Admonition directives.
 __docformat__ = 'reStructuredText'
 
 
-from docutils.parsers.rst import states, directives
+from docutils.parsers.rst import Directive, states, directives
 from docutils import nodes
 
 
-def make_admonition(node_class, name, arguments, options, content, lineno,
-                       content_offset, block_text, state, state_machine):
-    if not content:
-        error = state_machine.reporter.error(
-            'The "%s" admonition is empty; content required.' % (name),
-            nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    text = '\n'.join(content)
-    admonition_node = node_class(text)
-    if arguments:
-        title_text = arguments[0]
-        textnodes, messages = state.inline_text(title_text, lineno)
-        admonition_node += nodes.title(title_text, '', *textnodes)
-        admonition_node += messages
-        if options.has_key('class'):
-            classes = options['class']
-        else:
-            classes = ['admonition-' + nodes.make_id(title_text)]
-        admonition_node['classes'] += classes
-    state.nested_parse(content, content_offset, admonition_node)
-    return [admonition_node]
+class GenericAdmonition(Directive):
 
-def admonition(*args):
-    return make_admonition(nodes.admonition, *args)
+    required_arguments = 0
+    optional_arguments = 0
+    final_argument_whitespace = True
 
-admonition.arguments = (1, 0, 1)
-admonition.options = {'class': directives.class_option}
-admonition.content = 1
+    options = {}
+    has_content = True
 
-def attention(*args):
-    return make_admonition(nodes.attention, *args)
+    # Subclasses must set node_class to the appropriate admonition
+    # node class.
 
-attention.content = 1
+    def run(self):
+        if not self.content:
+            error = self.state_machine.reporter.error(
+                'The "%s" admonition is empty; content required.' % self.name,
+                nodes.literal_block(self.block_text, self.block_text),
+                line=self.lineno)
+            return [error]
+        text = '\n'.join(self.content)
+        admonition_node = self.node_class(text)
+        if self.arguments:
+            title_text = self.arguments[0]
+            textnodes, messages = self.state.inline_text(title_text,
+                                                         self.lineno)
+            admonition_node += nodes.title(title_text, '', *textnodes)
+            admonition_node += messages
+            if self.options.has_key('class'):
+                classes = self.options['class']
+            else:
+                classes = ['admonition-' + nodes.make_id(title_text)]
+            admonition_node['classes'] += classes
+        self.state.nested_parse(self.content, self.content_offset,
+                                admonition_node)
+        return [admonition_node]
 
-def caution(*args):
-    return make_admonition(nodes.caution, *args)
+class Admonition(GenericAdmonition):
+    required_arguments = 1
+    options = {'class': directives.class_option}
+    node_class = nodes.admonition
 
-caution.content = 1
+class Attention(GenericAdmonition):
+    node_class = nodes.attention
 
-def danger(*args):
-    return make_admonition(nodes.danger, *args)
+class Caution(GenericAdmonition):
+    node_class = nodes.caution
 
-danger.content = 1
+class Danger(GenericAdmonition):
+    node_class = nodes.danger
 
-def error(*args):
-    return make_admonition(nodes.error, *args)
+class Error(GenericAdmonition):
+    node_class = nodes.error
 
-error.content = 1
+class Hint(GenericAdmonition):
+    node_class = nodes.hint
 
-def hint(*args):
-    return make_admonition(nodes.hint, *args)
+class Important(GenericAdmonition):
+    node_class = nodes.important
 
-hint.content = 1
+class Note(GenericAdmonition):
+    node_class = nodes.note
 
-def important(*args):
-    return make_admonition(nodes.important, *args)
+class Tip(GenericAdmonition):
+    node_class = nodes.tip
 
-important.content = 1
-
-def note(*args):
-    return make_admonition(nodes.note, *args)
-
-note.content = 1
-
-def tip(*args):
-    return make_admonition(nodes.tip, *args)
-
-tip.content = 1
-
-def warning(*args):
-    return make_admonition(nodes.warning, *args)
-
-warning.content = 1
+class Warning(GenericAdmonition):
+    node_class = nodes.warning
