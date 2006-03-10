@@ -104,7 +104,7 @@ _directive_registry = {
       'admonition': ('admonitions', 'Admonition'),
       'sidebar': ('body', 'Sidebar'),
       'topic': ('body', 'Topic'),
-      'line-block': ('body', 'line_block'),
+      'line-block': ('body', 'LineBlock'),
       'parsed-literal': ('body', 'parsed_literal'),
       'rubric': ('body', 'rubric'),
       'epigraph': ('body', 'epigraph'),

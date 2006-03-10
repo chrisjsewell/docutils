@@ -85,29 +85,33 @@ class Sidebar(TopicOrSidebarThingy):
         return TopicOrSidebarThingy.run(self)
 
 
-def line_block(name, arguments, options, content, lineno,
-               content_offset, block_text, state, state_machine):
-    if not content:
-        warning = state_machine.reporter.warning(
-            'Content block expected for the "%s" directive; none found.'
-            % name, nodes.literal_block(block_text, block_text), line=lineno)
-        return [warning]
-    block = nodes.line_block(classes=options.get('class', []))
-    node_list = [block]
-    for line_text in content:
-        text_nodes, messages = state.inline_text(line_text.strip(),
-                                                 lineno + content_offset)
-        line = nodes.line(line_text, '', *text_nodes)
-        if line_text.strip():
-            line.indent = len(line_text) - len(line_text.lstrip())
-        block += line
-        node_list.extend(messages)
-        content_offset += 1
-    state.nest_line_block_lines(block)
-    return node_list
+class LineBlock(Directive):
 
-line_block.options = {'class': directives.class_option}
-line_block.content = 1
+    has_content = True
+
+    options = {'class': directives.class_option}
+
+    def run(self):
+        if not self.content:
+            warning = self.state_machine.reporter.warning(
+                'Content block expected for the "%s" directive; none found.'
+                % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [warning]
+        block = nodes.line_block(classes=self.options.get('class', []))
+        node_list = [block]
+        for line_text in self.content:
+            text_nodes, messages = self.state.inline_text(
+                line_text.strip(), self.lineno + self.content_offset)
+            line = nodes.line(line_text, '', *text_nodes)
+            if line_text.strip():
+                line.indent = len(line_text) - len(line_text.lstrip())
+            block += line
+            node_list.extend(messages)
+            self.content_offset += 1
+        self.state.nest_line_block_lines(block)
+        return node_list
+
 
 def parsed_literal(name, arguments, options, content, lineno,
                    content_offset, block_text, state, state_machine):
