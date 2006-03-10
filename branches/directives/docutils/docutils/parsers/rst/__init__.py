@@ -162,16 +162,22 @@ class Directive:
     Base class for reStructuredText directives.
     """
 
-    # Number of required directive arguments.
     required_arguments = 0
-    # Number of optional arguments after the required arguments.
+    """Number of required directive arguments."""
+
     optional_arguments = 0
-    # Final argument may contain whitespace.
+    """Number of optional arguments after the required arguments."""
+
     final_argument_whitespace = False
-    # Mapping of option names to validator functions.
+    """May the final argument contain whitespace?"""
+
+    # !!! Class attribute conflicts with instance attribute self.options.
+    # Change to option_spec?
     options = None
-    # Directive may have content.
+    """Mapping of option names to validator functions."""
+
     has_content = False
+    """May the directive have content?"""
 
     def __init__(self, name, arguments, options, content, lineno,
                  content_offset, block_text, state, state_machine):
@@ -186,4 +192,4 @@ class Directive:
         self.state_machine = state_machine
 
     def run(self):
-        raise RuntimeError('Must override run() is subclass.')
+        raise NotImplementedError('Must override run() is subclass.')
