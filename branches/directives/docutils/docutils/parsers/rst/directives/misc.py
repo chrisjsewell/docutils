@@ -399,27 +399,33 @@ class Role(Directive):
         return messages
 
 
-def default_role(name, arguments, options, content, lineno,
-                 content_offset, block_text, state, state_machine):
-    """Set the default interpreted text role."""
-    if not arguments:
-        if roles._roles.has_key(''):
-            # restore the "default" default role
-            del roles._roles['']
-        return []
-    role_name = arguments[0]
-    role, messages = roles.role(
-        role_name, state_machine.language, lineno, state.reporter)
-    if role is None:
-        error = state.reporter.error(
-            'Unknown interpreted text role "%s".' % role_name,
-            nodes.literal_block(block_text, block_text), line=lineno)
-        return messages + [error]
-    roles._roles[''] = role
-    # @@@ should this be local to the document, not the parser?
-    return messages
+class DefaultRole(Directive):
 
-default_role.arguments = (0, 1, 0)
+    """Set the default interpreted text role."""
+
+    required_arguments = 0
+    optional_arguments = 1
+    final_argument_whitespace = False
+
+    def run(self):
+        if not self.arguments:
+            if roles._roles.has_key(''):
+                # restore the "default" default role
+                del roles._roles['']
+            return []
+        role_name = self.arguments[0]
+        role, messages = roles.role(role_name, self.state_machine.language,
+                                    self.lineno, self.state.reporter)
+        if role is None:
+            error = self.state.reporter.error(
+                'Unknown interpreted text role "%s".' % role_name,
+                nodes.literal_block(self.block_text, self.block_text),
+                line=self.lineno)
+            return messages + [error]
+        roles._roles[''] = role
+        # @@@ should this be local to the document, not the parser?
+        return messages
+
 
 def title(name, arguments, options, content, lineno,
           content_offset, block_text, state, state_machine):

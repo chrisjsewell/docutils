@@ -133,7 +133,7 @@ _directive_registry = {
       'unicode': ('misc', 'Unicode'),
       'class': ('misc', 'Class'),
       'role': ('misc', 'Role'),
-      'default-role': ('misc', 'default_role'),
+      'default-role': ('misc', 'DefaultRole'),
       'title': ('misc', 'title'),
       'date': ('misc', 'date'),
       'restructuredtext-test-directive': ('misc', 'directive_test_function'),}
