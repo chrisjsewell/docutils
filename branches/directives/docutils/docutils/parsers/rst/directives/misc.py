@@ -13,6 +13,7 @@ import os.path
 import re
 import time
 from docutils import io, nodes, statemachine, utils
+from docutils.parsers.rst import convert_directive_function
 from docutils.parsers.rst import directives, roles, states
 from docutils.transforms import misc
 
@@ -322,7 +323,7 @@ def role(name, arguments, options, content, lineno,
         'Supplemental directive arguments for "%s" directive not supported'
         '(specified by "%r" role).' % (name, base_role))
     try:
-        converted_role = state.convert_old_style_directive(base_role)
+        converted_role = convert_directive_function(base_role)
         (arguments, options, content, content_offset) = (
             state.parse_directive_block(content[1:], content_offset,
                                         converted_role, option_presets={}))

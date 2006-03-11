@@ -115,6 +115,7 @@ from docutils.statemachine import StateMachineWS, StateWS
 from docutils.nodes import fully_normalize_name as normalize_name
 from docutils.nodes import whitespace_normalize_name
 from docutils.utils import escape2null, unescape, column_width
+from docutils.parsers.rst import convert_directive_function
 from docutils.parsers.rst import directives, languages, tableparser, roles
 from docutils.parsers.rst.languages import en as _fallback_language_module
 
@@ -1975,29 +1976,6 @@ class Body(RSTState):
         else:
             return self.unknown_directive(type_name)
 
-    def convert_old_style_directive(self, directive_fn):
-        """
-        Return a directive class generated from `directive_fn`.
-
-        `directive_fn` uses the old-style, functional interface.
-        """
-        from docutils.parsers.rst import Directive
-        class FunctionalDirective(Directive):
-            if hasattr(directive_fn, 'options'):
-                options = directive_fn.options
-            if hasattr(directive_fn, 'content'):
-                has_content = directive_fn.content
-            if hasattr(directive_fn, 'arguments'):
-                (required_arguments, optional_arguments,
-                 final_argument_whitespace) = directive_fn.arguments
-            def run(self):
-                return directive_fn(
-                    self.name, self.arguments, self.options, self.content,
-                    self.lineno, self.content_offset, self.block_text,
-                    self.state, self.state_machine)
-        # Return new-style directive.
-        return FunctionalDirective
-
     def run_directive(self, directive, match, type_name, option_presets):
         """
         Parse a directive then run its directive function.
@@ -2020,7 +1998,7 @@ class Body(RSTState):
         Returns a 2-tuple: list of nodes, and a "blank finish" boolean.
         """
         if isinstance(directive, FunctionType):
-            directive = self.convert_old_style_directive(directive)
+            directive = convert_directive_function(directive)
         lineno = self.state_machine.abs_line_number()
         initial_line_offset = self.state_machine.line_offset
         indented, indent, line_offset, blank_finish \
