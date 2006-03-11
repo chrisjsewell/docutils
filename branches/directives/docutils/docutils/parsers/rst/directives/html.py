@@ -12,7 +12,8 @@ __docformat__ = 'reStructuredText'
 
 import sys
 from docutils import nodes, utils
-from docutils.parsers.rst import Directive, states
+from docutils.parsers.rst import Directive
+from docutils.parsers.rst import states
 from docutils.transforms import components
 
 

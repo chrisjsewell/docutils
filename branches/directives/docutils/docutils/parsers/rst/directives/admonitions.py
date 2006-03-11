@@ -11,7 +11,8 @@ Admonition directives.
 __docformat__ = 'reStructuredText'
 
 
-from docutils.parsers.rst import Directive, states, directives
+from docutils.parsers.rst import Directive
+from docutils.parsers.rst import states, directives
 from docutils import nodes
 
 
