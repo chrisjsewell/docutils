@@ -202,7 +202,7 @@ def convert_directive_function(directive_fn):
 
     class FunctionalDirective(Directive):
 
-        options = getattr(directive_fn, 'options', None)
+        option_spec = getattr(directive_fn, 'options', None)
         has_content = getattr(directive_fn, 'content', False)
         _argument_spec = getattr(directive_fn, 'arguments', (0, 0, False))
         required_arguments, optional_arguments, final_argument_whitespace \

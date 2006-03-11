@@ -115,7 +115,6 @@ from docutils.statemachine import StateMachineWS, StateWS
 from docutils.nodes import fully_normalize_name as normalize_name
 from docutils.nodes import whitespace_normalize_name
 from docutils.utils import escape2null, unescape, column_width
-from docutils.parsers.rst import convert_directive_function
 from docutils.parsers.rst import directives, languages, tableparser, roles
 from docutils.parsers.rst.languages import en as _fallback_language_module
 
@@ -1998,6 +1997,7 @@ class Body(RSTState):
         Returns a 2-tuple: list of nodes, and a "blank finish" boolean.
         """
         if isinstance(directive, FunctionType):
+            from docutils.parsers.rst import convert_directive_function
             directive = convert_directive_function(directive)
         lineno = self.state_machine.abs_line_number()
         initial_line_offset = self.state_machine.line_offset
