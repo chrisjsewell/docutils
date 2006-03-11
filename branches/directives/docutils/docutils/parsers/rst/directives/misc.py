@@ -13,7 +13,7 @@ import os.path
 import re
 import time
 from docutils import io, nodes, statemachine, utils
-from docutils.parsers.rst import convert_directive_function
+from docutils.parsers.rst import Directive, convert_directive_function
 from docutils.parsers.rst import directives, roles, states
 from docutils.transforms import misc
 
@@ -23,60 +23,69 @@ except ImportError:
     urllib2 = None
 
 
-standard_include_path = os.path.join(os.path.dirname(states.__file__),
-                                     'include')
+class Include(Directive):
 
-def include(name, arguments, options, content, lineno,
-            content_offset, block_text, state, state_machine):
-    """Include a reST file as part of the content of this reST file."""
-    if not state.document.settings.file_insertion_enabled:
-        warning = state_machine.reporter.warning(
-              '"%s" directive disabled.' % name,
-              nodes.literal_block(block_text, block_text), line=lineno)
-        return [warning]
-    source = state_machine.input_lines.source(
-        lineno - state_machine.input_offset - 1)
-    source_dir = os.path.dirname(os.path.abspath(source))
-    path = directives.path(arguments[0])
-    if path.startswith('<') and  path.endswith('>'):
-        path = os.path.join(standard_include_path, path[1:-1])
-    path = os.path.normpath(os.path.join(source_dir, path))
-    path = utils.relative_path(None, path)
-    encoding = options.get('encoding', state.document.settings.input_encoding)
-    try:
-        state.document.settings.record_dependencies.add(path)
-        include_file = io.FileInput(
-            source_path=path, encoding=encoding,
-            error_handler=state.document.settings.input_encoding_error_handler,
-            handle_io_errors=None)
-    except IOError, error:
-        severe = state_machine.reporter.severe(
-              'Problems with "%s" directive path:\n%s: %s.'
-              % (name, error.__class__.__name__, error),
-              nodes.literal_block(block_text, block_text), line=lineno)
-        return [severe]
-    try:
-        include_text = include_file.read()
-    except UnicodeError, error:
-        severe = state_machine.reporter.severe(
-              'Problem with "%s" directive:\n%s: %s'
-              % (name, error.__class__.__name__, error),
-              nodes.literal_block(block_text, block_text), line=lineno)
-        return [severe]
-    if options.has_key('literal'):
-        literal_block = nodes.literal_block(include_text, include_text,
-                                            source=path)
-        literal_block.line = 1
-        return literal_block
-    else:
-        include_lines = statemachine.string2lines(include_text,
-                                                  convert_whitespace=1)
-        state_machine.insert_input(include_lines, path)
-        return []
-
-include.arguments = (1, 0, 1)
-include.options = {'literal': directives.flag,
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = True
+    option_spec = {'literal': directives.flag,
                    'encoding': directives.encoding}
+
+    standard_include_path = os.path.join(os.path.dirname(states.__file__),
+                                         'include')
+
+    def run(self):
+        """Include a reST file as part of the content of this reST file."""
+        if not self.state.document.settings.file_insertion_enabled:
+            warning = self.state_machine.reporter.warning(
+                  '"%s" directive disabled.' % self.name,
+                  nodes.literal_block(self.block_text, self.block_text),
+                  line=self.lineno)
+            return [warning]
+        source = self.state_machine.input_lines.source(
+            self.lineno - self.state_machine.input_offset - 1)
+        source_dir = os.path.dirname(os.path.abspath(source))
+        path = directives.path(self.arguments[0])
+        if path.startswith('<') and path.endswith('>'):
+            path = os.path.join(self.standard_include_path, path[1:-1])
+        path = os.path.normpath(os.path.join(source_dir, path))
+        path = utils.relative_path(None, path)
+        encoding = self.options.get(
+            'encoding', self.state.document.settings.input_encoding)
+        try:
+            self.state.document.settings.record_dependencies.add(path)
+            include_file = io.FileInput(
+                source_path=path, encoding=encoding,
+                error_handler=(self.state.document.settings.\
+                               input_encoding_error_handler),
+                handle_io_errors=None)
+        except IOError, error:
+            severe = self.state_machine.reporter.severe(
+                  'Problems with "%s" directive path:\n%s: %s.'
+                  % (self.name, error.__class__.__name__, error),
+                  nodes.literal_block(self.block_text, self.block_text),
+                  line=self.lineno)
+            return [severe]
+        try:
+            include_text = include_file.read()
+        except UnicodeError, error:
+            severe = self.state_machine.reporter.severe(
+                  'Problem with "%s" directive:\n%s: %s'
+                  % (self.name, error.__class__.__name__, error),
+                  nodes.literal_block(self.block_text, self.block_text),
+                  line=self.lineno)
+            return [severe]
+        if self.options.has_key('literal'):
+            literal_block = nodes.literal_block(include_text, include_text,
+                                                source=path)
+            literal_block.line = 1
+            return literal_block
+        else:
+            include_lines = statemachine.string2lines(include_text,
+                                                      convert_whitespace=1)
+            self.state_machine.insert_input(include_lines, path)
+            return []
+
 
 def raw(name, arguments, options, content, lineno,
         content_offset, block_text, state, state_machine):

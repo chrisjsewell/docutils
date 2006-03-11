@@ -128,7 +128,7 @@ _directive_registry = {
       'meta': ('html', 'Meta'),
       #'imagemap': ('html', 'imagemap'),
       'raw': ('misc', 'raw'),
-      'include': ('misc', 'include'),
+      'include': ('misc', 'Include'),
       'replace': ('misc', 'replace'),
       'unicode': ('misc', 'unicode_directive'),
       'class': ('misc', 'class_directive'),
