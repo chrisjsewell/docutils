@@ -129,7 +129,7 @@ _directive_registry = {
       #'imagemap': ('html', 'imagemap'),
       'raw': ('misc', 'Raw'),
       'include': ('misc', 'Include'),
-      'replace': ('misc', 'replace'),
+      'replace': ('misc', 'Replace'),
       'unicode': ('misc', 'unicode_directive'),
       'class': ('misc', 'class_directive'),
       'role': ('misc', 'role'),

@@ -204,38 +204,43 @@ class Raw(Directive):
         return [raw_node]
 
 
-def replace(name, arguments, options, content, lineno,
-            content_offset, block_text, state, state_machine):
-    if not isinstance(state, states.SubstitutionDef):
-        error = state_machine.reporter.error(
-            'Invalid context: the "%s" directive can only be used within a '
-            'substitution definition.' % (name),
-            nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    text = '\n'.join(content)
-    element = nodes.Element(text)
-    if text:
-        state.nested_parse(content, content_offset, element)
-        if len(element) != 1 or not isinstance(element[0], nodes.paragraph):
-            messages = []
-            for node in element:
-                if isinstance(node, nodes.system_message):
-                    node['backrefs'] = []
-                    messages.append(node)
-            error = state_machine.reporter.error(
-                'Error in "%s" directive: may contain a single paragraph '
-                'only.' % (name), line=lineno)
-            messages.append(error)
-            return messages
-        else:
-            return element[0].children
-    else:
-        error = state_machine.reporter.error(
-            'The "%s" directive is empty; content required.' % (name),
-            line=lineno)
-        return [error]
+class Replace(Directive):
 
-replace.content = 1
+    has_content = True
+
+    def run(self):
+        if not isinstance(self.state, states.SubstitutionDef):
+            error = self.state_machine.reporter.error(
+                'Invalid context: the "%s" directive can only be used within '
+                'a substitution definition.' % self.name,
+                nodes.literal_block(self.block_text, self.block_text),
+                line=self.lineno)
+            return [error]
+        text = '\n'.join(self.content)
+        element = nodes.Element(text)
+        if text:
+            self.state.nested_parse(self.content, self.content_offset,
+                                    element)
+            if ( len(element) != 1
+                 or not isinstance(element[0], nodes.paragraph)):
+                messages = []
+                for node in element:
+                    if isinstance(node, nodes.system_message):
+                        node['backrefs'] = []
+                        messages.append(node)
+                error = self.state_machine.reporter.error(
+                    'Error in "%s" directive: may contain a single paragraph '
+                    'only.' % (self.name), line=self.lineno)
+                messages.append(error)
+                return messages
+            else:
+                return element[0].children
+        else:
+            error = self.state_machine.reporter.error(
+                'The "%s" directive is empty; content required.' % self.name,
+                line=self.lineno)
+            return [error]
+
 
 def unicode_directive(name, arguments, options, content, lineno,
                       content_offset, block_text, state, state_machine):
