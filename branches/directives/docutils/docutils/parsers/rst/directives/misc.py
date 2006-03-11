@@ -438,19 +438,22 @@ class Title(Directive):
         return []
 
 
-def date(name, arguments, options, content, lineno,
-         content_offset, block_text, state, state_machine):
-    if not isinstance(state, states.SubstitutionDef):
-        error = state_machine.reporter.error(
-            'Invalid context: the "%s" directive can only be used within a '
-            'substitution definition.' % (name),
-            nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    format = '\n'.join(content) or '%Y-%m-%d'
-    text = time.strftime(format)
-    return [nodes.Text(text)]
+class Date(Directive):
 
-date.content = 1
+    has_content = True
+
+    def run(self):
+        if not isinstance(self.state, states.SubstitutionDef):
+            error = state_machine.reporter.error(
+                'Invalid context: the "%s" directive can only be used within '
+                'a substitution definition.' % self.name,
+                nodes.literal_block(self.block_text, self.block_text),
+                line=self.lineno)
+            return [error]
+        format = '\n'.join(self.content) or '%Y-%m-%d'
+        text = time.strftime(format)
+        return [nodes.Text(text)]
+
 
 def directive_test_function(name, arguments, options, content, lineno,
                             content_offset, block_text, state, state_machine):
