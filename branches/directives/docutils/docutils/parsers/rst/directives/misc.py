@@ -292,38 +292,45 @@ class Unicode(Directive):
         return element.children
 
 
-def class_directive(name, arguments, options, content, lineno,
-                       content_offset, block_text, state, state_machine):
+class Class(Directive):
+
     """
     Set a "class" attribute on the directive content or the next element.
     When applied to the next element, a "pending" element is inserted, and a
     transform does the work later.
     """
-    try:
-        class_value = directives.class_option(arguments[0])
-    except ValueError:
-        error = state_machine.reporter.error(
-            'Invalid class attribute value for "%s" directive: "%s".'
-            % (name, arguments[0]),
-            nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    node_list = []
-    if content:
-        container = nodes.Element()
-        state.nested_parse(content, content_offset, container)
-        for node in container:
-            node['classes'].extend(class_value)
-        node_list.extend(container.children)
-    else:
-        pending = nodes.pending(misc.ClassAttribute,
-                                {'class': class_value, 'directive': name},
-                                block_text)
-        state_machine.document.note_pending(pending)
-        node_list.append(pending)
-    return node_list
 
-class_directive.arguments = (1, 0, 1)
-class_directive.content = 1
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = True
+    has_content = True
+
+    def run(self):
+        try:
+            class_value = directives.class_option(self.arguments[0])
+        except ValueError:
+            error = self.state_machine.reporter.error(
+                'Invalid class attribute value for "%s" directive: "%s".'
+                % (self.name, self.arguments[0]), nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [error]
+        node_list = []
+        if self.content:
+            container = nodes.Element()
+            self.state.nested_parse(self.content, self.content_offset,
+                                    container)
+            for node in container:
+                node['classes'].extend(class_value)
+            node_list.extend(container.children)
+        else:
+            pending = nodes.pending(
+                misc.ClassAttribute,
+                {'class': class_value, 'directive': self.name},
+                self.block_text)
+            self.state_machine.document.note_pending(pending)
+            node_list.append(pending)
+        return node_list
+
 
 role_arg_pat = re.compile(r'(%s)\s*(\(\s*(%s)\s*\)\s*)?$'
                           % ((states.Inliner.simplename,) * 2))
