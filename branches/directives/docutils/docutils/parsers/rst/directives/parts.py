@@ -102,35 +102,40 @@ class Sectnum(Directive):
         return [pending]
 
 
-def header_footer(node, name, arguments, options, content, lineno,
-                  content_offset, block_text, state, state_machine):
+class HeaderFooter(Directive):
+
     """Contents of document header or footer."""
-    if not content:
-        warning = state_machine.reporter.warning(
-            'Content block expected for the "%s" directive; none found.'
-            % name, nodes.literal_block(block_text, block_text),
-            line=lineno)
-        node.append(nodes.paragraph(
-            '', 'Problem with the "%s" directive: no content supplied.' % name))
-        return [warning]
-    text = '\n'.join(content)
-    state.nested_parse(content, content_offset, node)
-    return []
 
-def header(name, arguments, options, content, lineno,
-           content_offset, block_text, state, state_machine):
-    decoration = state_machine.document.get_decoration()
-    node = decoration.get_header()
-    return header_footer(node, name, arguments, options, content, lineno,
-                         content_offset, block_text, state, state_machine)
+    has_content = True
 
-header.content = 1
+    def populate_node(self, node):
+        """
+        Parse directive contents into node, and return empty list or
+        list of system messages.
+        """
+        if not self.content:
+            warning = self.state_machine.reporter.warning(
+                'Content block expected for the "%s" directive; none found.'
+                % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            node.append(nodes.paragraph(
+                '', 'Problem with the "%s" directive: no content supplied.'
+                % self.name))
+            return [warning]
+        text = '\n'.join(self.content)
+        self.state.nested_parse(self.content, self.content_offset, node)
+        return []
 
-def footer(name, arguments, options, content, lineno,
-           content_offset, block_text, state, state_machine):
-    decoration = state_machine.document.get_decoration()
-    node = decoration.get_footer()
-    return header_footer(node, name, arguments, options, content, lineno,
-                         content_offset, block_text, state, state_machine)
 
-footer.content = 1
+class Header(HeaderFooter):
+
+    def run(self):
+        decoration = self.state_machine.document.get_decoration()
+        return self.populate_node(decoration.get_header())
+
+
+class Footer(HeaderFooter):
+
+    def run(self):
+        decoration = self.state_machine.document.get_decoration()
+        return self.populate_node(decoration.get_footer())
