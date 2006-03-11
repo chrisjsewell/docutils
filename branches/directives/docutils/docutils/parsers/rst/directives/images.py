@@ -13,80 +13,94 @@ __docformat__ = 'reStructuredText'
 
 import sys
 from docutils import nodes, utils
-from docutils.parsers.rst import directives, states
+from docutils.parsers.rst import Directive, directives, states
 from docutils.nodes import fully_normalize_name, whitespace_normalize_name
 from docutils.parsers.rst.roles import set_classes
 
 try:
-    import Image                        # PIL
+    import Image as PIL                        # PIL
 except ImportError:
-    Image = None
+    PIL = None
 
-align_h_values = ('left', 'center', 'right')
-align_v_values = ('top', 'middle', 'bottom')
-align_values = align_v_values + align_h_values
 
-def align(argument):
-    return directives.choice(argument, align_values)
+class Image(Directive):
 
-def image(name, arguments, options, content, lineno,
-          content_offset, block_text, state, state_machine):
-    if options.has_key('align'):
-        # check for align_v values only
-        if isinstance(state, states.SubstitutionDef):
-            if options['align'] not in align_v_values:
-                error = state_machine.reporter.error(
+    align_h_values = ('left', 'center', 'right')
+    align_v_values = ('top', 'middle', 'bottom')
+    align_values = align_v_values + align_h_values
+
+    def align(argument):
+        # This is not callable as self.align.  We cannot make it a
+        # staticmethod because we're saving an unbound method in
+        # option_spec below.
+        return directives.choice(argument, Image.align_values)
+
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = True
+    option_spec = {'alt': directives.unchanged,
+                   'height': directives.length_or_unitless,
+                   'width': directives.length_or_percentage_or_unitless,
+                   'scale': directives.nonnegative_int,
+                   'align': align,
+                   'target': directives.unchanged_required,
+                   'class': directives.class_option}
+
+    def run(self):
+        if self.options.has_key('align'):
+            # check for align_v values only
+            if isinstance(self.state, states.SubstitutionDef):
+                if self.options['align'] not in self.align_v_values:
+                    error = self.state_machine.reporter.error(
+                        'Error in "%s" directive: "%s" is not a valid value for '
+                        'the "align" option within a substitution definition.  '
+                        'Valid values for "align" are: "%s".'
+                        % (self.name, self.options['align'],
+                           '", "'.join(self.align_v_values)),
+                        nodes.literal_block(self.block_text, self.block_text),
+                        line=self.lineno)
+                    return [error]
+            elif self.options['align'] not in self.align_h_values:
+                error = self.state_machine.reporter.error(
                     'Error in "%s" directive: "%s" is not a valid value for '
-                    'the "align" option within a substitution definition.  '
-                    'Valid values for "align" are: "%s".'
-                    % (name, options['align'], '", "'.join(align_v_values)),
-                    nodes.literal_block(block_text, block_text), line=lineno)
+                    'the "align" option.  Valid values for "align" are: "%s".'
+                    % (self.name, self.options['align'],
+                       '", "'.join(self.align_h_values)),
+                    nodes.literal_block(self.block_text, self.block_text),
+                    line=self.lineno)
                 return [error]
-        elif options['align'] not in align_h_values:
-            error = state_machine.reporter.error(
-                'Error in "%s" directive: "%s" is not a valid value for '
-                'the "align" option.  Valid values for "align" are: "%s".'
-                % (name, options['align'], '", "'.join(align_h_values)),
-                nodes.literal_block(block_text, block_text), line=lineno)
-            return [error]
-    messages = []
-    reference = directives.uri(arguments[0])
-    options['uri'] = reference
-    reference_node = None
-    if options.has_key('target'):
-        block = states.escape2null(options['target']).splitlines()
-        block = [line for line in block]
-        target_type, data = state.parse_target(block, block_text, lineno)
-        if target_type == 'refuri':
-            reference_node = nodes.reference(refuri=data)
-        elif target_type == 'refname':
-            reference_node = nodes.reference(
-                refname=fully_normalize_name(data),
-                name=whitespace_normalize_name(data))
-            reference_node.indirect_reference_name = data
-            state.document.note_refname(reference_node)
-        else:                           # malformed target
-            messages.append(data)       # data is a system message
-        del options['target']
-    set_classes(options)
-    image_node = nodes.image(block_text, **options)
-    if reference_node:
-        reference_node += image_node
-        return messages + [reference_node]
-    else:
-        return messages + [image_node]
+        messages = []
+        reference = directives.uri(self.arguments[0])
+        self.options['uri'] = reference
+        reference_node = None
+        if self.options.has_key('target'):
+            block = states.escape2null(
+                self.options['target']).splitlines()
+            block = [line for line in block]
+            target_type, data = self.state.parse_target(
+                block, self.block_text, self.lineno)
+            if target_type == 'refuri':
+                reference_node = nodes.reference(refuri=data)
+            elif target_type == 'refname':
+                reference_node = nodes.reference(
+                    refname=fully_normalize_name(data),
+                    name=whitespace_normalize_name(data))
+                reference_node.indirect_reference_name = data
+                self.state.document.note_refname(reference_node)
+            else:                           # malformed target
+                messages.append(data)       # data is a system message
+            del self.options['target']
+        set_classes(self.options)
+        image_node = nodes.image(self.block_text, **self.options)
+        if reference_node:
+            reference_node += image_node
+            return messages + [reference_node]
+        else:
+            return messages + [image_node]
 
-image.arguments = (1, 0, 1)
-image.options = {'alt': directives.unchanged,
-                 'height': directives.length_or_unitless,
-                 'width': directives.length_or_percentage_or_unitless,
-                 'scale': directives.nonnegative_int,
-                 'align': align,
-                 'target': directives.unchanged_required,
-                 'class': directives.class_option}
 
 def figure_align(argument):
-    return directives.choice(argument, align_h_values)
+    return directives.choice(argument, Image.align_h_values)
 
 def figure(name, arguments, options, content, lineno,
            content_offset, block_text, state, state_machine):
@@ -99,16 +113,17 @@ def figure(name, arguments, options, content, lineno,
     align = options.get('align')
     if align:
         del options['align']
-    (image_node,) = image(name, arguments, options, content, lineno,
-                         content_offset, block_text, state, state_machine)
+    (image_node,) = Image(
+        name, arguments, options, content, lineno,
+        content_offset, block_text, state, state_machine).run()
     if isinstance(image_node, nodes.system_message):
         return [image_node]
     figure_node = nodes.figure('', image_node)
     if figwidth == 'image':
-        if Image and state.document.settings.file_insertion_enabled:
+        if PIL and state.document.settings.file_insertion_enabled:
             # PIL doesn't like Unicode paths:
             try:
-                i = Image.open(str(image_node['uri']))
+                i = PIL.open(str(image_node['uri']))
             except (IOError, UnicodeError):
                 pass
             else:
@@ -147,6 +162,6 @@ def figwidth_value(argument):
 figure.arguments = (1, 0, 1)
 figure.options = {'figwidth': figwidth_value,
                   'figclass': directives.class_option}
-figure.options.update(image.options)
+figure.options.update(Image.option_spec)
 figure.options['align'] = figure_align
 figure.content = 1

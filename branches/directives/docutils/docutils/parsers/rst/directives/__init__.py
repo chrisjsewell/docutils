@@ -116,7 +116,7 @@ _directive_registry = {
       'table': ('tables', 'table'),
       'csv-table': ('tables', 'csv_table'),
       'list-table': ('tables', 'list_table'),
-      'image': ('images', 'image'),
+      'image': ('images', 'Image'),
       'figure': ('images', 'figure'),
       'contents': ('parts', 'contents'),
       'sectnum': ('parts', 'sectnum'),
