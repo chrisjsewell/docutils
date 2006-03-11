@@ -20,7 +20,7 @@ class GenericAdmonition(Directive):
     required_arguments = 0
     optional_arguments = 0
     final_argument_whitespace = True
-    options = {}
+    option_spec = {}
     has_content = True
 
     # Subclasses must set node_class to the appropriate admonition
@@ -51,34 +51,54 @@ class GenericAdmonition(Directive):
                                 admonition_node)
         return [admonition_node]
 
+
 class Admonition(GenericAdmonition):
+
     required_arguments = 1
-    options = {'class': directives.class_option}
+    option_spec = {'class': directives.class_option}
     node_class = nodes.admonition
 
+
 class Attention(GenericAdmonition):
+
     node_class = nodes.attention
 
+
 class Caution(GenericAdmonition):
+
     node_class = nodes.caution
 
+
 class Danger(GenericAdmonition):
+
     node_class = nodes.danger
 
+
 class Error(GenericAdmonition):
+
     node_class = nodes.error
 
+
 class Hint(GenericAdmonition):
+
     node_class = nodes.hint
 
+
 class Important(GenericAdmonition):
+
     node_class = nodes.important
 
+
 class Note(GenericAdmonition):
+
     node_class = nodes.note
 
+
 class Tip(GenericAdmonition):
+
     node_class = nodes.tip
 
+
 class Warning(GenericAdmonition):
+
     node_class = nodes.warning

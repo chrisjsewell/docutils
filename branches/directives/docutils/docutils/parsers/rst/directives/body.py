@@ -19,13 +19,12 @@ from docutils.parsers.rst import Directive, directives
 from docutils.parsers.rst.roles import set_classes
 
 
-# XXX David, can you think of a nice name for this?
-class TopicOrSidebarThingy(Directive):
+class BaseTopic(Directive):
 
     required_arguments = 1
     optional_arguments = 0
     final_argument_whitespace = True
-    options = {'class': directives.class_option}
+    option_spec = {'class': directives.class_option}
     has_content = True
 
     # Must be set in subclasses.
@@ -63,17 +62,17 @@ class TopicOrSidebarThingy(Directive):
         return [node]
 
 
-class Topic(TopicOrSidebarThingy):
+class Topic(BaseTopic):
 
     node_class = nodes.topic
 
 
-class Sidebar(TopicOrSidebarThingy):
+class Sidebar(BaseTopic):
 
     node_class = nodes.sidebar
 
-    options = TopicOrSidebarThingy.options.copy()
-    options['subtitle'] = directives.unchanged_required
+    option_spec = BaseTopic.option_spec.copy()
+    option_spec['subtitle'] = directives.unchanged_required
 
     def run(self):
         if isinstance(self.state_machine.node, nodes.sidebar):
@@ -82,12 +81,12 @@ class Sidebar(TopicOrSidebarThingy):
                 % self.name, nodes.literal_block(
                 self.block_text, self.block_text), line=self.lineno)
             return [error]
-        return TopicOrSidebarThingy.run(self)
+        return BaseTopic.run(self)
 
 
 class LineBlock(Directive):
 
-    options = {'class': directives.class_option}
+    option_spec = {'class': directives.class_option}
     has_content = True
 
     def run(self):
@@ -114,7 +113,7 @@ class LineBlock(Directive):
 
 class ParsedLiteral(Directive):
 
-    options = {'class': directives.class_option}
+    option_spec = {'class': directives.class_option}
     has_content = True
 
     def run(self):
@@ -137,7 +136,7 @@ class Rubric(Directive):
     required_arguments = 1
     optional_arguments = 0
     final_argument_whitespace = True
-    options = {'class': directives.class_option}
+    option_spec = {'class': directives.class_option}
 
     def run(self):
         set_classes(self.options)
@@ -158,19 +157,25 @@ class BlockQuote(Directive):
         block_quote['classes'] += self.classes
         return [block_quote] + messages
 
+
 class Epigraph(BlockQuote):
+
     classes = ['epigraph']
 
+
 class Highlights(BlockQuote):
+
     classes = ['highlights']
 
+
 class PullQuote(BlockQuote):
+
     classes = ['pull-quote']
 
 
 class Compound(Directive):
 
-    options = {'class': directives.class_option}
+    option_spec = {'class': directives.class_option}
     has_content = True
 
     def run(self):

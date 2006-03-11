@@ -171,9 +171,7 @@ class Directive:
     final_argument_whitespace = False
     """May the final argument contain whitespace?"""
 
-    # !!! Class attribute conflicts with instance attribute self.options.
-    # Change to option_spec?
-    options = None
+    option_spec = None
     """Mapping of option names to validator functions."""
 
     has_content = False

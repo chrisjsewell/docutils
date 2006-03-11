@@ -1967,12 +1967,12 @@ class Body(RSTState):
     def directive(self, match, **option_presets):
         """Returns a 2-tuple: list of nodes, and a "blank finish" boolean."""
         type_name = match.group(1)
-        directive_function, messages = directives.directive(
+        directive_class, messages = directives.directive(
             type_name, self.memo.language, self.document)
         self.parent += messages
-        if directive_function:
+        if directive_class:
             return self.run_directive(
-                directive_function, match, type_name, option_presets)
+                directive_class, match, type_name, option_presets)
         else:
             return self.unknown_directive(type_name)
 
@@ -2025,10 +2025,8 @@ class Body(RSTState):
 
     def parse_directive_block(self, indented, line_offset, directive,
                               option_presets):
-        arguments = []
-        options = {}
-        option_spec = directive.options
-        content_spec = directive.has_content
+        option_spec = directive.option_spec
+        has_content = directive.has_content
         if indented and not indented[0].strip():
             indented.trim_start()
             line_offset += 1
@@ -2059,10 +2057,14 @@ class Body(RSTState):
                                   or directive.optional_arguments):
                 raise MarkupError('no arguments permitted; blank line '
                                   'required before content block')
+        else:
+            options = {}
         if directive.required_arguments or directive.optional_arguments:
             arguments = self.parse_directive_arguments(
                 directive, arg_block)
-        if content and not content_spec:
+        else:
+            arguments = []
+        if content and not has_content:
             raise MarkupError('no content permitted')
         return (arguments, options, content, content_offset)
 
