@@ -242,8 +242,8 @@ class Replace(Directive):
             return [error]
 
 
-def unicode_directive(name, arguments, options, content, lineno,
-                      content_offset, block_text, state, state_machine):
+class Unicode(Directive):
+
     r"""
     Convert Unicode character codes (numbers) to characters.  Codes may be
     decimal numbers, hexadecimal numbers (prefixed by ``0x``, ``x``, ``\x``,
@@ -251,39 +251,46 @@ def unicode_directive(name, arguments, options, content, lineno,
     entities (e.g. ``&#x262E;``).  Text following ".." is a comment and is
     ignored.  Spaces are ignored, and any other text remains as-is.
     """
-    if not isinstance(state, states.SubstitutionDef):
-        error = state_machine.reporter.error(
-            'Invalid context: the "%s" directive can only be used within a '
-            'substitution definition.' % (name),
-            nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    substitution_definition = state_machine.node
-    if options.has_key('trim'):
-        substitution_definition.attributes['ltrim'] = 1
-        substitution_definition.attributes['rtrim'] = 1
-    if options.has_key('ltrim'):
-        substitution_definition.attributes['ltrim'] = 1
-    if options.has_key('rtrim'):
-        substitution_definition.attributes['rtrim'] = 1
-    codes = unicode_comment_pattern.split(arguments[0])[0].split()
-    element = nodes.Element()
-    for code in codes:
-        try:
-            decoded = directives.unicode_code(code)
-        except ValueError, err:
-            error = state_machine.reporter.error(
-                'Invalid character code: %s\n%s: %s'
-                % (code, err.__class__.__name__, err),
-                nodes.literal_block(block_text, block_text), line=lineno)
-            return [error]
-        element += nodes.Text(decoded)
-    return element.children
 
-unicode_directive.arguments = (1, 0, 1)
-unicode_directive.options = {'trim': directives.flag,
-                             'ltrim': directives.flag,
-                             'rtrim': directives.flag}
-unicode_comment_pattern = re.compile(r'( |\n|^)\.\. ')
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = True
+    option_spec = {'trim': directives.flag,
+                   'ltrim': directives.flag,
+                   'rtrim': directives.flag}
+
+    comment_pattern = re.compile(r'( |\n|^)\.\. ')
+
+    def run(self):
+        if not isinstance(self.state, states.SubstitutionDef):
+            error = self.state_machine.reporter.error(
+                'Invalid context: the "%s" directive can only be used within '
+                'a substitution definition.' % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [error]
+        substitution_definition = self.state_machine.node
+        if self.options.has_key('trim'):
+            substitution_definition.attributes['ltrim'] = 1
+            substitution_definition.attributes['rtrim'] = 1
+        if self.options.has_key('ltrim'):
+            substitution_definition.attributes['ltrim'] = 1
+        if self.options.has_key('rtrim'):
+            substitution_definition.attributes['rtrim'] = 1
+        codes = self.comment_pattern.split(self.arguments[0])[0].split()
+        element = nodes.Element()
+        for code in codes:
+            try:
+                decoded = directives.unicode_code(code)
+            except ValueError, err:
+                error = self.state_machine.reporter.error(
+                    'Invalid character code: %s\n%s: %s'
+                    % (code, err.__class__.__name__, err),
+                    nodes.literal_block(self.block_text, self.block_text),
+                    line=self.lineno)
+                return [error]
+            element += nodes.Text(decoded)
+        return element.children
+
 
 def class_directive(name, arguments, options, content, lineno,
                        content_offset, block_text, state, state_machine):

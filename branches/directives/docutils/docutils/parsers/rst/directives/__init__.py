@@ -130,7 +130,7 @@ _directive_registry = {
       'raw': ('misc', 'Raw'),
       'include': ('misc', 'Include'),
       'replace': ('misc', 'Replace'),
-      'unicode': ('misc', 'unicode_directive'),
+      'unicode': ('misc', 'Unicode'),
       'class': ('misc', 'class_directive'),
       'role': ('misc', 'role'),
       'default-role': ('misc', 'default_role'),
