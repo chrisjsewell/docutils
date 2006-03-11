@@ -21,18 +21,6 @@ totest = {}
 
 totest['class'] = [
 ["""\
-.. class:: myclass
-""",
-"""\
-<document source="test data">
-    <pending>
-        .. internal attributes:
-             .transform: docutils.transforms.misc.ClassAttribute
-             .details:
-               class: ['myclass']
-               directive: 'class'
-"""],
-["""\
 .. class:: class1  class2
 """,
 """\
