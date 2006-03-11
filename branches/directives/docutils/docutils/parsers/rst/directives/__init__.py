@@ -118,7 +118,7 @@ _directive_registry = {
       'list-table': ('tables', 'list_table'),
       'image': ('images', 'Image'),
       'figure': ('images', 'Figure'),
-      'contents': ('parts', 'contents'),
+      'contents': ('parts', 'Contents'),
       'sectnum': ('parts', 'sectnum'),
       'header': ('parts', 'header'),
       'footer': ('parts', 'footer'),

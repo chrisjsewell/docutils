@@ -12,20 +12,12 @@ __docformat__ = 'reStructuredText'
 
 from docutils import nodes, languages
 from docutils.transforms import parts
+from docutils.parsers.rst import Directive
 from docutils.parsers.rst import directives
 
 
-backlinks_values = ('top', 'entry', 'none')
+class Contents(Directive):
 
-def backlinks(arg):
-    value = directives.choice(arg, backlinks_values)
-    if value == 'none':
-        return None
-    else:
-        return value
-
-def contents(name, arguments, options, content, lineno,
-             content_offset, block_text, state, state_machine):
     """
     Table of contents.
 
@@ -35,49 +27,64 @@ def contents(name, arguments, options, content, lineno,
     internally.  At a later stage in the processing, the 'pending' element is
     replaced by a 'topic' element, a title and the table of contents proper.
     """
-    if not (state_machine.match_titles
-            or isinstance(state_machine.node, nodes.sidebar)):
-        error = state_machine.reporter.error(
-              'The "%s" directive may not be used within topics '
-              'or body elements.' % name,
-              nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    document = state_machine.document
-    language = languages.get_language(document.settings.language_code)
-    if arguments:
-        title_text = arguments[0]
-        text_nodes, messages = state.inline_text(title_text, lineno)
-        title = nodes.title(title_text, '', *text_nodes)
-    else:
-        messages = []
-        if options.has_key('local'):
-            title = None
-        else:
-            title = nodes.title('', language.labels['contents'])
-    topic = nodes.topic(classes=['contents'])
-    topic['classes'] += options.get('class', [])
-    if options.has_key('local'):
-        topic['classes'].append('local')
-    if title:
-        name = title.astext()
-        topic += title
-    else:
-        name = language.labels['contents']
-    name = nodes.fully_normalize_name(name)
-    if not document.has_name(name):
-        topic['names'].append(name)
-    document.note_implicit_target(topic)
-    pending = nodes.pending(parts.Contents, rawsource=block_text)
-    pending.details.update(options)
-    document.note_pending(pending)
-    topic += pending
-    return [topic] + messages
 
-contents.arguments = (0, 1, 1)
-contents.options = {'depth': directives.nonnegative_int,
-                    'local': directives.flag,
-                    'backlinks': backlinks,
-                    'class': directives.class_option}
+    backlinks_values = ('top', 'entry', 'none')
+
+    def backlinks(arg):
+        value = directives.choice(arg, Contents.backlinks_values)
+        if value == 'none':
+            return None
+        else:
+            return value
+
+    required_arguments = 0
+    optional_arguments = 1
+    final_argument_whitespace = True
+    option_spec = {'depth': directives.nonnegative_int,
+                   'local': directives.flag,
+                   'backlinks': backlinks,
+                   'class': directives.class_option}
+    
+    def run(self):
+        if not (self.state_machine.match_titles
+                or isinstance(self.state_machine.node, nodes.sidebar)):
+            error = self.state_machine.reporter.error(
+                'The "%s" directive may not be used within topics or body '
+                'elements.' % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [error]
+        document = self.state_machine.document
+        language = languages.get_language(document.settings.language_code)
+        if self.arguments:
+            title_text = self.arguments[0]
+            text_nodes, messages = self.state.inline_text(title_text,
+                                                          self.lineno)
+            title = nodes.title(title_text, '', *text_nodes)
+        else:
+            messages = []
+            if self.options.has_key('local'):
+                title = None
+            else:
+                title = nodes.title('', language.labels['contents'])
+        topic = nodes.topic(classes=['contents'])
+        topic['classes'] += self.options.get('class', [])
+        if self.options.has_key('local'):
+            topic['classes'].append('local')
+        if title:
+            name = title.astext()
+            topic += title
+        else:
+            name = language.labels['contents']
+        name = nodes.fully_normalize_name(name)
+        if not document.has_name(name):
+            topic['names'].append(name)
+        document.note_implicit_target(topic)
+        pending = nodes.pending(parts.Contents, rawsource=self.block_text)
+        pending.details.update(self.options)
+        document.note_pending(pending)
+        topic += pending
+        return [topic] + messages
+
 
 def sectnum(name, arguments, options, content, lineno,
             content_offset, block_text, state, state_machine):
