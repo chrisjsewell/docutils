@@ -427,12 +427,16 @@ class DefaultRole(Directive):
         return messages
 
 
-def title(name, arguments, options, content, lineno,
-          content_offset, block_text, state, state_machine):
-    state_machine.document['title'] = arguments[0]
-    return []
+class Title(Directive):
 
-title.arguments = (1, 0, 1)
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = True
+
+    def run(self):
+        self.state_machine.document['title'] = self.arguments[0]
+        return []
+
 
 def date(name, arguments, options, content, lineno,
          content_offset, block_text, state, state_machine):
