@@ -87,8 +87,8 @@ class Include(Directive):
             return []
 
 
-def raw(name, arguments, options, content, lineno,
-        content_offset, block_text, state, state_machine):
+class Raw(Directive):
+
     """
     Pass through content unchanged
 
@@ -97,96 +97,112 @@ def raw(name, arguments, options, content, lineno,
     Content may be included inline (content section of directive) or
     imported from a file or url.
     """
-    if ( not state.document.settings.raw_enabled
-         or (not state.document.settings.file_insertion_enabled
-             and (options.has_key('file') or options.has_key('url'))) ):
-        warning = state_machine.reporter.warning(
-              '"%s" directive disabled.' % name,
-              nodes.literal_block(block_text, block_text), line=lineno)
-        return [warning]
-    attributes = {'format': ' '.join(arguments[0].lower().split())}
-    encoding = options.get('encoding', state.document.settings.input_encoding)
-    if content:
-        if options.has_key('file') or options.has_key('url'):
-            error = state_machine.reporter.error(
-                  '"%s" directive may not both specify an external file and '
-                  'have content.' % name,
-                  nodes.literal_block(block_text, block_text), line=lineno)
-            return [error]
-        text = '\n'.join(content)
-    elif options.has_key('file'):
-        if options.has_key('url'):
-            error = state_machine.reporter.error(
-                  'The "file" and "url" options may not be simultaneously '
-                  'specified for the "%s" directive.' % name,
-                  nodes.literal_block(block_text, block_text), line=lineno)
-            return [error]
-        source_dir = os.path.dirname(
-            os.path.abspath(state.document.current_source))
-        path = os.path.normpath(os.path.join(source_dir, options['file']))
-        path = utils.relative_path(None, path)
-        try:
-            state.document.settings.record_dependencies.add(path)
-            raw_file = io.FileInput(
-                source_path=path, encoding=encoding,
-                error_handler=state.document.settings.input_encoding_error_handler,
-                handle_io_errors=None)
-        except IOError, error:
-            severe = state_machine.reporter.severe(
-                  'Problems with "%s" directive path:\n%s.' % (name, error),
-                  nodes.literal_block(block_text, block_text), line=lineno)
-            return [severe]
-        try:
-            text = raw_file.read()
-        except UnicodeError, error:
-            severe = state_machine.reporter.severe(
-                  'Problem with "%s" directive:\n%s: %s'
-                  % (name, error.__class__.__name__, error),
-                  nodes.literal_block(block_text, block_text), line=lineno)
-            return [severe]
-        attributes['source'] = path
-    elif options.has_key('url'):
-        if not urllib2:
-            severe = state_machine.reporter.severe(
-                  'Problems with the "%s" directive and its "url" option: '
-                  'unable to access the required functionality (from the '
-                  '"urllib2" module).' % name,
-                  nodes.literal_block(block_text, block_text), line=lineno)
-            return [severe]
-        source = options['url']
-        try:
-            raw_text = urllib2.urlopen(source).read()
-        except (urllib2.URLError, IOError, OSError), error:
-            severe = state_machine.reporter.severe(
-                  'Problems with "%s" directive URL "%s":\n%s.'
-                  % (name, options['url'], error),
-                  nodes.literal_block(block_text, block_text), line=lineno)
-            return [severe]
-        raw_file = io.StringInput(
-            source=raw_text, source_path=source, encoding=encoding,
-            error_handler=state.document.settings.input_encoding_error_handler)
-        try:
-            text = raw_file.read()
-        except UnicodeError, error:
-            severe = state_machine.reporter.severe(
-                  'Problem with "%s" directive:\n%s: %s'
-                  % (name, error.__class__.__name__, error),
-                  nodes.literal_block(block_text, block_text), line=lineno)
-            return [severe]
-        attributes['source'] = source
-    else:
-        error = state_machine.reporter.warning(
-            'The "%s" directive requires content; none supplied.' % (name),
-            nodes.literal_block(block_text, block_text), line=lineno)
-        return [error]
-    raw_node = nodes.raw('', text, **attributes)
-    return [raw_node]
 
-raw.arguments = (1, 0, 1)
-raw.options = {'file': directives.path,
-               'url': directives.uri,
-               'encoding': directives.encoding}
-raw.content = 1
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = True
+    option_spec = {'file': directives.path,
+                   'url': directives.uri,
+                   'encoding': directives.encoding}
+    has_content = True
+
+    def run(self):
+        if (not self.state.document.settings.raw_enabled
+            or (not self.state.document.settings.file_insertion_enabled
+                and (self.options.has_key('file')
+                     or self.options.has_key('url')))):
+            warning = self.state_machine.reporter.warning(
+                '"%s" directive disabled.' % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [warning]
+        attributes = {'format': ' '.join(self.arguments[0].lower().split())}
+        encoding = self.options.get(
+            'encoding', self.state.document.settings.input_encoding)
+        if self.content:
+            if self.options.has_key('file') or self.options.has_key('url'):
+                error = self.state_machine.reporter.error(
+                    '"%s" directive may not both specify an external file '
+                    'and have content.' % self.name, nodes.literal_block(
+                    self.block_text, self.block_text), line=self.lineno)
+                return [error]
+            text = '\n'.join(self.content)
+        elif self.options.has_key('file'):
+            if self.options.has_key('url'):
+                error = self.state_machine.reporter.error(
+                    'The "file" and "url" options may not be simultaneously '
+                    'specified for the "%s" directive.' % self.name,
+                    nodes.literal_block(self.block_text, self.block_text),
+                    line=self.lineno)
+                return [error]
+            source_dir = os.path.dirname(
+                os.path.abspath(self.state.document.current_source))
+            path = os.path.normpath(os.path.join(source_dir,
+                                                 self.options['file']))
+            path = utils.relative_path(None, path)
+            try:
+                self.state.document.settings.record_dependencies.add(path)
+                raw_file = io.FileInput(
+                    source_path=path, encoding=encoding,
+                    error_handler=(self.state.document.settings.\
+                                   input_encoding_error_handler),
+                    handle_io_errors=None)
+            except IOError, error:
+                severe = self.state_machine.reporter.severe(
+                    'Problems with "%s" directive path:\n%s.'
+                    % (self.name, self.error), nodes.literal_block(
+                    self.block_text, self.block_text), line=self.lineno)
+                return [severe]
+            try:
+                text = raw_file.read()
+            except UnicodeError, error:
+                severe = self.state_machine.reporter.severe(
+                    'Problem with "%s" directive:\n%s: %s'
+                    % (self.name, error.__class__.__name__, error),
+                    nodes.literal_block(self.block_text, self.block_text),
+                    line=self.lineno)
+                return [severe]
+            attributes['source'] = path
+        elif self.options.has_key('url'):
+            if not urllib2:
+                severe = self.state_machine.reporter.severe(
+                    'Problems with the "%s" directive and its "url" option: '
+                    'unable to access the required functionality (from the '
+                    '"urllib2" module).' % name, nodes.literal_block(
+                    self.block_text, self.block_text), line=self.lineno)
+                return [severe]
+            source = self.options['url']
+            try:
+                raw_text = urllib2.urlopen(source).read()
+            except (urllib2.URLError, IOError, OSError), error:
+                severe = self.state_machine.reporter.severe(
+                    'Problems with "%s" directive URL "%s":\n%s.'
+                    % (self.name, self.options['url'], error),
+                    nodes.literal_block(self.block_text, self.block_text),
+                    line=self.lineno)
+                return [severe]
+            raw_file = io.StringInput(
+                source=raw_text, source_path=source, encoding=encoding,
+                error_handler=(self.state.document.settings.\
+                               input_encoding_error_handler))
+            try:
+                text = raw_file.read()
+            except UnicodeError, error:
+                severe = self.state_machine.reporter.severe(
+                    'Problem with "%s" directive:\n%s: %s'
+                    % (self.name, error.__class__.__name__, error),
+                    nodes.literal_block(self.block_text, self.block_text),
+                    line=self.lineno)
+                return [severe]
+            attributes['source'] = source
+        else:
+            error = self.state_machine.reporter.warning(
+                'The "%s" directive requires content; none supplied.'
+                % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [error]
+        raw_node = nodes.raw('', text, **attributes)
+        return [raw_node]
+
 
 def replace(name, arguments, options, content, lineno,
             content_offset, block_text, state, state_machine):

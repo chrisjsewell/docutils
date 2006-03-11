@@ -127,7 +127,7 @@ _directive_registry = {
       'target-notes': ('references', 'target_notes'),
       'meta': ('html', 'Meta'),
       #'imagemap': ('html', 'imagemap'),
-      'raw': ('misc', 'raw'),
+      'raw': ('misc', 'Raw'),
       'include': ('misc', 'Include'),
       'replace': ('misc', 'replace'),
       'unicode': ('misc', 'unicode_directive'),
