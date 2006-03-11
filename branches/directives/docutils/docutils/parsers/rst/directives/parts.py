@@ -86,18 +86,21 @@ class Contents(Directive):
         return [topic] + messages
 
 
-def sectnum(name, arguments, options, content, lineno,
-            content_offset, block_text, state, state_machine):
-    """Automatic section numbering."""
-    pending = nodes.pending(parts.SectNum)
-    pending.details.update(options)
-    state_machine.document.note_pending(pending)
-    return [pending]
+class Sectnum(Directive):
 
-sectnum.options = {'depth': int,
+    """Automatic section numbering."""
+
+    option_spec = {'depth': int,
                    'start': int,
                    'prefix': directives.unchanged_required,
                    'suffix': directives.unchanged_required}
+
+    def run(self):
+        pending = nodes.pending(parts.SectNum)
+        pending.details.update(self.options)
+        self.state_machine.document.note_pending(pending)
+        return [pending]
+
 
 def header_footer(node, name, arguments, options, content, lineno,
                   content_offset, block_text, state, state_machine):

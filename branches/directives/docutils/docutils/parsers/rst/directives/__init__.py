@@ -119,7 +119,7 @@ _directive_registry = {
       'image': ('images', 'Image'),
       'figure': ('images', 'Figure'),
       'contents': ('parts', 'Contents'),
-      'sectnum': ('parts', 'sectnum'),
+      'sectnum': ('parts', 'Sectnum'),
       'header': ('parts', 'header'),
       'footer': ('parts', 'footer'),
       #'footnotes': ('parts', 'footnotes'),
