@@ -136,7 +136,7 @@ _directive_registry = {
       'default-role': ('misc', 'DefaultRole'),
       'title': ('misc', 'Title'),
       'date': ('misc', 'Date'),
-      'restructuredtext-test-directive': ('misc', 'directive_test_function'),}
+      'restructuredtext-test-directive': ('misc', 'TestDirective'),}
 """Mapping of directive name to (module name, function name).  The directive
 name is canonical & must be lowercase.  Language-dependent names are defined
 in the ``language`` subpackage."""

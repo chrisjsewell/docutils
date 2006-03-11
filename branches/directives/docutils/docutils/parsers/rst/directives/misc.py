@@ -455,21 +455,47 @@ class Date(Directive):
         return [nodes.Text(text)]
 
 
-def directive_test_function(name, arguments, options, content, lineno,
-                            content_offset, block_text, state, state_machine):
-    """This directive is useful only for testing purposes."""
-    if content:
-        text = '\n'.join(content)
-        info = state_machine.reporter.info(
-            'Directive processed. Type="%s", arguments=%r, options=%r, '
-            'content:' % (name, arguments, options),
-            nodes.literal_block(text, text), line=lineno)
-    else:
-        info = state_machine.reporter.info(
-            'Directive processed. Type="%s", arguments=%r, options=%r, '
-            'content: None' % (name, arguments, options), line=lineno)
-    return [info]
+class TestDirective(Directive):
 
-directive_test_function.arguments = (0, 1, 1)
-directive_test_function.options = {'option': directives.unchanged_required}
-directive_test_function.content = 1
+    """This directive is useful only for testing purposes."""
+
+    required_arguments = 0
+    optional_arguments = 1
+    final_argument_whitespace = True
+    option_spec = {'option': directives.unchanged_required}
+    has_content = True
+
+    def run(self):
+        if self.content:
+            text = '\n'.join(self.content)
+            info = self.state_machine.reporter.info(
+                'Directive processed. Type="%s", arguments=%r, options=%r, '
+                'content:' % (self.name, self.arguments, self.options),
+                nodes.literal_block(text, text), line=self.lineno)
+        else:
+            info = self.state_machine.reporter.info(
+                'Directive processed. Type="%s", arguments=%r, options=%r, '
+                'content: None' % (self.name, self.arguments, self.options),
+                line=self.lineno)
+        return [info]
+
+# Old-style, functional definition:
+#
+# def directive_test_function(name, arguments, options, content, lineno,
+#                             content_offset, block_text, state, state_machine):
+#     """This directive is useful only for testing purposes."""
+#     if content:
+#         text = '\n'.join(content)
+#         info = state_machine.reporter.info(
+#             'Directive processed. Type="%s", arguments=%r, options=%r, '
+#             'content:' % (name, arguments, options),
+#             nodes.literal_block(text, text), line=lineno)
+#     else:
+#         info = state_machine.reporter.info(
+#             'Directive processed. Type="%s", arguments=%r, options=%r, '
+#             'content: None' % (name, arguments, options), line=lineno)
+#     return [info]
+#
+# directive_test_function.arguments = (0, 1, 1)
+# directive_test_function.options = {'option': directives.unchanged_required}
+# directive_test_function.content = 1
