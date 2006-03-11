@@ -99,69 +99,69 @@ class Image(Directive):
             return messages + [image_node]
 
 
-def figure_align(argument):
-    return directives.choice(argument, Image.align_h_values)
+class Figure(Image):
 
-def figure(name, arguments, options, content, lineno,
-           content_offset, block_text, state, state_machine):
-    figwidth = options.get('figwidth')
-    if figwidth:
-        del options['figwidth']
-    figclasses = options.get('figclass')
-    if figclasses:
-        del options['figclass']
-    align = options.get('align')
-    if align:
-        del options['align']
-    (image_node,) = Image(
-        name, arguments, options, content, lineno,
-        content_offset, block_text, state, state_machine).run()
-    if isinstance(image_node, nodes.system_message):
-        return [image_node]
-    figure_node = nodes.figure('', image_node)
-    if figwidth == 'image':
-        if PIL and state.document.settings.file_insertion_enabled:
-            # PIL doesn't like Unicode paths:
-            try:
-                i = PIL.open(str(image_node['uri']))
-            except (IOError, UnicodeError):
-                pass
-            else:
-                state.document.settings.record_dependencies.add(image_node['uri'])
-                figure_node['width'] = i.size[0]
-    elif figwidth is not None:
-        figure_node['width'] = figwidth
-    if figclasses:
-        figure_node['classes'] += figclasses
-    if align:
-        figure_node['align'] = align
-    if content:
-        node = nodes.Element()          # anonymous container for parsing
-        state.nested_parse(content, content_offset, node)
-        first_node = node[0]
-        if isinstance(first_node, nodes.paragraph):
-            caption = nodes.caption(first_node.rawsource, '',
-                                    *first_node.children)
-            figure_node += caption
-        elif not (isinstance(first_node, nodes.comment)
-                  and len(first_node) == 0):
-            error = state_machine.reporter.error(
-                  'Figure caption must be a paragraph or empty comment.',
-                  nodes.literal_block(block_text, block_text), line=lineno)
-            return [figure_node, error]
-        if len(node) > 1:
-            figure_node += nodes.legend('', *node[1:])
-    return [figure_node]
+    def align(argument):
+        return directives.choice(argument, Figure.align_h_values)
 
-def figwidth_value(argument):
-    if argument.lower() == 'image':
-        return 'image'
-    else:
-        return directives.nonnegative_int(argument)
+    def figwidth_value(argument):
+        if argument.lower() == 'image':
+            return 'image'
+        else:
+            return directives.nonnegative_int(argument)
 
-figure.arguments = (1, 0, 1)
-figure.options = {'figwidth': figwidth_value,
-                  'figclass': directives.class_option}
-figure.options.update(Image.option_spec)
-figure.options['align'] = figure_align
-figure.content = 1
+    option_spec = Image.option_spec.copy()
+    option_spec['figwidth'] = figwidth_value
+    option_spec['figclass'] = directives.class_option
+    option_spec['align'] = align
+    has_content = True
+
+    def run(self):
+        figwidth = self.options.get('figwidth')
+        if figwidth:
+            del self.options['figwidth']
+        figclasses = self.options.get('figclass')
+        if figclasses:
+            del self.options['figclass']
+        align = self.options.get('align')
+        if align:
+            del self.options['align']
+        (image_node,) = Image.run(self)
+        if isinstance(image_node, nodes.system_message):
+            return [image_node]
+        figure_node = nodes.figure('', image_node)
+        if figwidth == 'image':
+            if PIL and self.state.document.settings.file_insertion_enabled:
+                # PIL doesn't like Unicode paths:
+                try:
+                    i = PIL.open(str(image_node['uri']))
+                except (IOError, UnicodeError):
+                    pass
+                else:
+                    self.state.document.settings.record_dependencies.add(
+                        image_node['uri'])
+                    figure_node['width'] = i.size[0]
+        elif figwidth is not None:
+            figure_node['width'] = figwidth
+        if figclasses:
+            figure_node['classes'] += figclasses
+        if align:
+            figure_node['align'] = align
+        if self.content:
+            node = nodes.Element()          # anonymous container for parsing
+            self.state.nested_parse(self.content, self.content_offset, node)
+            first_node = node[0]
+            if isinstance(first_node, nodes.paragraph):
+                caption = nodes.caption(first_node.rawsource, '',
+                                        *first_node.children)
+                figure_node += caption
+            elif not (isinstance(first_node, nodes.comment)
+                      and len(first_node) == 0):
+                error = self.state_machine.reporter.error(
+                      'Figure caption must be a paragraph or empty comment.',
+                      nodes.literal_block(self.block_text, self.block_text),
+                      line=self.lineno)
+                return [figure_node, error]
+            if len(node) > 1:
+                figure_node += nodes.legend('', *node[1:])
+        return [figure_node]
