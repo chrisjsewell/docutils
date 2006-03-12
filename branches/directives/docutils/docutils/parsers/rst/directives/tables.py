@@ -23,11 +23,6 @@ try:
 except ImportError:
     csv = None
 
-try:
-    import urllib2
-except ImportError:
-    urllib2 = None
-
 
 class Table(Directive):
 
@@ -298,13 +293,10 @@ class CSVTable(Table):
                 raise SystemMessagePropagation(severe)
         elif self.options.has_key('url'):
             # CSV data is from a URL.
-            if not urllib2:
-                severe = self.state_machine.reporter.severe(
-                      'Problems with the "%s" directive and its "url" option: '
-                      'unable to access the required functionality (from the '
-                      '"urllib2" module).' % self.name, nodes.literal_block(
-                    self.block_text, self.block_text), line=self.lineno)
-                raise SystemMessagePropagation(severe)
+            # Do not import urllib2 at the top of the module because
+            # it may fail due to broken SSL dependencies, and it takes
+            # about 0.15 seconds to load.
+            import urllib2
             source = self.options['url']
             try:
                 csv_text = urllib2.urlopen(source).read()

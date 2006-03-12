@@ -17,11 +17,6 @@ from docutils.parsers.rst import Directive, convert_directive_function
 from docutils.parsers.rst import directives, roles, states
 from docutils.transforms import misc
 
-try:
-    import urllib2
-except ImportError:
-    urllib2 = None
-
 
 class Include(Directive):
 
@@ -163,14 +158,11 @@ class Raw(Directive):
                 return [severe]
             attributes['source'] = path
         elif self.options.has_key('url'):
-            if not urllib2:
-                severe = self.state_machine.reporter.severe(
-                    'Problems with the "%s" directive and its "url" option: '
-                    'unable to access the required functionality (from the '
-                    '"urllib2" module).' % name, nodes.literal_block(
-                    self.block_text, self.block_text), line=self.lineno)
-                return [severe]
             source = self.options['url']
+            # Do not import urllib2 at the top of the module because
+            # it may fail due to broken SSL dependencies, and it takes
+            # about 0.15 seconds to load.
+            import urllib2
             try:
                 raw_text = urllib2.urlopen(source).read()
             except (urllib2.URLError, IOError, OSError), error:
