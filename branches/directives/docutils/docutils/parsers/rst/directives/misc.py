@@ -436,7 +436,7 @@ class Date(Directive):
 
     def run(self):
         if not isinstance(self.state, states.SubstitutionDef):
-            error = state_machine.reporter.error(
+            error = self.state_machine.reporter.error(
                 'Invalid context: the "%s" directive can only be used within '
                 'a substitution definition.' % self.name,
                 nodes.literal_block(self.block_text, self.block_text),
