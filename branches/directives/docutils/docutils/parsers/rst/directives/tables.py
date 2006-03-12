@@ -15,6 +15,7 @@ import sys
 import os.path
 from docutils import io, nodes, statemachine, utils
 from docutils.utils import SystemMessagePropagation
+from docutils.parsers.rst import Directive
 from docutils.parsers.rst import directives
 
 try:
@@ -27,41 +28,50 @@ try:
 except ImportError:
     urllib2 = None
 
-try:
-    True
-except NameError:                       # Python 2.2 & 2.1 compatibility
-    True = not 0
-    False = not 1
+
+class Table(Directive):
+
+    required_arguments = 0
+    optional_arguments = 1
+    final_argument_whitespace = True
+    option_spec = {'class': directives.class_option}
+    has_content = True
+
+    def make_title(self):
+        if self.arguments:
+            title_text = self.arguments[0]
+            text_nodes, messages = self.state.inline_text(title_text,
+                                                          self.lineno)
+            title = nodes.title(title_text, '', *text_nodes)
+        else:
+            title = None
+            messages = []
+        return title, messages
+
+    def run(self):
+        if not self.content:
+            warning = self.state_machine.reporter.warning(
+                'Content block expected for the "%s" directive; none found.'
+                % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [warning]
+        title, messages = self.make_title()
+        node = nodes.Element()          # anonymous container for parsing
+        self.state.nested_parse(self.content, self.content_offset, node)
+        if len(node) != 1 or not isinstance(node[0], nodes.table):
+            error = self.state_machine.reporter.error(
+                'Error parsing content block for the "%s" directive: exactly '
+                'one table expected.' % self.name, nodes.literal_block(
+                self.block_text, self.block_text), line=self.lineno)
+            return [error]
+        table_node = node[0]
+        table_node['classes'] += self.options.get('class', [])
+        if title:
+            table_node.insert(0, title)
+        return [table_node] + messages
 
 
-def table(name, arguments, options, content, lineno,
-          content_offset, block_text, state, state_machine):
-    if not content:
-        warning = state_machine.reporter.warning(
-            'Content block expected for the "%s" directive; none found.'
-            % name, nodes.literal_block(block_text, block_text),
-            line=lineno)
-        return [warning]
-    title, messages = make_title(arguments, state, lineno)
-    node = nodes.Element()          # anonymous container for parsing
-    state.nested_parse(content, content_offset, node)
-    if len(node) != 1 or not isinstance(node[0], nodes.table):
-        error = state_machine.reporter.error(
-            'Error parsing content block for the "%s" directive: '
-            'exactly one table expected.'
-            % name, nodes.literal_block(block_text, block_text),
-            line=lineno)
-        return [error]
-    table_node = node[0]
-    table_node['classes'] += options.get('class', [])
-    if title:
-        table_node.insert(0, title)
-    return [table_node] + messages
-
-table.arguments = (0, 1, 1)
-table.options = {'class': directives.class_option}
-table.content = 1
-
+# XXX Keep me till everything is refactored.
 def make_title(arguments, state, lineno):
     if arguments:
         title_text = arguments[0]

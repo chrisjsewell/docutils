@@ -113,7 +113,7 @@ _directive_registry = {
       'compound': ('body', 'Compound'),
       'container': ('body', 'Container'),
       #'questions': ('body', 'question_list'),
-      'table': ('tables', 'table'),
+      'table': ('tables', 'Table'),
       'csv-table': ('tables', 'csv_table'),
       'list-table': ('tables', 'list_table'),
       'image': ('images', 'Image'),
