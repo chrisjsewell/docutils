@@ -124,7 +124,7 @@ _directive_registry = {
       'footer': ('parts', 'Footer'),
       #'footnotes': ('parts', 'footnotes'),
       #'citations': ('parts', 'citations'),
-      'target-notes': ('references', 'target_notes'),
+      'target-notes': ('references', 'TargetNotes'),
       'meta': ('html', 'Meta'),
       #'imagemap': ('html', 'imagemap'),
       'raw': ('misc', 'Raw'),
