@@ -135,6 +135,17 @@ Raw input file is UTF-16-encoded, and is not valid ASCII.
     <raw format="html" xml:space="preserve">
         Should the parser complain becau\xdfe there is no :file:?  BUG?
 """],
+["""\
+.. raw:: html
+""",
+"""\
+<document source="test data">
+    <system_message level="2" line="1" source="test data" type="WARNING">
+        <paragraph>
+            The "raw" directive requires content; none supplied.
+        <literal_block xml:space="preserve">
+            .. raw:: html
+"""],
 ]
 
 # Skip tests whose output contains "UnicodeDecodeError" if we are not
