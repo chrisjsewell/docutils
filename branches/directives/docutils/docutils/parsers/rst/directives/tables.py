@@ -415,13 +415,6 @@ class ListTable(Table):
             else:
                 num_cols = len(item[0])
         col_widths = self.get_column_widths(num_cols)
-        if len(col_widths) != num_cols:
-            error = self.state_machine.reporter.error(
-                'Error parsing "widths" option of the "%s" directive: '
-                'number of columns does not match the table data (%s vs %s).'
-                % (self.name, len(col_widths), num_cols), nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            raise SystemMessagePropagation(error)
         return num_cols, col_widths
 
     def build_table_from_list(self, table_data, col_widths, header_rows, stub_columns):
