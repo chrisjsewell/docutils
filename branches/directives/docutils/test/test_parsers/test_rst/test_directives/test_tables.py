@@ -150,6 +150,17 @@ totest['table'] = [
             \n\
                This is a paragraph.
 """],
+["""\
+.. table:: empty
+""",
+"""\
+<document source="test data">
+    <system_message level="2" line="1" source="test data" type="WARNING">
+        <paragraph>
+            Content block expected for the "table" directive; none found.
+        <literal_block xml:space="preserve">
+            .. table:: empty
+"""],
 ]
 
 if not csv:
@@ -1033,6 +1044,17 @@ totest['list-table'] = [
             \n\
                * - column 1
                  - column 2
+"""],
+["""\
+.. list-table:: empty
+""",
+"""\
+<document source="test data">
+    <system_message level="3" line="1" source="test data" type="ERROR">
+        <paragraph>
+            The "list-table" directive is empty; content required.
+        <literal_block xml:space="preserve">
+            .. list-table:: empty
 """],
 ]
 
