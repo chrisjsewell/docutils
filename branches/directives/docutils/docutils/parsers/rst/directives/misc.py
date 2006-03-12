@@ -144,7 +144,7 @@ class Raw(Directive):
             except IOError, error:
                 severe = self.state_machine.reporter.severe(
                     'Problems with "%s" directive path:\n%s.'
-                    % (self.name, self.error), nodes.literal_block(
+                    % (self.name, error), nodes.literal_block(
                     self.block_text, self.block_text), line=self.lineno)
                 return [severe]
             try:

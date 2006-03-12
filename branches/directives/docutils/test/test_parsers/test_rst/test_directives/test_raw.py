@@ -146,6 +146,20 @@ Raw input file is UTF-16-encoded, and is not valid ASCII.
         <literal_block xml:space="preserve">
             .. raw:: html
 """],
+["""\
+.. raw:: html
+   :file: non-existent.file
+""",
+"""\
+<document source="test data">
+    <system_message level="4" line="1" source="test data" type="SEVERE">
+        <paragraph>
+            Problems with "raw" directive path:
+            [Errno 2] No such file or directory: 'non-existent.file'.
+        <literal_block xml:space="preserve">
+            .. raw:: html
+               :file: non-existent.file
+"""],
 ]
 
 # Skip tests whose output contains "UnicodeDecodeError" if we are not
