@@ -162,7 +162,7 @@ class CSVTable(Table):
 
         class DocutilsDialect(csv.Dialect):
 
-            """CSV dialect for `csv_table` directive function."""
+            """CSV dialect for `csv_table` directive."""
 
             delimiter = ','
             quotechar = '"'

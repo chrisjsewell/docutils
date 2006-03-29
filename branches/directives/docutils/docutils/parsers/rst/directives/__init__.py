@@ -62,9 +62,9 @@ _directive_registry = {
       'title': ('misc', 'Title'),
       'date': ('misc', 'Date'),
       'restructuredtext-test-directive': ('misc', 'TestDirective'),}
-"""Mapping of directive name to (module name, function name).  The directive
-name is canonical & must be lowercase.  Language-dependent names are defined
-in the ``language`` subpackage."""
+"""Mapping of directive name to (module name, class name).  The
+directive name is canonical & must be lowercase.  Language-dependent
+names are defined in the ``language`` subpackage."""
 
 _modules = {}
 """Cache of imported directive modules."""
@@ -107,7 +107,7 @@ def directive(directive_name, language_module, document):
             '\n'.join(msg_text), line=document.current_line)
         messages.append(message)
     try:
-        modulename, functionname = _directive_registry[canonicalname]
+        modulename, classname = _directive_registry[canonicalname]
     except KeyError:
         # Error handling done by caller.
         return None, messages
@@ -123,22 +123,22 @@ def directive(directive_name, language_module, document):
                 line=document.current_line))
             return None, messages
     try:
-        function = getattr(module, functionname)
-        _directives[normname] = function
+        directive = getattr(module, classname)
+        _directives[normname] = directive
     except AttributeError:
         messages.append(document.reporter.error(
-            'No function "%s" in module "%s" (directive "%s").'
-            % (functionname, modulename, directive_name),
+            'No directive class "%s" in module "%s" (directive "%s").'
+            % (classname, modulename, directive_name),
             line=document.current_line))
         return None, messages
-    return function, messages
+    return directive, messages
 
-def register_directive(name, directive_function):
+def register_directive(name, directive):
     """
     Register a nonstandard application-defined directive function.
     Language lookups are not needed for such functions.
     """
-    _directives[name] = directive_function
+    _directives[name] = directive
 
 def flag(argument):
     """
