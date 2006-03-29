@@ -66,11 +66,8 @@ _directive_registry = {
 directive name is canonical & must be lowercase.  Language-dependent
 names are defined in the ``language`` subpackage."""
 
-_modules = {}
-"""Cache of imported directive modules."""
-
 _directives = {}
-"""Cache of imported directive functions."""
+"""Cache of imported directives."""
 
 def directive(directive_name, language_module, document):
     """
@@ -111,17 +108,14 @@ def directive(directive_name, language_module, document):
     except KeyError:
         # Error handling done by caller.
         return None, messages
-    if _modules.has_key(modulename):
-        module = _modules[modulename]
-    else:
-        try:
-            module = __import__(modulename, globals(), locals())
-        except ImportError, detail:
-            messages.append(document.reporter.error(
-                'Error importing directive module "%s" (directive "%s"):\n%s'
-                % (modulename, directive_name, detail),
-                line=document.current_line))
-            return None, messages
+    try:
+        module = __import__(modulename, globals(), locals())
+    except ImportError, detail:
+        messages.append(document.reporter.error(
+            'Error importing directive module "%s" (directive "%s"):\n%s'
+            % (modulename, directive_name, detail),
+            line=document.current_line))
+        return None, messages
     try:
         directive = getattr(module, classname)
         _directives[normname] = directive
