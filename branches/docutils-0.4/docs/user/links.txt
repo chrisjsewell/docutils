@@ -33,6 +33,11 @@ the box.
 
 * For Blogs (Weblogs), please see the `FAQ entry about Blogs`_.
 
+* ReSTedit_ by Bill Bumgarner is a Docutils GUI for Mac OS X.
+
+* There is an `ASCII art to SVG converter`_ (aafigure), developed by
+  Chris Liechti.
+
 * Alberto Berti is developing an `OpenDocument writer`_.
 
 * Jens J. Mortensen developed `LaTeX math for reST`_, which writes to
@@ -113,7 +118,9 @@ code base.
 .. _Docutils: http://docutils.sourceforge.net/
 .. _FAQ entry about Wikis: http://docutils.sf.net/FAQ.html#are-there-any-wikis-that-use-restructuredtext-syntax
 .. _FAQ entry about Blogs: http://docutils.sf.net/FAQ.html#are-there-any-weblog-blog-projects-that-use-restructuredtext-syntax
-.. _OpenDocument writer: http://thread.gmane.org/gmane.text.docutils.devel/3388
+.. _ReSTedit: http://www.friday.com/bbum/index.php?s=restedit
+.. _ASCII art to SVG converter: http://docutils.sf.net/sandbox/cliechti/aafigure/
+.. _OpenDocument writer: http://thread.gmane.org/gmane.text.docutils.devel/3613
 .. _LaTeX math for reST:
    http://docutils.sourceforge.net/sandbox/jensj/latex_math/
 .. _xml2rst: http://www.merten-home.de/FreeSoftware/xml2rst/index.html
