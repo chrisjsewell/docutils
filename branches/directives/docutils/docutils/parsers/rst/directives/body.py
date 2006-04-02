@@ -28,8 +28,8 @@ class BaseTopic(Directive):
     option_spec = {'class': directives.class_option}
     has_content = True
 
-    # Must be set in subclasses.
     node_class = None
+    """Node class to be used (must be set in subclasses)."""
 
     def run(self):
         if not (self.state_machine.match_titles

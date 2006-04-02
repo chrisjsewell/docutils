@@ -24,9 +24,8 @@ class GenericAdmonition(Directive):
     option_spec = {}
     has_content = True
 
-    # Subclasses must set node_class to the appropriate admonition
-    # node class.
     node_class = None
+    """Subclasses must set this to the appropriate admonition node class."""
 
     def run(self):
         if not self.content:
