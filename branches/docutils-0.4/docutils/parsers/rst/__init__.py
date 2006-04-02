@@ -92,9 +92,9 @@ class Parser(docutils.parsers.Parser):
           ['--pep-references'],
           {'action': 'store_true', 'validator': frontend.validate_boolean}),
          ('Base URL for PEP references '
-          '(default "http://www.python.org/dev/peps/").',
+          '(default "http://www.python.org/peps/").',
           ['--pep-base-url'],
-          {'metavar': '<URL>', 'default': 'http://www.python.org/dev/peps/',
+          {'metavar': '<URL>', 'default': 'http://www.python.org/peps/',
            'validator': frontend.validate_url_trailing_slash}),
          ('Recognize and link to standalone RFC references (like "RFC 822").',
           ['--rfc-references'],

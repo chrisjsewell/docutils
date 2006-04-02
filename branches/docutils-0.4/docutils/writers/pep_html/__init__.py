@@ -79,31 +79,25 @@ class Writer(html4css1.Writer):
         if pyhome == '..':
             subs['pepindex'] = '.'
         else:
-            subs['pepindex'] = pyhome + '/dev/peps'
+            subs['pepindex'] = pyhome + '/peps'
         index = self.document.first_child_matching_class(nodes.field_list)
         header = self.document[index]
-        self.pepnum = header[0][1].astext()
-        subs['pep'] = self.pepnum
+        pepnum = header[0][1].astext()
+        subs['pep'] = pepnum
         if settings.no_random:
             subs['banner'] = 0
         else:
             import random
             subs['banner'] = random.randrange(64)
         try:
-            subs['pepnum'] = '%04i' % int(self.pepnum)
+            subs['pepnum'] = '%04i' % int(pepnum)
         except ValueError:
             subs['pepnum'] = pepnum
-        self.title = header[1][1].astext()
-        subs['title'] = self.title
+        subs['title'] = header[1][1].astext()
         subs['body'] = ''.join(
             self.body_pre_docinfo + self.docinfo + self.body)
         subs['body_suffix'] = ''.join(self.body_suffix)
         self.output = template % subs
-
-    def assemble_parts(self):
-        html4css1.Writer.assemble_parts(self)
-        self.parts['title'] = [self.title]
-        self.parts['pepnum'] = self.pepnum
 
 
 class HTMLTranslator(html4css1.HTMLTranslator):
