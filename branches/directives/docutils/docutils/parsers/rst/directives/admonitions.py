@@ -16,7 +16,7 @@ from docutils.parsers.rst import states, directives
 from docutils import nodes
 
 
-class GenericAdmonition(Directive):
+class BaseAdmonition(Directive):
 
     required_arguments = 0
     optional_arguments = 0
@@ -52,53 +52,53 @@ class GenericAdmonition(Directive):
         return [admonition_node]
 
 
-class Admonition(GenericAdmonition):
+class Admonition(BaseAdmonition):
 
     required_arguments = 1
     option_spec = {'class': directives.class_option}
     node_class = nodes.admonition
 
 
-class Attention(GenericAdmonition):
+class Attention(BaseAdmonition):
 
     node_class = nodes.attention
 
 
-class Caution(GenericAdmonition):
+class Caution(BaseAdmonition):
 
     node_class = nodes.caution
 
 
-class Danger(GenericAdmonition):
+class Danger(BaseAdmonition):
 
     node_class = nodes.danger
 
 
-class Error(GenericAdmonition):
+class Error(BaseAdmonition):
 
     node_class = nodes.error
 
 
-class Hint(GenericAdmonition):
+class Hint(BaseAdmonition):
 
     node_class = nodes.hint
 
 
-class Important(GenericAdmonition):
+class Important(BaseAdmonition):
 
     node_class = nodes.important
 
 
-class Note(GenericAdmonition):
+class Note(BaseAdmonition):
 
     node_class = nodes.note
 
 
-class Tip(GenericAdmonition):
+class Tip(BaseAdmonition):
 
     node_class = nodes.tip
 
 
-class Warning(GenericAdmonition):
+class Warning(BaseAdmonition):
 
     node_class = nodes.warning

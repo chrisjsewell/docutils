@@ -20,7 +20,7 @@ from docutils.parsers.rst import directives
 from docutils.parsers.rst.roles import set_classes
 
 
-class BaseTopic(Directive):
+class BasePseudoSection(Directive):
 
     required_arguments = 1
     optional_arguments = 0
@@ -63,16 +63,16 @@ class BaseTopic(Directive):
         return [node]
 
 
-class Topic(BaseTopic):
+class Topic(BasePseudoSection):
 
     node_class = nodes.topic
 
 
-class Sidebar(BaseTopic):
+class Sidebar(BasePseudoSection):
 
     node_class = nodes.sidebar
 
-    option_spec = BaseTopic.option_spec.copy()
+    option_spec = BasePseudoSection.option_spec.copy()
     option_spec['subtitle'] = directives.unchanged_required
 
     def run(self):
@@ -82,7 +82,7 @@ class Sidebar(BaseTopic):
                 % self.name, nodes.literal_block(
                 self.block_text, self.block_text), line=self.lineno)
             return [error]
-        return BaseTopic.run(self)
+        return BasePseudoSection.run(self)
 
 
 class LineBlock(Directive):
