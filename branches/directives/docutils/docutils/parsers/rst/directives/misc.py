@@ -255,11 +255,9 @@ class Unicode(Directive):
 
     def run(self):
         if not isinstance(self.state, states.SubstitutionDef):
-            error = self.state_machine.reporter.error(
-                'Invalid context: the "%s" directive can only be used within '
-                'a substitution definition.' % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [error]
+            return [self.error('Invalid context: the "%s" directive can only '
+                               'be used within a substitution definition.'
+                               % self.name)]
         substitution_definition = self.state_machine.node
         if self.options.has_key('trim'):
             substitution_definition.attributes['ltrim'] = 1
@@ -274,12 +272,9 @@ class Unicode(Directive):
             try:
                 decoded = directives.unicode_code(code)
             except ValueError, err:
-                error = self.state_machine.reporter.error(
+                return [self.error(
                     'Invalid character code: %s\n%s: %s'
-                    % (code, err.__class__.__name__, err),
-                    nodes.literal_block(self.block_text, self.block_text),
-                    line=self.lineno)
-                return [error]
+                    % (code, err.__class__.__name__, err))]
             element += nodes.Text(decoded)
         return element.children
 

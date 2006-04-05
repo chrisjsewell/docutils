@@ -75,7 +75,7 @@ __docformat__ = 'reStructuredText'
 import docutils.parsers
 import docutils.statemachine
 from docutils.parsers.rst import states
-from docutils import frontend
+from docutils import frontend, nodes
 
 
 class Parser(docutils.parsers.Parser):
@@ -257,6 +257,39 @@ class Directive:
 
     def run(self):
         raise NotImplementedError('Must override run() is subclass.')
+
+    # Convenience methods:
+
+    def system_message(self, level, message, *children, **kwargs):
+        """
+        Return a system message with the current directive block and
+        the line number set.
+        
+        Call "return [self.system_message(level, message)]" from
+        within a directive implementation to return one single system
+        message, which automatically gets the directive block and the
+        line number added.
+        """
+        children += (nodes.literal_block(self.block_text, self.block_text),)
+        kwargs.setdefault('line', self.lineno)
+        return self.state_machine.reporter.system_message(
+            level, message, *children, **kwargs)
+
+    def debug(self, *args, **kwargs):
+        return self.system_message(0, *args, **kwargs)
+
+    def info(self, *args, **kwargs):
+        return self.system_message(1, *args, **kwargs)
+
+    def warning(self, *args, **kwargs):
+        return self.system_message(2, *args, **kwargs)
+
+    def error(self, *args, **kwargs):
+        return self.system_message(3, *args, **kwargs)
+
+    def severe(self, *args, **kwargs):
+        return self.system_message(4, *args, **kwargs)
+
 
 
 def convert_directive_function(directive_fn):
