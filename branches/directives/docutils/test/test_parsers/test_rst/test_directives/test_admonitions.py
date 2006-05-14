@@ -116,7 +116,7 @@ totest['admonitions'] = [
 <document source="test data">
     <system_message level="3" line="1" source="test data" type="ERROR">
         <paragraph>
-            The "note" admonition is empty; content required.
+            Content block expected for the "note" directive; none found.
         <literal_block xml:space="preserve">
             .. note::
 """],

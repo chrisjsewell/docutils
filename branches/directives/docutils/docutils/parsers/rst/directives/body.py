@@ -34,17 +34,9 @@ class BasePseudoSection(Directive):
     def run(self):
         if not (self.state_machine.match_titles
                 or isinstance(self.state_machine.node, nodes.sidebar)):
-            error = self.state_machine.reporter.error(
-                'The "%s" directive may not be used within topics or body '
-                'elements.' % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [error]
-        if not self.content:
-            warning = self.state_machine.reporter.warning(
-                'Content block expected for the "%s" directive; none found.'
-                % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [warning]
+            raise self.error('The "%s" directive may not be used within '
+                             'topics or body elements.' % self.name)
+        self.assert_has_content()
         title_text = self.arguments[0]
         textnodes, messages = self.state.inline_text(title_text, self.lineno)
         titles = [nodes.title(title_text, '', *textnodes)]
@@ -77,11 +69,8 @@ class Sidebar(BasePseudoSection):
 
     def run(self):
         if isinstance(self.state_machine.node, nodes.sidebar):
-            error = self.state_machine.reporter.error(
-                'The "%s" directive may not be used within a sidebar element.'
-                % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [error]
+            raise self.error('The "%s" directive may not be used within a '
+                             'sidebar element.' % self.name)
         return BasePseudoSection.run(self)
 
 
@@ -91,12 +80,7 @@ class LineBlock(Directive):
     has_content = True
 
     def run(self):
-        if not self.content:
-            warning = self.state_machine.reporter.warning(
-                'Content block expected for the "%s" directive; none found.'
-                % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [warning]
+        self.assert_has_content()
         block = nodes.line_block(classes=self.options.get('class', []))
         node_list = [block]
         for line_text in self.content:
@@ -119,12 +103,7 @@ class ParsedLiteral(Directive):
 
     def run(self):
         set_classes(self.options)
-        if not self.content:
-            warning = self.state_machine.reporter.warning(
-                'Content block expected for the "%s" directive; none found.'
-                % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [warning]
+        self.assert_has_content()
         text = '\n'.join(self.content)
         text_nodes, messages = self.state.inline_text(text, self.lineno)
         node = nodes.literal_block(text, '', *text_nodes, **self.options)
@@ -180,12 +159,8 @@ class Compound(Directive):
     has_content = True
 
     def run(self):
+        self.assert_has_content()
         text = '\n'.join(self.content)
-        if not text:
-            error = self.state_machine.reporter.error(
-                'The "%s" directive is empty; content required.' % name,
-                nodes.literal_block(block_text, block_text), line=lineno)
-            return [error]
         node = nodes.compound(text)
         node['classes'] += self.options.get('class', [])
         self.state.nested_parse(self.content, self.content_offset, node)
@@ -200,24 +175,17 @@ class Container(Directive):
     has_content = True
 
     def run(self):
+        self.assert_has_content()
         text = '\n'.join(self.content)
-        if not text:
-            error = self.state_machine.reporter.error(
-                'The "%s" directive is empty; content required.' % self.name,
-                nodes.literal_block(self.block_text, self.block_text),
-                line=self.lineno)
-            return [error]
         try:
             if self.arguments:
                 classes = directives.class_option(self.arguments[0])
             else:
                 classes = []
         except ValueError:
-            error = self.state_machine.reporter.error(
+            raise self.error(
                 'Invalid class attribute value for "%s" directive: "%s".'
-                % (self.name, self.arguments[0]), nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [error]
+                % (self.name, self.arguments[0]))
         node = nodes.container(text)
         node['classes'].extend(classes)
         self.state.nested_parse(self.content, self.content_offset, node)

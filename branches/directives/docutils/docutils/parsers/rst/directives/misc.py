@@ -32,11 +32,7 @@ class Include(Directive):
     def run(self):
         """Include a reST file as part of the content of this reST file."""
         if not self.state.document.settings.file_insertion_enabled:
-            warning = self.state_machine.reporter.warning(
-                  '"%s" directive disabled.' % self.name,
-                  nodes.literal_block(self.block_text, self.block_text),
-                  line=self.lineno)
-            return [warning]
+            raise self.warning('"%s" directive disabled.' % self.name)
         source = self.state_machine.input_lines.source(
             self.lineno - self.state_machine.input_offset - 1)
         source_dir = os.path.dirname(os.path.abspath(source))
@@ -55,26 +51,19 @@ class Include(Directive):
                                input_encoding_error_handler),
                 handle_io_errors=None)
         except IOError, error:
-            severe = self.state_machine.reporter.severe(
-                  'Problems with "%s" directive path:\n%s: %s.'
-                  % (self.name, error.__class__.__name__, error),
-                  nodes.literal_block(self.block_text, self.block_text),
-                  line=self.lineno)
-            return [severe]
+            raise self.severe('Problems with "%s" directive path:\n%s: %s.'
+                              % (self.name, error.__class__.__name__, error))
         try:
             include_text = include_file.read()
         except UnicodeError, error:
-            severe = self.state_machine.reporter.severe(
-                  'Problem with "%s" directive:\n%s: %s'
-                  % (self.name, error.__class__.__name__, error),
-                  nodes.literal_block(self.block_text, self.block_text),
-                  line=self.lineno)
-            return [severe]
+            raise self.severe(
+                'Problem with "%s" directive:\n%s: %s'
+                % (self.name, error.__class__.__name__, error))
         if self.options.has_key('literal'):
             literal_block = nodes.literal_block(include_text, include_text,
                                                 source=path)
             literal_block.line = 1
-            return literal_block
+            return [literal_block]
         else:
             include_lines = statemachine.string2lines(include_text,
                                                       convert_whitespace=1)
@@ -255,9 +244,9 @@ class Unicode(Directive):
 
     def run(self):
         if not isinstance(self.state, states.SubstitutionDef):
-            return [self.error('Invalid context: the "%s" directive can only '
-                               'be used within a substitution definition.'
-                               % self.name)]
+            raise self.error('Invalid context: the "%s" directive can only '
+                             'be used within a substitution definition.'
+                             % self.name)
         substitution_definition = self.state_machine.node
         if self.options.has_key('trim'):
             substitution_definition.attributes['ltrim'] = 1
@@ -272,9 +261,9 @@ class Unicode(Directive):
             try:
                 decoded = directives.unicode_code(code)
             except ValueError, err:
-                return [self.error(
+                raise self.error(
                     'Invalid character code: %s\n%s: %s'
-                    % (code, err.__class__.__name__, err))]
+                    % (code, err.__class__.__name__, err))
             element += nodes.Text(decoded)
         return element.children
 

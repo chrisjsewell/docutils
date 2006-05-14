@@ -115,6 +115,7 @@ from docutils.statemachine import StateMachineWS, StateWS
 from docutils.nodes import fully_normalize_name as normalize_name
 from docutils.nodes import whitespace_normalize_name
 from docutils.utils import escape2null, unescape, column_width
+import docutils.parsers.rst
 from docutils.parsers.rst import directives, languages, tableparser, roles
 from docutils.parsers.rst.languages import en as _fallback_language_module
 
@@ -2019,7 +2020,19 @@ class Body(RSTState):
         directive_instance = directive(
             type_name, arguments, options, content, lineno,
             content_offset, block_text, self, self.state_machine)
-        result = directive_instance.run()
+        try:
+            result = directive_instance.run()
+        except docutils.parsers.rst.SystemMessage, msg:
+            msg_node = self.reporter.system_message(msg.level, msg.message)
+            msg_node += nodes.literal_block(block_text, block_text)
+            msg_node['line'] = lineno
+            result = [msg_node]
+        assert isinstance(result, list), \
+               'Directive "%s" must return a list of nodes.' % type_name
+        for i in range(len(result)):
+            assert isinstance(result[i], nodes.Node), \
+                   ('Directive "%s" returned non-Node object (index %s): %r'
+                    % (type_name, i, result[i]))
         return (result,
                 blank_finish or self.state_machine.is_next_line_blank())
 

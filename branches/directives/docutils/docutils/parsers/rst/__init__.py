@@ -156,6 +156,22 @@ class Parser(docutils.parsers.Parser):
         self.finish_parse()
 
 
+class SystemMessage(Exception):
+
+    """
+    "Dumb" system message that only stores the message itself and the level.
+
+    To be thrown from inside directive code.
+
+    Do not instantiate directly -- use `Directive.system_message()` instead!
+    """
+
+    def __init__(self, level, message):
+        Exception.__init__(self)
+        self.level = level
+        self.message = message
+
+
 class Directive:
 
     """
@@ -258,38 +274,43 @@ class Directive:
     def run(self):
         raise NotImplementedError('Must override run() is subclass.')
 
-    # Convenience methods:
+    # System messages:
 
-    def system_message(self, level, message, *children, **kwargs):
+    def system_message(self, level, message):
         """
-        Return a system message with the current directive block and
-        the line number set.
+        Return a SystemMessage suitable for being thrown as an exception.
         
-        Call "return [self.system_message(level, message)]" from
+        Call "raise self.system_message(level, message)" from
         within a directive implementation to return one single system
         message, which automatically gets the directive block and the
         line number added.
         """
-        children += (nodes.literal_block(self.block_text, self.block_text),)
-        kwargs.setdefault('line', self.lineno)
-        return self.state_machine.reporter.system_message(
-            level, message, *children, **kwargs)
+        return SystemMessage(level, message)
 
-    def debug(self, *args, **kwargs):
-        return self.system_message(0, *args, **kwargs)
+    def debug(self, message):
+        return self.system_message(0, message)
 
-    def info(self, *args, **kwargs):
-        return self.system_message(1, *args, **kwargs)
+    def info(self, message):
+        return self.system_message(1, message)
 
-    def warning(self, *args, **kwargs):
-        return self.system_message(2, *args, **kwargs)
+    def warning(self, message):
+        return self.system_message(2, message)
 
-    def error(self, *args, **kwargs):
-        return self.system_message(3, *args, **kwargs)
+    def error(self, message):
+        return self.system_message(3, message)
 
-    def severe(self, *args, **kwargs):
-        return self.system_message(4, *args, **kwargs)
+    def severe(self, message):
+        return self.system_message(4, message)
 
+    # Convenience methods:
+
+    def assert_has_content(self):
+        """
+        Throw an "error" SystemMessage if the directive doesn't have contents.
+        """
+        if not self.content:
+            raise self.error('Content block expected for the "%s" directive; '
+                             'none found.' % self.name)
 
 
 def convert_directive_function(directive_fn):

@@ -28,12 +28,7 @@ class BaseAdmonition(Directive):
     """Subclasses must set this to the appropriate admonition node class."""
 
     def run(self):
-        if not self.content:
-            error = self.state_machine.reporter.error(
-                'The "%s" admonition is empty; content required.' % self.name,
-                nodes.literal_block(self.block_text, self.block_text),
-                line=self.lineno)
-            return [error]
+        self.assert_has_content()
         text = '\n'.join(self.content)
         admonition_node = self.node_class(text)
         if self.arguments:

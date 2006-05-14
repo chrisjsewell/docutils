@@ -89,7 +89,7 @@ class Meta(Directive):
                 node += error
         else:
             error = self.state_machine.reporter.error(
-                'Empty meta directive.',
+                'Empty %s directive.' % self.name,
                 nodes.literal_block(self.block_text, self.block_text),
                 line=self.lineno)
             node += error
