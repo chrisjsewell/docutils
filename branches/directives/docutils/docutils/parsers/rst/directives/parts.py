@@ -48,11 +48,8 @@ class Contents(Directive):
     def run(self):
         if not (self.state_machine.match_titles
                 or isinstance(self.state_machine.node, nodes.sidebar)):
-            error = self.state_machine.reporter.error(
-                'The "%s" directive may not be used within topics or body '
-                'elements.' % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [error]
+            raise self.error('The "%s" directive may not be used within '
+                             'topics or body elements.' % self.name)
         document = self.state_machine.document
         language = languages.get_language(document.settings.language_code)
         if self.arguments:
@@ -102,40 +99,27 @@ class Sectnum(Directive):
         return [pending]
 
 
-class HeaderFooter(Directive):
+class Header(Directive):
 
-    """Contents of document header or footer."""
+    """Contents of document header."""
 
     has_content = True
 
-    def populate_node(self, node):
-        """
-        Parse directive contents into node, and return empty list or
-        list of system messages.
-        """
-        if not self.content:
-            warning = self.state_machine.reporter.warning(
-                'Content block expected for the "%s" directive; none found.'
-                % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            node.append(nodes.paragraph(
-                '', 'Problem with the "%s" directive: no content supplied.'
-                % self.name))
-            return [warning]
-        text = '\n'.join(self.content)
-        self.state.nested_parse(self.content, self.content_offset, node)
+    def run(self):
+        self.assert_has_content()
+        header = self.state_machine.document.get_decoration().get_header()
+        self.state.nested_parse(self.content, self.content_offset, header)
         return []
 
 
-class Header(HeaderFooter):
+class Footer(Directive):
+
+    """Contents of document footer."""
+
+    has_content = True
 
     def run(self):
-        decoration = self.state_machine.document.get_decoration()
-        return self.populate_node(decoration.get_header())
-
-
-class Footer(HeaderFooter):
-
-    def run(self):
-        decoration = self.state_machine.document.get_decoration()
-        return self.populate_node(decoration.get_footer())
+        self.assert_has_content()
+        footer = self.state_machine.document.get_decoration().get_footer()
+        self.state.nested_parse(self.content, self.content_offset, footer)
+        return []
