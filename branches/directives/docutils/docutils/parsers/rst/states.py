@@ -2022,8 +2022,9 @@ class Body(RSTState):
             content_offset, block_text, self, self.state_machine)
         try:
             result = directive_instance.run()
-        except docutils.parsers.rst.SystemMessage, msg:
-            msg_node = self.reporter.system_message(msg.level, msg.message)
+        except docutils.parsers.rst.DirectiveError, directive_error:
+            msg_node = self.reporter.system_message(directive_error.level,
+                                                    directive_error.message)
             msg_node += nodes.literal_block(block_text, block_text)
             msg_node['line'] = lineno
             result = [msg_node]

@@ -156,17 +156,21 @@ class Parser(docutils.parsers.Parser):
         self.finish_parse()
 
 
-class SystemMessage(Exception):
+class DirectiveError(Exception):
 
     """
-    "Dumb" system message that only stores the message itself and the level.
+    Store a message and a system message level.
 
     To be thrown from inside directive code.
 
-    Do not instantiate directly -- use `Directive.system_message()` instead!
+    Do not instantiate directly -- use `Directive.directive_error()`
+    instead!
     """
 
     def __init__(self, level, message):
+        """
+        Initialize with message `message`.  `level` is a system message level.
+        """
         Exception.__init__(self)
         self.level = level
         self.message = message
@@ -274,39 +278,43 @@ class Directive:
     def run(self):
         raise NotImplementedError('Must override run() is subclass.')
 
-    # System messages:
+    # Directive errors:
 
-    def system_message(self, level, message):
+    def directive_error(self, level, message):
         """
-        Return a SystemMessage suitable for being thrown as an exception.
-        
-        Call "raise self.system_message(level, message)" from
-        within a directive implementation to return one single system
-        message, which automatically gets the directive block and the
-        line number added.
+        Return a DirectiveError suitable for being thrown as an exception.
+
+        Call "raise self.directive_error(level, message)" from within
+        a directive implementation to return one single system message
+        at level `level`, which automatically gets the directive block
+        and the line number added.
+
+        You'd often use self.error(message) instead, which will
+        generate an ERROR-level directive error.
         """
-        return SystemMessage(level, message)
+        return DirectiveError(level, message)
 
     def debug(self, message):
-        return self.system_message(0, message)
+        return self.directive_error(0, message)
 
     def info(self, message):
-        return self.system_message(1, message)
+        return self.directive_error(1, message)
 
     def warning(self, message):
-        return self.system_message(2, message)
+        return self.directive_error(2, message)
 
     def error(self, message):
-        return self.system_message(3, message)
+        return self.directive_error(3, message)
 
     def severe(self, message):
-        return self.system_message(4, message)
+        return self.directive_error(4, message)
 
     # Convenience methods:
 
     def assert_has_content(self):
         """
-        Throw an "error" SystemMessage if the directive doesn't have contents.
+        Throw an ERROR-level DirectiveError if the directive doesn't
+        have contents.
         """
         if not self.content:
             raise self.error('Content block expected for the "%s" directive; '
