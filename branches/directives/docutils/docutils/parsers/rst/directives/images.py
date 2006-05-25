@@ -49,27 +49,21 @@ class Image(Directive):
 
     def run(self):
         if self.options.has_key('align'):
-            # check for align_v values only
             if isinstance(self.state, states.SubstitutionDef):
+                # Check for align_v_values.
                 if self.options['align'] not in self.align_v_values:
-                    error = self.state_machine.reporter.error(
-                        'Error in "%s" directive: "%s" is not a valid value for '
-                        'the "align" option within a substitution definition.  '
-                        'Valid values for "align" are: "%s".'
+                    raise self.error(
+                        'Error in "%s" directive: "%s" is not a valid value '
+                        'for the "align" option within a substitution '
+                        'definition.  Valid values for "align" are: "%s".'
                         % (self.name, self.options['align'],
-                           '", "'.join(self.align_v_values)),
-                        nodes.literal_block(self.block_text, self.block_text),
-                        line=self.lineno)
-                    return [error]
+                           '", "'.join(self.align_v_values)))
             elif self.options['align'] not in self.align_h_values:
-                error = self.state_machine.reporter.error(
+                raise self.error(
                     'Error in "%s" directive: "%s" is not a valid value for '
                     'the "align" option.  Valid values for "align" are: "%s".'
                     % (self.name, self.options['align'],
-                       '", "'.join(self.align_h_values)),
-                    nodes.literal_block(self.block_text, self.block_text),
-                    line=self.lineno)
-                return [error]
+                       '", "'.join(self.align_h_values)))
         messages = []
         reference = directives.uri(self.arguments[0])
         self.options['uri'] = reference

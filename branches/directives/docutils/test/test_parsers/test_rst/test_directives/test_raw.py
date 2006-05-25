@@ -140,9 +140,9 @@ Raw input file is UTF-16-encoded, and is not valid ASCII.
 """,
 """\
 <document source="test data">
-    <system_message level="2" line="1" source="test data" type="WARNING">
+    <system_message level="3" line="1" source="test data" type="ERROR">
         <paragraph>
-            The "raw" directive requires content; none supplied.
+            Content block expected for the "raw" directive; none found.
         <literal_block xml:space="preserve">
             .. raw:: html
 """],

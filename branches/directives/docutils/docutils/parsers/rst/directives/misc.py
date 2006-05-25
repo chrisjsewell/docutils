@@ -95,29 +95,21 @@ class Raw(Directive):
             or (not self.state.document.settings.file_insertion_enabled
                 and (self.options.has_key('file')
                      or self.options.has_key('url')))):
-            warning = self.state_machine.reporter.warning(
-                '"%s" directive disabled.' % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [warning]
+            raise self.warning('"%s" directive disabled.' % self.name)
         attributes = {'format': ' '.join(self.arguments[0].lower().split())}
         encoding = self.options.get(
             'encoding', self.state.document.settings.input_encoding)
         if self.content:
             if self.options.has_key('file') or self.options.has_key('url'):
-                error = self.state_machine.reporter.error(
+                raise self.error(
                     '"%s" directive may not both specify an external file '
-                    'and have content.' % self.name, nodes.literal_block(
-                    self.block_text, self.block_text), line=self.lineno)
-                return [error]
+                    'and have content.' % self.name)
             text = '\n'.join(self.content)
         elif self.options.has_key('file'):
             if self.options.has_key('url'):
-                error = self.state_machine.reporter.error(
+                raise self.error(
                     'The "file" and "url" options may not be simultaneously '
-                    'specified for the "%s" directive.' % self.name,
-                    nodes.literal_block(self.block_text, self.block_text),
-                    line=self.lineno)
-                return [error]
+                    'specified for the "%s" directive.' % self.name)
             source_dir = os.path.dirname(
                 os.path.abspath(self.state.document.current_source))
             path = os.path.normpath(os.path.join(source_dir,
@@ -131,20 +123,14 @@ class Raw(Directive):
                                    input_encoding_error_handler),
                     handle_io_errors=None)
             except IOError, error:
-                severe = self.state_machine.reporter.severe(
-                    'Problems with "%s" directive path:\n%s.'
-                    % (self.name, error), nodes.literal_block(
-                    self.block_text, self.block_text), line=self.lineno)
-                return [severe]
+                raise self.severe('Problems with "%s" directive path:\n%s.'
+                                  % (self.name, error))
             try:
                 text = raw_file.read()
             except UnicodeError, error:
-                severe = self.state_machine.reporter.severe(
+                raise self.severe(
                     'Problem with "%s" directive:\n%s: %s'
-                    % (self.name, error.__class__.__name__, error),
-                    nodes.literal_block(self.block_text, self.block_text),
-                    line=self.lineno)
-                return [severe]
+                    % (self.name, error.__class__.__name__, error))
             attributes['source'] = path
         elif self.options.has_key('url'):
             source = self.options['url']
@@ -155,12 +141,9 @@ class Raw(Directive):
             try:
                 raw_text = urllib2.urlopen(source).read()
             except (urllib2.URLError, IOError, OSError), error:
-                severe = self.state_machine.reporter.severe(
+                raise self.severe(
                     'Problems with "%s" directive URL "%s":\n%s.'
-                    % (self.name, self.options['url'], error),
-                    nodes.literal_block(self.block_text, self.block_text),
-                    line=self.lineno)
-                return [severe]
+                    % (self.name, self.options['url'], error))
             raw_file = io.StringInput(
                 source=raw_text, source_path=source, encoding=encoding,
                 error_handler=(self.state.document.settings.\
@@ -168,19 +151,13 @@ class Raw(Directive):
             try:
                 text = raw_file.read()
             except UnicodeError, error:
-                severe = self.state_machine.reporter.severe(
+                raise self.severe(
                     'Problem with "%s" directive:\n%s: %s'
-                    % (self.name, error.__class__.__name__, error),
-                    nodes.literal_block(self.block_text, self.block_text),
-                    line=self.lineno)
-                return [severe]
+                    % (self.name, error.__class__.__name__, error))
             attributes['source'] = source
         else:
-            error = self.state_machine.reporter.warning(
-                'The "%s" directive requires content; none supplied.'
-                % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [error]
+            # This will always fail because there is no content.
+            self.assert_has_content()
         raw_node = nodes.raw('', text, **attributes)
         return [raw_node]
 
@@ -191,36 +168,28 @@ class Replace(Directive):
 
     def run(self):
         if not isinstance(self.state, states.SubstitutionDef):
-            error = self.state_machine.reporter.error(
+            raise self.error(
                 'Invalid context: the "%s" directive can only be used within '
-                'a substitution definition.' % self.name,
-                nodes.literal_block(self.block_text, self.block_text),
-                line=self.lineno)
-            return [error]
+                'a substitution definition.' % self.name)
+        self.assert_has_content()
         text = '\n'.join(self.content)
         element = nodes.Element(text)
-        if text:
-            self.state.nested_parse(self.content, self.content_offset,
-                                    element)
-            if ( len(element) != 1
-                 or not isinstance(element[0], nodes.paragraph)):
-                messages = []
-                for node in element:
-                    if isinstance(node, nodes.system_message):
-                        node['backrefs'] = []
-                        messages.append(node)
-                error = self.state_machine.reporter.error(
-                    'Error in "%s" directive: may contain a single paragraph '
-                    'only.' % (self.name), line=self.lineno)
-                messages.append(error)
-                return messages
-            else:
-                return element[0].children
-        else:
+        self.state.nested_parse(self.content, self.content_offset,
+                                element)
+        if ( len(element) != 1
+             or not isinstance(element[0], nodes.paragraph)):
+            messages = []
+            for node in element:
+                if isinstance(node, nodes.system_message):
+                    node['backrefs'] = []
+                    messages.append(node)
             error = self.state_machine.reporter.error(
-                'The "%s" directive is empty; content required.' % self.name,
-                line=self.lineno)
-            return [error]
+                'Error in "%s" directive: may contain a single paragraph '
+                'only.' % (self.name), line=self.lineno)
+            messages.append(error)
+            return messages
+        else:
+            return element[0].children
 
 
 class Unicode(Directive):
@@ -244,9 +213,9 @@ class Unicode(Directive):
 
     def run(self):
         if not isinstance(self.state, states.SubstitutionDef):
-            raise self.error('Invalid context: the "%s" directive can only '
-                             'be used within a substitution definition.'
-                             % self.name)
+            raise self.error(
+                'Invalid context: the "%s" directive can only be used within '
+                'a substitution definition.' % self.name)
         substitution_definition = self.state_machine.node
         if self.options.has_key('trim'):
             substitution_definition.attributes['ltrim'] = 1
@@ -285,11 +254,9 @@ class Class(Directive):
         try:
             class_value = directives.class_option(self.arguments[0])
         except ValueError:
-            error = self.state_machine.reporter.error(
+            raise self.error(
                 'Invalid class attribute value for "%s" directive: "%s".'
-                % (self.name, self.arguments[0]), nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [error]
+                % (self.name, self.arguments[0]))
         node_list = []
         if self.content:
             container = nodes.Element()
@@ -318,19 +285,13 @@ class Role(Directive):
     def run(self):
         """Dynamically create and register a custom interpreted text role."""
         if self.content_offset > self.lineno or not self.content:
-            error = self.state_machine.reporter.error(
-                '"%s" directive requires arguments on the first line.'
-                % self.name, nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [error]
+            raise self.error('"%s" directive requires arguments on the first '
+                             'line.' % self.name)
         args = self.content[0]
         match = self.argument_pattern.match(args)
         if not match:
-            error = self.state_machine.reporter.error(
-                '"%s" directive arguments not valid role names: "%s".'
-                % (self.name, args), nodes.literal_block(
-                self.block_text, self.block_text), line=self.lineno)
-            return [error]
+            raise self.error('"%s" directive arguments not valid role names: '
+                             '"%s".' % (self.name, args))
         new_role_name = match.group(1)
         base_role_name = match.group(3)
         messages = []
@@ -420,12 +381,9 @@ class Date(Directive):
 
     def run(self):
         if not isinstance(self.state, states.SubstitutionDef):
-            error = self.state_machine.reporter.error(
+            raise self.error(
                 'Invalid context: the "%s" directive can only be used within '
-                'a substitution definition.' % self.name,
-                nodes.literal_block(self.block_text, self.block_text),
-                line=self.lineno)
-            return [error]
+                'a substitution definition.' % self.name)
         format = '\n'.join(self.content) or '%Y-%m-%d'
         text = time.strftime(format)
         return [nodes.Text(text)]

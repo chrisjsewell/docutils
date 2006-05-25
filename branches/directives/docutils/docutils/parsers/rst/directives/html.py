@@ -74,22 +74,16 @@ class Meta(Directive):
     SMkwargs = {'state_classes': (MetaBody,)}
 
     def run(self):
+        self.assert_has_content()
         node = nodes.Element()
-        if self.content:
-            new_line_offset, blank_finish = self.state.nested_list_parse(
-                self.content, self.content_offset, node,
-                initial_state='MetaBody', blank_finish=1,
-                state_machine_kwargs=self.SMkwargs)
-            if (new_line_offset - self.content_offset) != len(self.content):
-                # incomplete parse of block?
-                error = self.state_machine.reporter.error(
-                    'Invalid meta directive.',
-                    nodes.literal_block(self.block_text, self.block_text),
-                    line=self.lineno)
-                node += error
-        else:
+        new_line_offset, blank_finish = self.state.nested_list_parse(
+            self.content, self.content_offset, node,
+            initial_state='MetaBody', blank_finish=1,
+            state_machine_kwargs=self.SMkwargs)
+        if (new_line_offset - self.content_offset) != len(self.content):
+            # incomplete parse of block?
             error = self.state_machine.reporter.error(
-                'Empty %s directive.' % self.name,
+                'Invalid meta directive.',
                 nodes.literal_block(self.block_text, self.block_text),
                 line=self.lineno)
             node += error
