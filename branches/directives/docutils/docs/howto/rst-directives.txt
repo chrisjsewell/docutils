@@ -243,8 +243,6 @@ Register the Directive
       directives.register_directive(directive_name, directive_class)
 
 
-.. TODO: Update from here.
-
 Examples
 ========
 
