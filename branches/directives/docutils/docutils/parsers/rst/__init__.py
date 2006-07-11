@@ -225,10 +225,11 @@ class Directive:
 
     - ``arguments`` is the list of positional arguments (strings).
 
-    - ``options`` is a dictionary mapping option names (strings) to values (type
-      depends on option conversion functions; see below).
+    - ``options`` is a dictionary mapping option names (strings) to
+      values (type depends on option conversion functions; see
+      `option_spec` above).
 
-    - ``content`` is a list of strings, the directive content.
+    - ``content`` is a list of strings, the directive content line by line.
 
     - ``lineno`` is the line number of the first line of the directive.
 

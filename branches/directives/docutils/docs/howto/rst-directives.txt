@@ -103,10 +103,11 @@ docstring of the ``Directive`` base class::
 
         - ``arguments`` is the list of positional arguments (strings).
 
-        - ``options`` is a dictionary mapping option names (strings) to values (type
-          depends on option conversion functions; see below).
+        - ``options`` is a dictionary mapping option names (strings) to
+          values (type depends on option conversion functions; see
+          `option_spec` above).
 
-        - ``content`` is a list of strings, the directive content.
+        - ``content`` is a list of strings, the directive content line by line.
 
         - ``lineno`` is the line number of the first line of the directive.
 
@@ -213,7 +214,41 @@ options, "name" and "value", each with an option argument::
     option_spec = {'name': unchanged, 'value': int}
 
 
-.. TODO: Document Directive.error, ...
+Error Handling
+==============
+
+If your directive implementation encounters an error during
+processing, you should call ``self.error()`` inside the ``run()``
+method::
+
+    if error_condition:
+        raise self.error('Error message.')
+
+The ``self.error()`` method will immediately raise an exception that
+will be caught by the reStructuredText directive handler.  The
+directive handler will then insert an error-level system message in
+the document at the place where the directive occurred.
+
+Instead of ``self.error``, you can also use ``self.severe`` and
+``self.warning`` for more or less severe problems.
+
+If you want to return a system message *and* document contents, you need to
+create the system message yourself instead of using the ``self.error``
+convenience method::
+
+    def run(self):
+        # Create node(s).
+        node = nodes.paragraph(...)
+        # Node list to return.
+        node_list = [node]
+        if error_condition:
+             # Create system message.
+             error = self.reporter.error(
+                 'Error in "%s" directive: Your error message.' % self.name,
+                 nodes.literal_block(block_text, block_text), line=lineno)
+             node_list.append(error)
+        return node_list
+
 
 Register the Directive
 ======================
@@ -250,8 +285,8 @@ For the most direct and accurate information, "Use the Source, Luke!".
 All standard directives are documented in `reStructuredText
 Directives`_, and the source code implementing them is located in the
 ``docutils/parsers/rst/directives`` package.  The ``__init__.py``
-module contains a mapping of directive name to module & function name.
-Several representative directives are described below.
+module contains a mapping of directive name to module and function
+name.  Several representative directives are described below.
 
 
 Admonitions
@@ -281,6 +316,11 @@ the node class is set as a class attribute and is read by the
 ``run()`` method of ``BaseAdmonition``, where the actual processing
 takes place::
 
+    # Import Docutils document tree nodes module.
+    from docutils import nodes
+    # Import Directive base class.
+    from docutils.parsers.rst import Directive
+
     class BaseAdmonition(Directive):
 
         required_arguments = 0
@@ -293,28 +333,29 @@ takes place::
         """Subclasses must set this to the appropriate admonition node class."""
 
         def run(self):
+            # Raise an error if the directive does not have contents.
             self.assert_has_content()
             text = '\n'.join(self.content)
+            # Create the admonition node, to be populated by `nested_parse`.
             admonition_node = self.node_class(rawsource=text)
-            # [...]
+            # Parse the directive contents.
             self.state.nested_parse(self.content, self.content_offset,
                                     admonition_node)
             return [admonition_node]
 
 Three things are noteworthy in the ``run()`` method above:
 
-1. The ``admonition_node = self.node_class(text)`` line creates the
-   wrapper element, using the class passed in from the initial (stub)
-   directive function.
+* The ``admonition_node = self.node_class(text)`` line creates the
+  wrapper element, using the class set by the specific admonition
+  subclasses (as in note, ``node_class = nodes.note``).
 
-2. The call to ``state.nested_parse()`` is what does the actual
-   processing.  It parses the directive content and adds any generated
-   elements as child elements of ``admonition_node``.
+* The call to ``state.nested_parse()`` is what does the actual
+  processing.  It parses the directive content and adds any generated
+  elements as child elements of ``admonition_node``.
 
-3. If there was no directive content, the ``assert_has_content()``
-   method generates a warning and raises it as an exception (which
-   will be caught by the reStructuredText parser's directive handler
-   code).
+* If there was no directive content, the ``assert_has_content()``
+  convenience method raises an error exception by calling
+  ``self.error()`` (see `Error Handling`_ above).
 
 
 "image"
@@ -326,6 +367,13 @@ The "image_" directive is used to insert a picture into a document.
 This directive has one argument, the path to the image file, and
 supports several options.  There is no directive content.  Here's an
 early version of the image directive class::
+
+    # Import Docutils document tree nodes module.
+    from docutils import nodes
+    # Import ``directives`` module (contains conversion functions).
+    from docutils.parsers.rst import directives
+    # Import Directive base class.
+    from docutils.parsers.rst import Directive
 
     def align(argument):
         """Conversion function for the "align" option.""" 
@@ -356,8 +404,8 @@ Several things are noteworthy in the code above:
 * The "image" directive requires a single argument, which is allowed
   to contain whitespace (``final_argument_whitespace = True``).  This
   is to allow for long URLs which may span multiple lines.  The first
-  line of the ``image`` function joins the URL, discarding any
-  embedded whitespace.
+  line of the ``run()`` method joins the URL, discarding any embedded
+  whitespace.
 
 * The reference is added to the ``options`` dictionary under the
   "uri" key; this becomes an attribute of the ``nodes.image`` element
