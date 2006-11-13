@@ -52,6 +52,7 @@ class ConfigFileTests(unittest.TestCase):
                 'generator': 1,
                 'no_random': 1,
                 'python_home': 'http://www.python.org',
+                'raw_enabled': 0,
                 'record_dependencies': utils.DependencyList(),
                 'source_link': 1,
                 'stylesheet': None,
