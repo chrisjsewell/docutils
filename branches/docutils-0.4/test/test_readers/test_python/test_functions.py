@@ -12,7 +12,11 @@ Tests for PySource Reader functions.
 
 import unittest
 from __init__ import DocutilsTestSupport
-from docutils.readers.python.moduleparser import trim_docstring
+
+try:
+    from docutils.readers.python.moduleparser import trim_docstring
+except ImportError:
+    trim_docstring = None
 
 
 class MiscTests(unittest.TestCase):
@@ -50,6 +54,11 @@ Last line unindented."""),
             self.assertEquals(trim_docstring(docstring), expected)
             self.assertEquals(trim_docstring('\n    ' + docstring),
                               expected)
+
+# This is a bit of a kluge, but I'd rather not put an entire class definition
+# inside a try/except.
+if trim_docstring is None:
+    del MiscTests.test_trim_docstring
 
 
 if __name__ == '__main__':
