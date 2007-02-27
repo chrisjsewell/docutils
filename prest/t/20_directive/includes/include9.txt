@@ -1,3 +1,0 @@
-In ../includes/include9.txt.
-
-.. include:: ../include.dir/include2.txt
