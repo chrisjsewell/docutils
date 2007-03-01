@@ -32,6 +32,7 @@ what-you-see-is-what-you-get plaintext markup syntax.""", # wrap at col 60
     'author_email': 'goodger@python.org',
     'license': 'public domain, Python, BSD, GPL (see COPYING.txt)',
     'platforms': 'OS-independent',
+    'install_requires': 'setuptools>=0.6c5',
     'packages': find_packages(),
     'include_package_data': True,
     'scripts' : ['tools/rst2html.py',
@@ -43,13 +44,19 @@ what-you-see-is-what-you-get plaintext markup syntax.""", # wrap at col 60
     'entry_points': {
         'docutils.writers':
         ['docutils_xml = docutils.writers.docutils_xml:Writer',
+         'html = docutils.writers.html4css1:Writer',
          'html4css1 = docutils.writers.html4css1:Writer',
+         'latex = docutils.writers.latex2e:Writer',
          'latex2e = docutils.writers.latex2e:Writer',
          'newlatex2e = docutils.writers.newlatex2e:Writer',
          'null = docutils.writers.null:Writer',
          'pep_html = docutils.writers.pep_html:Writer',
+         'pformat = docutils.writers.pseudoxml:Writer',
+         'pprint = docutils.writers.pseudoxml:Writer',
          'pseudoxml = docutils.writers.pseudoxml:Writer',
-         's5_html = docutils.writers.s5_html:Writer'],
+         's5 = docutils.writers.s5_html:Writer',
+         's5_html = docutils.writers.s5_html:Writer',
+         'xml = docutils.writers.docutils_xml:Writer'],
         }
     }
 """Setup parameters."""
