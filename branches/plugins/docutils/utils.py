@@ -15,9 +15,9 @@ import types
 import warnings
 import unicodedata
 from types import StringType, UnicodeType
+import pkg_resources
 from docutils import ApplicationError, DataError
 from docutils import nodes
-
 
 class SystemMessage(ApplicationError):
 
@@ -577,3 +577,33 @@ class DependencyList:
         else:
             output_file = None
         return '%s(%r, %s)' % (self.__class__.__name__, output_file, self.list)
+
+
+class EntryPointNotFoundError(ApplicationError): pass
+class DuplicateEntryPointError(ApplicationError): pass
+
+def get_entry_point(group, name):
+    """
+    Load the entry point with name `name` in entry point group `group`
+    and return the associated Python object.  If no such entry point
+    is found, raise `EntryPointNotFoundError`.  If more than one entry
+    point is found, raise `DuplicateEntryPointError`.
+    """
+    entry_points = list(pkg_resources.iter_entry_points(group, name))
+    if not len(entry_points):
+        # Retrieving components used to be case-insensitive, but that's
+        # probably a bad idea.
+        if name != name.lower():
+            entry_point = get_entry_point(group, name.lower())
+            print >>sys.stderr, 'Warning: Entry point names are case-'\
+                  'sensitive; using lower-case name "%s.%s"' \
+                  % (group, name.lower())
+            return entry_point
+        else:
+            raise EntryPointNotFoundError(
+                'Entry point "%s.%s" not found.' % (group, name))
+    if len(entry_points) > 1:
+        raise DuplicateEntryPointError('More than one entry point "%s.%s" '
+                                       'installed on system.' % (group, name))
+    entry_point = entry_points[0]
+    return entry_point.load()

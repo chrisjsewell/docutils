@@ -11,7 +11,7 @@ __docformat__ = 'reStructuredText'
 
 import os.path
 import docutils
-from docutils import languages, Component
+from docutils import languages, utils, Component
 from docutils.transforms import universal
 
 
@@ -113,26 +113,3 @@ class UnfilteredWriter(Writer):
         # later, the then-used writer will add the appropriate
         # transforms.
         return Component.get_transforms(self)
-
-
-_writer_aliases = {
-      'html': 'html4css1',
-      'latex': 'latex2e',
-      'pprint': 'pseudoxml',
-      'pformat': 'pseudoxml',
-      'pdf': 'rlpdf',
-      'xml': 'docutils_xml',
-      's5': 's5_html'}
-
-def get_writer_class(writer_name):
-    """Return the Writer class from the `writer_name` module."""
-    writer_name = writer_name.lower()
-    if _writer_aliases.has_key(writer_name):
-        writer_name = _writer_aliases[writer_name]
-    import pkg_resources
-    writer = None
-    for entrypoint in pkg_resources.iter_entry_points('docutils.writers'):
-        if entrypoint.name == writer_name:
-            writer = entrypoint.load()
-    assert writer is not None, 'writer "%s" not found' % writer_name
-    return writer
