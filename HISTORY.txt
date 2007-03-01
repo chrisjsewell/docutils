@@ -14,6 +14,21 @@
 .. contents::
 
 
+Plugins Branch
+==============
+
+* docutils/utils.py:
+
+  - Added ``get_entry_point()`` method, which uses setuptools.
+
+* docutils/core.py:
+
+  - Use setuptools' entry-point architecture for discovering
+    components.
+  - Reader, parser, and writer names are now case-sensitive; a warning
+    is issued if the uppercase version of a component name is used.
+
+
 Changes Since 0.4
 =================
 

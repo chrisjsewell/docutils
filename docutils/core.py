@@ -82,7 +82,7 @@ class Publisher:
 
     def set_writer(self, writer_name):
         """Set `self.writer` by name."""
-        writer_class = writers.get_writer_class(writer_name)
+        writer_class = utils.get_entry_point('docutils.writers', writer_name)
         self.writer = writer_class()
 
     def set_components(self, reader_name, parser_name, writer_name):
