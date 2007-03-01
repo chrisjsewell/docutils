@@ -39,7 +39,17 @@ what-you-see-is-what-you-get plaintext markup syntax.""", # wrap at col 60
                  'tools/rst2latex.py',
                  'tools/rst2newlatex.py',
                  'tools/rst2xml.py',
-                 'tools/rst2pseudoxml.py'],}
+                 'tools/rst2pseudoxml.py'],
+    'entry_points': {
+        'docutils.writers': ['docutils_xml = docutils.writers.docutils_xml',
+                             'html4css1 = docutils.writers.html4css1',
+                             'latex2e = docutils.writers.latex2e',
+                             'newlatex2e = docutils.writers.newlatex2e',
+                             'null = docutils.writers.null',
+                             'pseudoxml = docutils.writers.pseudoxml',
+                             's5_html = docutils.writers.s5_html'],
+        }
+    }
 """Setup parameters."""
 
 classifiers = [
