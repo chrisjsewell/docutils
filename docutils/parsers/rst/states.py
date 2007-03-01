@@ -105,7 +105,7 @@ __docformat__ = 'reStructuredText'
 
 import sys
 import re
-import roman
+from docutils import roman
 from types import TupleType, FunctionType, MethodType
 from docutils import nodes, statemachine, utils, urischemes
 from docutils import ApplicationError, DataError
