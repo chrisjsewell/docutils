@@ -129,5 +129,10 @@ def get_writer_class(writer_name):
     writer_name = writer_name.lower()
     if _writer_aliases.has_key(writer_name):
         writer_name = _writer_aliases[writer_name]
-    module = __import__(writer_name, globals(), locals())
-    return module.Writer
+    import pkg_resources
+    writer = None
+    for entrypoint in pkg_resources.iter_entry_points('docutils.writers'):
+        if entrypoint.name == writer_name:
+            writer = entrypoint.load()
+    assert writer is not None, 'writer "%s" not found' % writer_name
+    return writer
