@@ -41,13 +41,14 @@ what-you-see-is-what-you-get plaintext markup syntax.""", # wrap at col 60
                  'tools/rst2xml.py',
                  'tools/rst2pseudoxml.py'],
     'entry_points': {
-        'docutils.writers': ['docutils_xml = docutils.writers.docutils_xml',
-                             'html4css1 = docutils.writers.html4css1',
-                             'latex2e = docutils.writers.latex2e',
-                             'newlatex2e = docutils.writers.newlatex2e',
-                             'null = docutils.writers.null',
-                             'pseudoxml = docutils.writers.pseudoxml',
-                             's5_html = docutils.writers.s5_html'],
+        'docutils.writers':
+        ['docutils_xml = docutils.writers.docutils_xml:Writer',
+         'html4css1 = docutils.writers.html4css1:Writer',
+         'latex2e = docutils.writers.latex2e:Writer',
+         'newlatex2e = docutils.writers.newlatex2e:Writer',
+         'null = docutils.writers.null:Writer',
+         'pseudoxml = docutils.writers.pseudoxml:Writer',
+         's5_html = docutils.writers.s5_html:Writer'],
         }
     }
 """Setup parameters."""
