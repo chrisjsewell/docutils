@@ -47,6 +47,7 @@ what-you-see-is-what-you-get plaintext markup syntax.""", # wrap at col 60
          'latex2e = docutils.writers.latex2e:Writer',
          'newlatex2e = docutils.writers.newlatex2e:Writer',
          'null = docutils.writers.null:Writer',
+         'pep_html = docutils.writers.pep_html:Writer',
          'pseudoxml = docutils.writers.pseudoxml:Writer',
          's5_html = docutils.writers.s5_html:Writer'],
         }
