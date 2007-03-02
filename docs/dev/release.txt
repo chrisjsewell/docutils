@@ -60,8 +60,7 @@ reminded of them.
   (a) Expand the tarball in a new location, not over any existing
       files.
 
-  (b) Remove the old installation from site-packages (including
-      roman.py, and optparse.py, textwrap.py).
+  (b) Remove the old installation from site-packages.
 
       Install from expanded directory::
 
