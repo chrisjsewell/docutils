@@ -26,6 +26,17 @@ Markup Specification`_ for syntax details.
 .. contents::
 
 
+Create an Extension Package
+===========================
+
+First, create an extension package as described in the `Extension
+How-To`_.
+
+.. _Extension How-To: extensions.html
+
+We will now show you how to write a new role function:
+
+
 Define the Role Function
 ========================
 
@@ -114,19 +125,17 @@ the "role" directive itself.
    rst-directives.html#specify-directive-arguments-options-and-content
 
 
-Register the Role
-=================
+Adding a Role to the Docutils Core
+==================================
 
-If the role is a general-use addition to the Docutils core, it must be
-registered with the parser and language mappings added:
+Most roles start off as `extension packages`_.  If the role is an
+**addition to the Docutils core**, it must be registered as an entry
+point and language mappings must be added:
 
-1. Register the new role using the canonical name::
+.. _extension packages: extensions.html
 
-       from docutils.parsers.rst import roles
-       roles.register_canonical_role(name, role_function)
-
-   This code is normally placed immediately after the definition of
-   the role funtion.
+1. Add an entry point definition for the role in Docutils' own
+   ``setup.py``.
 
 2. Add an entry to the ``roles`` dictionary in
    ``docutils/parsers/rst/languages/en.py`` for the role, mapping the
@@ -137,12 +146,6 @@ registered with the parser and language mappings added:
 3. Update all the other language modules as well.  For languages in
    which you are proficient, please add translations.  For other
    languages, add the English role name plus "(translation required)".
-
-If the role is application-specific, use the ``register_local_role``
-function::
-
-    from docutils.parsers.rst import roles
-    roles.register_local_role(name, role_function)
 
 
 Examples

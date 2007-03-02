@@ -380,8 +380,7 @@ Docutils Package Structure
 
   - Package "docutils.parsers": markup parsers_.
 
-    - Function "get_parser_class(parser_name)" returns a parser module
-      by name.  Class "Parser" is the base class of specific parsers.
+    - Class "Parser" is the base class of specific parsers.
       (``docutils/parsers/__init__.py``)
 
     - Package "docutils.parsers.rst": the reStructuredText parser.
@@ -392,9 +391,8 @@ Docutils Package Structure
 
   - Package "docutils.readers": context-aware input readers.
 
-    - Function "get_reader_class(reader_name)" returns a reader module
-      by name or alias.  Class "Reader" is the base class of specific
-      readers.  (``docutils/readers/__init__.py``)
+    - Class "Reader" is the base class of specific readers.
+      (``docutils/readers/__init__.py``)
 
     - Module "docutils.readers.standalone" reads independent document
       files.
@@ -412,8 +410,7 @@ Docutils Package Structure
 
   - Package "docutils.writers": output format writers.
 
-    - Function "get_writer_class(writer_name)" returns a writer module
-      by name.  Class "Writer" is the base class of specific writers.
+    - Class "Writer" is the base class of specific writers.
       (``docutils/writers/__init__.py``)
 
     - Package "docutils.writers.html4css1" is a simple HyperText

@@ -579,8 +579,9 @@ class DependencyList:
         return '%s(%r, %s)' % (self.__class__.__name__, output_file, self.list)
 
 
-class EntryPointNotFoundError(ApplicationError): pass
-class DuplicateEntryPointError(ApplicationError): pass
+class EntryPointError(ApplicationError): pass
+class EntryPointNotFoundError(EntryPointError): pass
+class DuplicateEntryPointError(EntryPointError): pass
 
 def get_entry_point(group, name):
     """

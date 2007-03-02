@@ -168,12 +168,6 @@ General
 
 * Add validation?  See http://pytrex.sourceforge.net, RELAX NG, pyRXP.
 
-* In ``docutils.readers.get_reader_class`` (& ``parsers`` &
-  ``writers`` too), should we be importing "standalone" or
-  "docutils.readers.standalone"?  (This would avoid importing
-  top-level modules if the module name is not in docutils/readers.
-  Potential nastiness.)
-
 * Perhaps store a _`name-to-id mapping file`?  This could be stored
   permanently, read by subsequent processing runs, and updated with
   new entries.  ("Persistent ID mapping"?)

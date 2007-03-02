@@ -39,6 +39,17 @@ about the building blocks of Docutils documents.
 .. contents:: Table of Contents
 
 
+Create an Extension Package
+===========================
+
+First, create an extension package as described in the `Extension
+How-To`_.
+
+.. _Extension How-To: extensions.html
+
+We will now show you how to write a new directive class:
+
+
 The Directive Class
 ===================
 
@@ -250,34 +261,6 @@ convenience method::
         return node_list
 
 
-Register the Directive
-======================
-
-* If the directive is a general-use **addition to the Docutils core**,
-  it must be registered with the parser and language mappings added:
-
-  1. Register the new directive using its canonical name in
-     ``docutils/parsers/rst/directives/__init__.py``, in the
-     ``_directive_registry`` dictionary.  This allows the
-     reStructuredText parser to find and use the directive.
-
-  2. Add an entry to the ``directives`` dictionary in
-     ``docutils/parsers/rst/languages/en.py`` for the directive, mapping
-     the English name to the canonical name (both lowercase).  Usually
-     the English name and the canonical name are the same.
-
-  3. Update all the other language modules as well.  For languages in
-     which you are proficient, please add translations.  For other
-     languages, add the English directive name plus "(translation
-     required)".
-
-* If the directive is **application-specific**, use the
-  ``register_directive`` function::
-
-      from docutils.parsers.rst import directives
-      directives.register_directive(directive_name, directive_class)
-
-
 Examples
 ========
 
@@ -429,3 +412,26 @@ docutils.parsers.rst.directives.parts__.
 
 .. _transform: ../ref/transforms.html
 __ http://docutils.sf.net/docutils/parsers/rst/directives/parts.py
+
+
+Adding a Directive to the Docutils Core
+=======================================
+
+Most directives start off as `extension packages`_.  If the directive
+is an **addition to the Docutils core**, it must be registered as an
+entry point and language mappings must be added:
+
+.. _extension packages: extensions.html
+
+1. Add an entry point definition for the directive in Docutils' own
+   ``setup.py``.
+
+2. Add an entry to the ``directives`` dictionary in
+   ``docutils/parsers/rst/languages/en.py`` for the directive, mapping
+   the English name to the canonical name (both lowercase).  Usually
+   the English name and the canonical name are the same.
+
+3. Update all the other language modules as well.  For languages in
+   which you are proficient, please add translations.  For other
+   languages, add the English directive name plus "(translation
+   required)".

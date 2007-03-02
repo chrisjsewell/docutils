@@ -93,9 +93,8 @@ class DocstringFormattingVisitor(nodes.SparseNodeVisitor):
         Get a parser based on its name.  We reuse parsers during this
         visitation, so parser instances are cached.
         """
-        parser_name = parsers._parser_aliases.get(parser_name, parser_name)
         if not self.parsers.has_key(parser_name):
-            cls = parsers.get_parser_class(parser_name)
+            cls = utils.get_entry_point('docutils.parsers', parser_name)
             self.parsers[parser_name] = cls()
         return self.parsers[parser_name]
 
