@@ -76,7 +76,7 @@ class Publisher:
 
     def set_reader(self, reader_name, parser, parser_name):
         """Set `self.reader` by name."""
-        reader_class = readers.get_reader_class(reader_name)
+        reader_class = utils.get_entry_point('docutils.readers', reader_name)
         self.reader = reader_class(parser, parser_name)
         self.parser = self.reader.parser
 

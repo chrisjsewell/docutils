@@ -57,7 +57,7 @@ class Reader(Component):
 
     def set_parser(self, parser_name):
         """Set `self.parser` by name."""
-        parser_class = parsers.get_parser_class(parser_name)
+        parser_class = utils.get_entry_point('docutils.parsers', parser_name)
         self.parser = parser_class()
 
     def read(self, source, parser, settings):
@@ -94,14 +94,3 @@ class ReReader(Reader):
         # Do not add any transforms.  They have already been applied
         # by the reader which originally created the document.
         return Component.get_transforms(self)
-
-
-_reader_aliases = {}
-
-def get_reader_class(reader_name):
-    """Return the Reader class from the `reader_name` module."""
-    reader_name = reader_name.lower()
-    if _reader_aliases.has_key(reader_name):
-        reader_name = _reader_aliases[reader_name]
-    module = __import__(reader_name, globals(), locals())
-    return module.Reader

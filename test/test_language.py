@@ -15,8 +15,10 @@ that language.
 import sys
 import os
 import re
+import pkg_resources
 from types import UnicodeType
 import DocutilsTestSupport              # must be imported before docutils
+from docutils import utils
 import docutils.languages
 import docutils.parsers.rst.languages
 from docutils.parsers.rst import states, directives, roles
@@ -165,13 +167,13 @@ class LanguageTestCase(DocutilsTestSupport.CustomTestCase):
         failures = []
         for d in module.roles.values():
             try:
-                method = roles._role_registry[d]
-                #if not method:
-                #    failures.append('"%s": unknown role' % d)
-            except KeyError, error:
+                method = utils.get_entry_point(
+                    'docutils.parsers.rst.roles', d)
+            except utils.EntryPointError, error:
                 failures.append('"%s": %s' % (d, error))
         inverted = self._invert(module.roles)
-        canonical = roles._role_registry.keys()
+        canonical = [ep.name for ep in pkg_resources.iter_entry_points(
+            'docutils.parsers.rst.roles')]
         canonical.sort()
         canonical.remove('restructuredtext-unimplemented-role')
         for name in canonical:

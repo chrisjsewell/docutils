@@ -10,59 +10,21 @@ __docformat__ = 'reStructuredText'
 
 import re
 import codecs
-from docutils import nodes
+import sys
+from docutils import nodes, utils
 from docutils.parsers.rst.languages import en as _fallback_language_module
 
 
-_directive_registry = {
-      'attention': ('admonitions', 'Attention'),
-      'caution': ('admonitions', 'Caution'),
-      'danger': ('admonitions', 'Danger'),
-      'error': ('admonitions', 'Error'),
-      'important': ('admonitions', 'Important'),
-      'note': ('admonitions', 'Note'),
-      'tip': ('admonitions', 'Tip'),
-      'hint': ('admonitions', 'Hint'),
-      'warning': ('admonitions', 'Warning'),
-      'admonition': ('admonitions', 'Admonition'),
-      'sidebar': ('body', 'Sidebar'),
-      'topic': ('body', 'Topic'),
-      'line-block': ('body', 'LineBlock'),
-      'parsed-literal': ('body', 'ParsedLiteral'),
-      'rubric': ('body', 'Rubric'),
-      'epigraph': ('body', 'Epigraph'),
-      'highlights': ('body', 'Highlights'),
-      'pull-quote': ('body', 'PullQuote'),
-      'compound': ('body', 'Compound'),
-      'container': ('body', 'Container'),
-      #'questions': ('body', 'question_list'),
-      'table': ('tables', 'RSTTable'),
-      'csv-table': ('tables', 'CSVTable'),
-      'list-table': ('tables', 'ListTable'),
-      'image': ('images', 'Image'),
-      'figure': ('images', 'Figure'),
-      'contents': ('parts', 'Contents'),
-      'sectnum': ('parts', 'Sectnum'),
-      'header': ('parts', 'Header'),
-      'footer': ('parts', 'Footer'),
-      #'footnotes': ('parts', 'footnotes'),
-      #'citations': ('parts', 'citations'),
-      'target-notes': ('references', 'TargetNotes'),
-      'meta': ('html', 'Meta'),
-      #'imagemap': ('html', 'imagemap'),
-      'raw': ('misc', 'Raw'),
-      'include': ('misc', 'Include'),
-      'replace': ('misc', 'Replace'),
-      'unicode': ('misc', 'Unicode'),
-      'class': ('misc', 'Class'),
-      'role': ('misc', 'Role'),
-      'default-role': ('misc', 'DefaultRole'),
-      'title': ('misc', 'Title'),
-      'date': ('misc', 'Date'),
-      'restructuredtext-test-directive': ('misc', 'TestDirective'),}
+def _deprecated(fn):
+    print >>sys.stderr, \
+          'Warning: docutils.parsers.rst.directives.%s is deprecated; ' \
+          'see <http://docutils.sf.net/docs/howto/rst-directives.html>.' % fn
+
+_directive_registry = {}
 """Mapping of directive name to (module name, class name).  The
 directive name is canonical & must be lowercase.  Language-dependent
-names are defined in the ``language`` subpackage."""
+names are defined in the ``language`` subpackage.  This mapping is
+deprecated; see <http://docutils.sf.net/docs/howto/rst-directives.html>."""
 
 _directives = {}
 """Cache of imported directives."""
@@ -102,27 +64,34 @@ def directive(directive_name, language_module, document):
             '\n'.join(msg_text), line=document.current_line)
         messages.append(message)
     try:
-        modulename, classname = _directive_registry[canonicalname]
-    except KeyError:
+        directive = utils.get_entry_point('docutils.parsers.rst.directives',
+                                          canonicalname)
+    except utils.EntryPointNotFoundError:
+        # Retain backwards compatibility with _directive_registry mechanism.
+        if _directive_registry.has_key(canonicalname):
+            _deprecated('_directive_registry')
+            modulename, classname = _directive_registry[canonicalname]
+            try:
+                module = __import__(modulename, globals(), locals())
+            except ImportError, detail:
+                messages.append(document.reporter.error(
+                    'Error importing directive module "%s" (directive "%s"):\n%s'
+                    % (modulename, directive_name, detail),
+                    line=document.current_line))
+                return None, messages
+            try:
+                directive = getattr(module, classname)
+                _directives[normname] = directive
+            except AttributeError:
+                messages.append(document.reporter.error(
+                    'No directive class "%s" in module "%s" (directive "%s").'
+                    % (classname, modulename, directive_name),
+                    line=document.current_line))
+                return None, messages
+            return directive, messages
         # Error handling done by caller.
         return None, messages
-    try:
-        module = __import__(modulename, globals(), locals())
-    except ImportError, detail:
-        messages.append(document.reporter.error(
-            'Error importing directive module "%s" (directive "%s"):\n%s'
-            % (modulename, directive_name, detail),
-            line=document.current_line))
-        return None, messages
-    try:
-        directive = getattr(module, classname)
-        _directives[normname] = directive
-    except AttributeError:
-        messages.append(document.reporter.error(
-            'No directive class "%s" in module "%s" (directive "%s").'
-            % (classname, modulename, directive_name),
-            line=document.current_line))
-        return None, messages
+    _directives[normname] = directive
     return directive, messages
 
 def register_directive(name, directive):
@@ -130,6 +99,7 @@ def register_directive(name, directive):
     Register a nonstandard application-defined directive function.
     Language lookups are not needed for such functions.
     """
+    _deprecated('register_directive()')
     _directives[name] = directive
 
 def flag(argument):

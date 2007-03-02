@@ -1,0 +1,156 @@
+======================================
+ How To Create Extensions to Docutils
+======================================
+
+:Author: Felix Wiemann
+:Contact: Felix.Wiemann@ososo.de
+:Date: $Date$
+:Revision: $Revision$
+:Copyright: This document has been placed in the public domain.
+
+Since version 0.5, Docutils uses setuptools_ as its primary extension
+mechanism.  This document will walk you through the process of
+creating an extension to Docutils using setuptools.  You do not need
+to have used setuptools before.
+
+.. _setuptools: http://peak.telecommunity.com/DevCenter/setuptools
+
+Specifically, this document covers the addition of Docutils components
+(readers, parsers, and writers), and the addition of reStructuredText
+roles and directives.
+
+.. contents::
+
+
+Entry Points
+============
+
+Docutils defines several so-called *entry point groups*, which
+extension packages can "hook into" by registering a new *entry point*
+with setuptools.
+
+The three entry point groups for adding new components are
+``docutils.readers``, ``docutils.parsers``, and ``docutils.writers``.
+(Note that these are entry point names, not Python package names.)
+
+The reStructuredText parser uses two additional entry point groups,
+``docutils.parsers.rst.directives`` and
+``docutils.parsers.rst.roles``.  These can be used to add new
+directives and roles, respectively.
+
+Registering entry points is done using ``setup.py``.  This means that
+your extension must supply its own setup script.  This is easy though;
+we will provide you with a template below.
+
+If you look at Docutils' own setup.py file and search for
+"entry_points", you will see that Docutils registers its own readers,
+parsers, writers, and reStructuredText roles and directives just like
+an extension package would do.
+
+
+Package Structure
+=================
+
+The directory structure of your package should look like this::
+
+    newpackage/
+        README.txt    (general information about your package)
+        setup.py      (setup script, explained below)
+        docs/         (documentation -- optional)
+        test/         (tests -- optional; do not place an __init__.py here)
+        newpackage/   (source directory -- same name as parent directory)
+            __init__.py
+            some_module.py   (the particular module structure is up to you)
+
+Your module can create new readers, parsers, writers, `new roles`_ and
+`new directives`_, by deriving from one of the following base classes:
+
+* docutils.readers.Reader
+* docutils.parsers.Parser
+* docutils.writers.Writer
+* docutils.parsers.rst.Directive (see the `directive how-to`)
+* role functions are implemented using functions; see the `role
+  how-to`.
+
+.. _role how-to:
+.. _new roles: rst-roles.html
+.. _directive how-to:
+.. _new directives: rst-directives.html
+
+
+setup.py
+========
+
+Your ``setup.py`` would look like this::
+
+    # $Id$
+    # Copyright: Your copyright note.  (E.g. "This module has been
+    # placed in the public domain.")
+
+    from setuptools import setup, find_packages
+    # Map entry point groups to entry point definitions.
+    entry_points = {
+        'docutils.readers': 'newreader = newpackage:Reader',
+        'docutils.parsers': 'newparser = newpackage.some_module:Parser',
+        'docutils.writers': 'newwriter = newpackage:Writer',
+        'docutils.parsers.rst.directives': [
+            # register several directives by passing a list of entry points
+            'new-directive-1 = newpackage.some_module:FirstDirective',
+            'another-directive = newpackage.some_module:SecondDirective',
+            ]
+        'docutils.parsers.rst.roles': 'some-role = newpackage:some_role_fn',
+    }
+    setup(
+        name = 'docutils-newpackage',
+        version = '0.1',
+        description = 'Short description',
+        author = 'Your Name',
+        author_email = '<email@example.org>',
+        license = 'the license of your extension package',
+        install_requires = ['docutils>=0.5']  # adjust to current Docutils version
+        packages = find_packages(),
+        include_package_data = True,  # set to False to not include data files
+        entry_points = entry_points,  # using the dictionary defined above
+    )
+
+The entry point definitions above are lengthy for illustration
+purposes; normally, you would only register, for example, one writer,
+or one directive.  Note that after each module name in the entry point
+definitions, there is a colon followed by the name of a Python object
+(typically a class).  Do *not* register modules with Docutils;
+register the appropriate classes inside these modules.  Note again
+that the module name and the class name are separated by a colon, not
+by a dot.
+
+The names of the entry points (in the example above, ``newreader``,
+``newparser``, ``newwriter``, ``new-directive-1``,
+``another-directive``, and ``some-role``) are the names by which the
+components, roles, or directives are registered with Docutils or the
+reStructuredText parser.  (Unfortunately, there is no clean and
+generic way yet to provide translations of directive and role names as
+part of your extension package.)
+
+In order to actually register your extension package, you need to run
+the following command as root or administrator::
+
+    python setup.py develop
+
+This will install a link to the source directory of your package in
+Python's global ``site-packages`` directory and register the entry
+points with the entry point groups.  Every time you change your
+setup.py file, you need to re-run ``python setup.py develop``.
+
+If your users want to install your extension package permanently, you
+should instruct them to run ::
+
+    python setup.py install
+
+Beyond this setup.py file, no registration of your extensions is
+necessary.  Once the ``setup.py`` script has been run, all components,
+roles, and directives are visible to Docutils.  That means that you
+can use the roles and directives in your reStructuredText documents as
+if they were part of the Docutils core.  For new components, you will
+need to add a new `front-end tool`_ (like ``rst2newformat.py``).  This
+is not yet covered in this document.
+
+.. _front-end tool: ../api/cmdline-tool.html
