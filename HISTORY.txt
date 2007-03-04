@@ -27,6 +27,9 @@ Plugins Branch
     components.
   - Reader, parser, and writer names are now case-sensitive; a warning
     is issued if the uppercase version of a component name is used.
+    
+* docs/howto/extensions.txt: Added to project; guide describing how to
+  create extension packages.
 
 
 Changes Since 0.4
