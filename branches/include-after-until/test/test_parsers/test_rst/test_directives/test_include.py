@@ -392,7 +392,7 @@ Nonexistent standard include data file:
             .. include:: <nonexistent>
 """ % nonexistent_rel],
 ["""\
-Include before-after Test
+Include after-until Test
 =========================
 
 .. include:: %s
@@ -403,9 +403,9 @@ A paragraph.
 """ % include12,
 """\
 <document source="test data">
-    <section ids="include-before-after-test" names="include\ before-after\ test">
+    <section ids="include-after-until-test" names="include\ after-until\ test">
         <title>
-            Include before-after Test
+            Include after-until Test
         <paragraph>
             In include12.txt (after start here, before stop here)
         <paragraph>
