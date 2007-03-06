@@ -18,6 +18,15 @@ from docutils.transforms import misc
 
 class Include(Directive):
 
+    """
+    Include content read from a separate source file.
+
+    Content may be included as a literal block,
+    the encoding of the included file can be specified,
+    only a part of the given file argument may be included by specifying
+    text to match before and/or after the text to be used.
+    """
+
     required_arguments = 1
     optional_arguments = 0
     final_argument_whitespace = True
@@ -59,28 +68,24 @@ class Include(Directive):
             raise self.severe(
                 'Problem with "%s" directive:\n%s: %s'
                 % (self.name, error.__class__.__name__, error))
-        # currently no restrictions on newlines in match-text,
+        # For after/until there are no restrictions on newlines in match-text,
         # and no restrictions on matching inside lines vs. line boundaries
         after_text = self.options.get('after', None)
         if after_text:
-            # skip lines in include_text before (and incl.) a matching text
-            print 'after_text', after_text
+            # skip content in include_text before *and incl.* a matching text
             after_index = include_text.find(after_text)
             if after_index < 0:
                 raise self.severe('Problems with "%s" directive "after"'
                                   'option:\ntext not found.' % self.name)
-            else:
-                include_text = include_text[after_index + len(after_text):]
+            include_text = include_text[after_index + len(after_text):]
         until_text = self.options.get('until', None)
         if until_text:
-            # skip lines in include_text after (and incl.) a matching text
-            print 'until_text', until_text
+            # skip content in include_text after *and incl.* a matching text
             until_index = include_text.find(until_text)
             if until_index < 0:
                 raise self.severe('Problems with "%s" directive "until"'
                                   'option:\ntext not found.' % self.name)
-            else:
-                include_text = include_text[:until_index]
+            include_text = include_text[:until_index]
         if self.options.has_key('literal'):
             literal_block = nodes.literal_block(include_text, include_text,
                                                 source=path)

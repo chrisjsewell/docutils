@@ -30,6 +30,8 @@ include10rel = DocutilsTestSupport.utils.relative_path(None, include10)
 include11 = os.path.join(mydir, 'include 11.txt')
 include11rel = DocutilsTestSupport.utils.relative_path(None, include11)
 include12 = os.path.join(mydir, 'include12.txt')
+include13 = os.path.join(mydir, 'include13.txt')
+include13rel = DocutilsTestSupport.utils.relative_path(None, include13)
 utf_16_file = os.path.join(mydir, 'utf-16.csv')
 utf_16_file_rel = DocutilsTestSupport.utils.relative_path(None, utf_16_file)
 nonexistent = os.path.join(os.path.dirname(states.__file__),
@@ -393,7 +395,6 @@ Nonexistent standard include data file:
 """ % nonexistent_rel],
 ["""\
 Include after-until Test
-=========================
 
 .. include:: %s
    :after: .. start here
@@ -403,14 +404,72 @@ A paragraph.
 """ % include12,
 """\
 <document source="test data">
-    <section ids="include-after-until-test" names="include\ after-until\ test">
-        <title>
-            Include after-until Test
-        <paragraph>
-            In include12.txt (after start here, before stop here)
-        <paragraph>
-            A paragraph.
+    <paragraph>
+        Include after-until Test
+    <paragraph>
+        In include12.txt (after start here, before stop here)
+    <paragraph>
+        A paragraph.
 """],
+["""\
+Include after-until Test, single option variant
+
+.. include:: %s
+   :until: .. start here
+
+.. include:: %s
+   :after: .. stop here
+
+A paragraph.
+""" % (include12, include12),
+"""\
+<document source="test data">
+    <paragraph>
+        Include after-until Test, single option variant
+    <paragraph>
+        In include12.txt (but before start here)
+    <paragraph>
+        In include12.txt (after stop here)
+    <paragraph>
+        A paragraph.
+"""],
+["""\
+Include after-until multiline Test
+
+.. include:: %s
+   :after: From: me
+           To: you
+   :until: -------
+           -- mork of ork
+
+.. include:: %s
+   :after: From: me
+           To: you
+   :until:
+       -------
+         -- mork of ork
+
+A paragraph.
+""" % (include13, include13),
+"""\
+<document source="test data">
+    <paragraph>
+        Include after-until multiline Test
+    <system_message level="4" line="3" source="test data" type="SEVERE">
+        <paragraph>
+            Problems with "include" directive "until"option:
+            text not found.
+        <literal_block xml:space="preserve">
+            .. include:: %s
+               :after: From: me
+                       To: you
+               :until: -------
+                       -- mork of ork
+    <paragraph>
+        In include13.txt (between header and signature)
+    <paragraph>
+        A paragraph.
+""" % include13rel],
 ]
 
 
