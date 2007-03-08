@@ -21,9 +21,9 @@ class Include(Directive):
     """
     Include content read from a separate source file.
 
-    Content may be included as a literal block,
-    the encoding of the included file can be specified,
-    only a part of the given file argument may be included by specifying
+    Content may be parsed by the parser, or included as a literal
+    block.  The encoding of the included file can be specified.  Only
+    a part of the given file argument may be included by specifying
     text to match before and/or after the text to be used.
     """
 
@@ -75,16 +75,16 @@ class Include(Directive):
             # skip content in include_text before *and incl.* a matching text
             after_index = include_text.find(after_text)
             if after_index < 0:
-                raise self.severe('Problems with "%s" directive "after"'
-                                  'option:\ntext not found.' % self.name)
+                raise self.severe('Problem with "after" option of "%s" '
+                                  'directive:\nText not found.' % self.name)
             include_text = include_text[after_index + len(after_text):]
         until_text = self.options.get('until', None)
         if until_text:
             # skip content in include_text after *and incl.* a matching text
             until_index = include_text.find(until_text)
             if until_index < 0:
-                raise self.severe('Problems with "%s" directive "until"'
-                                  'option:\ntext not found.' % self.name)
+                raise self.severe('Problem with "until" option of "%s" '
+                                  'directive:\nText not found.' % self.name)
             include_text = include_text[:until_index]
         if self.options.has_key('literal'):
             literal_block = nodes.literal_block(include_text, include_text,

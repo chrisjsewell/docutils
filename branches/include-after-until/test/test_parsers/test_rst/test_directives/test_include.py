@@ -407,7 +407,7 @@ A paragraph.
     <paragraph>
         Include after-until Test
     <paragraph>
-        In include12.txt (after start here, before stop here)
+        In include12.txt (after "start here", before "stop here")
     <paragraph>
         A paragraph.
 """],
@@ -427,14 +427,14 @@ A paragraph.
     <paragraph>
         Include after-until Test, single option variant
     <paragraph>
-        In include12.txt (but before start here)
+        In include12.txt (but before "start here")
     <paragraph>
-        In include12.txt (after stop here)
+        In include12.txt (after "stop here")
     <paragraph>
         A paragraph.
 """],
 ["""\
-Include after-until multiline Test
+Include after/until multi-line test.
 
 .. include:: %s
    :after: From: me
@@ -454,11 +454,11 @@ A paragraph.
 """\
 <document source="test data">
     <paragraph>
-        Include after-until multiline Test
+        Include after/until multi-line test.
     <system_message level="4" line="3" source="test data" type="SEVERE">
         <paragraph>
-            Problems with "include" directive "until"option:
-            text not found.
+            Problem with "until" option of "include" directive:
+            Text not found.
         <literal_block xml:space="preserve">
             .. include:: %s
                :after: From: me
@@ -469,7 +469,27 @@ A paragraph.
         In include13.txt (between header and signature)
     <paragraph>
         A paragraph.
-""" % include13rel],
+""" % include13],
+["""\
+Error handling test; "until" error handling tested in previous test.
+
+.. include:: %s
+   :after: bad string
+   :until: mork of ork
+""" % include13,
+"""\
+<document source="test data">
+    <paragraph>
+        Error handling test; "until" error handling tested in previous test.
+    <system_message level="4" line="3" source="test data" type="SEVERE">
+        <paragraph>
+            Problem with "after" option of "include" directive:
+            Text not found.
+        <literal_block xml:space="preserve">
+            .. include:: %s
+               :after: bad string
+               :until: mork of ork
+""" % include13],
 ]
 
 
