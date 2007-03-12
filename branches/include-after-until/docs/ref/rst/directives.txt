@@ -1371,11 +1371,11 @@ __ substitutions.html
 
 The following options are recognized:
 
-``after`` : text to find in the external data file
+``start-after`` : text to find in the external data file
     Only the content after the first occurrence of the specified text
     will be included.
 
-``until`` : text to find in the external data file
+``end-before`` : text to find in the external data file
     Only the content before the first occurrence of the specified text
     (but after any ``after`` text) will be included.
 

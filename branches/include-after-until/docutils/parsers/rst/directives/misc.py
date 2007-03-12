@@ -32,8 +32,8 @@ class Include(Directive):
     final_argument_whitespace = True
     option_spec = {'literal': directives.flag,
                    'encoding': directives.encoding,
-                   'after': directives.unchanged_required,
-                   'until': directives.unchanged_required}
+                   'start-after': directives.unchanged_required,
+                   'end-before': directives.unchanged_required}
 
     standard_include_path = os.path.join(os.path.dirname(states.__file__),
                                          'include')
@@ -68,24 +68,24 @@ class Include(Directive):
             raise self.severe(
                 'Problem with "%s" directive:\n%s: %s'
                 % (self.name, error.__class__.__name__, error))
-        # For after/until there are no restrictions on newlines in match-text,
+        # start-after/end-before: no restrictions on newlines in match-text,
         # and no restrictions on matching inside lines vs. line boundaries
-        after_text = self.options.get('after', None)
+        after_text = self.options.get('start-after', None)
         if after_text:
             # skip content in include_text before *and incl.* a matching text
             after_index = include_text.find(after_text)
             if after_index < 0:
-                raise self.severe('Problem with "after" option of "%s" '
+                raise self.severe('Problem with "start-after" option of "%s" '
                                   'directive:\nText not found.' % self.name)
             include_text = include_text[after_index + len(after_text):]
-        until_text = self.options.get('until', None)
-        if until_text:
+        before_text = self.options.get('end-before', None)
+        if before_text:
             # skip content in include_text after *and incl.* a matching text
-            until_index = include_text.find(until_text)
-            if until_index < 0:
-                raise self.severe('Problem with "until" option of "%s" '
+            before_index = include_text.find(before_text)
+            if before_index < 0:
+                raise self.severe('Problem with "end-before" option of "%s" '
                                   'directive:\nText not found.' % self.name)
-            include_text = include_text[:until_index]
+            include_text = include_text[:before_index]
         if self.options.has_key('literal'):
             literal_block = nodes.literal_block(include_text, include_text,
                                                 source=path)

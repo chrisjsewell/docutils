@@ -394,38 +394,38 @@ Nonexistent standard include data file:
             .. include:: <nonexistent>
 """ % nonexistent_rel],
 ["""\
-Include after-until Test
+Include start-after/end-before Test
 
 .. include:: %s
-   :after: .. start here
-   :until: .. stop here
+   :start-after: .. start here
+   :end-before: .. stop here
 
 A paragraph.
 """ % include12,
 """\
 <document source="test data">
     <paragraph>
-        Include after-until Test
+        Include start-after/end-before Test
     <paragraph>
         In include12.txt (after "start here", before "stop here")
     <paragraph>
         A paragraph.
 """],
 ["""\
-Include after-until Test, single option variant
+Include start-after/end-before Test, single option variant
 
 .. include:: %s
-   :until: .. start here
+   :end-before: .. start here
 
 .. include:: %s
-   :after: .. stop here
+   :start-after: .. stop here
 
 A paragraph.
 """ % (include12, include12),
 """\
 <document source="test data">
     <paragraph>
-        Include after-until Test, single option variant
+        Include start-after/end-before Test, single option variant
     <paragraph>
         In include12.txt (but before "start here")
     <paragraph>
@@ -434,18 +434,18 @@ A paragraph.
         A paragraph.
 """],
 ["""\
-Include after/until multi-line test.
+Include start-after/end-before multi-line test.
 
 .. include:: %s
-   :after: From: me
-           To: you
-   :until: -------
-           -- mork of ork
+   :start-after: From: me
+                 To: you
+   :end-before: -------
+                -- mork of ork
 
 .. include:: %s
-   :after: From: me
-           To: you
-   :until:
+   :start-after: From: me
+                 To: you
+   :end-before:
        -------
          -- mork of ork
 
@@ -454,41 +454,41 @@ A paragraph.
 """\
 <document source="test data">
     <paragraph>
-        Include after/until multi-line test.
+        Include start-after/end-before multi-line test.
     <system_message level="4" line="3" source="test data" type="SEVERE">
         <paragraph>
-            Problem with "until" option of "include" directive:
+            Problem with "end-before" option of "include" directive:
             Text not found.
         <literal_block xml:space="preserve">
             .. include:: %s
-               :after: From: me
-                       To: you
-               :until: -------
-                       -- mork of ork
+               :start-after: From: me
+                             To: you
+               :end-before: -------
+                            -- mork of ork
     <paragraph>
         In include13.txt (between header and signature)
     <paragraph>
         A paragraph.
 """ % include13],
 ["""\
-Error handling test; "until" error handling tested in previous test.
+Error handling test; "end-before" error handling tested in previous test.
 
 .. include:: %s
-   :after: bad string
-   :until: mork of ork
+   :start-after: bad string
+   :end-before: mork of ork
 """ % include13,
 """\
 <document source="test data">
     <paragraph>
-        Error handling test; "until" error handling tested in previous test.
+        Error handling test; "end-before" error handling tested in previous test.
     <system_message level="4" line="3" source="test data" type="SEVERE">
         <paragraph>
-            Problem with "after" option of "include" directive:
+            Problem with "start-after" option of "include" directive:
             Text not found.
         <literal_block xml:space="preserve">
             .. include:: %s
-               :after: bad string
-               :until: mork of ork
+               :start-after: bad string
+               :end-before: mork of ork
 """ % include13],
 ]
 
