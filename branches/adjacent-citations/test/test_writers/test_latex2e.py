@@ -230,6 +230,40 @@ The underscore is mishandled.
 ]
 
 
+totest_latex_citations['adjacent_citations'] = [
+# input
+["""\
+Two citations: [MeYou2007]_[YouMe2007]_.
+
+.. [MeYou2007] not.
+.. [YouMe2007] important.
+""",
+## # expected output
+latex_head + """\
+\\title{}
+\\author{}
+\\date{}
+\\raggedbottom
+\\begin{document}
+
+\\setlength{\\locallinewidth}{\\linewidth}
+
+Two citations: \\cite{MeYou2007,YouMe2007}.
+
+\\begin{thebibliography}{MeYou2007}
+\\bibitem[MeYou2007]{MeYou2007}{
+not.
+}
+\\bibitem[YouMe2007]{YouMe2007}{
+important.
+}
+\\end{thebibliography}
+
+\\end{document}
+"""],
+]
+
+
 totest['enumerated_lists'] = [
 # input
 ["""\

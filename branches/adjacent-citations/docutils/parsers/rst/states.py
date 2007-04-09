@@ -514,6 +514,13 @@ class Inliner:
     non_whitespace_after = r'(?![ \n])'
     # Alphanumerics with isolated internal [-._] chars (i.e. not 2 together):
     simplename = r'(?:(?!_)\w)+(?:[-._](?:(?!_)\w)+)*'
+    # Special case for adjacent citation references:
+    citref_concatenator = ']_['
+    citation_labels = (r'%s(?:%s%s)*'
+                       % (simplename,
+                          re.escape(citref_concatenator),
+                          simplename)
+                       )
     # Valid URI characters (see RFC 2396 & RFC 2732);
     # final \x00 allows backslash escapes in URIs:
     uric = r"""[-_.!~*'()[\];/:@&=+$,%a-zA-Z0-9\x00]"""
@@ -546,7 +553,8 @@ class Inliner:
                  [r'[0-9]+',               # manually numbered
                   r'\#(%s)?' % simplename, # auto-numbered (w/ label?)
                   r'\*',                   # auto-symbol
-                  r'(?P<citationlabel>%s)' % simplename] # citation reference
+                  r'(?P<citationlabels>%s)' % citation_labels, # citation ref
+                  ]
                  )
                 ]
                ),
@@ -856,11 +864,16 @@ class Inliner:
         string = match.string
         before = string[:match.start('whole')]
         remaining = string[match.end('whole'):]
-        if match.group('citationlabel'):
-            refnode = nodes.citation_reference('[%s]_' % label,
-                                               refname=refname)
-            refnode += nodes.Text(label)
-            self.document.note_citation_ref(refnode)
+        refnodes = []
+        if match.group('citationlabels'):
+            labels = label.split(Inliner.citref_concatenator)
+            refnames = refname.split(Inliner.citref_concatenator)
+            for label, refname in zip(labels, refnames):
+                refnode = nodes.citation_reference('[%s]_' % label,
+                                                   refname=refname)
+                refnode += nodes.Text(label)
+                self.document.note_citation_ref(refnode)
+                refnodes.append(refnode)
         else:
             refnode = nodes.footnote_reference('[%s]_' % label)
             if refname[0] == '#':
@@ -879,7 +892,8 @@ class Inliner:
                 self.document.note_footnote_ref(refnode)
             if utils.get_trim_footnote_ref_space(self.document.settings):
                 before = before.rstrip()
-        return (before, [refnode], remaining, [])
+            refnodes.append(refnode)
+        return (before, refnodes, remaining, [])
 
     def reference(self, match, lineno, anonymous=None):
         referencename = match.group('refname')

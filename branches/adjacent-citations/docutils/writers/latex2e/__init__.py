@@ -1065,8 +1065,9 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def visit_citation_reference(self, node):
         if self._use_latex_citations:
-            self.body.append('\\cite{')
-            self.inside_citation_reference_label = 1
+            if not self.inside_citation_reference_label:
+                self.body.append('\\cite{')
+                self.inside_citation_reference_label = 1
         else:
             href = ''
             if node.has_key('refid'):
@@ -1077,8 +1078,12 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def depart_citation_reference(self, node):
         if self._use_latex_citations:
-            self.body.append('}')
-            self.inside_citation_reference_label = 0
+            next_sibling = node.next_node(descend=0, siblings=1)
+            if next_sibling.__class__ == node.__class__:
+                self.body.append(',')
+            else:
+                self.body.append('}')
+                self.inside_citation_reference_label = 0
         else:
             self.body.append('}]')
 
