@@ -1078,8 +1078,17 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
     def depart_citation_reference(self, node):
         if self._use_latex_citations:
+            followup_citation = False
+            # check for a following citation separated by a space or newline
             next_sibling = node.next_node(descend=0, siblings=1)
-            if next_sibling.__class__ == node.__class__:
+            if (isinstance(next_sibling, nodes.Text)
+                    and next_sibling.astext() in (' ', '\n')):
+                nenext_sibling = next_sibling.next_node(descend=0, siblings=1)
+                if nenext_sibling.__class__ == node.__class__:
+                    followup_citation = True
+                    # remove the space/newline:
+                    next_sibling.data = ''
+            if followup_citation:
                 self.body.append(',')
             else:
                 self.body.append('}')
