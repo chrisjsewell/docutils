@@ -58,7 +58,7 @@ class Reader(Component):
     def set_parser(self, parser_name):
         """Set `self.parser` by name."""
         parser_class = parsers.get_parser_class(parser_name)
-        self.parser = parser_class()
+        self.parser = parser_class(reader=self)
 
     def read(self, source, parser, settings):
         self.source = source

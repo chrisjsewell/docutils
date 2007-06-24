@@ -48,13 +48,18 @@ Customizing the Parser
 Anything that isn't already customizable is that way simply because that type
 of customizability hasn't been implemented yet.  Patches welcome!
 
-When instantiating an object of the `Parser` class, two parameters may be
-passed: ``rfc2822`` and ``inliner``.  Pass ``rfc2822=1`` to enable an initial
-RFC-2822 style header block, parsed as a "field_list" element (with "class"
-attribute set to "rfc2822").  Currently this is the only body-level element
-which is customizable without subclassing.  (Tip: subclass `Parser` and change
-its "state_classes" and "initial_state" attributes to refer to new classes.
-Contact the author if you need more details.)
+When instantiating an object of the `Parser` class, three parameters may be
+passed: ``reader``, ``rfc2822``, and ``inliner``.
+
+The reader instance calling the parser should be passed as the ``reader``
+parameter; otherwise, the "subdocument" directive will not work.
+
+Pass ``rfc2822=True`` to enable an initial RFC-2822 style header block, parsed
+as a "field_list" element (with "class" attribute set to "rfc2822").
+Currently this is the only body-level element which is customizable without
+subclassing.  (Tip: subclass `Parser` and change its "state_classes" and
+"initial_state" attributes to refer to new classes.  Contact the author if you
+need more details.)
 
 The ``inliner`` parameter takes an instance of `states.Inliner` or a subclass.
 It handles inline markup recognition.  A common extension is the addition of
@@ -136,13 +141,14 @@ class Parser(docutils.parsers.Parser):
     config_section = 'restructuredtext parser'
     config_section_dependencies = ('parsers',)
 
-    def __init__(self, rfc2822=None, inliner=None):
+    def __init__(self, reader=None, rfc2822=None, inliner=None):
         if rfc2822:
             self.initial_state = 'RFC2822Body'
         else:
             self.initial_state = 'Body'
         self.state_classes = states.state_classes
         self.inliner = inliner
+        self.reader = reader
 
     def parse(self, inputstring, document):
         """Parse `inputstring` and populate `document`, a document tree."""
@@ -154,7 +160,8 @@ class Parser(docutils.parsers.Parser):
         inputlines = docutils.statemachine.string2lines(
               inputstring, tab_width=document.settings.tab_width,
               convert_whitespace=1)
-        self.statemachine.run(inputlines, document, inliner=self.inliner)
+        self.statemachine.run(inputlines, document, self.reader,
+                              inliner=self.inliner)
         self.finish_parse()
 
 
@@ -285,7 +292,7 @@ class Directive:
     """May the directive have content?"""
 
     def __init__(self, name, arguments, options, content, lineno,
-                 content_offset, block_text, state, state_machine):
+                 content_offset, block_text, state, state_machine, reader):
         self.name = name
         self.arguments = arguments
         self.options = options
@@ -295,6 +302,7 @@ class Directive:
         self.block_text = block_text
         self.state = state
         self.state_machine = state_machine
+        self.reader = reader
 
     def run(self):
         raise NotImplementedError('Must override run() is subclass.')

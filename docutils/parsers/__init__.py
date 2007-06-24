@@ -16,6 +16,9 @@ class Parser(Component):
     component_type = 'parser'
     config_section = 'parsers'
 
+    def __init__(self, reader=None):
+        self.reader = reader
+
     def parse(self, inputstring, document):
         """Override to parse `inputstring` into document tree `document`."""
         raise NotImplementedError('subclass must override this method')
