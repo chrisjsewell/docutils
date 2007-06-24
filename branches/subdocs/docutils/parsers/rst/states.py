@@ -141,8 +141,8 @@ class RSTStateMachine(StateMachineWS):
     The entry point to reStructuredText parsing is the `run()` method.
     """
 
-    def run(self, input_lines, document, input_offset=0, match_titles=1,
-            inliner=None):
+    def run(self, input_lines, document, reader, input_offset=0,
+            match_titles=1, inliner=None):
         """
         Parse `input_lines` and modify the `document` node in place.
 
@@ -156,6 +156,7 @@ class RSTStateMachine(StateMachineWS):
             inliner = Inliner()
         inliner.init_customizations(document.settings)
         self.memo = Struct(document=document,
+                           reader=reader,
                            reporter=document.reporter,
                            language=self.language,
                            title_styles=[],
@@ -2038,7 +2039,8 @@ class Body(RSTState):
             return [error], blank_finish
         directive_instance = directive(
             type_name, arguments, options, content, lineno,
-            content_offset, block_text, self, self.state_machine)
+            content_offset, block_text, self, self.state_machine,
+            self.memo.reader)
         try:
             result = directive_instance.run()
         except docutils.parsers.rst.DirectiveError, directive_error:
