@@ -45,7 +45,7 @@ class Filter(Transform):
         pending = self.startnode
         component_type = pending.details['component'] # 'reader' or 'writer'
         format = pending.details['format']
-        component = self.document.transformer.components[component_type]
+        component = self.transformer.components[component_type]
         if component.supports(format):
             pending.replace_self(pending.details['nodes'])
         else:
