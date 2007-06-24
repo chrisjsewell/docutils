@@ -11,7 +11,7 @@ __docformat__ = 'reStructuredText'
 
 import os.path
 import docutils
-from docutils import languages, Component
+from docutils import languages, transforms, Component
 from docutils.transforms import universal
 
 
@@ -73,9 +73,20 @@ class Writer(Component):
         self.language = languages.get_language(
             document.settings.language_code)
         self.destination = destination
+        self.transform()
         self.translate()
         output = self.destination.write(self.output)
         return output
+
+    def transform(self):
+        """Apply transforms added by this writer."""
+        transformer = transforms.Transformer(self.document)
+        # Add transforms returned by the writer's get_transforms method.
+        transformer.populate_from_components([self])
+        # Add deferred pending nodes.
+        for pending, priority in self.document.pending_nodes_for_writer:
+            transformer.add_pending(pending, priority)
+        transformer.apply_transforms()
 
     def translate(self):
         """

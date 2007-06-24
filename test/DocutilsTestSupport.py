@@ -60,7 +60,8 @@ try:
     import package_unittest
     import docutils
     import docutils.core
-    from docutils import frontend, nodes, statemachine, urischemes, utils
+    from docutils import frontend, nodes, statemachine, urischemes, utils, \
+        transforms
     from docutils.transforms import universal
     from docutils.parsers import rst
     from docutils.parsers.rst import states, tableparser, roles, languages
@@ -336,8 +337,14 @@ class TransformTestCase(CustomTestCase):
         # enable the Transformer's default transforms.
         document.transformer.add_transforms(self.transforms)
         document.transformer.add_transform(universal.TestMessages)
-        document.transformer.components['writer'] = self
         document.transformer.apply_transforms()
+        document.transformer = None
+        # Apply deferred transforms.
+        transformer = transforms.Transformer(document)
+        transformer.components['writer'] = self
+        for pending, priority in document.pending_nodes_for_writer:
+            transformer.add_pending(pending, priority)
+        transformer.apply_transforms()
         output = document.pformat()
         self.compare_output(self.input, output, self.expected)
 

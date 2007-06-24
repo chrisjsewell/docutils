@@ -904,7 +904,21 @@ class document(Root, Structural, Element):
 
         import docutils.transforms
         self.transformer = docutils.transforms.Transformer(self)
-        """Storage for transforms to be applied to this document."""
+        """Transformer to notify of pending nodes."""
+
+        self.pending_nodes_for_writer = []
+        """Deferred pending nodes to be run when the writer is called.
+        Contains (pending_node, priority) tuples, where priority can
+        be None."""
+        # This is currently only used by the meta directive, to pass
+        # pending nodes calling the components.Filter transform.  The
+        # Filter transform cannot be applied at reading time because
+        # the writer is not known yet, so we have to defer it.  This
+        # attribute is then picked up by the Writer.transform method.
+        # Perhaps the Filter transform is not the best way to
+        # implement this (and with a different implementation we
+        # might be able to do without this attribute), but for now it
+        # works.
 
         self.decoration = None
         """Document's `decoration` node."""
@@ -1109,6 +1123,9 @@ class document(Root, Structural, Element):
 
     def note_pending(self, pending, priority=None):
         self.transformer.add_pending(pending, priority)
+        
+    def note_pending_for_writer(self, pending, priority=None):
+        self.pending_nodes_for_writer.append((pending, priority))
 
     def note_parse_message(self, message):
         self.parse_messages.append(message)

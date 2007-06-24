@@ -39,13 +39,16 @@ class Transform:
     default_priority = None
     """Numerical priority of this transform, 0 through 999 (override)."""
 
-    def __init__(self, document, startnode=None):
+    def __init__(self, document, transformer, startnode=None):
         """
         Initial setup for in-place document transforms.
         """
 
         self.document = document
         """The document tree to transform."""
+        
+        self.transformer = transformer
+        """The Transformer which called this transform."""
 
         self.startnode = startnode
         """Node from which to begin the transform.  For many transforms which
@@ -167,6 +170,6 @@ class Transformer(TransformSpec):
                 self.transforms.reverse()
                 self.sorted = 1
             priority, transform_class, pending, kwargs = self.transforms.pop()
-            transform = transform_class(self.document, startnode=pending)
+            transform = transform_class(self.document, self, startnode=pending)
             transform.apply(**kwargs)
             self.applied.append((priority, transform_class, pending, kwargs))

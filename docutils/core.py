@@ -20,7 +20,6 @@ from types import StringType
 from docutils import __version__, __version_details__, SettingsSpec
 from docutils import frontend, io, utils, readers, writers
 from docutils.frontend import OptionParser
-from docutils.transforms import Transformer
 import docutils.readers.doctree
 
 
@@ -177,11 +176,6 @@ class Publisher:
             encoding=self.settings.output_encoding,
             error_handler=self.settings.output_encoding_error_handler)
 
-    def apply_transforms(self):
-        self.document.transformer.populate_from_components(
-            (self.reader, self.reader.parser, self.writer))
-        self.document.transformer.apply_transforms()
-
     def publish(self, argv=None, usage=None, description=None,
                 settings_spec=None, settings_overrides=None,
                 config_section=None, enable_exit_status=None):
@@ -199,7 +193,6 @@ class Publisher:
             self.set_io()
             self.document = self.reader.read(self.source, self.parser,
                                              self.settings)
-            self.apply_transforms()
             output = self.writer.write(self.document, self.destination)
             self.writer.assemble_parts()
         except SystemExit, error:
@@ -232,15 +225,6 @@ class Publisher:
         if self.settings.dump_internals:
             print >>sys.stderr, '\n::: Document internals:'
             print >>sys.stderr, pprint.pformat(self.document.__dict__)
-        if self.settings.dump_transforms:
-            print >>sys.stderr, '\n::: Transforms applied:'
-            print >>sys.stderr, (' (priority, transform class, '
-                                 'pending node details, keyword args)')
-            print >>sys.stderr, pprint.pformat(
-                [(priority, '%s.%s' % (xclass.__module__, xclass.__name__),
-                  pending and pending.details, kwargs)
-                 for priority, xclass, pending, kwargs
-                 in self.document.transformer.applied])
         if self.settings.dump_pseudo_xml:
             print >>sys.stderr, '\n::: Pseudo-XML:'
             print >>sys.stderr, self.document.pformat().encode(
@@ -474,8 +458,7 @@ def publish_from_doctree(document, destination_path=None,
     Note that document.settings is overridden; if you want to use the settings
     of the original `document`, pass settings=document.settings.
 
-    Also, new document.transformer and document.reporter objects are
-    generated.
+    Also, a new document.reporter object is generated.
 
     For encoded string output, be sure to set the 'output_encoding' setting to
     the desired encoding.  Set it to 'unicode' for unencoded Unicode string

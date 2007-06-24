@@ -67,6 +67,7 @@ class Reader(Component):
         self.settings = settings
         self.input = self.source.read()
         self.parse()
+        self.transform()
         return self.document
 
     def parse(self):
@@ -79,6 +80,19 @@ class Reader(Component):
         """Create and return a new empty document tree (root node)."""
         document = utils.new_document(self.source.source_path, self.settings)
         return document
+    
+    def transform(self):
+        """Apply transforms."""
+        # Use the existing transformer instantiated by
+        # document.__init__; by now pending transforms have been
+        # added.
+        transformer = self.document.transformer
+        assert transformer is not None
+        # Add transforms returned by the reader's and parser's
+        # `get_transforms` methods.
+        transformer.populate_from_components([self, self.parser])
+        transformer.apply_transforms()
+        self.document.transformer = None
 
 
 class ReReader(Reader):

@@ -220,7 +220,7 @@ class IndirectHyperlinks(Transform):
             if not reftarget_id:
                 # Check the unknown_reference_resolvers
                 for resolver_function in \
-                        self.document.transformer.unknown_reference_resolvers:
+                        self.transformer.unknown_reference_resolvers:
                     if resolver_function(target):
                         break
                 else:
@@ -744,8 +744,8 @@ class TargetNotes(Transform):
     but before `Footnotes`."""
 
 
-    def __init__(self, document, startnode):
-        Transform.__init__(self, document, startnode=startnode)
+    def __init__(self, document, transformer, startnode):
+        Transform.__init__(self, document, transformer, startnode=startnode)
 
         self.classes = startnode.details.get('class', [])
 
@@ -828,7 +828,7 @@ class DanglingReferences(Transform):
     def apply(self):
         visitor = DanglingReferencesVisitor(
             self.document,
-            self.document.transformer.unknown_reference_resolvers)
+            self.transformer.unknown_reference_resolvers)
         self.document.walk(visitor)
         # *After* resolving all references, check for unreferenced
         # targets:

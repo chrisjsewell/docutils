@@ -61,7 +61,7 @@ class MetaBody(states.SpecializedBody):
                       % (token, detail), nodes.literal_block(line, line),
                       line=self.state_machine.abs_line_number())
                 return msg, blank_finish
-        self.document.note_pending(pending)
+        self.document.note_pending_for_writer(pending)
         return pending, blank_finish
 
 
