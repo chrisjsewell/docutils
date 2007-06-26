@@ -68,6 +68,8 @@ directives = {
       u'sekcia-numerado': 'sectnum',
       u'kapsekcio': 'header',
       u'piedsekcio': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       #'footnotes': 'footnotes',
       #'citations': 'citations',
       u'celaj-notoj': 'target-notes',

@@ -58,6 +58,8 @@ directives = {
       u'kappale': u'sectnum',
       u'header (translation required)': 'header',
       u'footer (translation required)': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       #u'alaviitteet': u'footnotes',
       #u'viitaukset': u'citations',
       u'target-notes (translation required)': u'target-notes'}

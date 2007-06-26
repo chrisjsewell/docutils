@@ -65,6 +65,8 @@ directives = {
       u'linkziel-fu\xdfnoten': 'target-notes',
       u'header (translation required)': 'header',
       u'footer (translation required)': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       #u'fu\xdfnoten': 'footnotes',
       #'zitate': 'citations',
       }

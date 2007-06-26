@@ -63,6 +63,8 @@ directives = {
       'annota-riferimenti-esterni': 'target-notes',
       'intestazione': 'header',
       'piede-pagina': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       #'footnotes': 'footnotes',
       #'citations': 'citations',
       'restructuredtext-test-directive': 'restructuredtext-test-directive'}

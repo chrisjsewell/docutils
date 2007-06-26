@@ -60,6 +60,8 @@ directives = {
       u'target-notes (translation required)': 'target-notes',
       u'header (translation required)': 'header',
       u'footer (translation required)': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       # u'fotnoter': 'footnotes',
       # u'citeringar': 'citations',
       }

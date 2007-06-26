@@ -66,6 +66,8 @@ directives = {
       u'numeraci\u00F3-seccions': 'sectnum',
       u'cap\u00E7alera': 'header',
       u'peu-de-p\u00E0gina': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       u'peu-p\u00E0gina': 'footer',
       #'footnotes': 'footnotes',
       #'citations': 'citations',

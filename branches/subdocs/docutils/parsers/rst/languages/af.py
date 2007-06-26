@@ -60,6 +60,8 @@ directives = {
       'section-numbering': 'sectnum',
       u'header (translation required)': 'header',
       u'footer (translation required)': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       #'voetnote': 'footnotes',
       #'aanhalings': 'citations',
       'teikennotas': 'target-notes',

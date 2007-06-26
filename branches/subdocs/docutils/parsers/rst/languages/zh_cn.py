@@ -61,6 +61,8 @@ directives = {
       u'章节序号': 'sectnum',
       u'题头': 'header',
       u'页脚': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       #u'footnotes (translation required)': 'footnotes',
       #u'citations (translation required)': 'citations',
       u'target-notes (translation required)': 'target-notes',

@@ -74,6 +74,8 @@ directives = {
       u'notas-destino': 'target-notes',
       u'cabecera': 'header',
       u'pie': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       #'footnotes': 'footnotes',
       #'citations': 'citations',
       u'restructuredtext-test-directive': 'restructuredtext-test-directive'}
