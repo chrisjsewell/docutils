@@ -61,6 +61,8 @@ directives = {
       u'section-numbering (translation required)': 'sectnum',
       u'header (translation required)': 'header',
       u'footer (translation required)': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       #'footnotes': 'footnotes',
       #'citations': 'citations',
       u'target-notes (translation required)': 'target-notes',

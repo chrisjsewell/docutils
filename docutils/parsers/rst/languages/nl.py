@@ -63,6 +63,8 @@ directives = {
       'hoofdstuk-nummering': 'sectnum',
       u'header (translation required)': 'header',
       u'footer (translation required)': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       #'voetnoten': 'footnotes',
       #'citaten': 'citations',
       'verwijzing-voetnoten': 'target-notes',
