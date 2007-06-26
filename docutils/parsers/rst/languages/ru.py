@@ -62,6 +62,8 @@ directives = {
       u'\u044d\u043f\u0438\u0433\u0440\u0430\u0444': u'epigraph',
       u'header (translation required)': 'header',
       u'footer (translation required)': 'footer',
+      'subdocuments (translation required)': 'subdocs',
+      'subdocs (translation required)': 'subdocs',
       #'footnotes (translation required)': 'footnotes',
       #'citations (translation required)': 'citations',
       u'\u0446\u0435\u043b\u0435\u0432\u044b\u0435-\u0441\u043d\u043e\u0441\u043a\u0438': 
