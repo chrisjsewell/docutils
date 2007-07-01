@@ -2509,14 +2509,7 @@ class ExtensionOptions(FieldList):
 
     def parse_field_body(self, indented, offset, node):
         """Override `Body.parse_field_body` for simpler parsing."""
-        lines = []
-        for line in list(indented) + ['']:
-            if line.strip():
-                lines.append(line)
-            elif lines:
-                text = '\n'.join(lines)
-                node += nodes.paragraph(text, text)
-                lines = []
+        node += nodes.paragraph('\n'.join(indented), '\n'.join(indented))
 
 
 class LineBlock(SpecializedBody):
