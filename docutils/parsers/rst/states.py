@@ -2512,6 +2512,58 @@ class ExtensionOptions(FieldList):
         node += nodes.paragraph('\n'.join(indented), '\n'.join(indented))
 
 
+class SubdocumentsSpec(BulletList):
+
+    """
+    Parse bullet list specifying sub-documents to be included.
+
+    Limited nested parsing (and no inline markup parsing) is done.
+    """
+
+    def list_item(self, indent):
+        if self.state_machine.line[indent:]:
+            indented, line_offset, blank_finish = (
+                self.state_machine.get_known_indented(indent))
+        else:
+            indented, indent, line_offset, blank_finish = (
+                self.state_machine.get_first_known_indented(indent))
+        if not indented:
+            self.reporter.error('No empty list items allowed in '
+                'subdocuments specification.', line=self.state_machine.line)
+            return [], blank_finish
+        if indented[0].startswith(':'):
+            self.reporter.error('File names may not start with a colon.',
+                                line=self.state_machine.line)
+            return [], blank_finish
+        # If the user tries to start the item with a bullet list, like
+        # "* * ...", should we catch it?
+        if '' in indented:
+            blank_line_index = indented.index('')
+            file_name = ''.join(indented[:blank_line_index])
+            nested_list_lines = indented[blank_line_index+1:]
+        else:
+            file_name = ''.join(indented)
+            nested_list_lines = None
+        list_item = nodes.list_item('\n'.join(indented))
+        list_item += nodes.paragraph(file_name, file_name)
+        if nested_list_lines:
+            bullet_list = nodes.bullet_list('\n'.join(nested_list_lines),
+                                            bullet=nested_list_lines[0][0])
+            new_line_offset, blank_finish = self.nested_list_parse(
+                nested_list_lines,
+                blank_line_index + 1,
+                                     # XXX correct? what's line_offset anyway?
+                node=bullet_list, initial_state='SubdocumentsSpec',
+                blank_finish=blank_finish)
+            if new_line_offset != len(indented):
+                self.reporter.error('sub-document specification list items '
+                                    'may only contain one nested bullet list',
+                                    line=self.state_machine.abs_line_number())
+                return [], blank_finish
+            list_item += bullet_list
+        return list_item, blank_finish
+
+
 class LineBlock(SpecializedBody):
 
     """Second and subsequent lines of a line_block."""
@@ -2978,6 +3030,7 @@ class QuotedLiteralBlock(RSTState):
 
 
 state_classes = (Body, BulletList, DefinitionList, EnumeratedList, FieldList,
-                 OptionList, LineBlock, ExtensionOptions, Explicit, Text,
-                 Definition, Line, SubstitutionDef, RFC2822Body, RFC2822List)
+                 OptionList, LineBlock, ExtensionOptions, SubdocumentsSpec,
+                 Explicit, Text, Definition, Line, SubstitutionDef,
+                 RFC2822Body, RFC2822List)
 """Standard set of State classes used to start `RSTStateMachine`."""
