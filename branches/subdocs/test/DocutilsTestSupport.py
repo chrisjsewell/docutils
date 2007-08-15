@@ -429,7 +429,8 @@ class ParserTestCase(CustomTestCase):
     cases that have nothing to do with the input and output of the parser.
     """
 
-    parser = rst.Parser()
+    reader = standalone.Reader()
+    parser = rst.Parser(reader)
     """Parser shared by all ParserTestCases."""
 
     option_parser = frontend.OptionParser(components=(rst.Parser,))

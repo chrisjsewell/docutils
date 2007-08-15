@@ -1,0 +1,5 @@
+============
+ Document 1
+============
+
+Contents of document 1.

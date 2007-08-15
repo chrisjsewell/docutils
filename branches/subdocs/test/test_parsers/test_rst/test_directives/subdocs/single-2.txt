@@ -1,0 +1,5 @@
+.. Comments in front of the document title should be allowed.
+
+------------
+ Document 2
+------------

@@ -1,0 +1,11 @@
+======================
+ Recursive Document 1
+======================
+
+Document contents.
+
+.. docset-root:: .
+
+.. subdocs::
+
+   * recursive-2.txt

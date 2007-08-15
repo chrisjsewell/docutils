@@ -78,6 +78,7 @@ directives = {
     u'フッタ': 'footer',
       'subdocuments (translation required)': 'subdocs',
       'subdocs (translation required)': 'subdocs',
+      'docset-root (translation required)': 'docset-root',
     #u'脚注': 'footnotes',             # 脚註?
     #u'サイテーション': 'citations',　　　# 出典　引証　引用
     u'ターゲットノート': 'target-notes', # 的注　的脚注

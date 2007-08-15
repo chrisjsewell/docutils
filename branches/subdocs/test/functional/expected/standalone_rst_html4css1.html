@@ -121,20 +121,27 @@ They are transformed from section titles after parsing. -->
 <li><a class="reference internal" href="#replacement-text" id="id59">2.14.6&nbsp;&nbsp;&nbsp;Replacement Text</a></li>
 <li><a class="reference internal" href="#compound-paragraph" id="id60">2.14.7&nbsp;&nbsp;&nbsp;Compound Paragraph</a></li>
 <li><a class="reference internal" href="#parsed-literal-blocks" id="id61">2.14.8&nbsp;&nbsp;&nbsp;Parsed Literal Blocks</a></li>
+<li><a class="reference internal" href="#sub-documents" id="id62">2.14.9&nbsp;&nbsp;&nbsp;Sub-Documents</a><ul class="auto-toc">
+<li><a class="reference internal" href="#sub-document-1" id="id63">2.14.9.1&nbsp;&nbsp;&nbsp;Sub-Document 1</a><ul class="auto-toc">
+<li><a class="reference internal" href="#sub-document-2" id="id64">2.14.9.1.1&nbsp;&nbsp;&nbsp;Sub-Document 2</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#substitution-definitions" id="id62">2.15&nbsp;&nbsp;&nbsp;Substitution Definitions</a></li>
-<li><a class="reference internal" href="#comments" id="id63">2.16&nbsp;&nbsp;&nbsp;Comments</a></li>
-<li><a class="reference internal" href="#raw-text" id="id64">2.17&nbsp;&nbsp;&nbsp;Raw text</a></li>
-<li><a class="reference internal" href="#container" id="id65">2.18&nbsp;&nbsp;&nbsp;Container</a></li>
-<li><a class="reference internal" href="#colspanning-tables" id="id66">2.19&nbsp;&nbsp;&nbsp;Colspanning tables</a></li>
-<li><a class="reference internal" href="#rowspanning-tables" id="id67">2.20&nbsp;&nbsp;&nbsp;Rowspanning tables</a></li>
-<li><a class="reference internal" href="#complex-tables" id="id68">2.21&nbsp;&nbsp;&nbsp;Complex tables</a></li>
-<li><a class="reference internal" href="#list-tables" id="id69">2.22&nbsp;&nbsp;&nbsp;List Tables</a></li>
-<li><a class="reference internal" href="#custom-roles" id="id70">2.23&nbsp;&nbsp;&nbsp;Custom Roles</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#error-handling" id="id71">3&nbsp;&nbsp;&nbsp;Error Handling</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#substitution-definitions" id="id65">2.15&nbsp;&nbsp;&nbsp;Substitution Definitions</a></li>
+<li><a class="reference internal" href="#comments" id="id66">2.16&nbsp;&nbsp;&nbsp;Comments</a></li>
+<li><a class="reference internal" href="#raw-text" id="id67">2.17&nbsp;&nbsp;&nbsp;Raw text</a></li>
+<li><a class="reference internal" href="#container" id="id68">2.18&nbsp;&nbsp;&nbsp;Container</a></li>
+<li><a class="reference internal" href="#colspanning-tables" id="id69">2.19&nbsp;&nbsp;&nbsp;Colspanning tables</a></li>
+<li><a class="reference internal" href="#rowspanning-tables" id="id70">2.20&nbsp;&nbsp;&nbsp;Rowspanning tables</a></li>
+<li><a class="reference internal" href="#complex-tables" id="id71">2.21&nbsp;&nbsp;&nbsp;Complex tables</a></li>
+<li><a class="reference internal" href="#list-tables" id="id72">2.22&nbsp;&nbsp;&nbsp;List Tables</a></li>
+<li><a class="reference internal" href="#custom-roles" id="id73">2.23&nbsp;&nbsp;&nbsp;Custom Roles</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#error-handling" id="id74">3&nbsp;&nbsp;&nbsp;Error Handling</a></li>
 </ul>
 </div>
 <div class="section" id="structural-elements">
@@ -479,7 +486,7 @@ Here's a reference to the next footnote: <a class="footnote-reference" href="#id
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label">[4]</td><td>Here's an unreferenced footnote, with a reference to a
-nonexistent footnote: <a href="#id80"><span class="problematic" id="id81"><span id="id16"></span>[5]_</span></a>.</td></tr>
+nonexistent footnote: <a href="#id86"><span class="problematic" id="id87"><span id="id16"></span>[5]_</span></a>.</td></tr>
 </tbody>
 </table>
 </div>
@@ -492,7 +499,7 @@ nonexistent footnote: <a href="#id80"><span class="problematic" id="id81"><span 
 rendered separately and differently from footnotes.</td></tr>
 </tbody>
 </table>
-<p>Here's a reference to the above, <a class="citation-reference" href="#cit2002" id="id17">[CIT2002]</a>, and a <a href="#id82"><span class="problematic" id="id83"><span id="id18"></span>[nonexistent]_</span></a>
+<p>Here's a reference to the above, <a class="citation-reference" href="#cit2002" id="id17">[CIT2002]</a>, and a <a href="#id88"><span class="problematic" id="id89"><span id="id18"></span>[nonexistent]_</span></a>
 citation.</p>
 </div>
 <div class="section" id="targets">
@@ -506,7 +513,7 @@ hyperlink targets</a> are also possible.</p>
 &quot;<a class="reference external" href="http://www.python.org/">Python</a> <a class="footnote-reference" href="#id25" id="id27">[5]</a>&quot;.</p>
 <p>Targets may be indirect and anonymous.  Thus <a class="reference internal" href="#id22">this phrase</a> may also
 refer to the <a class="reference internal" href="#id22">Targets</a> section.</p>
-<p>Here's a <a href="#id84"><span class="problematic" id="id85">`hyperlink reference without a target`_</span></a>, which generates an
+<p>Here's a <a href="#id90"><span class="problematic" id="id91">`hyperlink reference without a target`_</span></a>, which generates an
 error.</p>
 <div class="section" id="duplicate-target-names">
 <h3><a class="toc-backref" href="#id51">2.13.1&nbsp;&nbsp;&nbsp;Duplicate Target Names</a></h3>
@@ -518,34 +525,41 @@ explicit targets will generate &quot;warning&quot; (level-2) system messages.</p
 <h3><a class="toc-backref" href="#id52">2.13.2&nbsp;&nbsp;&nbsp;Duplicate Target Names</a></h3>
 <p>Since there are two &quot;Duplicate Target Names&quot; section headers, we
 cannot uniquely refer to either of them by name.  If we try to (like
-this: <a href="#id86"><span class="problematic" id="id87">`Duplicate Target Names`_</span></a>), an error is generated.</p>
+this: <a href="#id92"><span class="problematic" id="id93">`Duplicate Target Names`_</span></a>), an error is generated.</p>
 </div>
 </div>
 <div class="section" id="directives">
 <h2><a class="toc-backref" href="#id53">2.14&nbsp;&nbsp;&nbsp;Directives</a></h2>
 <div class="contents local topic" id="contents">
 <ul class="auto-toc simple">
-<li><a class="reference internal" href="#document-parts" id="id72">2.14.1&nbsp;&nbsp;&nbsp;Document Parts</a></li>
-<li><a class="reference internal" href="#images" id="id73">2.14.2&nbsp;&nbsp;&nbsp;Images</a></li>
-<li><a class="reference internal" href="#admonitions" id="id74">2.14.3&nbsp;&nbsp;&nbsp;Admonitions</a></li>
-<li><a class="reference internal" href="#topics-sidebars-and-rubrics" id="id75">2.14.4&nbsp;&nbsp;&nbsp;Topics, Sidebars, and Rubrics</a></li>
-<li><a class="reference internal" href="#target-footnotes" id="id76">2.14.5&nbsp;&nbsp;&nbsp;Target Footnotes</a></li>
-<li><a class="reference internal" href="#replacement-text" id="id77">2.14.6&nbsp;&nbsp;&nbsp;Replacement Text</a></li>
-<li><a class="reference internal" href="#compound-paragraph" id="id78">2.14.7&nbsp;&nbsp;&nbsp;Compound Paragraph</a></li>
-<li><a class="reference internal" href="#parsed-literal-blocks" id="id79">2.14.8&nbsp;&nbsp;&nbsp;Parsed Literal Blocks</a></li>
+<li><a class="reference internal" href="#document-parts" id="id75">2.14.1&nbsp;&nbsp;&nbsp;Document Parts</a></li>
+<li><a class="reference internal" href="#images" id="id76">2.14.2&nbsp;&nbsp;&nbsp;Images</a></li>
+<li><a class="reference internal" href="#admonitions" id="id77">2.14.3&nbsp;&nbsp;&nbsp;Admonitions</a></li>
+<li><a class="reference internal" href="#topics-sidebars-and-rubrics" id="id78">2.14.4&nbsp;&nbsp;&nbsp;Topics, Sidebars, and Rubrics</a></li>
+<li><a class="reference internal" href="#target-footnotes" id="id79">2.14.5&nbsp;&nbsp;&nbsp;Target Footnotes</a></li>
+<li><a class="reference internal" href="#replacement-text" id="id80">2.14.6&nbsp;&nbsp;&nbsp;Replacement Text</a></li>
+<li><a class="reference internal" href="#compound-paragraph" id="id81">2.14.7&nbsp;&nbsp;&nbsp;Compound Paragraph</a></li>
+<li><a class="reference internal" href="#parsed-literal-blocks" id="id82">2.14.8&nbsp;&nbsp;&nbsp;Parsed Literal Blocks</a></li>
+<li><a class="reference internal" href="#sub-documents" id="id83">2.14.9&nbsp;&nbsp;&nbsp;Sub-Documents</a><ul class="auto-toc">
+<li><a class="reference internal" href="#sub-document-1" id="id84">2.14.9.1&nbsp;&nbsp;&nbsp;Sub-Document 1</a><ul class="auto-toc">
+<li><a class="reference internal" href="#sub-document-2" id="id85">2.14.9.1.1&nbsp;&nbsp;&nbsp;Sub-Document 2</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 <p>These are just a sample of the many reStructuredText Directives.  For
 others, please see
 <a class="reference external" href="http://docutils.sourceforge.net/docs/ref/rst/directives.html">http://docutils.sourceforge.net/docs/ref/rst/directives.html</a>.</p>
 <div class="section" id="document-parts">
-<h3><a class="toc-backref" href="#id72">2.14.1&nbsp;&nbsp;&nbsp;Document Parts</a></h3>
+<h3><a class="toc-backref" href="#id75">2.14.1&nbsp;&nbsp;&nbsp;Document Parts</a></h3>
 <p>An example of the &quot;contents&quot; directive can be seen above this section
 (a local, untitled table of <a class="reference internal" href="#contents">contents</a>) and at the beginning of the
 document (a document-wide <a class="reference internal" href="#table-of-contents">table of contents</a>).</p>
 </div>
 <div class="section" id="images">
-<h3><a class="toc-backref" href="#id73">2.14.2&nbsp;&nbsp;&nbsp;Images</a></h3>
+<h3><a class="toc-backref" href="#id76">2.14.2&nbsp;&nbsp;&nbsp;Images</a></h3>
 <p>An image directive (also clickable -- a hyperlink reference):</p>
 <a class="reference internal image-reference" href="#directives"><img alt="../../../docs/user/rst/images/title.png" class="class1 class2" src="../../../docs/user/rst/images/title.png" /></a>
 <p>Image with multiple IDs:</p>
@@ -619,7 +633,7 @@ This is the legend.</div>
 <img alt="../../../docs/user/rst/images/biohazard.png" src="../../../docs/user/rst/images/biohazard.png" style="height: 3cm;" />
 </div>
 <div class="section" id="admonitions">
-<h3><a class="toc-backref" href="#id74">2.14.3&nbsp;&nbsp;&nbsp;Admonitions</a></h3>
+<h3><a class="toc-backref" href="#id77">2.14.3&nbsp;&nbsp;&nbsp;Admonitions</a></h3>
 <div class="attention">
 <p class="first admonition-title">Attention!</p>
 <p class="last">Directives at large.</p>
@@ -668,7 +682,7 @@ Reader discretion is strongly advised.</p>
 </div>
 </div>
 <div class="section" id="topics-sidebars-and-rubrics">
-<h3><a class="toc-backref" href="#id75">2.14.4&nbsp;&nbsp;&nbsp;Topics, Sidebars, and Rubrics</a></h3>
+<h3><a class="toc-backref" href="#id78">2.14.4&nbsp;&nbsp;&nbsp;Topics, Sidebars, and Rubrics</a></h3>
 <div class="sidebar">
 <p class="first sidebar-title">Sidebar Title</p>
 <p class="sidebar-subtitle">Optional Subtitle</p>
@@ -685,7 +699,7 @@ background color.</p>
 <p class="rubric">This is a rubric</p>
 </div>
 <div class="section" id="target-footnotes">
-<h3><a class="toc-backref" href="#id76">2.14.5&nbsp;&nbsp;&nbsp;Target Footnotes</a></h3>
+<h3><a class="toc-backref" href="#id79">2.14.5&nbsp;&nbsp;&nbsp;Target Footnotes</a></h3>
 <table class="docutils footnote" frame="void" id="id25" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
@@ -700,11 +714,11 @@ background color.</p>
 </table>
 </div>
 <div class="section" id="replacement-text">
-<h3><a class="toc-backref" href="#id77">2.14.6&nbsp;&nbsp;&nbsp;Replacement Text</a></h3>
+<h3><a class="toc-backref" href="#id80">2.14.6&nbsp;&nbsp;&nbsp;Replacement Text</a></h3>
 <p>I recommend you try <a class="reference external" href="http://www.python.org/">Python, <em>the</em> best language around</a> <a class="footnote-reference" href="#id25" id="id28">[5]</a>.</p>
 </div>
 <div class="section" id="compound-paragraph">
-<h3><a class="toc-backref" href="#id78">2.14.7&nbsp;&nbsp;&nbsp;Compound Paragraph</a></h3>
+<h3><a class="toc-backref" href="#id81">2.14.7&nbsp;&nbsp;&nbsp;Compound Paragraph</a></h3>
 <div class="some-class compound">
 <p class="compound-first">Compound 1, paragraph 1.</p>
 <p class="compound-middle">Compound 1, paragraph 2.</p>
@@ -772,7 +786,7 @@ paragraph.</td>
 </div>
 </div>
 <div class="section" id="parsed-literal-blocks">
-<h3><a class="toc-backref" href="#id79">2.14.8&nbsp;&nbsp;&nbsp;Parsed Literal Blocks</a></h3>
+<h3><a class="toc-backref" href="#id82">2.14.8&nbsp;&nbsp;&nbsp;Parsed Literal Blocks</a></h3>
 <pre class="literal-block">
 This is a parsed literal block.
     This line is indented.  The next line is blank.
@@ -781,14 +795,27 @@ Inline markup is supported, e.g. <em>emphasis</em>, <strong>strong</strong>, <tt
 <span class="pre">text</span></tt>, footnotes <a class="footnote-reference" href="#id8" id="id21">[1]</a>, <span class="target" id="id22">targets</span>, and <a class="reference external" href="http://www.python.org/">references</a>.
 </pre>
 </div>
+<div class="section" id="sub-documents">
+<h3><a class="toc-backref" href="#id83">2.14.9&nbsp;&nbsp;&nbsp;Sub-Documents</a></h3>
+<p>Include another document:</p>
+<div class="section" id="sub-document-1">
+<h4><a class="toc-backref" href="#id84">2.14.9.1&nbsp;&nbsp;&nbsp;Sub-Document 1</a></h4>
+<p>This is a document intended to be included as a sub-document by other
+documents.  It includes a sub-document itself:</p>
+<div class="section" id="sub-document-2">
+<h5><a class="toc-backref" href="#id85">2.14.9.1.1&nbsp;&nbsp;&nbsp;Sub-Document 2</a></h5>
+<p>This is another document intended to be included as a sub-document.</p>
+</div>
+</div>
+</div>
 </div>
 <div class="section" id="substitution-definitions">
-<h2><a class="toc-backref" href="#id62">2.15&nbsp;&nbsp;&nbsp;Substitution Definitions</a></h2>
+<h2><a class="toc-backref" href="#id65">2.15&nbsp;&nbsp;&nbsp;Substitution Definitions</a></h2>
 <p>An inline image (<img alt="EXAMPLE" src="../../../docs/user/rst/images/biohazard.png" />) example:</p>
 <p>(Substitution definitions are not visible in the HTML source.)</p>
 </div>
 <div class="section" id="comments">
-<h2><a class="toc-backref" href="#id63">2.16&nbsp;&nbsp;&nbsp;Comments</a></h2>
+<h2><a class="toc-backref" href="#id66">2.16&nbsp;&nbsp;&nbsp;Comments</a></h2>
 <p>Here's one:</p>
 <!-- Comments begin with two dots and a space. Anything may
 follow, except for the syntax of footnotes, hyperlink
@@ -800,20 +827,20 @@ Comments may contain non-ASCII characters: ä ö ü æ ø å -->
 <p>(View the HTML source to see the comment.)</p>
 </div>
 <div class="section" id="raw-text">
-<h2><a class="toc-backref" href="#id64">2.17&nbsp;&nbsp;&nbsp;Raw text</a></h2>
+<h2><a class="toc-backref" href="#id67">2.17&nbsp;&nbsp;&nbsp;Raw text</a></h2>
 <p>This does not necessarily look nice, because there may be missing white space.</p>
 <p>It's just there to freeze the behavior.</p>
 A test.Second test.<div class="myclass">Another test with myclass set.</div><p>This is the <span class="myrawroleclass">fourth test</span> with myrawroleclass set.</p>
 Fifth test in HTML.<br />Line two.</div>
 <div class="section" id="container">
-<h2><a class="toc-backref" href="#id65">2.18&nbsp;&nbsp;&nbsp;Container</a></h2>
+<h2><a class="toc-backref" href="#id68">2.18&nbsp;&nbsp;&nbsp;Container</a></h2>
 <div class="custom container">
 <p>paragraph 1</p>
 <p>paragraph 2</p>
 </div>
 </div>
 <div class="section" id="colspanning-tables">
-<h2><a class="toc-backref" href="#id66">2.19&nbsp;&nbsp;&nbsp;Colspanning tables</a></h2>
+<h2><a class="toc-backref" href="#id69">2.19&nbsp;&nbsp;&nbsp;Colspanning tables</a></h2>
 <p>This table has a cell spanning two columns:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -851,7 +878,7 @@ Fifth test in HTML.<br />Line two.</div>
 </table>
 </div>
 <div class="section" id="rowspanning-tables">
-<h2><a class="toc-backref" href="#id67">2.20&nbsp;&nbsp;&nbsp;Rowspanning tables</a></h2>
+<h2><a class="toc-backref" href="#id70">2.20&nbsp;&nbsp;&nbsp;Rowspanning tables</a></h2>
 <p>Here's a table with cells spanning several rows:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -884,7 +911,7 @@ cell.</td>
 </table>
 </div>
 <div class="section" id="complex-tables">
-<h2><a class="toc-backref" href="#id68">2.21&nbsp;&nbsp;&nbsp;Complex tables</a></h2>
+<h2><a class="toc-backref" href="#id71">2.21&nbsp;&nbsp;&nbsp;Complex tables</a></h2>
 <p>Here's a complex table, which should test all features.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -933,7 +960,7 @@ empty: <tt class="docutils literal"><span class="pre">--&gt;</span></tt></td>
 </table>
 </div>
 <div class="section" id="list-tables">
-<h2><a class="toc-backref" href="#id69">2.22&nbsp;&nbsp;&nbsp;List Tables</a></h2>
+<h2><a class="toc-backref" href="#id72">2.22&nbsp;&nbsp;&nbsp;List Tables</a></h2>
 <p>Here's a list table exercising all features:</p>
 <table border="1" class="test docutils">
 <caption>list table with integral header</caption>
@@ -966,7 +993,7 @@ crunchy, now would it?</td>
 </table>
 </div>
 <div class="section" id="custom-roles">
-<h2><a class="toc-backref" href="#id70">2.23&nbsp;&nbsp;&nbsp;Custom Roles</a></h2>
+<h2><a class="toc-backref" href="#id73">2.23&nbsp;&nbsp;&nbsp;Custom Roles</a></h2>
 <ul>
 <li><p class="first">A role based on an existing role.</p>
 <p><tt class="custom docutils literal"><span class="pre">one</span></tt> <tt class="custom docutils literal"><span class="pre">two</span></tt> <tt class="custom docutils literal"><span class="pre">three</span></tt></p>
@@ -984,7 +1011,7 @@ crunchy, now would it?</td>
 </div>
 </div>
 <div class="section" id="error-handling">
-<h1><a class="toc-backref" href="#id71">3&nbsp;&nbsp;&nbsp;Error Handling</a></h1>
+<h1><a class="toc-backref" href="#id74">3&nbsp;&nbsp;&nbsp;Error Handling</a></h1>
 <p>Any errors caught during processing will generate system messages.</p>
 <p>There should be five messages in the following, auto-generated
 section, &quot;Docutils System Messages&quot;:</p>
@@ -995,17 +1022,17 @@ section, &quot;Docutils System Messages&quot;:</p>
 <div class="system-message" id="id23">
 <p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">functional/input/data/standard.txt</tt>, line 100); <em><a href="#id24">backlink</a></em></p>
 Undefined substitution referenced: &quot;problematic&quot;.</div>
-<div class="system-message" id="id80">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">functional/input/standalone_rst_html4css1.txt</tt>, line 358); <em><a href="#id81">backlink</a></em></p>
-Unknown target name: &quot;5&quot;.</div>
-<div class="system-message" id="id82">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">functional/input/data/standard.txt</tt>, line 367); <em><a href="#id83">backlink</a></em></p>
-Unknown target name: &quot;nonexistent&quot;.</div>
-<div class="system-message" id="id84">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">functional/input/data/standard.txt</tt>, line 394); <em><a href="#id85">backlink</a></em></p>
-Unknown target name: &quot;hyperlink reference without a target&quot;.</div>
 <div class="system-message" id="id86">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">functional/input/data/standard.txt</tt>, line 407); <em><a href="#id87">backlink</a></em></p>
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">functional/input/standalone_rst_html4css1.txt</tt>, line 358); <em><a href="#id87">backlink</a></em></p>
+Unknown target name: &quot;5&quot;.</div>
+<div class="system-message" id="id88">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">functional/input/data/standard.txt</tt>, line 367); <em><a href="#id89">backlink</a></em></p>
+Unknown target name: &quot;nonexistent&quot;.</div>
+<div class="system-message" id="id90">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">functional/input/data/standard.txt</tt>, line 394); <em><a href="#id91">backlink</a></em></p>
+Unknown target name: &quot;hyperlink reference without a target&quot;.</div>
+<div class="system-message" id="id92">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">functional/input/data/standard.txt</tt>, line 407); <em><a href="#id93">backlink</a></em></p>
 Duplicate target name, cannot be used as a unique reference: &quot;duplicate target names&quot;.</div>
 </div>
 </div>

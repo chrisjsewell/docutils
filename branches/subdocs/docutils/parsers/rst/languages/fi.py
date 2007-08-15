@@ -60,6 +60,7 @@ directives = {
       u'footer (translation required)': 'footer',
       'subdocuments (translation required)': 'subdocs',
       'subdocs (translation required)': 'subdocs',
+      'docset-root (translation required)': 'docset-root',
       #u'alaviitteet': u'footnotes',
       #u'viitaukset': u'citations',
       u'target-notes (translation required)': u'target-notes'}

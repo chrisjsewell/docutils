@@ -200,6 +200,16 @@ reStructuredText construct.
 
 \item {} \href{\#parsed-literal-blocks}{2.14.8~~~Parsed Literal Blocks}
 
+\item {} \href{\#sub-documents}{2.14.9~~~Sub-Documents}
+\begin{list}{}{}
+\item {} \href{\#sub-document-1}{2.14.9.1~~~Sub-Document 1}
+\begin{list}{}{}
+\item {} \href{\#sub-document-2}{2.14.9.1.1~~~Sub-Document 2}
+
+\end{list}
+
+\end{list}
+
 \end{list}
 
 \item {} \href{\#substitution-definitions}{2.15~~~Substitution Definitions}
@@ -855,6 +865,16 @@ this: {\color{red}\bfseries{}`Duplicate Target Names`{\_}}), an error is generat
 
 \item {} \href{\#parsed-literal-blocks}{2.14.8~~~Parsed Literal Blocks}
 
+\item {} \href{\#sub-documents}{2.14.9~~~Sub-Documents}
+\begin{list}{}{}
+\item {} \href{\#sub-document-1}{2.14.9.1~~~Sub-Document 1}
+\begin{list}{}{}
+\item {} \href{\#sub-document-2}{2.14.9.1.1~~~Sub-Document 2}
+
+\end{list}
+
+\end{list}
+
 \end{list}
 
 
@@ -1242,6 +1262,37 @@ This~is~a~parsed~literal~block.~\\
 Inline~markup~is~supported,~e.g.~\emph{emphasis},~\textbf{strong},~\texttt{literal~\\
 text},~footnotes\raisebox{.5em}[0em]{\scriptsize\hyperlink{id8}{1}},~\hypertarget{id22}{targets},~and~\href{http://www.python.org/}{references}.
 }\end{quote}
+
+
+%___________________________________________________________________________
+
+\hypertarget{sub-documents}{}
+\pdfbookmark[2]{2.14.9~~~Sub-Documents}{sub-documents}
+\subsubsection*{2.14.9~~~Sub-Documents}
+\label{sub-documents}
+
+Include another document:
+
+
+%___________________________________________________________________________
+
+\hypertarget{sub-document-1}{}
+\pdfbookmark[3]{2.14.9.1~~~Sub-Document 1}{sub-document-1}
+\paragraph*{2.14.9.1~~~Sub-Document 1}
+\label{sub-document-1}
+
+This is a document intended to be included as a sub-document by other
+documents.  It includes a sub-document itself:
+
+
+%___________________________________________________________________________
+
+\hypertarget{sub-document-2}{}
+\pdfbookmark[4]{2.14.9.1.1~~~Sub-Document 2}{sub-document-2}
+\subparagraph*{2.14.9.1.1~~~Sub-Document 2}
+\label{sub-document-2}
+
+This is another document intended to be included as a sub-document.
 
 
 %___________________________________________________________________________

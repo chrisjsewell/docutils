@@ -19,7 +19,7 @@ class BaseAdmonition(Directive):
     required_arguments = 0
     optional_arguments = 0
     final_argument_whitespace = True
-    option_spec = {}
+    option_spec = None
     has_content = True
 
     node_class = None

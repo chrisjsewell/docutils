@@ -63,6 +63,7 @@ directives = {
       u'footer (translation required)': 'footer',
       'subdocuments (translation required)': 'subdocs',
       'subdocs (translation required)': 'subdocs',
+      'docset-root (translation required)': 'docset-root',
       #u'notas-de-rorap\u00E9': 'footnotes',
       #u'cita\u00E7\u00F5es': 'citations',
       u'links-no-rodap\u00E9': 'target-notes',

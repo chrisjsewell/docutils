@@ -1,0 +1,6 @@
+================================
+ Document With a Funny Filename
+================================
+
+Document contents.
+
