@@ -187,7 +187,7 @@ class Subdocuments(Directive):
             parser_name='rst', docset_root=document.get('docset_root'))
         if not os.path.isabs(file_name):
             if not document.hasattr('docset_root'):
-                raise self.error('a docset root must be declared using the '
+                raise self.error('a doc-set root must be declared using the '
                                  '"docset-root" directive before '
                                  'referencing sub-documents')
                 # Not *quite* true; absolute paths are still allowed. ;->
@@ -250,7 +250,7 @@ class Subdocuments(Directive):
 class DocsetRoot(Directive):
 
     """
-    Specify the root of the docset (used by the subdocs directive).
+    Specify the root of the doc-set (used by the subdocs directive).
     """
 
     required_arguments = 1
@@ -262,7 +262,7 @@ class DocsetRoot(Directive):
             if self.reader is None or self.reader.source is None or \
                    self.reader.source.source_path is None:
                 # This could happen when called programmatically.
-                raise self.error('relative docset roots are prohibited if '
+                raise self.error('relative doc-set roots are prohibited if '
                                  'the document source path '
                                  '(reader.source.source_path) cannot be '
                                  'determined')
@@ -274,7 +274,7 @@ class DocsetRoot(Directive):
             document['docset_root'] = path
         elif os.path.normcase(os.path.abspath(document['docset_root'])) != \
                  os.path.normcase(os.path.abspath(path)):
-            raise self.error('given docset root ("%s") conflicts with '
-                             'previously specified docset root ("%s")'
+            raise self.error('given doc-set root ("%s") conflicts with '
+                             'previously specified doc-set root ("%s")'
                              % (path, document['docset_root']))
         return []
