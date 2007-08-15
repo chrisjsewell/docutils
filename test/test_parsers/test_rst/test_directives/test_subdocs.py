@@ -103,6 +103,34 @@ totest['subdocs'] = [
                 Contents of document 1.
 """ % paths],
 ["""\
+.. docset-root:: %(docset-root)s//
+.. subdocuments:: 
+
+   * single-1.txt
+
+     * single-2.txt
+
+       * single-1.txt
+""" % paths,
+"""\
+<document docset_root="%(docset-root)s" source="test data">
+    <section ids="document-1" names="document\\ 1" source="%(single-1.txt)s">
+        <title>
+            Document 1
+        <paragraph>
+            Contents of document 1.
+        <section ids="document-2" names="document\\ 2" source="%(single-2.txt)s">
+            <title>
+                Document 2
+            <comment xml:space="preserve">
+                Comments in front of the document title should be allowed.
+            <section ids="document-1" names="document\\ 1" source="%(single-1.txt)s">
+                <title>
+                    Document 1
+                <paragraph>
+                    Contents of document 1.
+""" % paths],
+["""\
 .. docset-root:: %(docset-root)s
 .. subdocs::
 
@@ -182,7 +210,7 @@ totest['subdocs-errors'] = [
 <document source="test data">
     <system_message level="3" line="1" source="test data" type="ERROR">
         <paragraph>
-            a docset root must be declared using the "docset-root" directive before referencing sub-documents
+            a doc-set root must be declared using the "docset-root" directive before referencing sub-documents
         <literal_block xml:space="preserve">
             .. subdocs::
             \n\
@@ -330,7 +358,7 @@ totest['docset-root'] = [
 <document source="test data">
     <system_message level="3" line="1" source="test data" type="ERROR">
         <paragraph>
-            relative docset roots are prohibited if the document source path (reader.source.source_path) cannot be determined
+            relative doc-set roots are prohibited if the document source path (reader.source.source_path) cannot be determined
         <literal_block xml:space="preserve">
             .. docset-root:: relative/path
 """ % paths],
@@ -342,7 +370,7 @@ totest['docset-root'] = [
 <document docset_root="%(docset-root)s" source="test data">
     <system_message level="3" line="2" source="test data" type="ERROR">
         <paragraph>
-            given docset root ("%(docset-root)s/different") conflicts with previously specified docset root ("%(docset-root)s")
+            given doc-set root ("%(docset-root)s/different") conflicts with previously specified doc-set root ("%(docset-root)s")
         <literal_block xml:space="preserve">
             .. docset-root:: %(docset-root)s/different
 """ % paths],
