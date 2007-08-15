@@ -1116,9 +1116,10 @@ The content block of the "subdocs" directive is a single bullet list,
 the list items of which specify the files to be included as
 sub-documents.
 
-Each sub-document must contain one or more top-level sections,
-(possibly interspersed by transitions).  These sections will be
-inserted in place of the "subdocs" directive, in order.
+Each sub-document must contain one or more top-level sections
+(possibly interspersed by transitions).  There must not be any content
+in front of the first section. [#content-in-front]_ These sections
+will be inserted in place of the "subdocs" directive, in order.
 
 If a sub-document has only one top-level section, you can add a nested
 bullet list after the file name ("``chapter-2-section-1.txt``" and
@@ -1127,6 +1128,16 @@ bullet list is parsed according to the same rules as the top-level
 list; it may itself contain nested bullet lists.  The sections of the
 sub-documents specified by the nested bullet lists are inserted at the
 end of the containing sub-document.
+
+.. [#content-in-front] As an obscure feature, the doctitle_xform_
+   setting is enabled for all sub-documents; this means that invisible
+   elements (such as comments, targets, etc.) in front of the document
+   title are allowed (since the DocTitle transform will move them
+   after the document title), but only if the document contains only
+   one top-level section.
+
+   .. Should this be documented at all?  Feel free to remove.
+   .. _doctitle_xform: ../../user/config.html#doctitle-xform
 
 
 .. _docset-root:
