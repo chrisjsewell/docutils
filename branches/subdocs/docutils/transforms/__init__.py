@@ -24,6 +24,8 @@ choose to perform on the parsed document.
 __docformat__ = 'reStructuredText'
 
 
+import sys
+
 from docutils import languages, ApplicationError, TransformSpec
 
 
@@ -171,5 +173,11 @@ class Transformer(TransformSpec):
                 self.sorted = 1
             priority, transform_class, pending, kwargs = self.transforms.pop()
             transform = transform_class(self.document, self, startnode=pending)
+            if self.document.settings.dump_transforms:
+                print >>sys.stderr, '::: Transform: priority=%s, ' \
+                    'class=%s.%s, pending details=%r, kwargs=%s' \
+                    % (priority, transform_class.__module__,
+                       transform_class.__name__, pending and pending.details,
+                       kwargs)
             transform.apply(**kwargs)
             self.applied.append((priority, transform_class, pending, kwargs))
