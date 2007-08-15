@@ -46,6 +46,7 @@ _directive_registry = {
       'header': ('parts', 'Header'),
       'footer': ('parts', 'Footer'),
       'subdocs': ('parts', 'Subdocuments'),
+      'docset-root': ('parts', 'DocsetRoot'),
       #'footnotes': ('parts', 'footnotes'),
       #'citations': ('parts', 'citations'),
       'target-notes': ('references', 'TargetNotes'),

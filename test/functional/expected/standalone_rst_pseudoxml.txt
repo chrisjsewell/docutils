@@ -1,4 +1,4 @@
-<document ids="restructuredtext-test-document doctitle" names="restructuredtext\ test\ document doctitle" source="functional/input/standalone_rst_pseudoxml.txt" title="reStructuredText Test Document">
+<document docset_root="functional/input" ids="restructuredtext-test-document doctitle" names="restructuredtext\ test\ document doctitle" source="functional/input/standalone_rst_pseudoxml.txt" title="reStructuredText Test Document">
     <title>
         reStructuredText Test Document
     <subtitle ids="examples-of-syntax-constructs subtitle" names="examples\ of\ syntax\ constructs subtitle">
@@ -274,57 +274,77 @@
                                         <generated classes="sectnum">
                                             2.14.8   
                                         Parsed Literal Blocks
+                            <list_item>
+                                <paragraph>
+                                    <reference ids="id62" refid="sub-documents">
+                                        <generated classes="sectnum">
+                                            2.14.9   
+                                        Sub-Documents
+                                <bullet_list classes="auto-toc">
+                                    <list_item>
+                                        <paragraph>
+                                            <reference ids="id63" refid="sub-document-1">
+                                                <generated classes="sectnum">
+                                                    2.14.9.1   
+                                                Sub-Document 1
+                                        <bullet_list classes="auto-toc">
+                                            <list_item>
+                                                <paragraph>
+                                                    <reference ids="id64" refid="sub-document-2">
+                                                        <generated classes="sectnum">
+                                                            2.14.9.1.1   
+                                                        Sub-Document 2
                     <list_item>
                         <paragraph>
-                            <reference ids="id62" refid="substitution-definitions">
+                            <reference ids="id65" refid="substitution-definitions">
                                 <generated classes="sectnum">
                                     2.15   
                                 Substitution Definitions
                     <list_item>
                         <paragraph>
-                            <reference ids="id63" refid="comments">
+                            <reference ids="id66" refid="comments">
                                 <generated classes="sectnum">
                                     2.16   
                                 Comments
                     <list_item>
                         <paragraph>
-                            <reference ids="id64" refid="raw-text">
+                            <reference ids="id67" refid="raw-text">
                                 <generated classes="sectnum">
                                     2.17   
                                 Raw text
                     <list_item>
                         <paragraph>
-                            <reference ids="id65" refid="container">
+                            <reference ids="id68" refid="container">
                                 <generated classes="sectnum">
                                     2.18   
                                 Container
                     <list_item>
                         <paragraph>
-                            <reference ids="id66" refid="colspanning-tables">
+                            <reference ids="id69" refid="colspanning-tables">
                                 <generated classes="sectnum">
                                     2.19   
                                 Colspanning tables
                     <list_item>
                         <paragraph>
-                            <reference ids="id67" refid="rowspanning-tables">
+                            <reference ids="id70" refid="rowspanning-tables">
                                 <generated classes="sectnum">
                                     2.20   
                                 Rowspanning tables
                     <list_item>
                         <paragraph>
-                            <reference ids="id68" refid="complex-tables">
+                            <reference ids="id71" refid="complex-tables">
                                 <generated classes="sectnum">
                                     2.21   
                                 Complex tables
                     <list_item>
                         <paragraph>
-                            <reference ids="id69" refid="list-tables">
+                            <reference ids="id72" refid="list-tables">
                                 <generated classes="sectnum">
                                     2.22   
                                 List Tables
             <list_item>
                 <paragraph>
-                    <reference ids="id70" refid="error-handling">
+                    <reference ids="id73" refid="error-handling">
                         <generated classes="sectnum">
                             3   
                         Error Handling
@@ -974,7 +994,7 @@
                 <paragraph>
                     Here's an unreferenced footnote, with a reference to a
                     nonexistent footnote: 
-                    <problematic ids="id80 id16" refid="id79">
+                    <problematic ids="id86 id16" refid="id85">
                         [5]_
                     .
         <section ids="citations" names="citations">
@@ -993,7 +1013,7 @@
                 <citation_reference ids="id17" refid="cit2002">
                     CIT2002
                 , and a 
-                <problematic ids="id82 id18" refid="id81">
+                <problematic ids="id88 id18" refid="id87">
                     [nonexistent]_
                 
                 citation.
@@ -1044,7 +1064,7 @@
             <target anonymous="1" ids="id19" refid="id22">
             <paragraph>
                 Here's a 
-                <problematic ids="id84" refid="id83">
+                <problematic ids="id90" refid="id89">
                     `hyperlink reference without a target`_
                 , which generates an
                 error.
@@ -1066,7 +1086,7 @@
                     Since there are two "Duplicate Target Names" section headers, we
                     cannot uniquely refer to either of them by name.  If we try to (like
                     this: 
-                    <problematic ids="id86" refid="id85">
+                    <problematic ids="id92" refid="id91">
                         `Duplicate Target Names`_
                     ), an error is generated.
         <section ids="directives" names="directives">
@@ -1078,52 +1098,72 @@
                 <bullet_list classes="auto-toc">
                     <list_item>
                         <paragraph>
-                            <reference ids="id71" refid="document-parts">
+                            <reference ids="id74" refid="document-parts">
                                 <generated classes="sectnum">
                                     2.14.1   
                                 Document Parts
                     <list_item>
                         <paragraph>
-                            <reference ids="id72" refid="images">
+                            <reference ids="id75" refid="images">
                                 <generated classes="sectnum">
                                     2.14.2   
                                 Images
                     <list_item>
                         <paragraph>
-                            <reference ids="id73" refid="admonitions">
+                            <reference ids="id76" refid="admonitions">
                                 <generated classes="sectnum">
                                     2.14.3   
                                 Admonitions
                     <list_item>
                         <paragraph>
-                            <reference ids="id74" refid="topics-sidebars-and-rubrics">
+                            <reference ids="id77" refid="topics-sidebars-and-rubrics">
                                 <generated classes="sectnum">
                                     2.14.4   
                                 Topics, Sidebars, and Rubrics
                     <list_item>
                         <paragraph>
-                            <reference ids="id75" refid="target-footnotes">
+                            <reference ids="id78" refid="target-footnotes">
                                 <generated classes="sectnum">
                                     2.14.5   
                                 Target Footnotes
                     <list_item>
                         <paragraph>
-                            <reference ids="id76" refid="replacement-text">
+                            <reference ids="id79" refid="replacement-text">
                                 <generated classes="sectnum">
                                     2.14.6   
                                 Replacement Text
                     <list_item>
                         <paragraph>
-                            <reference ids="id77" refid="compound-paragraph">
+                            <reference ids="id80" refid="compound-paragraph">
                                 <generated classes="sectnum">
                                     2.14.7   
                                 Compound Paragraph
                     <list_item>
                         <paragraph>
-                            <reference ids="id78" refid="parsed-literal-blocks">
+                            <reference ids="id81" refid="parsed-literal-blocks">
                                 <generated classes="sectnum">
                                     2.14.8   
                                 Parsed Literal Blocks
+                    <list_item>
+                        <paragraph>
+                            <reference ids="id82" refid="sub-documents">
+                                <generated classes="sectnum">
+                                    2.14.9   
+                                Sub-Documents
+                        <bullet_list classes="auto-toc">
+                            <list_item>
+                                <paragraph>
+                                    <reference ids="id83" refid="sub-document-1">
+                                        <generated classes="sectnum">
+                                            2.14.9.1   
+                                        Sub-Document 1
+                                <bullet_list classes="auto-toc">
+                                    <list_item>
+                                        <paragraph>
+                                            <reference ids="id84" refid="sub-document-2">
+                                                <generated classes="sectnum">
+                                                    2.14.9.1.1   
+                                                Sub-Document 2
             <paragraph>
                 These are just a sample of the many reStructuredText Directives.  For
                 others, please see
@@ -1131,7 +1171,7 @@
                     http://docutils.sourceforge.net/docs/ref/rst/directives.html
                 .
             <section ids="document-parts" names="document\ parts">
-                <title auto="1" refid="id71">
+                <title auto="1" refid="id74">
                     <generated classes="sectnum">
                         2.14.1   
                     Document Parts
@@ -1146,7 +1186,7 @@
                         table of contents
                     ).
             <section ids="images" names="images">
-                <title auto="1" refid="id72">
+                <title auto="1" refid="id75">
                     <generated classes="sectnum">
                         2.14.2   
                     Images
@@ -1254,7 +1294,7 @@
                     An image 3 cm high:
                 <image height="3cm" uri="../../../docs/user/rst/images/biohazard.png">
             <section ids="admonitions" names="admonitions">
-                <title auto="1" refid="id73">
+                <title auto="1" refid="id76">
                     <generated classes="sectnum">
                         2.14.3   
                     Admonitions
@@ -1304,7 +1344,7 @@
                         You can make up your own admonition too.
                     <target ids="docutils" names="docutils" refuri="http://docutils.sourceforge.net/">
             <section ids="topics-sidebars-and-rubrics" names="topics,\ sidebars,\ and\ rubrics">
-                <title auto="1" refid="id74">
+                <title auto="1" refid="id77">
                     <generated classes="sectnum">
                         2.14.4   
                     Topics, Sidebars, and Rubrics
@@ -1329,7 +1369,7 @@
                 <rubric>
                     This is a rubric
             <section ids="target-footnotes" names="target\ footnotes">
-                <title auto="1" refid="id75">
+                <title auto="1" refid="id78">
                     <generated classes="sectnum">
                         2.14.5   
                     Target Footnotes
@@ -1346,7 +1386,7 @@
                         <reference refuri="http://docutils.sourceforge.net/">
                             http://docutils.sourceforge.net/
             <section ids="replacement-text" names="replacement\ text">
-                <title auto="1" refid="id76">
+                <title auto="1" refid="id79">
                     <generated classes="sectnum">
                         2.14.6   
                     Replacement Text
@@ -1367,7 +1407,7 @@
                         the
                      best language around
             <section ids="compound-paragraph" names="compound\ paragraph">
-                <title auto="1" refid="id77">
+                <title auto="1" refid="id80">
                     <generated classes="sectnum">
                         2.14.7   
                     Compound Paragraph
@@ -1453,7 +1493,7 @@
                     <paragraph>
                         Compound 7, another paragraph.
             <section ids="parsed-literal-blocks" names="parsed\ literal\ blocks">
-                <title auto="1" refid="id78">
+                <title auto="1" refid="id81">
                     <generated classes="sectnum">
                         2.14.8   
                     Parsed Literal Blocks
@@ -1482,8 +1522,30 @@
                         references
                     <target ids="references" names="references" refuri="http://www.python.org/">
                     .
+            <section ids="sub-documents" names="sub-documents">
+                <title auto="1" refid="id82">
+                    <generated classes="sectnum">
+                        2.14.9   
+                    Sub-Documents
+                <paragraph>
+                    Include another document:
+                <section ids="sub-document-1" names="sub-document\ 1" source="functional/input/data/subdoc-1.txt">
+                    <title auto="1" refid="id83">
+                        <generated classes="sectnum">
+                            2.14.9.1   
+                        Sub-Document 1
+                    <paragraph>
+                        This is a document intended to be included as a sub-document by other
+                        documents.  It includes a sub-document itself:
+                    <section ids="sub-document-2" names="sub-document\ 2" source="functional/input/data/subdoc-2.txt">
+                        <title auto="1" refid="id84">
+                            <generated classes="sectnum">
+                                2.14.9.1.1   
+                            Sub-Document 2
+                        <paragraph>
+                            This is another document intended to be included as a sub-document.
         <section ids="substitution-definitions" names="substitution\ definitions">
-            <title auto="1" refid="id62">
+            <title auto="1" refid="id65">
                 <generated classes="sectnum">
                     2.15   
                 Substitution Definitions
@@ -1496,7 +1558,7 @@
             <paragraph>
                 (Substitution definitions are not visible in the HTML source.)
         <section ids="comments" names="comments">
-            <title auto="1" refid="id63">
+            <title auto="1" refid="id66">
                 <generated classes="sectnum">
                     2.16   
                 Comments
@@ -1513,7 +1575,7 @@
             <paragraph>
                 (View the HTML source to see the comment.)
         <section ids="raw-text" names="raw\ text">
-            <title auto="1" refid="id64">
+            <title auto="1" refid="id67">
                 <generated classes="sectnum">
                     2.17   
                 Raw text
@@ -1537,7 +1599,7 @@
             <raw format="latex" xml:space="preserve">
                 Fifth test in LaTeX.\\Line two.
         <section ids="container" names="container">
-            <title auto="1" refid="id65">
+            <title auto="1" refid="id68">
                 <generated classes="sectnum">
                     2.18   
                 Container
@@ -1547,7 +1609,7 @@
                 <paragraph>
                     paragraph 2
         <section ids="colspanning-tables" names="colspanning\ tables">
-            <title auto="1" refid="id66">
+            <title auto="1" refid="id69">
                 <generated classes="sectnum">
                     2.19   
                 Colspanning tables
@@ -1618,7 +1680,7 @@
                                 <paragraph>
                                     True
         <section ids="rowspanning-tables" names="rowspanning\ tables">
-            <title auto="1" refid="id67">
+            <title auto="1" refid="id70">
                 <generated classes="sectnum">
                     2.20   
                 Rowspanning tables
@@ -1670,7 +1732,7 @@
                                 <paragraph>
                                     body row 3
         <section ids="complex-tables" names="complex\ tables">
-            <title auto="1" refid="id68">
+            <title auto="1" refid="id71">
                 <generated classes="sectnum">
                     2.21   
                 Complex tables
@@ -1755,7 +1817,7 @@
                                         -->
                             <entry>
         <section ids="list-tables" names="list\ tables">
-            <title auto="1" refid="id69">
+            <title auto="1" refid="id72">
                 <generated classes="sectnum">
                     2.22   
                 List Tables
@@ -1812,7 +1874,7 @@
                                 <paragraph>
                                     On a stick!
     <section ids="error-handling" names="error\ handling">
-        <title auto="1" refid="id70">
+        <title auto="1" refid="id73">
             <generated classes="sectnum">
                 3   
             Error Handling
@@ -1829,15 +1891,15 @@
         <system_message backrefs="id24" ids="id23" level="3" line="100" source="functional/input/data/standard.txt" type="ERROR">
             <paragraph>
                 Undefined substitution referenced: "problematic".
-        <system_message backrefs="id80" ids="id79" level="3" line="358" source="functional/input/standalone_rst_pseudoxml.txt" type="ERROR">
+        <system_message backrefs="id86" ids="id85" level="3" line="358" source="functional/input/standalone_rst_pseudoxml.txt" type="ERROR">
             <paragraph>
                 Unknown target name: "5".
-        <system_message backrefs="id82" ids="id81" level="3" line="367" source="functional/input/data/standard.txt" type="ERROR">
+        <system_message backrefs="id88" ids="id87" level="3" line="367" source="functional/input/data/standard.txt" type="ERROR">
             <paragraph>
                 Unknown target name: "nonexistent".
-        <system_message backrefs="id84" ids="id83" level="3" line="394" source="functional/input/data/standard.txt" type="ERROR">
+        <system_message backrefs="id90" ids="id89" level="3" line="394" source="functional/input/data/standard.txt" type="ERROR">
             <paragraph>
                 Unknown target name: "hyperlink reference without a target".
-        <system_message backrefs="id86" ids="id85" level="3" line="407" source="functional/input/data/standard.txt" type="ERROR">
+        <system_message backrefs="id92" ids="id91" level="3" line="407" source="functional/input/data/standard.txt" type="ERROR">
             <paragraph>
                 Duplicate target name, cannot be used as a unique reference: "duplicate target names".

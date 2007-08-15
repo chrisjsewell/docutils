@@ -64,6 +64,7 @@ directives = {
       u'footer (translation required)': 'footer',
       'subdocuments (translation required)': 'subdocs',
       'subdocs (translation required)': 'subdocs',
+      'docset-root (translation required)': 'docset-root',
       #'footnotes (translation required)': 'footnotes',
       #'citations (translation required)': 'citations',
       u'\u0446\u0435\u043b\u0435\u0432\u044b\u0435-\u0441\u043d\u043e\u0441\u043a\u0438': 

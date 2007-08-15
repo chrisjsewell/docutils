@@ -1,5 +1,6 @@
 # $Id$
-# Authors: David Goodger <goodger@python.org>; Dmitry Jemerov
+# Authors: David Goodger <goodger@python.org>;
+#     Lea Wiemann <LeWiemann@gmail.com>; Dmitry Jemerov
 # Copyright: This module has been placed in the public domain.
 
 """
@@ -8,10 +9,14 @@ Directives for document parts.
 
 __docformat__ = 'reStructuredText'
 
-from docutils import nodes, languages
+import os.path
+
+from docutils import nodes, languages, utils
+from docutils.io import FileInput
 from docutils.transforms import parts
-from docutils.parsers.rst import Directive
+from docutils.parsers.rst import Directive, Parser
 from docutils.parsers.rst import directives, states
+from docutils.readers import standalone
 
 
 class Contents(Directive):
@@ -128,44 +133,26 @@ class Subdocuments(Directive):
     """Include sub-documents at the current position."""
 
     has_content = True
-    option_spec = {'inherit': directives.flag}
+    # Reserve space for future options.
+    option_spec = {}
 
     def run(self):
-        if self.reader is None:
-            raise self.warning('No document reader has been specified; '
-                               'therefore, the "%s" directive is unavailable.'
-                               % self.name) 
         self.assert_has_content()
-        if 'inherit' in self.options:
-            raise self.error('Error in "%s" directive: :inherit: option not'
-                             'yet implemented.' % self.name)
         bullets = states.Body.patterns['bullet']
         bullet = self.content[0][0]
-        # Not necessary. REMOVEME.
-#         print bullet, bullets
-#         if not bullet in bullets:
-#             raise self.content_error(
-#                 'directive must contain exactly one bullet list')
         bullet_list = nodes.bullet_list('\n'.join(self.content),
                                         bullet=bullet)
-        newline_offset, blank_finish = self.state.nested_list_parse(
-            self.content, self.content_offset, bullet_list,
-            initial_state='SubdocumentsSpec', blank_finish=True)
-        # XXX this does not work. Why?
-#         if newline_offset != len(self.block_text.splitlines()):
-#             raise self.content_error(
-#                 'directive must contain exactly one bullet list')
+        try:
+            newline_offset, blank_finish = self.state.nested_list_parse(
+                self.content, self.content_offset, bullet_list,
+                initial_state='SubdocumentsSpec', blank_finish=True)
+        except states.SubdocumentsSpecError, e:
+            raise self.error('Error with "%s" directive, line %s: %s'
+                             % (self.name, e.line, e.msg))
+        if newline_offset != len(self.content) + self.content_offset:
+            raise self.error('Error with "%s" directive: must contain a '
+                             'bullet list.' % self.name)
         return self.interpret_bullet_list(bullet_list)
-
-    def content_error(self, message):  # , node
-        return self.error(
-            'Error with %s directive: %s.' % (self.name, message))
-        # XXX How do we report an error with the particular node it
-        # occurred at, not with the whole directive?
-        #msg_node = self.state.reporter.system_message(3, message_text)
-        #source_line = self.state_machine.input_lines[node.LINE_NUMBER?]
-        #msg_node += nodes.literal_block(node.rawsource, node.rawsource) # does not work
-        #return msg_node
 
     def interpret_bullet_list(self, bullet_list):
         """
@@ -180,84 +167,114 @@ class Subdocuments(Directive):
                    and isinstance(item[0], nodes.paragraph) \
                    and len(item[0]) == 1
             file_name = item[0].astext()
-            # Expect field lists -- implement later:
-#             # Parse field list.
-#             sections += self.interpret_field_list(item[0])
-#             # Parse nested bullet list.
-#             assert len(item) != 2, 'nested sub-documents not yet implemented'
-            sections += self.read_subdocument({'file': file_name})
-            assert len(sections)
+            subdoc_sections = self.read_subdocument(file_name)
+            assert len(subdoc_sections)
+            sections += subdoc_sections
             if len(item) > 1:
                 assert len(item) == 2 and isinstance(item[1],
                                                      nodes.bullet_list)
-                if len(sections) > 1:
+                if len(subdoc_sections) > 1:
                     raise self.error('cannot have nested sub-documents '
                                      'since "%s" contains more than one '
                                      'section' % file_name)
-                sections[0] += self.interpret_bullet_list(item[1])
+                subdoc_sections[0] += self.interpret_bullet_list(item[1])
         return sections
 
-#     def interpret_field_list(self, field_list):
-#         """
-#         Parse the field list, read the sub-document specified, and
-#         return a list of sections.
-#         """
-#         assert isinstance(field_list, nodes.field_list)
-#         options = {}
-#         allowed_options = ('file',)
-#         required_options = ('file',)
-#         for field in field_list:
-#             field_name, field_body = field
-#             option = field_name.astext()
-#             # XXX HACK -- field bodies should be left unparsed instead
-#             # (how do we do this?)
-#             assert isinstance(field_body[0], nodes.paragraph)
-#             value = field_body[0].rawsource
-#             if not option in allowed_options:
-#                 raise self.content_error(
-#                     '"%s" is not a valid option; must be one of %s'
-#                     % (option,
-#                        ', '.join(['"%s"' % o for o in allowed_options])))
-#             if option in options:
-#                 raise self.content_error('duplicate option: "%s"' % option)
-#             if not value:
-#                 raise self.content_error(
-#                     'value expected for "%s" option' % option)
-#             options[option] = value
-#         return self.read_subdocument(options)
-
-    def read_subdocument(self, options):
+    def read_subdocument(self, file_name):
         # Perhaps this should be moved into the reader.
-        from docutils.readers import standalone
-        from docutils.io import FileInput
-        reader = standalone.Reader(parser_name='rst')
-        file_name = options['file']
+        document = self.state_machine.document
+        subdoc_reader = standalone.Reader(
+            parser_name='rst', docset_root=document.get('docset_root'))
+        if not os.path.isabs(file_name):
+            if not document.hasattr('docset_root'):
+                raise self.error('a docset root must be declared using the '
+                                 '"docset-root" directive before '
+                                 'referencing sub-documents')
+                # Not *quite* true; absolute paths are still allowed. ;->
+            file_name = os.path.join(document['docset_root'], file_name)
+        file_name = utils.normalize_path(file_name)
+        # Test for recursion.
+        subdoc_reader.subdoc_stack = (
+            hasattr(self.reader, 'subdoc_stack')
+            and self.reader.subdoc_stack or [])
+        if self.reader and self.reader.source and \
+               self.reader.source.source_path:
+            subdoc_reader.subdoc_stack.append(os.path.normcase(
+                os.path.abspath(self.reader.source.source_path)))
+        if os.path.normcase(os.path.abspath(file_name)) in \
+           subdoc_reader.subdoc_stack:
+            raise self.error('Error in "%s" directive: Recursive subdocument '
+                             'inclusion: "%s"' % (self.name, file_name))
         try:
-            # TODO make paths relative to document root
             source = FileInput(source_path=file_name,
                                handle_io_errors=False,
-                               encoding=self.reader.source.encoding)
+                               # None or current encoding
+                               encoding=(self.reader and self.reader.source
+                                         and self.reader.source.encoding))
         except IOError, error:
-            raise self.content_error('could not read file "%s": %s'
-                                     % (file_name, error))
-        subdocument = reader.read(source=source, parser=None,
-                                  settings=self.state.document.settings)
+            raise self.error(
+                'Error with "%s" directive: could not read file "%s": %s'
+                % (self.name, file_name, error))
+        subdoc_settings = self.state.document.settings.copy()
+        subdoc_settings.doctitle_xform = True
+        subdocument = subdoc_reader.read(
+            source=source, parser=Parser(subdoc_reader),
+            settings=subdoc_settings)
         if len(subdocument) >= 1 and isinstance(subdocument[0], nodes.title):
             # Single document title.
+            attributes = {}
+            for att in 'ids', 'names', 'source':
+                if subdocument.hasattr(att):
+                    attributes[att] = subdocument[att]
             section = nodes.section(
                 subdocument.rawsource, *subdocument.children,
-                **subdocument.attributes)
+                **attributes)
             return [section]
-        elif (len(subdocument) >= 1
-              # at least one section:
-              and [n for n in subdocument if isinstance(n, nodes.section)]
+        elif (# at least one section:
+              [n for n in subdocument if isinstance(n, nodes.section)]
               # only sections and transitions:
               and not [n for n in subdocument if
                        not isinstance(n, (nodes.section, nodes.transition))]):
+            for section in subdocument.children:
+                if not isinstance(section, nodes.section): continue
+                section['source'] = subdocument['source']
             return subdocument.children
         else:
-            raise self.content_error(
-                'problem with file "%s": a sub-document must either '
-                'have a single document-title, or it must consist of one '
-                'or more top-level sections and optionally transitions'
-                % file_name)
+            raise self.error(
+                'Error with "%s" directive, file "%s": a sub-document must '
+                'either have a single document-title, or it must consist of '
+                'one or more top-level sections and optionally transitions.'
+                % (self.name, file_name))
+
+
+class DocsetRoot(Directive):
+
+    """
+    Specify the root of the docset (used by the subdocs directive).
+    """
+
+    required_arguments = 1
+    final_argument_whitespace = True
+
+    def run(self):
+        path = self.arguments[0]
+        if not os.path.isabs(path):
+            if self.reader is None or self.reader.source is None or \
+                   self.reader.source.source_path is None:
+                # This could happen when called programmatically.
+                raise self.error('relative docset roots are prohibited if '
+                                 'the document source path '
+                                 '(reader.source.source_path) cannot be '
+                                 'determined')
+            path = os.path.join(
+                os.path.dirname(self.reader.source.source_path), path)
+        path = utils.normalize_path(path)
+        document = self.state_machine.document
+        if not document.hasattr('docset_root'):
+            document['docset_root'] = path
+        elif os.path.normcase(os.path.abspath(document['docset_root'])) != \
+                 os.path.normcase(os.path.abspath(path)):
+            raise self.error('given docset root ("%s") conflicts with '
+                             'previously specified docset root ("%s")'
+                             % (path, document['docset_root']))
+        return []

@@ -123,6 +123,12 @@ class UnknownInterpretedRoleError(DataError): pass
 class InterpretedRoleNotImplementedError(DataError): pass
 class ParserError(ApplicationError): pass
 class MarkupMismatch(Exception): pass
+class SubdocumentsSpecError(DataError):
+
+    def __init__(self, msg, line):
+        self.msg = msg
+        self.line = line
+        self.args = (msg, line)
 
 
 class Struct:
@@ -2069,7 +2075,7 @@ class Body(RSTState):
             indented.trim_end()
         if indented and (directive.required_arguments
                          or directive.optional_arguments
-                         or option_spec):
+                         or option_spec is not None):
             for i in range(len(indented)):
                 if not indented[i].strip():
                     break
@@ -2085,7 +2091,7 @@ class Body(RSTState):
         while content and not content[0].strip():
             content.trim_start()
             content_offset += 1
-        if option_spec:
+        if option_spec is not None:
             options, arg_block = self.parse_directive_options(
                 option_presets, option_spec, arg_block)
             if arg_block and not (directive.required_arguments
@@ -2528,15 +2534,19 @@ class SubdocumentsSpec(BulletList):
             indented, indent, line_offset, blank_finish = (
                 self.state_machine.get_first_known_indented(indent))
         if not indented:
-            self.reporter.error('No empty list items allowed in '
-                'subdocuments specification.', line=self.state_machine.line)
-            return [], blank_finish
+            raise SubdocumentsSpecError(
+                'No empty list items allowed in sub-documents specification.',
+                line=self.state_machine.abs_line_number())
         if indented[0].startswith(':'):
-            self.reporter.error('File names may not start with a colon.',
-                                line=self.state_machine.line)
-            return [], blank_finish
+            # Colons are reserved for future field-list syntax.
+            raise SubdocumentsSpecError(
+                'File names may not start with a colon.',
+                line=self.state_machine.abs_line_number())
         # If the user tries to start the item with a bullet list, like
-        # "* * ...", should we catch it?
+        # "* * ...", catch it.
+        if re.match(Body.patterns['bullet'], indented[0]):
+            raise SubdocumentsSpecError('No bullet allowed here.',
+                                        self.state_machine.abs_line_number())
         if '' in indented:
             blank_line_index = indented.index('')
             file_name = ''.join(indented[:blank_line_index])
@@ -2550,16 +2560,14 @@ class SubdocumentsSpec(BulletList):
             bullet_list = nodes.bullet_list('\n'.join(nested_list_lines),
                                             bullet=nested_list_lines[0][0])
             new_line_offset, blank_finish = self.nested_list_parse(
-                nested_list_lines,
-                blank_line_index + 1,
-                                     # XXX correct? what's line_offset anyway?
+                nested_list_lines, blank_line_index + 1,
                 node=bullet_list, initial_state='SubdocumentsSpec',
                 blank_finish=blank_finish)
             if new_line_offset != len(indented):
-                self.reporter.error('sub-document specification list items '
-                                    'may only contain one nested bullet list',
-                                    line=self.state_machine.abs_line_number())
-                return [], blank_finish
+                raise SubdocumentsSpecError(
+                    'Sub-document specification list items '
+                    'may only contain one nested bullet list',
+                    line=self.state_machine.abs_line_number())
             list_item += bullet_list
         return list_item, blank_finish
 

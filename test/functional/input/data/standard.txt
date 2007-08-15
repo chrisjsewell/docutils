@@ -686,6 +686,17 @@ Parsed Literal Blocks
    text``, footnotes [1]_, _`targets`, and `references
    <http://www.python.org/>`_.
 
+Sub-Documents
+`````````````
+
+Include another document:
+
+.. docset-root:: .
+
+.. subdocs::
+
+   * data/subdoc-1.txt
+
 Substitution Definitions
 ------------------------
 

@@ -68,6 +68,7 @@ directives = {
       u'peu-de-p\u00E0gina': 'footer',
       'subdocuments (translation required)': 'subdocs',
       'subdocs (translation required)': 'subdocs',
+      'docset-root (translation required)': 'docset-root',
       u'peu-p\u00E0gina': 'footer',
       #'footnotes': 'footnotes',
       #'citations': 'citations',

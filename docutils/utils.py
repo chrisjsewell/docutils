@@ -591,3 +591,18 @@ class DependencyList:
         else:
             output_file = None
         return '%s(%r, %s)' % (self.__class__.__name__, output_file, self.list)
+
+
+def normalize_path(path):
+    """
+    os.path.normpath replacement that uses slashes instead of
+    backslashes for relative paths.
+
+    Normalizing path names using this function allows for easier
+    testing since it makes the output platform-independent.
+    """
+    path = os.path.normpath(path)
+    if os.sep == '\\' and os.altsep == '/' and not os.path.isabs(path):
+        # relative path on Windows
+        path = path.replace('\\', '/')
+    return path

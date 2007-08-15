@@ -70,6 +70,7 @@ directives = {
       u'piedsekcio': 'footer',
       'subdocuments (translation required)': 'subdocs',
       'subdocs (translation required)': 'subdocs',
+      'docset-root (translation required)': 'docset-root',
       #'footnotes': 'footnotes',
       #'citations': 'citations',
       u'celaj-notoj': 'target-notes',

@@ -10,7 +10,7 @@ __docformat__ = 'reStructuredText'
 
 
 import sys
-from docutils import frontend, readers
+from docutils import frontend, utils, readers
 from docutils.transforms import frontmatter, references, misc
 
 
@@ -64,3 +64,15 @@ class Reader(readers.Reader):
             references.DanglingReferences,
             misc.Transitions,
             ]
+
+    def __init__(self, *args, **kwargs):
+        self.docset_root = kwargs.setdefault('docset_root')
+        del kwargs['docset_root']
+        readers.Reader.__init__(self, *args, **kwargs)
+
+    def new_document(self):
+        """Create and return a new empty document tree (root node)."""
+        document = utils.new_document(self.source.source_path, self.settings)
+        if self.docset_root is not None:
+            document['docset_root'] = self.docset_root
+        return document
