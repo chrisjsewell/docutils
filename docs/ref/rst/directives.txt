@@ -1053,6 +1053,130 @@ such as a datestamp, a link to `the Docutils website`_, etc.
 .. _the Docutils website: http://docutils.sourceforge.net
 
 
+..  subdocuments:
+.. _subdocs:
+
+Sub-Document Inclusion
+======================
+
+:Directive Types: "subdocs" or "subdocuments" (synonyms)
+:Doctree Elements: section, transition
+:Directive Arguments: None.
+:Directive Options: None.
+:Directive Content: Bullet list (described below).
+
+(New in Docutils 0.5.)
+
+The "subdocs" directive inserts one or more sub-documents in its
+place.  For example,
+
+.. parsed-literal::
+
+    .. docset-root_:: .
+
+    .. subdocs::
+
+       * chapter-1.txt
+       * chapter-2.txt
+
+         * chapter-2-section-1.txt
+         * chapter-2-section-2.txt
+
+       * chapter-3-and-4.txt
+       * chapter-5.txt
+
+might yield the following section structure::
+
+    Chapter 1
+    Chapter 2
+        Section 2.1
+        Section 2.2
+    Chapter 3
+    Chapter 4
+    Chapter 5
+
+It differs from the "include_" directive in that the sub-documents
+have their own parsing context: While the "include" directive inserts
+the contents of the referenced file verbatim into the current stream
+of lines, the "subdocs" treats the file as a separate document;
+therefore, the sub-document has its own namespace for targets,
+references, footnotes, etc., its role_ definitions do not affect those
+of the parent document, and its `section adornment`_ styles are
+independent of the parent document.
+
+.. _section adornment: restructuredtext.html#sections
+
+Before using the "subdocs" directive, you must specify a doc-set root
+directory using the "docset-root_" directive.  All paths of
+sub-document files are relative to the doc-set root directory.  In the
+simplest case, the current directory ("``.``") can be specified as the
+docset-root.
+
+The content block of the "subdocs" directive is a single bullet list,
+the list items of which specify the files to be included as
+sub-documents.
+
+Each sub-document must contain one or more top-level sections,
+(possibly interspersed by transitions).  These sections will be
+inserted in place of the "subdocs" directive, in order.
+
+If a sub-document has only one top-level section, you can add a nested
+bullet list after the file name ("``chapter-2-section-1.txt``" and
+"``chapter-2-section-2.txt``" in the example above).  The nested
+bullet list is parsed according to the same rules as the top-level
+list; it may itself contain nested bullet lists.  The sections of the
+sub-documents specified by the nested bullet lists are inserted at the
+end of the containing sub-document.
+
+
+.. _docset-root:
+
+Doc-Set Root Directory
+======================
+
+:Directive Type: "docset-root"
+:Doctree Elements: None.
+:Directive Arguments: Path of doc-set root directory (relative or absolute).
+:Directive Options: None.
+:Directive Content: None.
+
+(New in Docutils 0.5.)
+
+The "docset-root" directive specifies a doc-set root directory which
+the paths of the sub-documents specified by the "subdocs_" directive
+are relative to.  If a relative path to the doc-set root is provided,
+it is interpreted relative to the location of the current file.
+Trailing slashes are ignored.
+
+The docset-root should normally refer to the root directory of the
+current collection of documents (the so-called "doc-set"), for
+instance the project documentation root.  Therefore, documents in the
+documentation will specify the current directory ("``.. docset-root::
+.``"), whereas documents one level deeper in the directory hierarchy
+will specify the parent directory as their doc-set root
+("``.. docset-root:: ..``").
+
+It is necessary to specify a doc-set root before including
+sub-documents using the subdocs_ directive.  If a sub-document
+includes other sub-documents itself, it must specify a doc-set root
+that is identical to that of the parent document.  For instance, if
+the file "master.txt" includes a file "foo/bar.txt", ::
+
+    .. docset-root:: ./
+    .. subdocs::
+
+       * foo/bar.txt
+
+and the document "foo/bar.txt" in turn needs to include the file
+"foo/baz.txt", then it *must* specify the parent directory as its
+doc-set root::
+
+    .. docset-root:: ../
+    .. subdocs::
+
+       * foo/baz.txt
+
+
 ------------
  References
 ------------
