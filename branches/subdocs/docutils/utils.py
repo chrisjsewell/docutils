@@ -11,6 +11,7 @@ __docformat__ = 'reStructuredText'
 import sys
 import os
 import os.path
+import re
 import types
 import warnings
 import unicodedata
@@ -606,3 +607,28 @@ def normalize_path(path):
         # relative path on Windows
         path = path.replace('\\', '/')
     return path
+
+
+def make_path_relative(src, dest,
+                       sep=re.compile(os.sep == '\\' and r'[/\\]' or '/')):
+    """
+    Make `dest` relative to `src`.  E.g.
+    `make_path_relative('/home/user/foo', '/home/user/bar')` returns
+    '../bar'.  Both may be relative.  Trailing slashes are ignored.
+    """
+    src_drive, src_path = os.path.splitdrive(
+        os.path.normcase(os.path.abspath(src)))
+    dest_drive, dest_path = os.path.splitdrive(
+        os.path.normcase(os.path.abspath(dest)))
+    if src_drive != dest_drive:
+        # Return absolute path.
+        return dest_drive + dest_path
+    src_components = [c for c in sep.split(src_path) if c]
+    dest_components = [c for c in sep.split(dest_path) if c]
+    while src_components and dest_components:
+        if src_components[0] == dest_components[0]:
+            del src_components[0]
+            del dest_components[0]
+        else:
+            break
+    return '/'.join([os.pardir] * len(src_components) + dest_components)

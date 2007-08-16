@@ -705,6 +705,14 @@ class Element(Node):
             assert id is not None
             by_id.referenced = 1
 
+    def assert_integrity(self):
+        for child in self:
+            assert child.parent is self, \
+                   'node=%r, child=%r, but child.parent=%r' % (self, child,
+                                                               child.parent)
+            if isinstance(child, Element):
+                child.assert_integrity()
+
 
 class TextElement(Element):
 

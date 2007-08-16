@@ -167,9 +167,10 @@ class Subdocuments(Directive):
                    and isinstance(item[0], nodes.paragraph) \
                    and len(item[0]) == 1
             file_name = item[0].astext()
-            subdoc_sections = self.read_subdocument(file_name)
+            subdocument, subdoc_sections = self.read_subdocument(file_name)
             assert len(subdoc_sections)
             sections += subdoc_sections
+            self.update_document(subdocument)
             if len(item) > 1:
                 assert len(item) == 2 and isinstance(item[1],
                                                      nodes.bullet_list)
@@ -181,6 +182,11 @@ class Subdocuments(Directive):
         return sections
 
     def read_subdocument(self, file_name):
+        """
+        Read the document `file_name` and return a tuple (document,
+        sections), where `document` is the parsed document node and
+        `sections` are the sections to be inserted.
+        """
         # Perhaps this should be moved into the reader.
         document = self.state_machine.document
         subdoc_reader = standalone.Reader(
@@ -224,27 +230,37 @@ class Subdocuments(Directive):
             # Single document title.
             attributes = {}
             for att in 'ids', 'names', 'source':
-                if subdocument.hasattr(att):
-                    attributes[att] = subdocument[att]
+                assert subdocument.hasattr(att)
+                attributes[att] = subdocument[att]
             section = nodes.section(
                 subdocument.rawsource, *subdocument.children,
                 **attributes)
-            return [section]
+            for id in attributes['ids']:
+                subdocument.ids[id] = section
+            return subdocument, [section]
         elif (# at least one section:
               [n for n in subdocument if isinstance(n, nodes.section)]
               # only sections and transitions:
               and not [n for n in subdocument if
                        not isinstance(n, (nodes.section, nodes.transition))]):
-            for section in subdocument.children:
-                if not isinstance(section, nodes.section): continue
+            # Filter out transitions.
+            sections = [n for n in subdocument
+                        if isinstance(n, nodes.section)]
+            for section in sections:
                 section['source'] = subdocument['source']
-            return subdocument.children
+            for id in subdocument['ids']:
+                sections[0]['ids'].append(id)
+                subdocument.ids[id] = sections[0]
+            return subdocument, sections
         else:
             raise self.error(
                 'Error with "%s" directive, file "%s": a sub-document must '
                 'either have a single document-title, or it must consist of '
                 'one or more top-level sections and optionally transitions.'
                 % (self.name, file_name))
+
+    def update_document(self, subdocument):
+        self.state_machine.document.ids.update(subdocument.ids)
 
 
 class DocsetRoot(Directive):

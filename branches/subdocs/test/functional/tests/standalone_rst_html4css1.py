@@ -8,3 +8,4 @@ test_destination = "standalone_rst_html4css1.html"
 writer_name = "html4css1"
 
 # Settings: settings_overrides['setting'] = value
+settings_overrides['multi_output'] = 'parallel'
