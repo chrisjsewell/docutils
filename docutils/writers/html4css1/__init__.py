@@ -278,7 +278,6 @@ class HTMLTranslator(nodes.NodeVisitor):
 
     def __init__(self, document, writer):
         nodes.NodeVisitor.__init__(self, document)
-        document.assert_integrity()
         self.writer = writer
         self.settings = settings = document.settings
         lcode = settings.language_code
