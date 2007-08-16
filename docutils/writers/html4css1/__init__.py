@@ -25,7 +25,7 @@ try:
 except ImportError:
     Image = None
 import docutils
-from docutils import frontend, nodes, utils, writers, languages
+from docutils import frontend, nodes, utils, writers, languages, io
 from docutils.transforms import writer_aux
 
 
@@ -49,11 +49,18 @@ class Writer(writers.Writer):
     settings_spec = (
         'HTML-Specific Options',
         None,
-        (('Specify the template file (UTF-8 encoded).  Default is "%s".'
+        (('What to do if the "subdocs" directive was used.  Can be "none" '
+          '(still output a single file; default) or "parallel" (the output '
+          'file structure parallels the input file structure; this may '
+          'create directories).',
+          ['--multi-output'],
+          {'choices': ['parallel', 'none'],
+           'default': 'none', 'metavar': '<type>'}),
+         ('Specify the template file (UTF-8 encoded).  Default is "%s".'
           % default_template_path,
           ['--template'],
           {'default': default_template_path, 'metavar': '<file>'}),
-        ('Specify a stylesheet URL, used verbatim.  Overrides '
+         ('Specify a stylesheet URL, used verbatim.  Overrides '
           '--stylesheet-path.',
           ['--stylesheet'],
           {'metavar': '<URL>', 'overrides': 'stylesheet_path'}),
@@ -146,16 +153,37 @@ class Writer(writers.Writer):
     def get_transforms(self):
         return writers.Writer.get_transforms(self) + [writer_aux.Admonitions]
 
-    def __init__(self):
+    def __init__(self, destination_paths=None, external_nodes=None):
         writers.Writer.__init__(self)
+        self.destination_paths = destination_paths
+        self.external_nodes = external_nodes
         self.translator_class = HTMLTranslator
 
     def translate(self):
-        self.visitor = visitor = self.translator_class(self.document)
+        self.visitor = visitor = self.translator_class(self.document, self)
         self.document.walkabout(visitor)
         for attr in self.visitor_attributes:
             setattr(self, attr, getattr(visitor, attr))
         self.output = self.apply_template()
+        self.generate_external_files()
+
+    def generate_external_files(self):
+        while self.external_nodes:
+            section = self.external_nodes[0]
+            del self.external_nodes[0]
+            document = self.create_aux_document(section)
+            document.ids.update(self.document.ids)
+            dest = self.destination_paths[section]
+            if not os.access(os.path.dirname(dest), os.F_OK):
+                os.makedirs(os.path.dirname(dest))
+            destination = io.FileOutput(
+                destination_path=dest,
+                encoding=self.document.settings.output_encoding,
+                error_handler= \
+                self.document.settings.output_encoding_error_handler)
+            writer = Writer(destination_paths=self.destination_paths,
+                            external_nodes=self.external_nodes)
+            writer.write(document, destination)
 
     def apply_template(self):
         template_file = open(self.document.settings.template)
@@ -177,6 +205,18 @@ class Writer(writers.Writer):
         writers.Writer.assemble_parts(self)
         for part in self.visitor_attributes:
             self.parts[part] = ''.join(getattr(self, part))
+
+    def create_aux_document(self, node):
+        """
+        Return an auxiliary document to render `node` into an external file.
+        """
+        assert node.has_key('source')
+        document = utils.new_document(node['source'], settings=self.document.settings)
+        if isinstance(node, nodes.section):
+            assert isinstance(node[0], nodes.title)
+            document['title'] = node[0].astext()
+        document += node
+        return document
 
 
 class HTMLTranslator(nodes.NodeVisitor):
@@ -236,8 +276,10 @@ class HTMLTranslator(nodes.NodeVisitor):
     embedded_stylesheet = '<style type="text/css">\n\n%s\n</style>\n'
     words_and_spaces = re.compile(r'\S+| +|\n')
 
-    def __init__(self, document):
+    def __init__(self, document, writer):
         nodes.NodeVisitor.__init__(self, document)
+        document.assert_integrity()
+        self.writer = writer
         self.settings = settings = document.settings
         lcode = settings.language_code
         self.language = languages.get_language(lcode)
@@ -297,6 +339,72 @@ class HTMLTranslator(nodes.NodeVisitor):
         self.in_document_title = 0
         self.in_mailto = 0
         self.author_in_authors = None
+        if self.settings.multi_output != 'none':
+            if self.writer.external_nodes is None:
+                self.writer.external_nodes = self.find_external_nodes()
+            if self.writer.destination_paths is None:
+                self.writer.destination_paths = self.get_dest_path_mapping()
+
+    def find_external_nodes(self):
+        external_nodes = []
+        for section in self.document.traverse(nodes.section):
+            if section.has_key('source'):
+                # Here we should probably insert some kind of
+                # reference, like the "Subsections" box in the Python
+                # standard docs.  For now, rely on the TOC.
+                section.parent.remove(section)
+                external_nodes.append(section)
+        return external_nodes
+
+    file_extension = re.compile(r'\.\w{0,4}$', re.UNICODE)
+
+    def get_dest_path_mapping(self):
+        """Return map from auxiliary document nodes to destination paths."""
+        destination_paths = {}
+        master_source = self.document['source']
+        master_destination = self.writer.destination.destination_path
+        destination_paths[self.document] = master_destination
+        for node in self.writer.external_nodes:
+            source = node['source']
+            source_relative_to_master = utils.make_path_relative(
+                os.path.dirname(master_source), source)
+            dest = utils.normalize_path(
+                os.path.join(os.path.dirname(master_destination),
+                             source_relative_to_master))
+            base = self.file_extension.sub('', dest)
+            ext = '.html'
+            if base + ext not in destination_paths.values():
+                destination_paths[node] = base + ext
+            else:
+                for i in range(1, 100000):
+                    dest = '%s-%s%s' % (base, i, ext)
+                    if dest not in destination_paths.values():
+                        destination_paths[node] = dest
+                        break
+        return destination_paths
+
+    def get_href(self, id):
+        if self.settings.multi_output == 'none':
+            # Single-file document.
+            return '#' + id
+        else:
+            assert self.settings.multi_output == 'parallel'
+            own_dest = self.writer.destination.destination_path
+            ref_dest = self.get_destination_path_by_id(id)
+            rel_ref_dest = utils.make_path_relative(
+                os.path.dirname(own_dest), ref_dest)
+            if rel_ref_dest == os.path.basename(own_dest):
+                rel_ref_dest = ''
+            return '%s#%s' % (rel_ref_dest, id)
+
+    def get_destination_path_by_id(self, id):
+        """Return the path of the output file that contains a given ID."""
+        node = self.document.ids[id]
+        while node != self.document and not (
+            node.has_key('source') # and is not system_message:
+            and isinstance(node, (nodes.document, nodes.section))):
+            node = node.parent
+        return self.writer.destination_paths[node]
 
     def astext(self):
         return ''.join(self.head_prefix + self.head
@@ -549,7 +657,7 @@ class HTMLTranslator(nodes.NodeVisitor):
                          '</tbody>\n</table>\n')
 
     def visit_citation_reference(self, node):
-        href = '#' + node['refid']
+        href = self.get_href(node['refid'])
         self.body.append(self.starttag(
             node, 'a', '[', CLASS='citation-reference', href=href))
 
@@ -879,13 +987,13 @@ class HTMLTranslator(nodes.NodeVisitor):
             if len(backrefs) == 1:
                 self.context.append('')
                 self.context.append('</a>')
-                self.context.append('<a class="fn-backref" href="#%s">'
-                                    % backrefs[0])
+                self.context.append('<a class="fn-backref" href="%s">'
+                                    % self.get_href(backrefs[0]))
             else:
                 i = 1
                 for backref in backrefs:
-                    backlinks.append('<a class="fn-backref" href="#%s">%s</a>'
-                                     % (backref, i))
+                    backlinks.append('<a class="fn-backref" href="%s">%s</a>'
+                                     % (self.get_href(backref), i))
                     i += 1
                 self.context.append('<em>(%s)</em> ' % ', '.join(backlinks))
                 self.context += ['', '']
@@ -905,7 +1013,7 @@ class HTMLTranslator(nodes.NodeVisitor):
                          '</tbody>\n</table>\n')
 
     def visit_footnote_reference(self, node):
-        href = '#' + node['refid']
+        href = self.get_href(node['refid'])
         format = self.settings.footnote_references
         if format == 'brackets':
             suffix = '['
@@ -1188,7 +1296,7 @@ class HTMLTranslator(nodes.NodeVisitor):
 
     def visit_problematic(self, node):
         if node.hasattr('refid'):
-            self.body.append('<a href="#%s">' % node['refid'])
+            self.body.append('<a href="%s">' % self.get_href(node['refid']))
             self.context.append('</a>')
         else:
             self.context.append('')
@@ -1221,7 +1329,7 @@ class HTMLTranslator(nodes.NodeVisitor):
         else:
             assert node.has_key('refid'), \
                    'References must have "refuri" or "refid" attribute.'
-            atts['href'] = '#' + node['refid']
+            atts['href'] = self.get_href(node['refid'])
             atts['class'] += ' internal'
         if not isinstance(node.parent, nodes.TextElement):
             assert len(node) == 1 and isinstance(node[0], nodes.image)
@@ -1335,13 +1443,13 @@ class HTMLTranslator(nodes.NodeVisitor):
         if len(node['backrefs']):
             backrefs = node['backrefs']
             if len(backrefs) == 1:
-                backref_text = ('; <em><a href="#%s">backlink</a></em>'
-                                % backrefs[0])
+                backref_text = ('; <em><a href="%s">backlink</a></em>'
+                                % self.get_href(backrefs[0]))
             else:
                 i = 1
                 backlinks = []
                 for backref in backrefs:
-                    backlinks.append('<a href="#%s">%s</a>' % (backref, i))
+                    backlinks.append('<a href="%s">%s</a>' % (self.get_href(backref), i))
                     i += 1
                 backref_text = ('; <em>backlinks: %s</em>'
                                 % ', '.join(backlinks))
@@ -1446,7 +1554,7 @@ class HTMLTranslator(nodes.NodeVisitor):
             atts = {}
             if node.hasattr('refid'):
                 atts['class'] = 'toc-backref'
-                atts['href'] = '#' + node['refid']
+                atts['href'] = self.get_href(node['refid'])
             if atts:
                 self.body.append(self.starttag({}, 'a', '', **atts))
                 close_tag = '</a></h%s>\n' % (h_level)

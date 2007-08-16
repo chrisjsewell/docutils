@@ -4,6 +4,9 @@ Document 3, section A
 Contents of document 3, section A.
 
 
+------------------------------
+
+
 Document 3, section B
 =====================
 
