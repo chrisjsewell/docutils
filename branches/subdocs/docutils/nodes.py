@@ -858,7 +858,7 @@ class document(Root, Structural, Element):
 
         self.nametypes = {}
         """Mapping of names to hyperlink type (boolean: True => explicit,
-        False => implicit."""
+        False => implicit)."""
 
         self.ids = {}
         """Mapping of ids to nodes."""
@@ -923,6 +923,9 @@ class document(Root, Structural, Element):
         self.decoration = None
         """Document's `decoration` node."""
 
+        self.reserved_ids = []
+        """ID's not to be used."""
+
         self.document = self
 
     def __getstate__(self):
@@ -944,18 +947,22 @@ class document(Root, Structural, Element):
 
     def set_id(self, node, msgnode=None):
         for id in node['ids']:
-            if self.ids.has_key(id) and self.ids[id] is not node:
-                msg = self.reporter.severe('Duplicate ID: "%s".' % id)
+            if (self.ids.has_key(id) and self.ids[id] is not node
+                or id in self.reserved_ids):
+                msg = self.reporter.severe(
+                    'Duplicate or reserved ID: "%s".' % id)
                 if msgnode != None:
                     msgnode += msg
         if not node['ids']:
             for name in node['names']:
                 id = self.settings.id_prefix + make_id(name)
-                if id and not self.ids.has_key(id):
+                if id and not (self.ids.has_key(id)
+                               or id in self.reserved_ids):
                     break
             else:
                 id = ''
-                while not id or self.ids.has_key(id):
+                while not id or (self.ids.has_key(id) or \
+                                 id in self.reserved_ids):
                     id = (self.settings.id_prefix +
                           self.settings.auto_id_prefix + str(self.id_start))
                     self.id_start += 1

@@ -190,7 +190,8 @@ class Subdocuments(Directive):
         # Perhaps this should be moved into the reader.
         document = self.state_machine.document
         subdoc_reader = standalone.Reader(
-            parser_name='rst', docset_root=document.get('docset_root'))
+            parser_name='rst', docset_root=document.get('docset_root'),
+            reserved_ids=(document.ids.keys() + document.reserved_ids))
         if not os.path.isabs(file_name):
             if not document.hasattr('docset_root'):
                 raise self.error('a doc-set root must be declared using the '
@@ -226,6 +227,10 @@ class Subdocuments(Directive):
         subdocument = subdoc_reader.read(
             source=source, parser=Parser(subdoc_reader),
             settings=subdoc_settings)
+        # Get ID's used by sub-document back into current document.
+        for id in subdocument.ids:
+            if subdocument.ids[id] is not None:
+                self.state_machine.document.ids[id] = subdocument.ids[id]
         if len(subdocument) >= 1 and isinstance(subdocument[0], nodes.title):
             # Single document title.
             attributes = {}
