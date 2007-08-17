@@ -410,14 +410,17 @@ def clean_rcs_keywords(paragraph, keyword_substitutions):
                 textnode.data = pattern.sub(substitution, textnode.data)
                 return
 
-def relative_path(source, target):
+def relative_path(source, target,
+                  sep=re.compile(os.sep == '\\' and r'[/\\]' or '/')):
     """
     Build and return a path to `target`, relative to `source` (both files).
 
     If there is no common prefix, return the absolute path to `target`.
     """
-    source_parts = os.path.abspath(source or 'dummy_file').split(os.sep)
-    target_parts = os.path.abspath(target).split(os.sep)
+    source_parts = sep.split(os.path.abspath(source or 'dummy_file'))
+    target_parts = sep.split(os.path.abspath(target))
+    # Remove file name from source_parts, in case the file names coincide.
+    source_parts.pop()
     # Check first 2 parts because '/dir'.split('/') == ['', 'dir']:
     if source_parts[:2] != target_parts[:2]:
         # Nothing in common between paths.
@@ -431,8 +434,7 @@ def relative_path(source, target):
         source_parts.pop()
         target_parts.pop()
     target_parts.reverse()
-    parts = ['..'] * (len(source_parts) - 1) + target_parts
-    return '/'.join(parts)
+    return '/'.join(['..'] * len(source_parts) + target_parts)
 
 def get_stylesheet_reference(settings, relative_to=None):
     """
@@ -607,28 +609,3 @@ def normalize_path(path):
         # relative path on Windows
         path = path.replace('\\', '/')
     return path
-
-
-def make_path_relative(src, dest,
-                       sep=re.compile(os.sep == '\\' and r'[/\\]' or '/')):
-    """
-    Make `dest` relative to `src`.  E.g.
-    `make_path_relative('/home/user/foo', '/home/user/bar')` returns
-    '../bar'.  Both may be relative.  Trailing slashes are ignored.
-    """
-    src_drive, src_path = os.path.splitdrive(
-        os.path.normcase(os.path.abspath(src)))
-    dest_drive, dest_path = os.path.splitdrive(
-        os.path.normcase(os.path.abspath(dest)))
-    if src_drive != dest_drive:
-        # Return absolute path.
-        return dest_drive + dest_path
-    src_components = [c for c in sep.split(src_path) if c]
-    dest_components = [c for c in sep.split(dest_path) if c]
-    while src_components and dest_components:
-        if src_components[0] == dest_components[0]:
-            del src_components[0]
-            del dest_components[0]
-        else:
-            break
-    return '/'.join([os.pardir] * len(src_components) + dest_components)

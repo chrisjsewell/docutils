@@ -365,8 +365,8 @@ class HTMLTranslator(nodes.NodeVisitor):
         destination_paths[self.document] = master_destination
         for node in self.writer.external_nodes:
             source = node['source']
-            source_relative_to_master = utils.make_path_relative(
-                os.path.dirname(master_source), source)
+            source_relative_to_master = utils.relative_path(master_source,
+                                                            source)
             dest = utils.normalize_path(
                 os.path.join(os.path.dirname(master_destination),
                              source_relative_to_master))
@@ -390,8 +390,7 @@ class HTMLTranslator(nodes.NodeVisitor):
             assert self.settings.multi_output == 'parallel'
             own_dest = self.writer.destination.destination_path
             ref_dest = self.get_destination_path_by_id(id)
-            rel_ref_dest = utils.make_path_relative(
-                os.path.dirname(own_dest), ref_dest)
+            rel_ref_dest = utils.relative_path(own_dest, ref_dest)
             if rel_ref_dest == os.path.basename(own_dest):
                 rel_ref_dest = ''
             return '%s#%s' % (rel_ref_dest, id)
