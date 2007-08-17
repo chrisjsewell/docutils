@@ -65,14 +65,16 @@ class Reader(readers.Reader):
             misc.Transitions,
             ]
 
-    def __init__(self, *args, **kwargs):
-        self.docset_root = kwargs.setdefault('docset_root')
-        del kwargs['docset_root']
-        readers.Reader.__init__(self, *args, **kwargs)
+    def __init__(self, parser=None, parser_name=None,
+                 docset_root=None, reserved_ids=[]):
+        self.docset_root = docset_root
+        self.reserved_ids = reserved_ids
+        readers.Reader.__init__(self, parser=parser, parser_name=parser_name)
 
     def new_document(self):
         """Create and return a new empty document tree (root node)."""
         document = utils.new_document(self.source.source_path, self.settings)
         if self.docset_root is not None:
             document['docset_root'] = self.docset_root
+        document.reserved_ids = self.reserved_ids
         return document

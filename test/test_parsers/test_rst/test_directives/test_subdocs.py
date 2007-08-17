@@ -96,7 +96,7 @@ totest['subdocs'] = [
             Document 2
         <comment xml:space="preserve">
             Comments in front of the document title should be allowed.
-        <section ids="document-1" names="document\\ 1" source="%(single-1.txt)s">
+        <section ids="id1" names="document\\ 1" source="%(single-1.txt)s">
             <title>
                 Document 1
             <paragraph>
@@ -124,7 +124,7 @@ totest['subdocs'] = [
                 Document 2
             <comment xml:space="preserve">
                 Comments in front of the document title should be allowed.
-            <section ids="document-1" names="document\\ 1" source="%(single-1.txt)s">
+            <section ids="id1" names="document\\ 1" source="%(single-1.txt)s">
                 <title>
                     Document 1
                 <paragraph>
