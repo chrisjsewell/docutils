@@ -128,7 +128,7 @@ class Footer(Directive):
         return []
 
 
-class Subdocuments(Directive):
+class Subdocs(Directive):
 
     """Include sub-documents at the current position."""
 
