@@ -3,3 +3,6 @@
 ------------
  Document 2
 ------------
+
+.. header:: The header should be stripped.
+.. footer:: The footer should be stripped.
