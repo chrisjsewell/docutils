@@ -288,7 +288,8 @@ class DocsetRoot(Directive):
                                  '(reader.source.source_path) cannot be '
                                  'determined')
             path = os.path.join(
-                os.path.dirname(self.reader.source.source_path), path)
+                os.path.dirname(self.state_machine.input_lines.source(
+                self.lineno - self.state_machine.input_offset - 1)), path)
         path = utils.normalize_path(path)
         document = self.state_machine.document
         if not document.hasattr('docset_root'):
