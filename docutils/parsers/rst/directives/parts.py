@@ -168,9 +168,9 @@ class Subdocs(Directive):
                    and len(item[0]) == 1
             file_name = item[0].astext()
             subdocument, subdoc_sections = self.read_subdocument(file_name)
+            self.prepare_subdocument(subdocument)
             assert len(subdoc_sections)
             sections += subdoc_sections
-            self.update_document(subdocument)
             if len(item) > 1:
                 assert len(item) == 2 and isinstance(item[1],
                                                      nodes.bullet_list)
@@ -264,8 +264,13 @@ class Subdocs(Directive):
                 'one or more top-level sections and optionally transitions.'
                 % (self.name, file_name))
 
-    def update_document(self, subdocument):
+    def prepare_subdocument(self, subdocument):
+        """Miscellaneous operations on the sub-document after parsing it."""
+        # Update the master document's ID's.
         self.state_machine.document.ids.update(subdocument.ids)
+        # Remove decoration (header and footer).
+        for node in subdocument.traverse(nodes.decoration):
+            node.parent.remove(node)
 
 
 class DocsetRoot(Directive):
