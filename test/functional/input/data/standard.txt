@@ -691,7 +691,7 @@ Sub-Documents
 
 Include another document:
 
-.. docset-root:: .
+.. docset-root:: ../
 
 .. subdocs::
 

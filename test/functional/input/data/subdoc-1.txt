@@ -1,0 +1,12 @@
+----------------
+ Sub-Document 1
+----------------
+
+This is a document intended to be included as a sub-document by other
+documents.  It includes a sub-document itself:
+
+.. docset-root:: ../
+
+.. subdocs::
+
+   * data/subdoc-2.txt
