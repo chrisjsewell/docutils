@@ -1,0 +1,5 @@
+================
+ Sub-Document 2
+================
+
+This is another document intended to be included as a sub-document.
