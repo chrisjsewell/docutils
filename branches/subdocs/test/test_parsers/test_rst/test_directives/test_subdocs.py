@@ -144,6 +144,23 @@ totest['subdocs'] = [
         <paragraph>
             Document contents.
 """ % paths],
+["""\
+.. docset-root:: %(docset-root)s
+.. subdocs::
+
+   * subtitle-test.txt
+""" % paths,  # The "Document 1" title must not become a subtitle:
+"""\
+<document docset_root="%(docset-root)s" source="test data">
+    <section ids="a-sub-document-with-a-title-only" names="a\\ sub-document\\ with\\ a\\ title\\ only" source="%(subtitle-test.txt)s">
+        <title>
+            A Sub-Document With a Title Only
+        <section ids="document-1" names="document\\ 1" source="%(single-1.txt)s">
+            <title>
+                Document 1
+            <paragraph>
+                Contents of document 1.
+""" % paths],
 ]
 
 totest['subdocs-errors'] = [

@@ -168,7 +168,6 @@ class Subdocs(Directive):
                    and len(item[0]) == 1
             file_name = item[0].astext()
             subdocument, subdoc_sections = self.read_subdocument(file_name)
-            self.prepare_subdocument(subdocument)
             assert len(subdoc_sections)
             sections += subdoc_sections
             if len(item) > 1:
@@ -227,10 +226,6 @@ class Subdocs(Directive):
         subdocument = subdoc_reader.read(
             source=source, parser=Parser(subdoc_reader),
             settings=subdoc_settings)
-        # Get ID's used by sub-document back into current document.
-        for id in subdocument.ids:
-            if subdocument.ids[id] is not None:
-                self.state_machine.document.ids[id] = subdocument.ids[id]
         if len(subdocument) >= 1 and isinstance(subdocument[0], nodes.title):
             # Single document title.
             attributes = {}
@@ -242,7 +237,7 @@ class Subdocs(Directive):
                 **attributes)
             for id in attributes['ids']:
                 subdocument.ids[id] = section
-            return subdocument, [section]
+            sections = [section]
         elif (# at least one section:
               [n for n in subdocument if isinstance(n, nodes.section)]
               # only sections and transitions:
@@ -256,21 +251,18 @@ class Subdocs(Directive):
             for id in subdocument['ids']:
                 sections[0]['ids'].append(id)
                 subdocument.ids[id] = sections[0]
-            return subdocument, sections
         else:
             raise self.error(
                 'Error with "%s" directive, file "%s": a sub-document must '
                 'either have a single document-title, or it must consist of '
                 'one or more top-level sections and optionally transitions.'
                 % (self.name, file_name))
-
-    def prepare_subdocument(self, subdocument):
-        """Miscellaneous operations on the sub-document after parsing it."""
         # Update the master document's ID's.
         self.state_machine.document.ids.update(subdocument.ids)
         # Remove decoration (header and footer).
         for node in subdocument.traverse(nodes.decoration):
             node.parent.remove(node)
+        return subdocument, sections
 
 
 class DocsetRoot(Directive):
