@@ -1,0 +1,16 @@
+==================================
+ A Sub-Document With a Title Only
+==================================
+
+.. docset-root:: .
+.. subdocs::
+
+   * single-1.txt
+==================================
+ A Sub-Document With a Title Only
+==================================
+
+.. docset-root:: .
+.. subdocs::
+
+   * single-1.txt

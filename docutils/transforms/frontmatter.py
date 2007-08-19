@@ -68,7 +68,7 @@ class TitlePromoter(Transform):
         """
         Transform the following node tree::
 
-            <node>
+            <section>
                 <title>
                 <section>
                     <title>
@@ -76,7 +76,7 @@ class TitlePromoter(Transform):
 
         into ::
 
-            <node>
+            <section>
                 <title>
                 <subtitle>
                 ...
@@ -112,8 +112,8 @@ class TitlePromoter(Transform):
         """
         index = node.first_child_not_matching_class(
             nodes.PreBibliographic)
-        if index is None or len(node) > (index + 1) or \
-               not isinstance(node[index], nodes.section):
+        if index is None or len(node) > (index + 1) or not isinstance(
+            node[index], nodes.section) or node[index].has_key('source'):
             return None, None
         else:
             return node[index], index
