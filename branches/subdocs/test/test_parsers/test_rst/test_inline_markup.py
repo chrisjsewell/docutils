@@ -549,7 +549,7 @@ totest['qualified_references'] = [
 """\
 <document source="test data">
     <paragraph>
-        <reference qrefname="name <not an embedded uri>" qrefns="a NAMESPACE">
+        <reference qrefname="name <not an embedded uri>" qrefns="a name/space">
             name <not an  embedded URI>
 """],
 [r"""

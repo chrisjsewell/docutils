@@ -786,11 +786,13 @@ class Inliner:
                     'Qualified references cannot be anonymous.', line=lineno)
                 prb = self.problematic(text, rawsource, msg)
                 return before, [prb], after, [msg]
+            qrefns = whitespace_normalize_name(
+                unescape(match.group('namespace'),
+                         restore_backslashes=True).replace('\\', '/').lower())
+            qrefname = normalize_name(unescape(match.group('name')))
             reference = nodes.reference(
                 rawsource, unescape(match.group('name')),
-                qrefname=normalize_name(unescape(match.group('name'))),
-                qrefns=whitespace_normalize_name(
-                    unescape(match.group('namespace'))))
+                qrefns=qrefns, qrefname=qrefname)
             return before, [reference], after, []
         match = self.patterns.embedded_uri.search(escaped)
         if match:
@@ -1911,7 +1913,7 @@ class Body(RSTState):
 
             - 'refname' and the indirect reference name
             - 'refuri' and the URI
-            - 'malformed' and a system_message node
+            - 'qualified' and a 2-tuple (qrefns, qrefname)
         """
         if block and block[-1].strip()[-1:] == '_': # possible indirect target
             reference = ' '.join([line.strip() for line in block])

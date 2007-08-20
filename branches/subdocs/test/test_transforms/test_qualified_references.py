@@ -129,7 +129,7 @@ Section
 Section
 =======
 
-`<../../../../test data> Section`_
+`<../../..\\..\\test data> Section`_
 """ % paths,
 """\
 <document docset_root="%(docset-root)s" source="test data">
@@ -144,7 +144,7 @@ Section
                 Duplicate implicit target name: "section".
         <paragraph>
             <problematic ids="id3" refid="id2">
-                `<../../../../test data> Section`_
+                `<../../..\\..\\test data> Section`_
     <system_message backrefs="id3" ids="id2" level="3" line="8" source="test data" type="ERROR">
         <paragraph>
             Duplicate target "section" in namespace "../../../../test data" cannot be referenced.
