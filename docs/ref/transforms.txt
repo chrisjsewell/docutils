@@ -79,6 +79,8 @@ universal.ExposeInternals       Reader (r)                    840
 
 references.DanglingReferences   standalone (r), pep (r)       850
 
+misc.CheckDoctreeValidity       standalone (r)                856 
+
 universal.Messages              Writer (w)                    860
 
 universal.FilterMessages        Writer (w)                    870
