@@ -62,13 +62,15 @@ class Reader(readers.Reader):
             references.ExternalTargets,
             references.InternalTargets,
             references.DanglingReferences,
+            references.QualifiedReferences,
             misc.Transitions,
             misc.CheckDoctreeValidity,
             ]
 
     def __init__(self, parser=None, parser_name=None,
-                 docset_root=None, reserved_ids=[]):
+                 docset_root=None, reserved_ids=[], is_subdocument=False):
         self.docset_root = docset_root
+        self.is_subdocument = is_subdocument
         self.reserved_ids = reserved_ids
         readers.Reader.__init__(self, parser=parser, parser_name=parser_name)
 
@@ -78,4 +80,5 @@ class Reader(readers.Reader):
         if self.docset_root is not None:
             document['docset_root'] = self.docset_root
         document.reserved_ids = self.reserved_ids
+        document.is_subdocument = self.is_subdocument
         return document

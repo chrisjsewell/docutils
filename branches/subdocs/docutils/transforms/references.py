@@ -894,3 +894,47 @@ class DanglingReferencesVisitor(nodes.SparseNodeVisitor):
             node.resolved = 1
 
     visit_footnote_reference = visit_citation_reference = visit_reference
+
+
+class QualifiedReferences(Transform):
+
+    """
+    Resolve all references qualified by a namespace identifier.
+    """
+
+    default_priority = 852
+    """The last references transform to be applied."""
+
+    def apply(self):
+        self.document.global_nameids[self.document.get_namespace()] = \
+            self.document.nameids
+        if self.document.is_subdocument:
+            # Only apply on the master, once all sub-document have been read.
+            return
+        for node in self.document.traverse(nodes.reference):
+            if node.has_key('qrefname'):
+                assert node.has_key('qrefns')
+                self.resolve_qualified_reference(node)
+
+    def resolve_qualified_reference(self, ref):
+        ns, name = ref['qrefns'], ref['qrefname']
+        error = None
+        if not ns in self.document.global_nameids:
+            error = 'Invalid namespace: %s' % ns
+        elif not name in self.document.global_nameids[ns]:
+            error = 'No target "%s" found in namespace "%s".' % (name, ns)
+        elif self.document.global_nameids[ns][name] is None:
+            error = 'Duplicate target "%s" in namespace "%s" cannot be ' \
+                    'referenced.' % (name, ns)
+        if error is not None:
+            msg = self.document.reporter.error(
+                  error, base_node=ref)
+            msgid = self.document.set_id(msg)
+            prb = nodes.problematic(
+                ref.rawsource, ref.rawsource, refid=msgid)
+            prbid = self.document.set_id(prb)
+            msg.add_backref(prbid)
+            ref.replace_self(prb)
+            return
+        del ref['qrefns'], ref['qrefname']
+        ref['refid'] = self.document.global_nameids[ns][name]

@@ -869,12 +869,18 @@ class document(Root, Structural, Element):
         self.nameids = {}
         """Mapping of names to unique id's."""
 
+        self.global_nameids = {}
+        """Mapping of namespaces to mappings of names to unique id's."""
+
         self.nametypes = {}
         """Mapping of names to hyperlink type (boolean: True => explicit,
         False => implicit)."""
 
         self.ids = {}
         """Mapping of ids to nodes."""
+
+        self.reserved_ids = []
+        """ID's not to be used."""
 
         self.footnote_refs = {}
         """Mapping of footnote labels to lists of footnote_reference nodes."""
@@ -936,10 +942,9 @@ class document(Root, Structural, Element):
         self.decoration = None
         """Document's `decoration` node."""
 
-        self.reserved_ids = []
-        """ID's not to be used."""
-
         self.document = self
+
+        self.is_subdocument = False
 
     def __getstate__(self):
         """
@@ -1173,6 +1178,14 @@ class document(Root, Structural, Element):
             else:
                 self.insert(index, self.decoration)
         return self.decoration
+
+    def get_namespace(self):
+        if not self.has_key('docset_root'):
+            return None
+        else:
+            from docutils import utils
+            return utils.relative_path(self['docset_root'] + '/dummy',
+                                       self['source'])
 
 
 # ================

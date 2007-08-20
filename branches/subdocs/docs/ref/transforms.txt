@@ -79,7 +79,9 @@ universal.ExposeInternals       Reader (r)                    840
 
 references.DanglingReferences   standalone (r), pep (r)       850
 
-misc.CheckDoctreeValidity       standalone (r)                856 
+references.QualifiedReferences  standalone (r), pep (r)       852
+
+misc.CheckDoctreeValidity       standalone (r), pep (r)       856 
 
 universal.Messages              Writer (w)                    860
 
