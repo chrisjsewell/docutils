@@ -23,7 +23,7 @@ from test_parsers.test_rst.test_directives.test_subdocs import paths
 
 totest = {}
 
-totest['check_doctree_validity'] = ((CheckDoctreeValidity,), [
+totest['check-doctree-validity'] = ((CheckDoctreeValidity,), [
 ["""\
 .. docset-root:: %(docset-root)s
 .. subdocs::

@@ -190,7 +190,8 @@ class Subdocs(Directive):
         document = self.state_machine.document
         subdoc_reader = standalone.Reader(
             parser_name='rst', docset_root=document.get('docset_root'),
-            reserved_ids=(document.ids.keys() + document.reserved_ids))
+            reserved_ids=(document.ids.keys() + document.reserved_ids),
+            is_subdocument=True)
         if not os.path.isabs(file_name):
             if not document.hasattr('docset_root'):
                 raise self.error('a doc-set root must be declared using the '
@@ -257,8 +258,9 @@ class Subdocs(Directive):
                 'either have a single document-title, or it must consist of '
                 'one or more top-level sections and optionally transitions.'
                 % (self.name, file_name))
-        # Update the master document's ID's.
-        self.state_machine.document.ids.update(subdocument.ids)
+        # Update the master document's ID's and name-to-id mapping.
+        document.ids.update(subdocument.ids)
+        document.global_nameids.update(subdocument.global_nameids)
         # Remove decoration (header and footer).
         for node in subdocument.traverse(nodes.decoration):
             node.parent.remove(node)

@@ -542,6 +542,39 @@ Relative URIs' reference text can be omitted:
 """],
 ]
 
+totest['qualified_references'] = [
+[r"""
+`<a  NAME\SPACE> \name <not an  embedded URI>`_
+""",
+"""\
+<document source="test data">
+    <paragraph>
+        <reference qrefname="name <not an embedded uri>" qrefns="a NAMESPACE">
+            name <not an  embedded URI>
+"""],
+[r"""
+`<not a namespace\> foo`_
+""",
+"""\
+<document source="test data">
+    <paragraph>
+        <reference name="<not a namespace> foo" refname="<not a namespace> foo">
+            <not a namespace> foo
+"""],
+["""\
+`<foo> anonymous`__
+""",
+"""\
+<document source="test data">
+    <paragraph>
+        <problematic ids="id2" refid="id1">
+            <foo> anonymous
+    <system_message backrefs="id2" ids="id1" level="2" line="1" source="test data" type="WARNING">
+        <paragraph>
+            Qualified references cannot be anonymous.
+"""],
+]
+
 totest['inline_targets'] = [
 ["""\
 _`target`

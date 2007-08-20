@@ -594,6 +594,23 @@ class Inliner:
               )
               $                         # end of string
               """ % locals(), re.VERBOSE),
+          qualified_reference=re.compile(
+              r"""
+              ^                         # beginning of string
+              <                         # open bracket
+              %(non_whitespace_after)s
+              (?P<namespace>
+                [^<>]*                  # anything but angle brackets
+                [^<>\x00]               # closing angle bracket is not escaped
+              )
+              %(non_whitespace_before)s
+              >                         # close bracket
+              \s+
+              %(non_whitespace_after)s
+              (?P<name>
+                .*
+              )
+              """ % locals(), re.VERBOSE | re.DOTALL), 
           literal=re.compile(non_whitespace_before + '(``)'
                              + end_string_suffix),
           target=re.compile(non_whitespace_escape_before
@@ -746,7 +763,8 @@ class Inliner:
                     prb = self.problematic(text, text, msg)
                     return string[:rolestart], [prb], string[textend:], [msg]
                 return self.phrase_ref(string[:matchstart], string[textend:],
-                                       rawsource, escaped, unescape(escaped))
+                                       rawsource, escaped, unescape(escaped),
+                                       lineno)
             else:
                 rawsource = unescape(string[rolestart:textend], 1)
                 nodelist, messages = self.interpreted(rawsource, escaped, role,
@@ -760,7 +778,20 @@ class Inliner:
         prb = self.problematic(text, text, msg)
         return string[:matchstart], [prb], string[matchend:], [msg]
 
-    def phrase_ref(self, before, after, rawsource, escaped, text):
+    def phrase_ref(self, before, after, rawsource, escaped, text, lineno):
+        match = self.patterns.qualified_reference.search(escaped)
+        if match:
+            if rawsource[-2:] == '__':
+                msg = self.reporter.warning(
+                    'Qualified references cannot be anonymous.', line=lineno)
+                prb = self.problematic(text, rawsource, msg)
+                return before, [prb], after, [msg]
+            reference = nodes.reference(
+                rawsource, unescape(match.group('name')),
+                qrefname=normalize_name(unescape(match.group('name'))),
+                qrefns=whitespace_normalize_name(
+                    unescape(match.group('namespace'))))
+            return before, [reference], after, []
         match = self.patterns.embedded_uri.search(escaped)
         if match:
             text = unescape(escaped[:match.start(0)])
