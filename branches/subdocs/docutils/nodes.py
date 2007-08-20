@@ -190,16 +190,21 @@ class Node:
         return stop
 
     def traverse(self, condition=None,
-                 include_self=1, descend=1, siblings=0, ascend=0):
+                 include_self=1, descend=1, siblings=0, ascend=0,
+                 prune_subdocs=0):
         """
         Return an iterable containing
 
-        * self (if include_self is true)
-        * all descendants in tree traversal order (if descend is true)
+        * self (if include_self is true),
+        * all descendants in tree traversal order (if descend is true),
         * all siblings (if siblings is true) and their descendants (if
-          also descend is true)
-        * the siblings of the parent (if ascend is true) and their
-          descendants (if also descend is true), and so on
+          also descend is true),
+        * and the siblings of the parent (if ascend is true) and their
+          descendants (if also descend is true), and so on.
+
+        If prune_subdocs is true, do not include descendants of any sections
+        coming from sub-documents (but still include the section nodes
+        themselves).
 
         If `condition` is not None, the iterable contains only nodes
         for which ``condition(node)`` is true.  If `condition` is a
@@ -239,10 +244,18 @@ class Node:
             r.append(self)
         if descend and len(self.children):
             for child in self:
-                r.extend(child.traverse(
-                    include_self=1, descend=1, siblings=0, ascend=0,
-                    condition=condition))
+                if prune_subdocs and isinstance(child, section) and \
+                       child.has_key('source'):
+                    # Include this node but do not descend.
+                    r.append(child)
+                else:
+                    r.extend(child.traverse(
+                        condition=condition,
+                        include_self=1, descend=1, siblings=0, ascend=0,
+                        prune_subdocs=prune_subdocs))
         if siblings or ascend:
+            assert not prune_subdocs, \
+                   'prune_subdocs not implemented if siblings=1 or ascend=1'
             node = self
             while node.parent:
                 index = node.parent.index(node)
