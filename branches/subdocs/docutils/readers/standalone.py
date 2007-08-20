@@ -63,6 +63,7 @@ class Reader(readers.Reader):
             references.InternalTargets,
             references.DanglingReferences,
             misc.Transitions,
+            misc.CheckDoctreeValidity,
             ]
 
     def __init__(self, parser=None, parser_name=None,

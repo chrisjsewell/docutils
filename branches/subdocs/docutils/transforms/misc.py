@@ -141,3 +141,71 @@ class Transitions(Transform):
         node.parent.remove(node)
         # Insert the transition after the sibling.
         sibling.parent.insert(index + 1, node)
+
+
+class CheckDoctreeValidity(Transform):
+
+    """
+    Check that the "subdocs" directive did not leave the document tree invalid.
+
+    Turn this::
+
+        <section>
+            <paragraph>
+                sub-document contents...
+        <paragraph>
+            non-section content after the subdocs directive (forbidden)
+        <section>
+            ...
+
+    into this::
+        
+        <section>
+            <paragraph>
+                sub-document contents...
+            <paragraph>
+                non-section content after the subdocs directive (forbidden)
+            <system_message>
+                warning...
+        <section>
+            ...
+    """
+
+    default_priority = 856
+
+    def apply(self):
+        # Check all section nodes, but don't bother descending into
+        # subdocs, since they have been checked before.
+        for node in self.document.traverse(nodes.section, prune_subdocs=True):
+            # index is the element to check.
+            index = node.parent.index(node) + 1
+            first_offending_index = index
+            last_offending_index = None
+            for index in range(first_offending_index, len(node.parent)):
+                if isinstance(node.parent[index], nodes.section):
+                    break
+                # Collect intermediate transitions, but leave the one
+                # immediately before the next section.
+                elif not isinstance(node.parent[index], nodes.transition):
+                    # Non-section content.
+                    last_offending_index = index
+            if last_offending_index is not None:
+                msg = self.document.reporter.warning(
+                    'Only transitions and sections are allowed after the '
+                    '"subdocs" directive.')
+                # Insert in visually the same place.
+                lowest_section = node.traverse(nodes.section)[-1]
+                lowest_section.extend(node.parent[
+                    first_offending_index:last_offending_index+1] + [msg])
+                del node.parent[first_offending_index:last_offending_index+1]
+
+    def find_lowest_section(self, node):
+        """
+        Return the visually lowest section that is a descendant of node`::
+
+            <`node`>
+                <section>
+                    <section>
+                    <section>   <--- return this section
+        """
+        return node.traverse(nodes.section)[-1]
