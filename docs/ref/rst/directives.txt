@@ -1129,6 +1129,11 @@ list; it may itself contain nested bullet lists.  The sections of the
 sub-documents specified by the nested bullet lists are inserted at the
 end of the containing sub-document.
 
+.. Hint:: You can reference targets in sub-documents using the
+   `namespace qualifier`_ syntax.
+
+   .. _namespace qualifier: restructuredtext.html#namespace-qualifiers
+
 .. [#content-in-front] As an obscure feature, the doctitle_xform_
    setting is enabled for all sub-documents; this means that invisible
    elements (such as comments, targets, etc.) in front of the document
