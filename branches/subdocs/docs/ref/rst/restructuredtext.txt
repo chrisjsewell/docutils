@@ -2597,7 +2597,7 @@ Embedded URIs
 `````````````
 
 A hyperlink reference may directly embed a target URI inline, within
-angle brackets ("<...>") as follows::
+angle brackets ("<...>") following the reference name, as follows::
 
     See the `Python home page <http://www.python.org>`_ for info.
 
@@ -2649,6 +2649,48 @@ text::
    block-level `hyperlink targets`_ is **strongly recommended**.  The
    embedded URI construct is most suited to documents intended *only*
    to be read in processed form.
+
+
+Namespace Qualifiers
+````````````````````
+
+A hyperlink reference may specify a namespace qualifier, within angle
+brackets ("<...>") *preceding* the reference name, as follows::
+
+    `<docs/ref/rst/directives.txt> List Table`_
+
+If this reference occurred in the current document
+(docs/ref/rst/restructuredtext.txt) and was processed to HTML, it
+would yield ::
+
+    <a href="directives.html#list-table">List Table<a>
+
+The namespace qualifier ("``docs/ref/rst/restructuredtext.txt``")
+describes the location of the source file the that contains the
+reference name ("``List Table``").  The path is relative to the
+doc-set root of the document (specified using the docset-root_
+directive).  The path may alternatively use backslashes, and it is
+case-insensitive.  The specified file can either be
+
+* a sub-document (included using the subdocs_ directive), though not
+  necessarily included from the current document -- it is sufficient
+  if the master document or another sub-document includes the file as
+  a sub-document, or
+* the master document.
+
+Note that it is not possible to reference files that are included
+using the include_ directive; use the path of the including file
+instead.
+
+.. _docset-root: directives.html#docset-root
+.. _subdocs: directives.html#subdocs
+.. _include: directives.html#include
+
+.. Note:: Be sure not to confuse the two reference syntax constructs
+   that both use angle brackets: **Embedded URI's**, with the angle
+   brackets *after* the reference name (```name <http://URI>`_``), and
+   **namespace qualifiers**, with the angle brackets *before* the
+   reference name (```<namespace> name`_``).
 
 
 Inline Internal Targets
