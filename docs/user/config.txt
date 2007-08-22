@@ -698,6 +698,43 @@ _`option_limit`
 
     Default: 14 characters.  Option: ``--option-limit``.
 
+_`multi_output`
+    Whether to split the output document into multiple output files if
+    the subdocs_ directive was used.  Can be either
+
+    * "none": still only write a single document (the default), or
+
+    * "parallel": the output file structure parallels the input file
+      structure.  For instance, consider the following input structure
+      ::
+
+          docs/master.txt
+          docs/ref/functions.txt
+          docs/ref/classes.txt
+
+      where ``functions.txt`` and ``classes.txt`` are included as
+      sub-documents.  If the user calls ``rst2html.py
+      --multi-output=parallel docs/master.txt build/index.html``, then
+      the following output structure will be created::
+
+          build/index.html
+          build/ref/functions.html
+          build/ref/classes.html
+
+      While the directory containing the master output file
+      (``build/``) must already exist, any directories necessary to
+      create the directories holding sub-document output files
+      (``build/ref/`` in this instance) will be created by the HTML
+      writer if they do not exist.  Also, note that while you can
+      freely choose the name of the master output document
+      (``index.html``), the file names of all other output documents
+      are automatically derived from the names of their respective
+      input documents.
+
+    .. _subdocs: ../ref/rst/directives.html#subdocs
+
+    Default: "none".  Options: ``--multi-output``.
+
 .. _stylesheet [html4css1 writer]:
 
 stylesheet
