@@ -1670,8 +1670,29 @@ any knowledge of the Python-Reader origin of these elements.
     and collected (via a "glossary" directive perhaps) at one point.
 
 
+Transforms
+==========
+
+* Qualified references are currently resolved separately from
+  unqualified (local) references, using the QualifiedReferences.  This
+  causes code duplication (for following indirect references and for
+  detecting errors such as duplicate, nonexistent, or circular
+  targets), makes the whole system more complex add therefore
+  bug-prone, and does not seem like a very clean solution.
+
+  The QualifiedReferences transform is not applied on sub-documents;
+  it only runs at the very end, resolving all qualified references in
+  the whole document.  Instead of resolving local references for each
+  sub-document and at the end resolving all qualified references, all
+  references, qualified or not, should be resolved in one single pass
+  for the whole document; no reference-resolving should be done for
+  each individual sub-document.  This will also allows us to easily
+  consolidate the refname and qrefname attributes into a single
+  refname attribute, and rename the qrefns attribute to refns.
+
+
 Unimplemented Transforms
-========================
+------------------------
 
 * _`Footnote & Citation Gathering`
 
