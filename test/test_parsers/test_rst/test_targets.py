@@ -66,6 +66,12 @@ Indirect hyperlink targets:
 .. _target1: reference_
 
 .. _target2: `phrase-link reference`_
+
+.. _target3: <not> qualified_
+
+.. _target4: ` <not> qualified `_
+
+.. _target5: `< not> qualified`_
 """,
 """\
 <document source="test data">
@@ -73,6 +79,20 @@ Indirect hyperlink targets:
         Indirect hyperlink targets:
     <target ids="target1" names="target1" refname="reference">
     <target ids="target2" names="target2" refname="phrase-link reference">
+    <target ids="target3" names="target3" refuri="<not>qualified_">
+    <target ids="target4" names="target4" refuri="`<not>qualified`_">
+    <target ids="target5" names="target5" refname="< not> qualified">
+"""],
+["""\
+Indirect qualified hyperlink targets:
+
+.. _target1: `<namE/sPa  ce>  name`_
+""",
+"""\
+<document source="test data">
+    <paragraph>
+        Indirect qualified hyperlink targets:
+    <target ids="target1" names="target1" qrefname="name" qrefns="name/spa ce">
 """],
 ["""\
 .. _a long target name:

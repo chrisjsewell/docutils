@@ -34,6 +34,8 @@ paths['docset-root'] = utils.normalize_path(os.path.join(
     'test_parsers/test_rst/test_directives/subdocs'))
 for i in os.listdir(paths['docset-root']): # 'single-1.txt', ...
     paths[i] = utils.normalize_path(os.path.join(paths['docset-root'], i))
+# Note that not all files are used in this test suite
+# (test_subdocs.py); they are used in other test suites though.
 
 totest = {}
 

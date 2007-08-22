@@ -1863,11 +1863,18 @@ indirect.
 
    Just as with `hyperlink references`_ anywhere else in a document,
    if a phrase-reference is used in the link block it must be enclosed
-   in backquotes.  As with `external hyperlink targets`_, the link
-   block of an indirect hyperlink target may begin on the same line as
-   the explicit markup start or the next line.  It may also be split
-   over multiple lines, in which case the lines are joined with
-   whitespace before being normalized.
+   in backquotes.  If a phrase-reference is used, it is also possible
+   to use a `qualified hyperlink reference`__, such as ::
+
+       .. _link: `<path/to/file.txt> target name`_
+
+   __ `Namespace Qualifiers`_
+
+   As with `external hyperlink targets`_,
+   the link block of an indirect hyperlink target may begin on the
+   same line as the explicit markup start or the next line.  It may
+   also be split over multiple lines, in which case the lines are
+   joined with whitespace before being normalized.
 
    For example, the following indirect hyperlink targets are
    equivalent::
@@ -2691,6 +2698,14 @@ instead.
    brackets *after* the reference name (```name <http://URI>`_``), and
    **namespace qualifiers**, with the angle brackets *before* the
    reference name (```<namespace> name`_``).
+
+.. CAUTION:: Specifying target name-spaces inline makes the document
+   harder to read.  You should consider using `indirect hyperlink
+   targets`_ in order to link to other name-spaces::
+
+       See the chapter about frobnicating_.
+
+       .. _frobnicating: `<foo/bar/actions.txt> frobnicating`_
 
 
 Inline Internal Targets

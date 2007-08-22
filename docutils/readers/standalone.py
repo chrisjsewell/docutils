@@ -68,10 +68,10 @@ class Reader(readers.Reader):
             ]
 
     def __init__(self, parser=None, parser_name=None,
-                 docset_root=None, reserved_ids=[], is_subdocument=False):
+                 docset_root=None, reserved_ids=None, is_subdocument=False):
         self.docset_root = docset_root
         self.is_subdocument = is_subdocument
-        self.reserved_ids = reserved_ids
+        self.reserved_ids = reserved_ids or []
         readers.Reader.__init__(self, parser=parser, parser_name=parser_name)
 
     def new_document(self):
