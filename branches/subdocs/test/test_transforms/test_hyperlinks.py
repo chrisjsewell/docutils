@@ -11,7 +11,7 @@ Tests for docutils.transforms.references.Hyperlinks.
 from __init__ import DocutilsTestSupport
 from docutils.transforms.references import PropagateTargets, \
      AnonymousHyperlinks, IndirectHyperlinks, ExternalTargets, \
-     InternalTargets, DanglingReferences
+     InternalTargets, DanglingReferences, QualifiedReferences
 
 from docutils.parsers.rst import Parser
 
@@ -22,15 +22,18 @@ def suite():
     s.generateTests(totest)
     return s
 
+from test_parsers.test_rst.test_directives.test_subdocs import paths
+
+transform_spec = (PropagateTargets, AnonymousHyperlinks, IndirectHyperlinks,
+                  ExternalTargets, InternalTargets, DanglingReferences,
+                  QualifiedReferences)
+
 totest = {}
 
 # Exhaustive listing of hyperlink variations: every combination of
 # target/reference, direct/indirect, internal/external, and named/anonymous,
 # plus embedded URIs.
-totest['exhaustive_hyperlinks'] = ((PropagateTargets, AnonymousHyperlinks,
-                                    IndirectHyperlinks,
-                                    ExternalTargets, InternalTargets,
-                                    DanglingReferences), [
+totest['exhaustive_hyperlinks'] = (transform_spec, [
 ["""\
 direct_ external
 
@@ -372,9 +375,7 @@ An `anonymous embedded uri <http://direct>`__.
 """],
 ])
 
-totest['hyperlinks'] = ((PropagateTargets, AnonymousHyperlinks,
-                         IndirectHyperlinks, ExternalTargets,
-                         InternalTargets, DanglingReferences), [
+totest['hyperlinks'] = (transform_spec, [
 ["""\
 .. _internal hyperlink:
 
@@ -837,6 +838,226 @@ Duplicate manual footnote labels, with reference ([1]_):
 """],
 ])
 
+totest['qualified_references'] = (transform_spec, [
+["""\
+.. docset-root:: %(docset-root)s
+.. subdocs::
+
+   * %(single-1.txt)s
+
+`<single-1.txt> DocUMeNt  1`_
+""" % paths,
+"""\
+<document docset_root="%(docset-root)s" source="test data">
+    <section ids="document-1" names="document\\ 1" source="%(single-1.txt)s">
+        <title>
+            Document 1
+        <paragraph>
+            Contents of document 1.
+    <paragraph>
+        <reference refid="document-1">
+            DocUMeNt  1
+""" % paths,
+],
+["""\
+.. docset-root:: %(docset-root)s
+
+.. _foo:
+
+`<../../../../test data> foo`_
+""" % paths,  # cruelly test that the document can reference its own namespace
+"""\
+<document docset_root="%(docset-root)s" source="test data">
+    <target refid="foo">
+    <paragraph ids="foo" names="foo">
+        <reference refid="foo">
+            foo
+    <system_message level="1" line="3" source="test data" type="INFO">
+        <paragraph>
+            Hyperlink target "foo" is not referenced.
+""" % paths,
+],
+["""\
+.. docset-root:: %(docset-root)s
+
+.. subdocs::
+
+   * references.txt
+
+.. _foo:
+""" % paths,  # references.txt references the foo target
+"""\
+<document docset_root="%(docset-root)s" source="test data">
+    <section ids="section" names="section" source="%(references.txt)s">
+        <title>
+            Section
+        <paragraph>
+            <reference refid="foo">
+                foo
+    <target ids="foo" names="foo">
+    <system_message level="1" line="7" source="test data" type="INFO">
+        <paragraph>
+            Hyperlink target "foo" is not referenced.
+""" % paths,
+],
+["""\
+.. docset-root:: %(docset-root)s
+
+.. subdocs::
+
+   * targets-1.txt
+   * targets-2.txt
+
+indirect_, `<targets-1.txt> a`_
+
+.. _indirect: `<targets-1.txt> a`_
+""" % paths,
+"""\
+<document docset_root="%(docset-root)s" source="test data">
+    <section ids="section" names="section" source="%(targets-1.txt)s">
+        <title>
+            Section
+        <target ids="a" names="a" qrefname="d" qrefns="targets-2.txt">
+        <target ids="b" names="b" qrefname="d" qrefns="targets-2.txt">
+        <target ids="c" names="c" qrefname="d" qrefns="targets-2.txt">
+        <target ids="f" names="f" refuri="http://www.python.org/">
+    <section ids="id1" names="section" source="%(targets-2.txt)s">
+        <title>
+            Section
+        <target ids="d" names="d" qrefname="f" qrefns="targets-1.txt">
+        <target ids="e" names="e" qrefname="f" qrefns="targets-1.txt">
+    <paragraph>
+        <reference name="indirect" refuri="http://www.python.org/">
+            indirect
+        , \n\
+        <reference refuri="http://www.python.org/">
+            a
+    <target ids="indirect" names="indirect" qrefname="a" qrefns="targets-1.txt">
+    <system_message level="1" line="4" source="%(targets-1.txt)s" type="INFO">
+        <paragraph>
+            Hyperlink target "a" is not referenced.
+    <system_message level="1" line="7" source="%(targets-1.txt)s" type="INFO">
+        <paragraph>
+            Hyperlink target "f" is not referenced.
+    <system_message level="1" line="4" source="%(targets-2.txt)s" type="INFO">
+        <paragraph>
+            Hyperlink target "d" is not referenced.
+""" % paths,
+],
+])
+
+totest['qualified-references-errors'] = (transform_spec, [
+["""\
+.. docset-root:: %(docset-root)s
+
+`<nonexistent> bar`_
+""" % paths,
+"""\
+<document docset_root="%(docset-root)s" source="test data">
+    <paragraph>
+        <problematic ids="id2" refid="id1">
+            `<nonexistent> bar`_
+    <system_message backrefs="id2" ids="id1" level="3" line="3" source="test data" type="ERROR">
+        <paragraph>
+            Invalid namespace: nonexistent
+""" % paths,
+],
+["""\
+.. docset-root:: %(docset-root)s
+
+.. subdocs::
+
+   * single-1.txt
+
+`<single-1.txt> nonexistent`_
+""" % paths,
+"""\
+<document docset_root="%(docset-root)s" source="test data">
+    <section ids="document-1" names="document\\ 1" source="%(single-1.txt)s">
+        <title>
+            Document 1
+        <paragraph>
+            Contents of document 1.
+    <paragraph>
+        <problematic ids="id2" refid="id1">
+            `<single-1.txt> nonexistent`_
+    <system_message backrefs="id2" ids="id1" level="3" line="7" source="test data" type="ERROR">
+        <paragraph>
+            No target "nonexistent" found in namespace "single-1.txt".
+""" % paths,
+],
+["""\
+.. docset-root:: %(docset-root)s
+
+Section
+=======
+Section
+=======
+
+`<../../..\\..\\test data> Section`_
+""" % paths,
+"""\
+<document docset_root="%(docset-root)s" source="test data">
+    <section dupnames="section" ids="section">
+        <title>
+            Section
+    <section dupnames="section" ids="id1">
+        <title>
+            Section
+        <system_message backrefs="id1" level="1" line="6" source="test data" type="INFO">
+            <paragraph>
+                Duplicate implicit target name: "section".
+        <paragraph>
+            <problematic ids="id3" refid="id2">
+                `<../../..\\..\\test data> Section`_
+    <system_message backrefs="id3" ids="id2" level="3" line="8" source="test data" type="ERROR">
+        <paragraph>
+            Duplicate target "section" in namespace "../../../../test data" cannot be referenced.
+""" % paths,
+],
+["""\
+.. docset-root:: %(docset-root)s
+
+Currently, we don't complain about unresolvable qualified targets if
+they are unreferenced.
+
+.. _unresolvable: `<nonexistent> nonexistent`_
+""" % paths,
+"""\
+<document docset_root="%(docset-root)s" source="test data">
+    <paragraph>
+        Currently, we don't complain about unresolvable qualified targets if
+        they are unreferenced.
+    <target ids="unresolvable" names="unresolvable" qrefname="nonexistent" qrefns="nonexistent">
+    <system_message level="1" line="6" source="test data" type="INFO">
+        <paragraph>
+            Hyperlink target "unresolvable" is not referenced.
+""" % paths,
+],
+["""\
+.. docset-root:: %(docset-root)s
+
+.. _circular 1: `<../../../../test data> circular 2`_
+.. _circular 2: `<../../../../test data> circular 1`_
+
+`circular 1`_
+""" % paths,
+"""\
+<document docset_root="%(docset-root)s" source="test data">
+    <target ids="circular-1" names="circular\\ 1" qrefname="circular 2" qrefns="../../../../test data">
+    <target ids="circular-2" names="circular\\ 2" qrefname="circular 1" qrefns="../../../../test data">
+    <paragraph>
+        <problematic ids="id2" refid="id1">
+            `circular 1`_
+    <system_message level="1" line="4" source="test data" type="INFO">
+        <paragraph>
+            Hyperlink target "circular 2" is not referenced.
+    <system_message backrefs="id2" ids="id1" level="3" line="6" source="test data" type="ERROR">
+        <paragraph>
+            Cannot resolve "circular 2": circular reference.
+""" % paths,
+],
+])
 
 if __name__ == '__main__':
     import unittest

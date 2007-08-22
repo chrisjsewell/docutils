@@ -853,6 +853,9 @@ class document(Root, Structural, Element):
         self.indirect_targets = []
         """List of indirect target nodes."""
 
+        self.qualified_targets = []
+        """List of qualified target nodes."""
+
         self.substitution_defs = {}
         """Mapping of substitution names to substitution_definition nodes."""
 
@@ -1091,6 +1094,9 @@ class document(Root, Structural, Element):
         self.indirect_targets.append(target)
         if target['names']:
             self.note_refname(target)
+
+    def note_qualified_target(self, target):
+        self.qualified_targets.append(target)
 
     def note_anonymous_target(self, target):
         self.set_id(target)

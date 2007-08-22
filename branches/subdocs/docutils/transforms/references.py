@@ -44,7 +44,7 @@ class PropagateTargets(Transform):
             # Only block-level targets without reference (like ".. target:"):
             if (isinstance(target.parent, nodes.TextElement) or
                 (target.hasattr('refid') or target.hasattr('refuri') or
-                 target.hasattr('refname'))):
+                 target.hasattr('refname') or target.hasattr('qrefname'))):
                 continue
             assert len(target) == 0, 'error: block-level target has children'
             next_node = target.next_node(ascend=1)
@@ -179,7 +179,28 @@ class IndirectHyperlinks(Transform):
        Once the attribute is migrated, the preexisting "refname" attribute
        is dropped.
 
-    b) Indirect internal references::
+    b) Indirect qualified references::
+
+           <paragraph>
+               <reference refname="indirect qualified">
+                   indirect qualified
+           <target id="id1" name="direct qualified"
+               qrefname="name" qrefns="namespace">
+           <target id="id2" name="indirect qualified"
+               refname="direct external">
+
+       The "qrefns" and "qrefname" attributes are migrated back
+       analogously to the "refuri" attribute::
+
+           <paragraph>
+               <reference refname="indirect qualified">
+                   indirect qualified
+           <target id="id1" name="direct qualified"
+               qrefname="name" qrefns="namespace">
+           <target id="id2" name="indirect qualified"
+               refname="direct external">
+
+    c) Indirect internal references::
 
            <target id="id1" name="final target">
            <paragraph>
@@ -210,8 +231,11 @@ class IndirectHyperlinks(Transform):
             if not target.resolved:
                 self.resolve_indirect_target(target)
             self.resolve_indirect_references(target)
+        for target in self.document.qualified_targets:
+            self.resolve_indirect_references(target)
 
     def resolve_indirect_target(self, target):
+        assert target.has_key('refname')
         refname = target.get('refname')
         if refname is None:
             reftarget_id = target['refid']
@@ -240,6 +264,12 @@ class IndirectHyperlinks(Transform):
             del target.multiply_indirect
         if reftarget.hasattr('refuri'):
             target['refuri'] = reftarget['refuri']
+            if target.has_key('refid'):
+                # This is not covered by any test.  Is it necessary?
+                del target['refid']
+        elif reftarget.hasattr('qrefname'):
+            target['qrefname'] = reftarget['qrefname']
+            target['qrefns'] = reftarget['qrefns']
             if target.has_key('refid'):
                 del target['refid']
         elif reftarget.hasattr('refid'):
@@ -289,12 +319,14 @@ class IndirectHyperlinks(Transform):
         target.resolved = 1
 
     def resolve_indirect_references(self, target):
+        call_method = None
         if target.hasattr('refid'):
             attname = 'refid'
             call_method = self.document.note_refid
         elif target.hasattr('refuri'):
             attname = 'refuri'
-            call_method = None
+        elif target.hasattr('qrefname'):
+            attname = 'qrefname'
         else:
             return
         attval = target[attname]
@@ -307,6 +339,8 @@ class IndirectHyperlinks(Transform):
                     continue
                 del ref['refname']
                 ref[attname] = attval
+                if attname == 'qrefname':
+                    ref['qrefns'] = target['qrefns']
                 if call_method:
                     call_method(ref)
                 ref.resolved = 1
@@ -370,7 +404,8 @@ class InternalTargets(Transform):
 
     def apply(self):
         for target in self.document.traverse(nodes.target):
-            if not target.hasattr('refuri') and not target.hasattr('refid'):
+            if not target.hasattr('refuri') and not target.hasattr('refid') \
+                   and not target.hasattr('qrefname'):
                 self.resolve_reference_ids(target)
 
     def resolve_reference_ids(self, target):
@@ -916,8 +951,20 @@ class QualifiedReferences(Transform):
                 assert node.has_key('qrefns')
                 self.resolve_qualified_reference(node)
 
-    def resolve_qualified_reference(self, ref):
+    def resolve_qualified_reference(self, ref, stack=None):
+        """
+        Appropriately set the "refuri" or "refid" attribute on `ref`.
+
+        Follow all indirect targets that `ref` refers to.
+        """
+        # This method probably could (or should?) be generalized to
+        # resolve all references, qualified or unqualified (local).
+        # However, its error reporting may be more limited (one would
+        # need to check in detail whether this is a problem).
+        if stack is None:
+            stack = []
         ns, name = ref['qrefns'], ref['qrefname']
+        del ref['qrefns'], ref['qrefname']
         error = None
         if not ns in self.document.global_nameids:
             error = 'Invalid namespace: %s' % ns
@@ -926,15 +973,26 @@ class QualifiedReferences(Transform):
         elif self.document.global_nameids[ns][name] is None:
             error = 'Duplicate target "%s" in namespace "%s" cannot be ' \
                     'referenced.' % (name, ns)
-        if error is not None:
-            msg = self.document.reporter.error(
-                  error, base_node=ref)
+        elif (ns, name) in stack:
+            error = 'Cannot resolve "%s": circular reference.' % name
+        if error:
+            msg = self.document.reporter.error(error, base_node=ref)
             msgid = self.document.set_id(msg)
-            prb = nodes.problematic(
-                ref.rawsource, ref.rawsource, refid=msgid)
+            prb = nodes.problematic(ref.rawsource, ref.rawsource, refid=msgid)
             prbid = self.document.set_id(prb)
             msg.add_backref(prbid)
             ref.replace_self(prb)
             return
-        del ref['qrefns'], ref['qrefname']
-        ref['refid'] = self.document.global_nameids[ns][name]
+        stack.append((ns, name))
+        refid = self.document.global_nameids[ns][name]
+        refnode = self.document.ids[refid]
+        assert not (isinstance(refnode, nodes.target) and
+                    refnode.has_key('refid')), 'unexpected indirect target'
+        if isinstance(refnode, nodes.target) and refnode.has_key('qrefns'):
+            qrefns, qrefname = refnode['qrefns'], refnode['qrefname']
+            ref['qrefns'], ref['qrefname'] = qrefns, qrefname
+            self.resolve_qualified_reference(ref, stack=stack)
+        elif isinstance(refnode, nodes.target) and refnode.has_key('refuri'):
+            ref['refuri'] = refnode['refuri']
+        else:
+            ref['refid'] = refid

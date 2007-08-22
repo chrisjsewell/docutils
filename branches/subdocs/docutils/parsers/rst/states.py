@@ -762,9 +762,10 @@ class Inliner:
                     text = unescape(string[rolestart:textend], 1)
                     prb = self.problematic(text, text, msg)
                     return string[:rolestart], [prb], string[textend:], [msg]
-                return self.phrase_ref(string[:matchstart], string[textend:],
-                                       rawsource, escaped, unescape(escaped),
-                                       lineno)
+                else:
+                    nodes, msgs = self.phrase_ref(rawsource, escaped, lineno)
+                    return string[:matchstart], nodes, string[textend:], msgs
+                           
             else:
                 rawsource = unescape(string[rolestart:textend], 1)
                 nodelist, messages = self.interpreted(rawsource, escaped, role,
@@ -778,22 +779,19 @@ class Inliner:
         prb = self.problematic(text, text, msg)
         return string[:matchstart], [prb], string[matchend:], [msg]
 
-    def phrase_ref(self, before, after, rawsource, escaped, text, lineno):
-        match = self.patterns.qualified_reference.search(escaped)
-        if match:
+    def phrase_ref(self, rawsource, escaped, lineno):
+        qrefns, qrefname, text = qualifier(escaped, lineno)
+        if qrefns is not None:
             if rawsource[-2:] == '__':
                 msg = self.reporter.warning(
                     'Qualified references cannot be anonymous.', line=lineno)
-                prb = self.problematic(text, rawsource, msg)
-                return before, [prb], after, [msg]
-            qrefns = whitespace_normalize_name(
-                unescape(match.group('namespace'),
-                         restore_backslashes=True).replace('\\', '/').lower())
-            qrefname = normalize_name(unescape(match.group('name')))
+                prb = self.problematic(unescape(escaped), rawsource, msg)
+                return [prb], [msg]
             reference = nodes.reference(
-                rawsource, unescape(match.group('name')),
+                rawsource, text,
                 qrefns=qrefns, qrefname=qrefname)
-            return before, [reference], after, []
+            return [reference], []
+        text = unescape(escaped)
         match = self.patterns.embedded_uri.search(escaped)
         if match:
             text = unescape(escaped[:match.start(0)])
@@ -826,7 +824,7 @@ class Inliner:
             else:
                 reference['refname'] = refname
                 self.document.note_refname(reference)
-        return before, node_list, after, []
+        return node_list, []
 
     def adjust_uri(self, uri):
         match = self.patterns.email.match(uri)
@@ -1020,6 +1018,26 @@ def _upperalpha_to_int(s, _zero=(ord('A')-1)):
 
 def _lowerroman_to_int(s):
     return roman.fromRoman(s.upper())
+
+def qualifier(escaped, lineno):
+    """
+    Return a (qrefns, qrefname, text) tuple or (None, None, None) if the
+    given reference does not contain a namespace qualifier.
+    """
+    # Perhaps this function should be moved into some class?  The
+    # Inliner.patterns reference smells, it should be self.patterns.
+    # But it must be callable from the Inliner (for references) and
+    # from the Body class (for indirect targets).
+    match =  Inliner.patterns.qualified_reference.search(escaped)
+    if match:
+        qrefns = whitespace_normalize_name(
+            unescape(match.group('namespace'),
+                     restore_backslashes=True).replace('\\', '/').lower())
+        text = unescape(match.group('name'))
+        qrefname = normalize_name(text)
+        return qrefns, qrefname, text
+    else:
+        return None, None, None
 
 
 class Body(RSTState):
@@ -1893,17 +1911,21 @@ class Body(RSTState):
     def make_target(self, block, block_text, lineno, target_name):
         target_type, data = self.parse_target(block, block_text, lineno)
         if target_type == 'refname':
-            target = nodes.target(block_text, '', refname=normalize_name(data))
+            target = nodes.target(
+                block_text, '', refname=normalize_name(data))
             target.indirect_reference_name = data
             self.add_target(target_name, '', target, lineno)
             self.document.note_indirect_target(target)
-            return target
-        elif target_type == 'refuri':
+        elif target_type == 'qualified':
+            target = nodes.target(
+                block_text, '', qrefns=data[0], qrefname=data[1])
+            self.add_target(target_name, '', target, lineno)
+            self.document.note_qualified_target(target)
+        else:
+            assert target_type == 'refuri'
             target = nodes.target(block_text, '')
             self.add_target(target_name, data, target, lineno)
-            return target
-        else:
-            return data
+        return target
 
     def parse_target(self, block, block_text, lineno):
         """
@@ -1911,24 +1933,23 @@ class Body(RSTState):
 
         :Return: A 2-tuple, one of:
 
-            - 'refname' and the indirect reference name
+            - 'refname' and the indirect reference name (unnormalized)
             - 'refuri' and the URI
             - 'qualified' and a 2-tuple (qrefns, qrefname)
         """
         if block and block[-1].strip()[-1:] == '_': # possible indirect target
             reference = ' '.join([line.strip() for line in block])
-            refname = self.is_reference(reference)
-            if refname:
-                return 'refname', refname
+            match = self.explicit.patterns.reference.match(
+                whitespace_normalize_name(reference))
+            if match:
+                escaped = match.group('simple') or match.group('phrase')
+                qrefns, qrefname, text = qualifier(escaped, lineno)
+                if qrefns is not None:
+                    return 'qualified', (qrefns, qrefname)
+                else:
+                    return 'refname', unescape(escaped)
         reference = ''.join([''.join(line.split()) for line in block])
         return 'refuri', unescape(reference)
-
-    def is_reference(self, reference):
-        match = self.explicit.patterns.reference.match(
-            whitespace_normalize_name(reference))
-        if not match:
-            return None
-        return unescape(match.group('simple') or match.group('phrase'))
 
     def add_target(self, targetname, refuri, target, lineno):
         target.line = lineno
