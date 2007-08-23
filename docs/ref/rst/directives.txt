@@ -1129,6 +1129,8 @@ list; it may itself contain nested bullet lists.  The sections of the
 sub-documents specified by the nested bullet lists are inserted at the
 end of the containing sub-document.
 
+Headers and footer declared in sub-documents are silently dropped.
+
 .. Hint:: You can reference targets in sub-documents using the
    `namespace qualifier`_ syntax.
 
