@@ -21,8 +21,6 @@ from types import ListType
 from docutils import frontend, nodes, languages, writers, utils
 from docutils.writers.newlatex2e import unicode_map
 
-from docutils.transforms.references import DanglingReferencesVisitor
-
 class Writer(writers.Writer):
 
     supported = ('latex','latex2e')

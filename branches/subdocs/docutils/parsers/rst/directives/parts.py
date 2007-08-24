@@ -192,6 +192,7 @@ class Subdocs(Directive):
             parser_name='rst', docset_root=document.get('docset_root'),
             reserved_ids=(document.ids.keys() + document.reserved_ids),
             is_subdocument=True)
+        file_name = os.path.expanduser(file_name)
         if not os.path.isabs(file_name):
             if not document.hasattr('docset_root'):
                 raise self.error('a doc-set root must be declared using the '
@@ -261,6 +262,7 @@ class Subdocs(Directive):
         # Update the master document's ID's and name-to-id mapping.
         document.ids.update(subdocument.ids)
         document.global_nameids.update(subdocument.global_nameids)
+        document.transform_messages.extend(subdocument.transform_messages)
         # Remove decoration (header and footer).
         for node in subdocument.traverse(nodes.decoration):
             node.parent.remove(node)
@@ -277,7 +279,7 @@ class DocsetRoot(Directive):
     final_argument_whitespace = True
 
     def run(self):
-        path = self.arguments[0]
+        path = os.path.expanduser(self.arguments[0])
         if not os.path.isabs(path):
             if self.reader is None or self.reader.source is None or \
                    self.reader.source.source_path is None:
