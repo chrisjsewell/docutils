@@ -136,11 +136,11 @@ totest['subdocs'] = [
 .. docset-root:: %(docset-root)s
 .. subdocs::
 
-   * *funny*-filename.txt
+   * funny_ filename.txt
 """ % paths,
 """\
 <document docset_root="%(docset-root)s" source="test data">
-    <section ids="document-with-a-funny-filename" names="document\\ with\\ a\\ funny\\ filename" source="%(*funny*-filename.txt)s">
+    <section ids="document-with-a-funny-filename" names="document\\ with\\ a\\ funny\\ filename" source="%(funny_ filename.txt)s">
         <title>
             Document With a Funny Filename
         <paragraph>
