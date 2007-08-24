@@ -244,14 +244,14 @@ class Node:
             r.append(self)
         if descend and len(self.children):
             for child in self:
+                decend = True
                 if prune_subdocs and isinstance(child, section) and \
                        child.has_key('source'):
-                    # Include this node but do not descend.
-                    r.append(child)
+                    decend = False
                 else:
                     r.extend(child.traverse(
                         condition=condition,
-                        include_self=1, descend=1, siblings=0, ascend=0,
+                        include_self=1, descend=descend, siblings=0, ascend=0,
                         prune_subdocs=prune_subdocs))
         if siblings or ascend:
             assert not prune_subdocs, \
