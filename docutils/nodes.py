@@ -206,10 +206,10 @@ class Node:
         coming from sub-documents (but still include the section nodes
         themselves).
 
-        If `condition` is not None, the iterable contains only nodes
-        for which ``condition(node)`` is true.  If `condition` is a
-        node class ``cls``, it is equivalent to a function consisting
-        of ``return isinstance(node, cls)``.
+        If `condition` is not None, the iterable contains only nodes for which
+        ``condition(node)`` is true.  If `condition` is a node class or a
+        tuple, it is equivalent to a function ``lambda node: isinstance(node,
+        condition)``.
 
         If ascend is true, assume siblings to be true as well.
 
@@ -236,10 +236,9 @@ class Node:
             siblings=1
         # Check if `condition` is a class (check for TypeType for Python
         # implementations that use only new-style classes, like PyPy).
-        if isinstance(condition, (ClassType, TypeType)):
+        if isinstance(condition, (ClassType, TypeType, TupleType)):
             node_class = condition
-            def condition(node, node_class=node_class):
-                return isinstance(node, node_class)
+            condition = lambda n: isinstance(n, node_class)
         if include_self and (condition is None or condition(self)):
             r.append(self)
         if descend and len(self.children):
