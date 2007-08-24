@@ -40,7 +40,7 @@ class PropagateTargets(Transform):
     default_priority = 260
 
     def apply(self):
-        for target in self.document.traverse(nodes.target):
+        for target in self.document.traverse(nodes.target, prune_subdocs=1):
             # Only block-level targets without reference (like ".. target:"):
             if (isinstance(target.parent, nodes.TextElement) or
                 (target.hasattr('refid') or target.hasattr('refuri') or
@@ -114,10 +114,10 @@ class AnonymousHyperlinks(Transform):
     def apply(self):
         anonymous_refs = []
         anonymous_targets = []
-        for node in self.document.traverse(nodes.reference):
+        for node in self.document.traverse(nodes.reference, prune_subdocs=1):
             if node.get('anonymous'):
                 anonymous_refs.append(node)
-        for node in self.document.traverse(nodes.target):
+        for node in self.document.traverse(nodes.target, prune_subdocs=1):
             if node.get('anonymous'):
                 anonymous_targets.append(node)
         if len(anonymous_refs) \
@@ -383,7 +383,7 @@ class ExternalTargets(Transform):
     default_priority = 640
 
     def apply(self):
-        for target in self.document.traverse(nodes.target):
+        for target in self.document.traverse(nodes.target, prune_subdocs=1):
             if target.hasattr('refuri'):
                 refuri = target['refuri']
                 for name in target['names']:
@@ -403,7 +403,7 @@ class InternalTargets(Transform):
     default_priority = 660
 
     def apply(self):
-        for target in self.document.traverse(nodes.target):
+        for target in self.document.traverse(nodes.target, prune_subdocs=1):
             if not target.hasattr('refuri') and not target.hasattr('refid') \
                    and not target.hasattr('qrefname'):
                 self.resolve_reference_ids(target)
@@ -696,7 +696,8 @@ class Substitutions(Transform):
     def apply(self):
         defs = self.document.substitution_defs
         normed = self.document.substitution_names
-        subreflist = self.document.traverse(nodes.substitution_reference)
+        subreflist = self.document.traverse(nodes.substitution_reference,
+                                            prune_subdocs=1)
         nested = {}
         for ref in subreflist:
             refname = ref['refname']
@@ -787,7 +788,9 @@ class TargetNotes(Transform):
     def apply(self):
         notes = {}
         nodelist = []
-        for target in self.document.traverse(nodes.target):
+        # For now, this does not descend into sub-documents because
+        # document.refnames only maps the names of the local document.
+        for target in self.document.traverse(nodes.target, prune_subdocs=1):
             # Only external targets.
             if not target.hasattr('refuri'):
                 continue
@@ -803,7 +806,7 @@ class TargetNotes(Transform):
                 notes[target['refuri']] = footnote
                 nodelist.append(footnote)
         # Take care of anonymous references.
-        for ref in self.document.traverse(nodes.reference):
+        for ref in self.document.traverse(nodes.reference, prune_subdocs=1):
             if not ref.get('anonymous'):
                 continue
             if ref.hasattr('refuri'):
@@ -861,13 +864,41 @@ class DanglingReferences(Transform):
     default_priority = 850
 
     def apply(self):
-        visitor = DanglingReferencesVisitor(
-            self.document,
-            self.transformer.unknown_reference_resolvers)
-        self.document.walk(visitor)
+        for node in self.document.traverse(
+            (nodes.reference, nodes.citation_reference,
+             nodes.footnote_reference), prune_subdocs=1):
+            if node.resolved or not node.hasattr('refname'):
+                continue
+            refname = node['refname']
+            id = self.document.nameids.get(refname)
+            if id is None:
+                for resolver_function in \
+                        self.transformer.unknown_reference_resolvers:
+                    if resolver_function(node):
+                        break
+                else:
+                    if self.document.nameids.has_key(refname):
+                        msg = self.document.reporter.error(
+                            'Duplicate target name, cannot be used as a unique '
+                            'reference: "%s".' % (node['refname']), base_node=node)
+                    else:
+                        msg = self.document.reporter.error(
+                            'Unknown target name: "%s".' % (node['refname']),
+                            base_node=node)
+                    msgid = self.document.set_id(msg)
+                    prb = nodes.problematic(
+                          node.rawsource, node.rawsource, refid=msgid)
+                    prbid = self.document.set_id(prb)
+                    msg.add_backref(prbid)
+                    node.replace_self(prb)
+            else:
+                del node['refname']
+                node['refid'] = id
+                self.document.ids[id].note_referenced_by(id=id)
+                node.resolved = 1
         # *After* resolving all references, check for unreferenced
         # targets:
-        for target in self.document.traverse(nodes.target):
+        for target in self.document.traverse(nodes.target, prune_subdocs=1):
             if not target.referenced:
                 if target.get('anonymous'):
                     # If we have unreferenced anonymous targets, there
@@ -886,49 +917,6 @@ class DanglingReferences(Transform):
                 self.document.reporter.info(
                     'Hyperlink target "%s" is not referenced.'
                     % naming, base_node=target)
-
-
-class DanglingReferencesVisitor(nodes.SparseNodeVisitor):
-    
-    def __init__(self, document, unknown_reference_resolvers):
-        nodes.SparseNodeVisitor.__init__(self, document)
-        self.document = document
-        self.unknown_reference_resolvers = unknown_reference_resolvers
-
-    def unknown_visit(self, node):
-        pass
-
-    def visit_reference(self, node):
-        if node.resolved or not node.hasattr('refname'):
-            return
-        refname = node['refname']
-        id = self.document.nameids.get(refname)
-        if id is None:
-            for resolver_function in self.unknown_reference_resolvers:
-                if resolver_function(node):
-                    break
-            else:
-                if self.document.nameids.has_key(refname):
-                    msg = self.document.reporter.error(
-                        'Duplicate target name, cannot be used as a unique '
-                        'reference: "%s".' % (node['refname']), base_node=node)
-                else:
-                    msg = self.document.reporter.error(
-                        'Unknown target name: "%s".' % (node['refname']),
-                        base_node=node)
-                msgid = self.document.set_id(msg)
-                prb = nodes.problematic(
-                      node.rawsource, node.rawsource, refid=msgid)
-                prbid = self.document.set_id(prb)
-                msg.add_backref(prbid)
-                node.replace_self(prb)
-        else:
-            del node['refname']
-            node['refid'] = id
-            self.document.ids[id].note_referenced_by(id=id)
-            node.resolved = 1
-
-    visit_footnote_reference = visit_citation_reference = visit_reference
 
 
 class QualifiedReferences(Transform):
