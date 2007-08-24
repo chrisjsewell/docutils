@@ -87,12 +87,9 @@ class ExposeInternals(Transform):
 
     default_priority = 840
 
-    def not_Text(self, node):
-        return not isinstance(node, nodes.Text)
-
     def apply(self):
         if self.document.settings.expose_internals:
-            for node in self.document.traverse(self.not_Text):
+            for node in self.document.traverse(nodes.Element, prune_subdocs=1):
                 for att in self.document.settings.expose_internals:
                     value = getattr(node, att, None)
                     if value is not None:
@@ -165,7 +162,8 @@ class StripComments(Transform):
 
     def apply(self):
         if self.document.settings.strip_comments:
-            for node in self.document.traverse(nodes.comment):
+            for node in self.document.traverse(nodes.comment,
+                                               prune_subdocs=1):
                 node.parent.remove(node)
 
 
@@ -191,7 +189,8 @@ class StripClassesAndElements(Transform):
         self.strip_classes = dict(
             [(key, None) for key in (self.document.settings.strip_classes
                                      or [])])
-        for node in self.document.traverse(self.check_classes):
+        for node in self.document.traverse(self.check_classes,
+                                           prune_subdocs=1):
             node.parent.remove(node)
 
     def check_classes(self, node):
