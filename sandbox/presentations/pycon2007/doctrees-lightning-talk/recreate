@@ -1,7 +1,0 @@
-#!/bin/sh
-
-set -x
-
-rst2s5.py presentation.txt presentation.html
-rm footnote.html
-webcpp footnote.py footnote.html
