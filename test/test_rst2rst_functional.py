@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # $Id$
-# Author: Stefan Rank <strank@strank.info>
+# Author: Stefan Rank <strank(AT)strank(DOT)info>
 # Copyright: This module has been placed in the public domain.
 
 """
