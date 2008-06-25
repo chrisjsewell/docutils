@@ -1,7 +1,0 @@
-Docutils DocBook Writer Todo List
-=================================
-
-* use xml:space where needed -- use HTML writer as a guide
-* handle docinfo elements
-* tests
-
