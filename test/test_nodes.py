@@ -228,6 +228,35 @@ class MiscTests(unittest.TestCase):
                                [e[0]])
         self.assertEquals(list(e.traverse(nodes.TextElement)), [e[0][1]])
 
+    def test_traverse_duplicate_texts(self):
+        e = nodes.Element()
+        e += nodes.TextElement()
+        e[0] += nodes.Text('one')
+        e[0] += nodes.Text('two')
+        e[0] += nodes.Text('three')
+        e[0] += nodes.Text('two')
+        e[0] += nodes.Text('five')
+        # assertEquals is not enough, since it uses '==' equality not 'is'
+        fulltraversedlist = list(e[0][0].traverse(siblings=1))
+        self.assertEquals(len(fulltraversedlist), 5)
+        for ind in range(5):
+            self.assertTrue(fulltraversedlist[ind] is e[0][ind])
+        partialtraversedlist = list(e[0][3].traverse(siblings=1))
+        self.assertEquals(len(partialtraversedlist), 2)
+        for ind in range(2):
+            self.assertTrue(partialtraversedlist[ind] is e[0][ind + 3])
+
+    def test_index(self):
+        e = nodes.Element()
+        e += nodes.TextElement()
+        e[0] += nodes.Text('one')
+        e[0] += nodes.Text('two')
+        e[0] += nodes.Text('three')
+        e[0] += nodes.Text('two')
+        e[0] += nodes.Text('five')
+        for ind in range(5):
+            self.assertEquals(e[0][ind].parent.index(e[0][ind]), ind)
+
     def test_next_node(self):
         e = nodes.Element()
         e += nodes.Element()
