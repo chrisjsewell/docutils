@@ -572,7 +572,12 @@ class Element(Node):
         self.children.remove(item)
 
     def index(self, item):
-        return self.children.index(item)
+        index = self.children.index(item)
+        while self.children[index] is not item:
+            index += 1 + self.children[index + 1:].index(item)
+            # once docutils drops py2.2 support, we can use:
+            #index = self.children.index(item, index + 1)
+        return index
 
     def is_not_default(self, key):
         if self[key] == [] and key in self.list_attributes:
