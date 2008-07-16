@@ -246,6 +246,13 @@ class Node:
             node = self
             while node.parent:
                 index = node.parent.index(node)
+                if isinstance(node, Text):
+                    # special case since Text nodes have value-equality
+                    while node.parent[index] is not node:
+                        index += 1 + node.parent[index + 1:].index(node)
+                        # once docutils drops py2.2 support, we could use
+                        # the i,j arguments of list.index and beautify this
+                        #index = node.parent.index(node, index + 1)
                 for sibling in node.parent[index+1:]:
                     r.extend(sibling.traverse(include_self=1, descend=descend,
                                               siblings=0, ascend=0,
@@ -572,12 +579,7 @@ class Element(Node):
         self.children.remove(item)
 
     def index(self, item):
-        index = self.children.index(item)
-        while self.children[index] is not item:
-            index += 1 + self.children[index + 1:].index(item)
-            # once docutils drops py2.2 support, we can use:
-            #index = self.children.index(item, index + 1)
-        return index
+        return self.children.index(item)
 
     def is_not_default(self, key):
         if self[key] == [] and key in self.list_attributes:
