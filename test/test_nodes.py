@@ -254,8 +254,12 @@ class MiscTests(unittest.TestCase):
         e[0] += nodes.Text('three')
         e[0] += nodes.Text('two')
         e[0] += nodes.Text('five')
-        for ind in range(5):
+        # as expected for the first three:
+        for ind in range(3):
             self.assertEquals(e[0][ind].parent.index(e[0][ind]), ind)
+        # but an expected mismatch for the fourth node, because of the
+        # str-like equality of Text nodes:
+        self.assertEquals(e[0][3].parent.index(e[0][3]), 1)
 
     def test_next_node(self):
         e = nodes.Element()
