@@ -901,8 +901,8 @@ class Inliner:
         return self.reference(match, lineno, anonymous=1)
 
     def standalone_uri(self, match, lineno):
-        if not match.group('scheme') or urischemes.schemes.has_key(
-              match.group('scheme').lower()):
+        if (not match.group('scheme')
+                or match.group('scheme').lower() in urischemes.schemes):
             if match.group('email'):
                 addscheme = 'mailto:'
             else:
