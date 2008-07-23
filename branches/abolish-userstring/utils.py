@@ -161,7 +161,7 @@ class Reporter:
         Raise an exception or generate a warning if appropriate.
         """
         attributes = kwargs.copy()
-        if kwargs.has_key('base_node'):
+        if 'base_node' in kwargs:
             source, line = get_source_line(kwargs['base_node'])
             del attributes['base_node']
             if source is not None:
@@ -308,7 +308,7 @@ def assemble_option_dict(option_list, options_spec):
         convertor = options_spec[name]  # raises KeyError if unknown
         if convertor is None:
             raise KeyError(name)        # or if explicitly disabled
-        if options.has_key(name):
+        if name in options:
             raise DuplicateOptionError('duplicate option "%s"' % name)
         try:
             options[name] = convertor(value)

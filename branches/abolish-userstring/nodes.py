@@ -557,10 +557,10 @@ class Element(Node):
         return self.attributes.get(key, failobj)
 
     def hasattr(self, attr):
-        return self.attributes.has_key(attr)
+        return attr in self.attributes
 
     def delattr(self, attr):
-        if self.attributes.has_key(attr):
+        if attr in self.attributes:
             del self.attributes[attr]
 
     def setdefault(self, key, failobj=None):
@@ -951,18 +951,18 @@ class document(Root, Structural, Element):
 
     def set_id(self, node, msgnode=None):
         for id in node['ids']:
-            if self.ids.has_key(id) and self.ids[id] is not node:
+            if id in self.ids and self.ids[id] is not node:
                 msg = self.reporter.severe('Duplicate ID: "%s".' % id)
                 if msgnode != None:
                     msgnode += msg
         if not node['ids']:
             for name in node['names']:
                 id = self.settings.id_prefix + make_id(name)
-                if id and not self.ids.has_key(id):
+                if id and id not in self.ids:
                     break
             else:
                 id = ''
-                while not id or self.ids.has_key(id):
+                while not id or id in self.ids:
                     id = (self.settings.id_prefix +
                           self.settings.auto_id_prefix + str(self.id_start))
                     self.id_start += 1
@@ -1003,7 +1003,7 @@ class document(Root, Structural, Element):
            The new target is invalidated regardless.
         """
         for name in node['names']:
-            if self.nameids.has_key(name):
+            if name in self.nameids:
                 self.set_duplicate_name_id(node, id, name, msgnode, explicit)
             else:
                 self.nameids[name] = id
@@ -1018,10 +1018,10 @@ class document(Root, Structural, Element):
                 level = 2
                 if old_id is not None:
                     old_node = self.ids[old_id]
-                    if node.has_key('refuri'):
+                    if 'refuri' in node:
                         refuri = node['refuri']
                         if old_node['names'] \
-                               and old_node.has_key('refuri') \
+                               and 'refuri' in old_node \
                                and old_node['refuri'] == refuri:
                             level = 1   # just inform if refuri's identical
                     if level > 1:
@@ -1052,7 +1052,7 @@ class document(Root, Structural, Element):
                 msgnode += msg
 
     def has_name(self, name):
-        return self.nameids.has_key(name)
+        return name in self.nameids
 
     # "note" here is an imperative verb: "take note of".
     def note_implicit_target(self, target, msgnode=None):
@@ -1112,7 +1112,7 @@ class document(Root, Structural, Element):
 
     def note_substitution_def(self, subdef, def_name, msgnode=None):
         name = whitespace_normalize_name(def_name)
-        if self.substitution_defs.has_key(name):
+        if name in self.substitution_defs:
             msg = self.reporter.error(
                   'Duplicate substitution definition name: "%s".' % name,
                   base_node=subdef)
