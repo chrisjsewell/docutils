@@ -27,7 +27,6 @@ import re
 import warnings
 from types import IntType, SliceType, StringType, UnicodeType, \
      TupleType, ListType, ClassType, TypeType
-from UserString import UserString
 
 
 # ==============================
@@ -62,11 +61,7 @@ class Node:
         return 1
 
     def __str__(self):
-        return self.__unicode__().encode('raw_unicode_escape')
-
-    def __unicode__(self):
-        # Override in subclass.
-        raise NotImplementedError
+        return unicode(self).encode('raw_unicode_escape')
 
     def asdom(self, dom=None):
         """Return a DOM **fragment** representation of this Node."""
@@ -273,7 +268,15 @@ class Node:
         except IndexError:
             return None
 
-class Text(Node, UserString):
+class reprunicode(unicode):
+    """
+    A class that removes the initial u from unicode's repr.
+    """
+
+    def __repr__(self):
+        return unicode.__repr__(self)[1:]
+
+class Text(Node, reprunicode):
 
     """
     Instances are terminal nodes (leaves) containing text only; no child
@@ -286,38 +289,44 @@ class Text(Node, UserString):
     children = ()
     """Text nodes have no children, and cannot have children."""
 
+    def __new__(cls, data, rawsource=None):
+        """Prevent the rawsource argument from propagating to str."""
+        return reprunicode.__new__(cls, data)
+    
     def __init__(self, data, rawsource=''):
-        UserString.__init__(self, data)
 
         self.rawsource = rawsource
         """The raw text from which this element was constructed."""
 
     def __repr__(self):
-        data = repr(self.data)
+        data = reprunicode.__repr__(self)
         if len(data) > 70:
-            data = repr(self.data[:64] + ' ...')
+            data = reprunicode.__repr__(self[:64] + ' ...')
         return '<%s: %s>' % (self.tagname, data)
 
-    def __len__(self):
-        return len(self.data)
-
     def shortrepr(self):
-        data = repr(self.data)
+        data = reprunicode.__repr__(self)
         if len(data) > 20:
-            data = repr(self.data[:16] + ' ...')
+            data = reprunicode.__repr__(self[:16] + ' ...')
         return '<%s: %s>' % (self.tagname, data)
 
     def _dom_node(self, domroot):
-        return domroot.createTextNode(self.data)
+        return domroot.createTextNode(self)
 
     def astext(self):
-        return self.data
+        return reprunicode(self)
 
-    def __unicode__(self):
-        return self.data
+    # Note about __unicode__: The implementation of __unicode__ here,
+    # and the one raising NotImplemented in the superclass Node had
+    # to be removed when changing Text to a subclass of unicode instead
+    # of UserString, since there is no way to delegate the __unicode__
+    # call to the superclass unicode:
+    # unicode itself does not have __unicode__ method to delegate to
+    # and calling unicode(self) or unicode.__new__ directly creates
+    # an infinite loop
 
     def copy(self):
-        return self.__class__(self.data)
+        return self.__class__(reprunicode(self), rawsource=self.rawsource)
 
     def deepcopy(self):
         return self.copy()
@@ -325,10 +334,19 @@ class Text(Node, UserString):
     def pformat(self, indent='    ', level=0):
         result = []
         indent = indent * level
-        for line in self.data.splitlines():
+        for line in self.splitlines():
             result.append(indent + line + '\n')
         return ''.join(result)
 
+    # rstrip and lstrip are used by substitution definitions where
+    # they are expected to return a Text instance, this was formerly
+    # taken care of by UserString. Note that then and now the
+    # rawsource member is lost.
+
+    def rstrip(self, chars=None):
+        return self.__class__(reprunicode.rstrip(self, chars))
+    def lstrip(self, chars=None):
+        return self.__class__(reprunicode.lstrip(self, chars))
 
 class Element(Node):
 
