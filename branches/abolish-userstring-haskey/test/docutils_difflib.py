@@ -525,8 +525,9 @@ class SequenceMatcher:
         1.0
         """
 
-        matches = reduce(lambda sum, triple: sum + triple[-1],
-                         self.get_matching_blocks(), 0)
+        matches = 0
+        for triple in self.get_matching_blocks():
+            matches += triple[-1]
         return 2.0 * matches / (len(self.a) + len(self.b))
 
     def quick_ratio(self):
@@ -600,9 +601,9 @@ def get_close_matches(word, possibilities, n=3, cutoff=0.6):
     """
 
     if not n >  0:
-        raise ValueError("n must be > 0: " + `n`)
+        raise ValueError("n must be > 0: " + repr(n))
     if not 0.0 <= cutoff <= 1.0:
-        raise ValueError("cutoff must be in [0.0, 1.0]: " + `cutoff`)
+        raise ValueError("cutoff must be in [0.0, 1.0]: " + repr(cutoff))
     result = []
     s = SequenceMatcher()
     s.set_seq2(word)
@@ -788,7 +789,7 @@ class Differ:
             elif tag == 'equal':
                 self._dump(' ', a, alo, ahi)
             else:
-                raise ValueError, 'unknown tag ' + `tag`
+                raise ValueError, 'unknown tag ' + repr(tag)
         results = self.results
         self.results = []
         return results
@@ -904,7 +905,7 @@ class Differ:
                     atags += ' ' * la
                     btags += ' ' * lb
                 else:
-                    raise ValueError, 'unknown tag ' + `tag`
+                    raise ValueError, 'unknown tag ' + repr(tag)
             self._qformat(aelt, belt, atags, btags)
         else:
             # the synch pair is identical

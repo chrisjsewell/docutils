@@ -92,8 +92,9 @@ class FunctionalTestCase(DocutilsTestSupport.CustomTestCase):
         namespace['settings_overrides'] = {'_disable_config': 1}
         # Read the variables set in the default config file and in
         # the current config file into namespace:
-        execfile(join_path(datadir, 'tests', '_default.py'), namespace)
-        execfile(self.configfile, namespace)
+        defaultpy = open(join_path(datadir, 'tests', '_default.py')).read()
+        exec(defaultpy, namespace)
+        exec(open(self.configfile).read(), namespace)
         # Check for required settings:
         assert 'test_source' in namespace,\
                "No 'test_source' supplied in " + self.configfile

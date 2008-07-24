@@ -377,7 +377,7 @@ class StateMachine:
             self.next_line(len(block) - 1)
             return block
         except UnexpectedIndentationError, error:
-            block, source, lineno = error
+            block, source, lineno = error.args
             self.next_line(len(block) - 1) # advance to last line of block
             raise
 
