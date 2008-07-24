@@ -311,7 +311,7 @@ class Text(Node, reprunicode):
         return '<%s: %s>' % (self.tagname, data)
 
     def _dom_node(self, domroot):
-        return domroot.createTextNode(self)
+        return domroot.createTextNode(unicode(self))
 
     def astext(self):
         return reprunicode(self)

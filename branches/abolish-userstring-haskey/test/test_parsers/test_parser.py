@@ -23,8 +23,8 @@ class RstParserTests(unittest.TestCase):
         document = utils.new_document('test data', frontend.OptionParser(
                     components=(parser, )).get_default_values())
 
-        self.assertRaises(UnicodeDecodeError, parser.parse,
-                          'hol%s' % chr(224), document)
+        self.assertRaises(UnicodeError, # UnicodeDecodeError since py2.3
+                          parser.parse, 'hol%s' % chr(224), document)
 
 
 if __name__ == '__main__':

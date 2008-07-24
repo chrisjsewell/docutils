@@ -40,7 +40,8 @@ class TextTests(unittest.TestCase):
         self.assertEquals(self.text.pformat(), 'Line 1.\nLine 2.\n')
 
     def test_asciirestriction(self):
-        self.assertRaises(UnicodeDecodeError, nodes.Text, 'hol%s' % chr(224))
+        self.assertRaises(UnicodeError, nodes.Text, 'hol%s' % chr(224))
+        # more specifically: UnicodeDecodeError since py2.3
 
 
 class ElementTests(unittest.TestCase):
