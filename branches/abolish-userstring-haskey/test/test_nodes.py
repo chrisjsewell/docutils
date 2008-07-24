@@ -39,6 +39,9 @@ class TextTests(unittest.TestCase):
     def test_pformat(self):
         self.assertEquals(self.text.pformat(), 'Line 1.\nLine 2.\n')
 
+    def test_asciirestriction(self):
+        self.assertRaises(UnicodeDecodeError, nodes.Text, 'hol%s' % chr(224))
+
 
 class ElementTests(unittest.TestCase):
 

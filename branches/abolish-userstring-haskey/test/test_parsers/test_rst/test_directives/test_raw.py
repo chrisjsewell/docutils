@@ -122,12 +122,12 @@ Raw input file is UTF-16-encoded, and is not valid ASCII.
                :file: %s
                :encoding: ascii
 """ % utf_16_file_rel],
-["""\
+[unicode("""\
 .. raw:: html
    :encoding: utf-8
 
    Should the parser complain becau\xdfe there is no :file:?  BUG?
-""",
+""", 'iso-8859-1'),
 """\
 <document source="test data">
     <raw format="html" xml:space="preserve">
