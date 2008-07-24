@@ -562,7 +562,7 @@ u"""\
     <system_message level="4" line="1" source="test data" type="SEVERE">
         <paragraph>
             Problems with "csv-table" directive path:
-            [Errno 2] No such file or directory: 'bogus.csv'.
+            [Errno 2] No such file or directory: u'bogus.csv'.
         <literal_block xml:space="preserve">
             .. csv-table:: no such file
                :file: bogus.csv
