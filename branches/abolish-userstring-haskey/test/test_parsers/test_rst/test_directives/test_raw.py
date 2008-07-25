@@ -157,7 +157,7 @@ Raw input file is UTF-16-encoded, and is not valid ASCII.
         <literal_block xml:space="preserve">
             .. raw:: html
                :file: non-existent.file
-"""],
+"""], # note that this output is rewritten below for certain python versions
 ]
 
 # Skip tests whose output contains "UnicodeDecodeError" if we are not
@@ -170,6 +170,16 @@ if sys.version_info < (2, 3):
                    "Python 2.3+ required for expected output." % i)
             # Assume we have only one of these tests.
             break
+
+# Rewrite tests that depend on the output of IOError as it is
+# platform-dependent before python 2.4 for a unicode path.
+if sys.version_info < (2, 4):
+    # remove the unicode repr u except for py2.3 on windows:
+    if not sys.platform.startswith('win') or sys.version_info < (2, 3):
+        for i in range(len(totest['raw'])):
+            if totest['raw'][i][1].find("u'non-existent.file'") != -1:
+                totest['raw'][i][1] = totest['raw'][i][1].replace(
+                        "u'non-existent.file'", "'non-existent.file'")
 
 
 if __name__ == '__main__':
