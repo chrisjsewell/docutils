@@ -1123,6 +1123,10 @@ class LaTeXTranslator(nodes.NodeVisitor):
             if not self.inside_citation_reference_label:
                 self.body.append('\\cite{')
                 self.inside_citation_reference_label = 1
+            else:
+                assert self.body[-1] in (' ', '\n'),\
+                        'unexpected non-whitespace while in reference label'
+                del self.body[-1]
         else:
             href = ''
             if 'refid' in node:
@@ -1142,8 +1146,6 @@ class LaTeXTranslator(nodes.NodeVisitor):
                         and next.astext() in (' ', '\n')):
                     if next_siblings[1].__class__ == node.__class__:
                         followup_citation = True
-                        # remove the space/newline:
-                        next.data = ''
             if followup_citation:
                 self.body.append(',')
             else:
