@@ -2,8 +2,8 @@
  Docutils Release Notes
 ========================
 
-:Author: Felix Wiemann
-:Contact: Felix.Wiemann@ososo.de
+:Author: Lea Wiemann
+:Contact: LeWiemann@gmail.com
 :Date: $Date$
 :Revision: $Revision$
 :Web site: http://docutils.sourceforge.net/
@@ -18,8 +18,29 @@ more detailed list of changes, please see the `Docutils History`_.
 .. contents::
 
 
-Changes Since 0.4
+Changes Since 0.5
 =================
+
+
+Release 0.5 (2008-06-25)
+========================
+
+Components:
+
+* HTML writer.
+
+  - Dropped all ``name`` attributes of ``a`` elements (``id`` is
+    universally supported now).
+
+* LaTeX2e writer:
+
+  - Better bibTeX citation support.
+  - Add ``--literal-block-env``
+
+* PEP writer:
+
+  - Changed to support new python.org website structure and
+    pep2pyramid.py.
 
 reStructuredText:
 
@@ -30,6 +51,26 @@ reStructuredText:
 
   __ docs/howto/rst-directives.html
 
+* Allow ``+`` and ``:`` in reference names requested for citations.
+
+Documentation:
+
+* Added `Deploying Docutils Securely`__
+
+  __ docs/howto/security.txt
+
+Internationalization:
+
+* Added hebrew mappings.
+
+General:
+
+* Configuration files are now assumed and required to be
+  UTF-8-encoded.
+
+* Added docutils/writers/html4css1/template.txt.
+
+* Enhance emacs support.
 
 Release 0.4 (2006-01-09)
 ========================

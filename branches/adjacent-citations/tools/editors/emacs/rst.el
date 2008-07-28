@@ -1,12 +1,10 @@
-;;; rst.el --- ReStructuredText Support for Emacs
+;;; rst.el --- Mode for viewing and editing reStructuredText-documents.
 
-;; Copyright 2003-2006 by Martin Blais, Stefan Merten, and David Goodger.
+;; Copyright 2003-2008 by Martin Blais, Stefan Merten, and David Goodger.
 
 ;; Authors: Martin Blais <blais@furius.ca>,
 ;;          Stefan Merten <smerten@oekonux.de>,
 ;;          David Goodger <goodger@python.org>
-;; Revision: $Revision$
-;; Date: $Date$
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License version 2,
@@ -24,13 +22,11 @@
 
 ;;; Commentary:
 
-;; Support code for editing reStructuredText with Emacs.  The latest
-;; version of this file lies in the docutils source code repository.
-;;
-
-;;; Description
-
-;; Basically, this package contains:
+;; This package provides major mode rst-mode, which supports documents marked up
+;; using the reStructuredText format. Support includes font locking as well as
+;; some convenience functions for editing. It does this by defining a Emacs
+;; major mode: rst-mode (ReST). This mode is derived from text-mode (and
+;; inherits much of it). This package also contains:
 ;;
 ;; - Functions to automatically adjust and cycle the section underline
 ;;   decorations;
@@ -38,8 +34,7 @@
 ;;   from it;
 ;; - Functions to insert and automatically update a TOC in your source
 ;;   document;
-;; - A mode which supports font-lock highlighting of reStructuredText
-;;   structures;
+;; - Font-lock highlighting of notable reStructuredText structures;
 ;; - Some other convenience functions.
 ;;
 ;; See the accompanying document in the docutils documentation about
@@ -50,290 +45,170 @@
 ;;
 ;; For full details on how to use the contents of this file, see
 ;; http://docutils.sourceforge.net/docs/user/emacs.html
-
-;;; Download
-
-;; Click `Here <rst.el>`_ for download.
-
-;;; Packaging
-
-;; **IMPORTANT NOTE TO PACKAGERS**: this package is the result of merging:
-;;
-;; - restructuredtext.el
-;; - rst-mode.el
-;; - rst-html.el
-;;
-;; Those files are now OBSOLETE and have been replaced by this single package
-;; file (2005-10-30).
-
-;;; Installation instructions
-
-;; Add this line to your .emacs file and bind the versatile sectioning commands
-;; in text mode, like this::
-;;
-;;   (require 'rst)
-;;   (add-hook 'text-mode-hook 'rst-text-mode-bindings)
-;;
-;; rst-prefix-map is the prefix map for all the functionality provide by this
-;; module.  In addition, other shorter bindings are also provided on the
-;; mode-specific-map prefix (i.e C-c).
 ;;
 ;;
-;;    C-c p a (also C-=): rst-adjust
+;; There are a number of convenient keybindings provided by rst-mode. The main
+;; one is
 ;;
-;;       Updates or rotates the section title around point or promotes/demotes
-;;       the decorations within the region (see full details below).
+;;    C-c C-a (also C-=): rst-adjust
 ;;
-;;       Note that C-= is a good binding, since it allows you to specify a
-;;       negative arg easily with C-- C-= (easy to type), as well as ordinary
-;;       prefix arg with C-u C-=.
+;; Updates or rotates the section title around point or promotes/demotes the
+;; decorations within the region (see full details below). Note that C-= is a
+;; good binding, since it allows you to specify a negative arg easily with C--
+;; C-= (easy to type), as well as ordinary prefix arg with C-u C-=.
 ;;
-;;    C-c p h: rst-display-decorations-hierarchy
-;;
-;;       Displays the level decorations that are available in the file.
-;;
-;;    C-c p t: rst-toc
-;;
-;;       Displays the hierarchical table-of-contents of the document and allows
-;;       you to jump to any section from it.
-;;
-;;    C-c p i: rst-toc-insert
-;;
-;;       Inserts a table-of-contents in the document at the column where the
-;;       cursor is.
-;;
-;;    C-c p u: rst-toc-insert-update
-;;
-;;       Find an existing inserted table-of-contents in the document an
-;;       updates it.
-;;
-;;    C-c p p, C-c p n (C-c C-p, C-c C-n): rst-backward-section,
-;;    rst-forward-section
-;;
-;;       Navigate between section titles.
-;;
-;;    C-c p l, C-c p r (C-c C-l, C-c C-r): rst-shift-region-left,
-;;    rst-shift-region-right
-;;
-;;       Shift the region left or right by two-char increments, which is perfect
-;;       for bulleted lists.
-;;
-;;
-;; Other specialized and more generic functions are also available (see source
-;; code).  The most important function provided by this file for section title
-;; adjustments is rst-adjust.
-;;
-;; There are many variables that can be customized, look for defcustom and
-;; defvar in this file.
+;; For more on bindings, see rst-mode-map below. There are also many variables
+;; that can be customized, look for defcustom and defvar in this file.
 ;;
 ;; If you use the table-of-contents feature, you may want to add a hook to
 ;; update the TOC automatically everytime you adjust a section title::
 ;;
-;;   (add-hook 'rst-adjust-hook 'rst-toc-insert-update)
+;;   (add-hook 'rst-adjust-hook 'rst-toc-update)
 ;;
-;; rst-mode
-;; --------
+;; Syntax highlighting: font-lock is enabled by default. If you want to turn off
+;; syntax highlighting to rst-mode, you can use the following::
 ;;
-;; There is a special mode that you can setup if you want to have syntax
-;; highlighting.  The mode is based on `text-mode' and inherits some things from
-;; it.  Particularly `text-mode-hook' is run before `rst-mode-hook'.
+;;   (setq font-lock-global-modes '(not rst-mode ...))
 ;;
+
+
+;; CUSTOMIZATION
+;;
+;; rst
+;; ---
+;; This group contains some general customizable features.
+;;
+;; The group is contained in the wp group.
+;;
+;; rst-faces
+;; ---------
+;; This group contains all necessary for customizing fonts. The default
+;; settings use standard font-lock-*-face's so if you set these to your
+;; liking they are probably good in rst-mode also.
+;;
+;; The group is contained in the faces group as well as in the rst group.
+;;
+;; rst-faces-defaults
+;; ------------------
+;; This group contains all necessary for customizing the default fonts used for
+;; section title faces.
+;;
+;; The general idea for section title faces is to have a non-default background
+;; but do not change the background. The section level is shown by the
+;; lightness of the background color. If you like this general idea of
+;; generating faces for section titles but do not like the details this group
+;; is the point where you can customize the details. If you do not like the
+;; general idea, however, you should customize the faces used in
+;; rst-adornment-faces-alist.
+;;
+;; Note: If you are using a dark background please make sure the variable
+;; frame-background-mode is set to the symbol dark. This triggers
+;; some default values which are probably right for you.
+;;
+;; The group is contained in the rst-faces group.
+;;
+;; All customizable features have a comment explaining their meaning. Refer to
+;; the customization of your Emacs (try ``M-x customize``).
+
+
+;;; DOWNLOAD
+
+;; The latest version of this file lies in the docutils source code repository:
+;;   http://svn.berlios.de/svnroot/repos/docutils/trunk/docutils/tools/editors/emacs/rst.el
+
+
+;;; INSTALLATION
+
 ;; Add the following lines to your `.emacs' file:
 ;;
-;; (setq auto-mode-alist
-;;       (append '(("\\.rst$" . rst-mode)
-;;                 ("\\.rest$" . rst-mode)) auto-mode-alist))
+;;   (require 'rst)
 ;;
 ;; If you are using `.txt' as a standard extension for reST files as
 ;; http://docutils.sourceforge.net/FAQ.html#what-s-the-standard-filename-extension-for-a-restructuredtext-file
 ;; suggests you may use one of the `Local Variables in Files' mechanism Emacs
-;; provides to set the major mode automatically.  For instance you may use::
+;; provides to set the major mode automatically. For instance you may use::
 ;;
 ;;    .. -*- mode: rst -*-
 ;;
-;; in the very first line of your file.  However, because this is a major
-;; security breach you or your administrator may have chosen to switch that
-;; feature off.  See `Local Variables in Files' in the Emacs documentation for a
-;; more complete discussion.
+;; in the very first line of your file. The following code is useful if you want
+;; to automatically enter rst-mode from any file with compatible extensions:
+;;
+;; (setq auto-mode-alist
+;;       (append '(("\\.txt$" . rst-mode)
+;;                 ("\\.rst$" . rst-mode)
+;;                 ("\\.rest$" . rst-mode)) auto-mode-alist))
+;;
 
 ;;; BUGS
 
-;; David: If I try rst-toc-insert in docs/dev/rst/alternatives.txt, it skips the
-;; section 5 title, "... Or Not To Do?". Perhaps it mistakes it for a comment? A
-;; comment requires two periods and a space or newline; three periods is not a
-;; comment.
+;; - rst-enumeration-region: Select a single paragraph, with the top at one
+;;   blank line before the beginning, and it will fail.
+;; - The active region goes away when we shift it left or right, and this
+;;   prevents us from refilling it automatically when shifting many times.
+;; - The suggested decorations when adjusting should not have to cycle
+;;   below one below the last section decoration level preceding the
+;;   cursor.  We need to fix that.
 
-;; Doing a line block creates two pipes, Wtf, should be one?
+;;; TODO LIST
 
-;;; TODO list
-
-;; Bindings
-;; --------
-;; - We need to automatically add the rst-text-mode-bindings to rst-mode
-;; - We need to find better bindings because C-= does not generate an event on
-;;   the Macs.
-;;
 ;; rst-toc-insert features
 ;; ------------------------
 ;; - rst-toc-insert: We should parse the contents:: options to figure out how
 ;;   deep to render the inserted TOC.
 ;; - On load, detect any existing TOCs and set the properties for links.
 ;; - TOC insertion should have an option to add empty lines.
-;; - TOC insertion should deal with multiple lines
-;;
+;; - TOC insertion should deal with multiple lines.
 ;; - There is a bug on redo after undo of adjust when rst-adjust-hook uses the
 ;;   automatic toc update.  The cursor ends up in the TOC and this is
 ;;   annoying.  Gotta fix that.
-;;
 ;; - numbering: automatically detect if we have a section-numbering directive in
-;;   the corresponding section, to render the toc
+;;   the corresponding section, to render the toc.
 ;;
 ;; bulleted and enumerated list items
 ;; ----------------------------------
 ;; - We need to provide way to rebullet bulleted lists, and that would include
 ;;   automatic enumeration as well.
 ;;
-;; rst-mode
-;; --------
-;; - Look at the possibility of converting rst-mode from a Major mode to a Minor
-;;   mode of text-mode.
-;;
 ;; Other
 ;; -----
+;; - It would be nice to differentiate between text files using
+;;   reStructuredText_ and other general text files.  If we had a
+;;   function to automatically guess whether a .txt file is following the
+;;   reStructuredText_ conventions, we could trigger rst-mode without
+;;   having to hard-code this in every text file, nor forcing the user to
+;;   add a local mode variable at the top of the file.
+;;   We could perform this guessing by searching for a valid decoration
+;;   at the top of the document or searching for reStructuredText_
+;;   directives further on.
+;;
+;; - We should support imenu in our major mode, with the menu filled with the
+;;   section titles (this should be really easy).
+;;
 ;; - We should rename "adornment" to "decoration" or vice-versa in this
-;;   document.
-;; - Add an option to forego using the file structure in order to make
-;;   suggestion, and to always use the preferred decorations to do that.
-;; - We need to automatically recenter on rst-forward-section movment commands.
+;;   document (Stefan's code ("adornment") vs Martin ("decoration")), maybe some
+;;   functions even overlap.
+;;
+;; - We need to automatically recenter on rst-forward-section movement commands.
 
 
-;;; History:
+;;; HISTORY
 ;;
 
-;;; Code:
+;;; CODE
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Bindings and hooks
-
 (defgroup rst nil "Support for reStructuredText documents"
   :group 'wp
   :version "21.1"
   :link '(url-link "http://docutils.sourceforge.net/rst.html"))
 
-(defun rst-toc-or-hierarchy ()
-  "Binding for either TOC or decorations hierarchy."
-  (interactive)
-  (if (not current-prefix-arg)
-      (rst-toc)
-    (rst-display-decorations-hierarchy)))
-
-;; Define a prefix map for the long form of key combinations.
-(defvar rst-prefix-map (make-sparse-keymap)
-  "Keymap for rst commands.")
-
-(dolist (m '(("a" . rst-adjust)
-	     ("=" . rst-adjust)
-	     ("t" . rst-toc)
-	     ("i" . rst-toc-insert)
-	     ("+" . rst-toc-insert)
-	     ("u" . rst-toc-insert-update)
-	     ("f" . rst-goto-section)
-	     ;;([return] . rst-goto-section)
-	     ("h" . rst-display-decorations-hierarchy)
-	     ("s" . rst-straighten-decorations)
-	     ("w" . rst-straighten-bullets-region)
-	     ("b" . rst-listify-region)
-	     ("e" . rst-enumerate-region)
-	     ("p" . rst-backward-section)
-	     ("n" . rst-forward-section)
-	     ("m" . rst-mark-section)
-	     ("r" . rst-shift-region-right)
-	     ("l" . rst-shift-region-left)
-	     ("v" . rst-convert-bullets-to-enumeration)
-	     ("B" . rst-line-block-region)
-	     ("c" . rst-compile)
-	     ("C" . rst-compile-alt-toolset)
-	     ("x" . rst-compile-pseudo-region)
-	     ("q" . rst-compile-pdf-preview)
-	     ("Q" . rst-compile-slides-preview)
-	     ))
-  (define-key rst-prefix-map (car m) (cdr m)))
-
-(defun rst-text-mode-bindings ()
-  "Default text mode hook for rest."
-
-  ;; Direct command (somehow this one does not work on the Mac).
-  (local-set-key [(control ?=)] 'rst-adjust)
-
-  (define-key mode-specific-map [(control p)] 'rst-backward-section)
-  (define-key mode-specific-map [(control n)] 'rst-forward-section)
-  (define-key mode-specific-map [(control r)] 'rst-shift-region-right)
-  (define-key mode-specific-map [(control l)] 'rst-shift-region-left)
-
-  ;; Bind the rst commands on the C-c p prefix.
-  (define-key mode-specific-map [(p)] rst-prefix-map)
-
-  ;; Set comment syntax in text-mode to a ReST comment.
-  (when (or (eq major-mode 'text-mode)
-	    (eq major-mode 'rst-mode))
-    (set (make-local-variable 'comment-start) ".. "))
-  )
-
-
-;; Note: we cannot bind the TOC update on file write because it messes with
-;; undo.  If we disable undo, since it adds and removes characters, the
-;; positions in the undo list are not making sense anymore.  Dunno what to do
-;; with this, it would be nice to update when saving.
-;;
-;; (add-hook 'write-contents-hooks 'rst-toc-insert-update-fun)
-;; (defun rst-toc-insert-update-fun ()
-;;   ;; Disable undo for the write file hook.
-;;   (let ((buffer-undo-list t)) (rst-toc-insert-update) ))
-
-
-;; Additional abbreviations for text-mode.
-(define-abbrev text-mode-abbrev-table
-  "con" ".. contents::\n..\n   " nil 0)
-
-
-;; Bulleted item lists.
-(defvar rst-bullets
-  '(?- ?* ?+)
-  "List of all possible bullet characters for bulleted lists.")
-
-;; Paragraph separation customization.  This will work better for
-;; bullet and enumerated lists in restructuredtext documents and
-;; should not affect filling for other documents too much.  Set it up
-;; like this:
-;;
-;; (add-hook 'text-mode-hook 'rst-set-paragraph-separation)
-(defvar rst-extra-paragraph-start
-  (format "\\|[ \t]*\\(%s \\|[0-9]+\\. \\)"
-	  (regexp-opt (mapcar 'char-to-string rst-bullets)))
-  "Extra parapraph-separate patterns to add for `text-mode'.")
-;; FIXME: What about the missing >?
-;; The author uses a hardcoded for paragraph-separate: "\f\\|>*[ \t]*$"
-
-(defun rst-set-paragraph-separation ()
-  "Set the paragraph separation for restructuredtext."
-  ;; FIXME: the variable should be made automatically buffer local rather than
-  ;; using a function here, this function is unnecessary.
-  (make-local-variable 'paragraph-start) ; prevent it growing every time
-  (setq paragraph-start (concat paragraph-start rst-extra-paragraph-start)))
-
-;; FIXME: What about paragraph-separate?  paragraph-start and paragraph-separate
-;; are different.  The author hardcodes the value to
-;; "\f\\|>*[ \t]*$\\|>*[ \t]*[-+*] \\|>*[ \t]*[0-9#]+\\. "
-
-;; FIXME: the variables above are in limbo and need some fixing.
 
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Support functions
+;; Define some generic support functions.
 
-(require 'cl)
+(require 'cl) ;; We need this for destructuring-bind below.
 
 ;; Generic Filter function.
 (unless (fboundp 'filter)
@@ -360,6 +235,227 @@ is for which (pred elem) is true)"
 	(goto-char opoint)
 	(forward-line 0)
 	(1+ (count-lines start (point)))))) )
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mode definition.
+
+(defconst rst-use-unicode
+  (string-equal "\u0020" " ")
+  "Non-nil if we can use unicode characters.")
+
+;; Key bindings.
+(defvar rst-mode-map
+  (let ((map (make-sparse-keymap)))
+
+    ;;
+    ;; Section Decorations.
+    ;;
+    ;; The adjustment function that decorates or rotates a section title.
+    (define-key map [(control c) (control a)] 'rst-adjust)
+    (define-key map [(control c) (control ?=)] 'rst-adjust)
+    (define-key map [(control ?=)] 'rst-adjust) ;; (Does not work on the Mac OSX.)
+    ;; Display the hierarchy of decorations implied by the current document contents.
+    (define-key map [(control c) (control h)] 'rst-display-decorations-hierarchy)
+    ;; Homogeneize the decorations in the document.
+    (define-key map [(control c) (control s)] 'rst-straighten-decorations)
+;;    (define-key map [(control c) (control s)] 'rst-straighten-deco-spacing)
+
+    ;;
+    ;; Section Movement and Selection.
+    ;;
+    ;; Mark the subsection where the cursor is.
+    (define-key map [(control c) (control m)] 'rst-mark-section)
+    ;; Move forward/backward between section titles.
+    (define-key map [(control c) (control n)] 'rst-forward-section)
+    (define-key map [(control c) (control p)] 'rst-backward-section)
+
+    ;;
+    ;; Operating on Blocks of Text.
+    ;;
+    ;; Makes paragraphs in region as a bullet list.
+    (define-key map [(control c) (control b)] 'rst-bullet-list-region)
+    ;; Makes paragraphs in region as a enumeration.
+    (define-key map [(control c) (control e)] 'rst-enumerate-region)
+    ;; Converts bullets to an enumeration.
+    (define-key map [(control c) (control v)] 'rst-convert-bullets-to-enumeration)
+    ;; Makes region a line-block.
+    (define-key map [(control c) (control d)] 'rst-line-block-region)
+    ;; Make sure that all the bullets in the region are consistent.
+    (define-key map [(control c) (control w)] 'rst-straighten-bullets-region)
+    ;; Shift region left or right (taking into account of enumerations/bullets, etc.).
+    (define-key map [(control c) (control l)] 'rst-shift-region-left)
+    (define-key map [(control c) (control r)] 'rst-shift-region-right)
+    ;; Comment/uncomment the active region.
+    (define-key map [(control c) (control c)] 'comment-region)
+
+    ;;
+    ;; Table-of-Contents Features.
+    ;;
+    ;; Enter a TOC buffer to view and move to a specific section.
+    (define-key map [(control c) (control t)] 'rst-toc)
+    ;; Insert a TOC here.
+    (define-key map [(control c) (control i)] 'rst-toc-insert)
+    ;; Update the document's TOC (without changing the cursor position).
+    (define-key map [(control c) (control u)] 'rst-toc-update)
+    ;; Got to the section under the cursor (cursor must be in TOC).
+    (define-key map [(control c) (control f)] 'rst-goto-section)
+
+    ;;
+    ;; Converting Documents from Emacs.
+    ;;
+    ;; Run one of two pre-configured toolset commands on the document.
+    (define-key map [(control c) (?1)] 'rst-compile)
+    (define-key map [(control c) (?2)] 'rst-compile-alt-toolset)
+    ;; Convert the active region to pseudo-xml using the docutils tools.
+    (define-key map [(control c) (?3)] 'rst-compile-pseudo-region)
+    ;; Convert the current document to PDF and launch a viewer on the results.
+    (define-key map [(control c) (?4)] 'rst-compile-pdf-preview)
+    ;; Convert the current document to S5 slides and view in a web browser.
+    (define-key map [(control c) (?5)] 'rst-compile-slides-preview)
+
+    map)
+  "Keymap for ReStructuredText mode commands. This inherits from Text mode.")
+
+
+;; Abbrevs.
+(defvar rst-mode-abbrev-table nil
+  "Abbrev table used while in rst mode.")
+(define-abbrev-table 'rst-mode-abbrev-table
+  '(
+    ("contents" ".. contents::\n..\n   " nil 0)
+    ("con" ".. contents::\n..\n   " nil 0)
+    ("cont" "[...]" nil 0)
+    ("skip" "\n\n[...]\n\n  " nil 0)
+    ("seq" "\n\n[...]\n\n  " nil 0)
+    ;; FIXME: Add footnotes, links, and more.
+    ))
+
+
+;; Syntax table.
+(defvar rst-mode-syntax-table
+  (let ((st (copy-syntax-table text-mode-syntax-table)))
+
+    (modify-syntax-entry ?$ "." st)
+    (modify-syntax-entry ?% "." st)
+    (modify-syntax-entry ?& "." st)
+    (modify-syntax-entry ?' "." st)
+    (modify-syntax-entry ?* "." st)
+    (modify-syntax-entry ?+ "." st)
+    (modify-syntax-entry ?. "_" st)
+    (modify-syntax-entry ?/ "." st)
+    (modify-syntax-entry ?< "." st)
+    (modify-syntax-entry ?= "." st)
+    (modify-syntax-entry ?> "." st)
+    (modify-syntax-entry ?\\ "\\" st)
+    (modify-syntax-entry ?| "." st)
+    (modify-syntax-entry ?_ "." st)
+    (when rst-use-unicode
+      ;; Use strings because unicode literals are not understood before Emacs
+      ;; 22
+      (modify-syntax-entry (aref "\u00ab" 0) "." st)
+      (modify-syntax-entry (aref "\u00bb" 0) "." st)
+      (modify-syntax-entry (aref "\u2018" 0) "." st)
+      (modify-syntax-entry (aref "\u2019" 0) "." st)
+      (modify-syntax-entry (aref "\u201c" 0) "." st)
+      (modify-syntax-entry (aref "\u201d" 0) "." st))
+
+    st)
+  "Syntax table used while in `rst-mode'.")
+
+
+(defcustom rst-mode-hook nil
+  "Hook run when Rst Mode is turned on. The hook for Text Mode is run before
+  this one."
+  :group 'rst
+  :type '(hook))
+
+
+;;;###autoload
+(define-derived-mode rst-mode text-mode "ReST"
+  :abbrev-table rst-mode-abbrev-table
+  :syntax-table rst-mode-syntax-table
+  :group 'rst
+  "Major mode for editing reStructuredText documents.
+
+There are a number of convenient keybindings provided by
+rst-mode. The main one is \[rst-adjust\], it updates or rotates
+the section title around point or promotes/demotes the
+decorations within the region (see full details below). Use
+negative prefix arg to rotate in the other direction.
+\\{rst-mode-map}
+
+Turning on `rst-mode' calls the normal hooks `text-mode-hook' and
+`rst-mode-hook'. This mode also supports font-lock highlighting."
+
+  (set (make-local-variable 'paragraph-separate) paragraph-start)
+  (set (make-local-variable 'indent-line-function)
+       (if (<= emacs-major-version 21)
+	   'indent-relative-maybe
+	 'indent-relative))
+  (set (make-local-variable 'paragraph-start)
+       "\f\\|>*[ \t]*$\\|>*[ \t]*[-+*] \\|>*[ \t]*[0-9#]+\\. ")
+  (set (make-local-variable 'adaptive-fill-mode) t)
+
+  ;; FIXME: No need to reset this.
+  ;; (set (make-local-variable 'indent-line-function) 'indent-relative)
+
+  ;; The details of the following comment setup is important because it affects
+  ;; auto-fill, and it is pretty common in running text to have an ellipsis
+  ;; ("...") which trips because of the rest comment syntax (".. ").
+  (set (make-local-variable 'comment-start) ".. ")
+  (set (make-local-variable 'comment-start-skip) "^\\.\\. ")
+  (set (make-local-variable 'comment-multi-line) nil)
+
+  ;; Special variables
+  (make-local-variable 'rst-adornment-level-alist)
+
+  ;; Font lock
+  (set (make-local-variable 'font-lock-defaults)
+       '(rst-font-lock-keywords
+	 t nil nil nil
+	 (font-lock-multiline . t)
+	 (font-lock-mark-block-function . mark-paragraph)))
+  (when (boundp 'font-lock-support-mode)
+    ;; rst-mode does not need font-lock-support-mode and works not well with
+    ;; jit-lock-mode because reST is not made for machines
+    (set (make-local-variable 'font-lock-support-mode) nil)))
+
+;;;###autoload
+(define-minor-mode rst-minor-mode
+  "ReST Minor Mode.
+Toggle ReST minor mode.
+With no argument, this command toggles the mode.
+Non-null prefix argument turns on the mode.
+Null prefix argument turns off the mode.
+
+When ReST minor mode is enabled, the ReST mode
+keybindings are installed on top of the major
+mode bindings. Use this for modes derived from
+text-mode, like mail-mode.."
+ ;; The initial value.
+ nil
+ ;; The indicator for the mode line.
+ " ReST"
+ ;; The minor mode bindings.
+ rst-mode-map
+ :group 'rst)
+
+;; FIXME: can I somehow install these too?
+;;  :abbrev-table rst-mode-abbrev-table
+;;  :syntax-table rst-mode-syntax-table
+
+
+
+
+
+;; Bulleted item lists.
+(defcustom rst-bullets
+  '(?- ?* ?+)
+  "List of all possible bullet characters for bulleted lists."
+  :group 'rst)
+
 
 
 
@@ -567,8 +663,8 @@ suggest a better match."
 
     (copy-list (car curpotential)) ))
 
-(defun rst-delete-line ()
-  "A version of `kill-line' that does not use the `kill-ring'."
+(defun rst-delete-entire-line ()
+  "Delete the entire current line without using the `kill-ring'."
   (delete-region (line-beginning-position) (min (+ 1 (line-end-position))
 						(point-max))))
 
@@ -586,9 +682,7 @@ requested decoration."
 
   (interactive)
   (let (marker
-        len
-        ec
-        (c ?-))
+        len)
 
       (end-of-line)
       (setq marker (point-marker))
@@ -613,14 +707,14 @@ requested decoration."
              ;; Avoid removing the underline of a title right above us.
              (save-excursion (forward-line -1)
                              (not (looking-at rst-section-text-regexp)))
-             (rst-delete-line)))
+             (rst-delete-entire-line)))
 
       ;; Remove following line if it consists only of a single repeated
       ;; character
       (save-excursion
         (forward-line +1)
         (and (rst-line-homogeneous-p 1)
-             (rst-delete-line))
+             (rst-delete-entire-line))
         ;; Add a newline if we're at the end of the buffer, for the subsequence
         ;; inserting of the underline
         (if (= (point) (buffer-end 1))
@@ -682,7 +776,7 @@ function to remove redundancies and inconsistencies."
         (curline 1))
     ;; Iterate over all the section titles/decorations in the file.
     (save-excursion
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (while (< (point) (buffer-end 1))
         (if (rst-line-homogeneous-nodent-p)
             (progn
@@ -721,14 +815,12 @@ list element should be unique."
   (let ((hierarchy-alist (list)))
     (dolist (x decorations)
       (let ((char (car x))
-            (style (cadr x))
-            (indent (caddr x)))
+            (style (cadr x)))
         (unless (assoc (cons char style) hierarchy-alist)
-	  (setq hierarchy-alist
-		(append hierarchy-alist
-			(list (cons (cons char style) x)))) )
+	  (push (cons (cons char style) x) hierarchy-alist))
         ))
-    (mapcar 'cdr hierarchy-alist)
+
+    (mapcar 'cdr (nreverse hierarchy-alist))
     ))
 
 
@@ -836,7 +928,7 @@ previous and next decorations is returned."
     ))
 
 
-(defun rst-decoration-complete-p (deco &optional point)
+(defun rst-decoration-complete-p (deco)
   "Return true if the decoration DECO around POINT is complete."
   ;; Note: we assume that the detection of the overline as being the underline
   ;; of a preceding title has already been detected, and has been eliminated
@@ -886,8 +978,7 @@ REVERSE-DIRECTION is used to reverse the cycling order."
      ;; Search for next decoration.
      (cadr
       (let ((cur (if reverse-direction rotdecos
-                   (reverse rotdecos)))
-            found)
+                   (reverse rotdecos))))
         (while (and cur
                     (not (and (eq char (caar cur))
                               (eq style (cadar cur)))))
@@ -932,7 +1023,10 @@ b. a negative numerical argument, which generally inverts the
    prefix for example."
   (interactive)
 
-  (let* ( ;; Parse the positive and negative prefix arguments.
+  (let* (;; Save our original position on the current line.
+	 (origpt (set-marker (make-marker) (point)))
+
+	 ;; Parse the positive and negative prefix arguments.
          (reverse-direction
           (and current-prefix-arg
                (< (prefix-numeric-value current-prefix-arg) 0)))
@@ -948,10 +1042,19 @@ b. a negative numerical argument, which generally inverts the
     ;; Run the hooks to run after adjusting.
     (run-hooks 'rst-adjust-hook)
 
+    ;; Make sure to reset the cursor position properly after we're done.
+    (goto-char origpt)
+
     ))
 
 (defvar rst-adjust-hook nil
   "Hooks to be run after running `rst-adjust'.")
+
+(defvar rst-new-decoration-down nil
+  "If true, a new decoration being added will be initialized to
+  be one level down from the previous decoration. If nil, a new
+  decoration will be equal to the level of the previous
+  decoration.")
 
 (defun rst-adjust-decoration (&optional toggle-style reverse-direction)
 "Adjust/rotate the section decoration for the section title around point.
@@ -1163,7 +1266,8 @@ of the right hand fingers and the binding is unused in `text-mode'."
               (setq cur
                     (if prev
                         (if (not reverse-direction)
-                            (or (cadr (rst-get-decoration-match hier prev))
+                            (or (funcall (if rst-new-decoration-down 'cadr 'car)
+					 (rst-get-decoration-match hier prev))
                                 (rst-suggest-new-decoration hier prev))
                           prev)
                       (copy-list (car rst-preferred-decorations))
@@ -1316,18 +1420,17 @@ DECORATIONS."
         (dolist (x decorations)
           (insert (format "\nSection Level %d" level))
           (apply 'rst-update-section x)
-          (end-of-buffer)
+          (goto-char (point-max))
           (insert "\n")
           (incf level)
           ))
     )))
 
-(defun rst-straighten-decorations (&optional buffer)
-  "Redo all the decorations in the given buffer BUFFER.
+(defun rst-straighten-decorations ()
+  "Redo all the decorations in the current buffer.
 This is done using our preferred set of decorations.  This can be
 used, for example, when using somebody else's copy of a document,
-in order to adapt it to our preferred style.  If no buffer is
-specified, the default buffer is used."
+in order to adapt it to our preferred style."
   (interactive)
   (save-excursion
     (let* ((alldecos (rst-find-all-decorations))
@@ -1356,17 +1459,25 @@ specified, the default buffer is used."
     )))
 
 
-(defun rst-straighten-deco-spacing (&optional buffer)
-  "Adjust the spacing before and after decorations in BUFFER.
-The spacing will be standard.  If no buffer is specified, the
-default buffer is used."
+
+
+(defun rst-straighten-deco-spacing ()
+  "Adjust the spacing before and after decorations in the entire document.
+The spacing will be set to two blank lines before the first two
+section levels, and one blank line before any of the other
+section levels."
+;; FIXME: we need to take care of subtitle at some point.
   (interactive)
   (save-excursion
     (let* ((alldecos (rst-find-all-decorations)))
-      (dolist (deco alldecos)
-	;; Go to the appropriate position
-	(prin1 deco)
-;; FIXME: todo
+
+      ;; Work the list from the end, so that we don't have to use markers to
+      ;; adjust for the changes in the document.
+      (dolist (deco (nreverse alldecos))
+	;; Go to the appropriate position.
+	(goto-line (car deco))
+	(insert "@\n")
+;; FIXME: todo, we
 	)
     )))
 
@@ -1457,10 +1568,8 @@ adjust.  If bullets are found on levels beyond the
 
 (defun rst-rstrip (str)
   "Strips the whitespace at the end of string STR."
-  (let ((tmp))
-    (string-match "[ \t\n]*\\'" str)
-    (substring str 0 (match-beginning 0))
-    ))
+  (string-match "[ \t\n]*\\'" str)
+  (substring str 0 (match-beginning 0)))
 
 (defun rst-get-stripped-line ()
   "Return the line at cursor, stripped from whitespace."
@@ -1487,8 +1596,7 @@ Conceptually, the nil nodes--i.e.  those which have no title--are
 to be considered as being the same line as their first non-nil
 child.  This has advantages later in processing the graph."
 
-  (let* (thelist
-         (hier (rst-get-hierarchy alldecos))
+  (let* ((hier (rst-get-hierarchy alldecos))
          (levels (make-hash-table :test 'equal :size 10))
          lines)
 
@@ -1672,8 +1780,7 @@ align."
   ;; Note: we do child numbering from the parent, so we start number the
   ;; children one level before we print them.
   (let ((do-print (> level 0))
-        (count 1)
-        b)
+        (count 1))
     (when do-print
       (insert indent)
       (let ((b (point)))
@@ -1695,7 +1802,7 @@ align."
       (setq indent
 	    (cond
 	     ((eq rst-toc-insert-style 'plain)
-	      (concat indent rst-toc-indent))
+              (concat indent (make-string rst-toc-indent ? )))
 
 	     ((eq rst-toc-insert-style 'fixed)
 	      (concat indent (make-string rst-toc-indent ? )))
@@ -1776,18 +1883,33 @@ Delete that region.  Return t if found and the cursor is left after the comment.
       t
       )))
 
-(defun rst-toc-insert-update ()
+(defun rst-toc-update ()
   "Automatically find the contents section of a document and update.
 Updates the inserted TOC if present.  You can use this in your
 file-write hook to always make it up-to-date automatically."
   (interactive)
-  (save-excursion
-    (if (rst-toc-insert-find-delete-contents)
-        (progn (insert "\n    ")
-               (rst-toc-insert))) )
+  (let ((p (point)))
+    (save-excursion
+      (when (rst-toc-insert-find-delete-contents)
+        (insert "\n    ")
+	(rst-toc-insert)
+	))
+    ;; Somehow save-excursion does not really work well.
+    (goto-char p))
   ;; Note: always return nil, because this may be used as a hook.
   )
 
+;; Note: we cannot bind the TOC update on file write because it messes with
+;; undo.  If we disable undo, since it adds and removes characters, the
+;; positions in the undo list are not making sense anymore.  Dunno what to do
+;; with this, it would be nice to update when saving.
+;;
+;; (add-hook 'write-contents-hooks 'rst-toc-update-fun)
+;; (defun rst-toc-update-fun ()
+;;   ;; Disable undo for the write file hook.
+;;   (let ((buffer-undo-list t)) (rst-toc-update) ))
+
+(defalias 'rst-toc-insert-update 'rst-toc-update) ;; backwards compat.
 
 ;;------------------------------------------------------------------------------
 
@@ -1948,12 +2070,12 @@ EVENT is the input event."
 (put 'rst-toc-mode 'mode-class 'special)
 
 (defun rst-toc-mode ()
-  "Major mode for output from \\[rst-toc]."
+  "Major mode for output from \\[rst-toc], the table-of-contents for the document."
   (interactive)
   (kill-all-local-variables)
   (use-local-map rst-toc-mode-map)
   (setq major-mode 'rst-toc-mode)
-  (setq mode-name "Rst-TOC")
+  (setq mode-name "ReST-TOC")
   (setq buffer-read-only t)
   )
 
@@ -1982,7 +2104,6 @@ EVENT is the input event."
 
          (cur alldecos)
          (idx 0)
-         line
          )
 
     ;; Find the index of the "next" decoration w.r.t. to the current line.
@@ -2002,11 +2123,12 @@ EVENT is the input event."
     ;; boundaries.
     (if (and cur (>= idx 0))
         (goto-line (car cur))
-      (if (> offset 0) (end-of-buffer) (beginning-of-buffer)))
+      (if (> offset 0) (goto-char (point-max)) (goto-char (point-min))))
     ))
 
 (defun rst-backward-section ()
-  "Like rst-forward-section, except move back one title."
+  "Like rst-forward-section, except move back one title.
+With a prefix argument, move backward by a page."
   (interactive)
   (rst-forward-section -1))
 
@@ -2039,6 +2161,7 @@ EVENT is the input event."
 ;; Functions to work on item lists (e.g. indent/dedent, enumerate), which are
 ;; always 2 or 3 characters apart horizontally with rest.
 
+;; (FIXME: there is currently a bug that makes the region go away when we do that.)
 (defvar rst-shift-fill-region nil
   "Set to true if you want to automatically re-fill the region that is being
 shifted.")
@@ -2295,7 +2418,7 @@ do all lines instead of just paragraphs."
      (insert (make-string last-insert-len ?\ ))
      )))
 
-(defun rst-listify-region (beg end)
+(defun rst-bullet-list-region (beg end)
   "Add bullets to all the leftmost paragraphs in the given region.
 The region is specified between BEG and END.  With prefix argument,
 do all lines instead of just paragraphs."
@@ -2308,19 +2431,22 @@ do all lines instead of just paragraphs."
 
 (defmacro rst-iterate-leftmost-paragraphs
   (beg end first-only body-consequent body-alternative)
-  "Call FUN at the beginning of each line, with an argument that
+  "FIXME This definition is old and deprecated / we need to move
+to the newer version below:
+
+Call FUN at the beginning of each line, with an argument that
 specifies whether we are at the first line of a paragraph that
 starts at the leftmost column of the given region BEG and END.
 Set FIRST-ONLY to true if you want to callback on the first line
 of each paragraph only."
   `(save-excursion
-    (let ((leftcol (rst-find-leftmost-column beg end))
-	  (endm (set-marker (make-marker) end))
+    (let ((leftcol (rst-find-leftmost-column ,beg ,end))
+	  (endm (set-marker (make-marker) ,end))
 	  ,(when first-only '(in-par nil))
 	  )
 
       (do* (;; Iterate lines
-	    (l (progn (goto-char beg) (back-to-indentation))
+	    (l (progn (goto-char ,beg) (back-to-indentation))
 	       (progn (forward-line 1) (back-to-indentation)))
 
 	    (previous nil valid)
@@ -2342,6 +2468,45 @@ of each paragraph only."
 	  ,body-alternative)
 
 	))))
+
+
+(defmacro rst-iterate-leftmost-paragraphs-2 (spec &rest body)
+  "Evaluate BODY for each line in region defined by BEG END.
+LEFTMOST is set to true if the line is one of the leftmost of the
+entire paragraph. PARABEGIN is set to true if the line is the
+first of a paragraph."
+  (destructuring-bind
+      (beg end parabegin leftmost isleftmost isempty) spec
+
+  `(save-excursion
+     (let ((,leftmost (rst-find-leftmost-column ,beg ,end))
+	   (endm (set-marker (make-marker) ,end))
+	   (in-par nil)
+	   )
+
+      (do* (;; Iterate lines
+	    (l (progn (goto-char ,beg) (back-to-indentation))
+	       (progn (forward-line 1) (back-to-indentation)))
+
+ 	    (empty-line-previous nil ,isempty)
+
+	    (,isempty (looking-at "[ \t]*$")
+			(looking-at "[ \t]*$"))
+
+	    (,parabegin (not ,isempty)
+			(and empty-line-previous
+			     (not ,isempty)))
+
+	    (,isleftmost (and (not ,isempty)
+			      (= (current-column) ,leftmost))
+			 (and (not ,isempty)
+			      (= (current-column) ,leftmost)))
+	    )
+	  ((>= (point-marker) endm))
+
+	(progn ,@body)
+
+	)))))
 
 
 ;; FIXME: there are some problems left with the following function
@@ -2380,112 +2545,29 @@ of each paragraph only."
 ;;------------------------------------------------------------------------------
 
 (defun rst-line-block-region (rbeg rend &optional pfxarg)
-  "Toggle line block prefixes for a region."
+  "Toggle line block prefixes for a region. With prefix argument
+set the empty lines too."
   (interactive "r\nP")
   (let ((comment-start "| ")
 	(comment-end "")
 	(comment-start-skip "| ")
 	(comment-style 'indent)
-	(comment-multi-line nil))
-    (funcall (if pfxarg 'uncomment-region 'comment-region)
-	     rbeg rend)))
-
-;; FIXME todo: we need to provide the option of adding the line block chars for
-;; empty lines as well.  Sometimes this has to be decided by the user, but in
-;; certain cases it could be detected automatically, e.g.
-;;
-;;   Foo
-;;
-;;      Bar
-;;
-;;   Foo2
-;;
-
+	(force current-prefix-arg))
+    (rst-iterate-leftmost-paragraphs-2
+     (rbeg rend parbegin leftmost isleft isempty)
+     (if force
+	 (progn
+	   (move-to-column leftmost t)
+	   (delete-region (point) (+ (point) (- (current-indentation) leftmost)))
+	   (insert "| "))
+       (when (not isempty)
+	 (move-to-column leftmost)
+	 (delete-region (point) (+ (point) (- (current-indentation) leftmost)))
+	 (insert "| ")))
+     )))
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; rst-mode.el --- Mode for viewing and editing reStructuredText-documents.
-;;
-;; Copyright 2003 Stefan Merten <smerten@oekonux.de>
-;;
-;; Note: this is an update from version 0.2.9 of rst-mode.el
-;;
-;; DESCRIPTION
-;;
-;; This package provides support for documents marked up using the
-;; reStructuredText format. Support includes font locking as well as some
-;; convenience functions for editing. It does this by defining a Emacs major
-;; mode.
-;;
-;; The package is based on text-mode and inherits some things from it.
-;; Particularly text-mode-hook is run before rst-mode-hook.
-;;
-;; OPTIONS
-;;
-;; There are a number of things which can be customized using the standard
-;; Emacs customization features. There are two customization groups for this
-;; mode.
-;;
-;; Customization
-;; =============
-;;
-;; rst
-;; ---
-;; This group contains some general customizable features.
-;;
-;; The group is contained in the wp group.
-;;
-;; rst-faces
-;; ---------
-;; This group contains all necessary for customizing fonts. The default
-;; settings use standard font-lock-*-face's so if you set these to your
-;; liking they are probably good in rst-mode also.
-;;
-;; The group is contained in the faces group as well as in the rst group.
-;;
-;; rst-faces-defaults
-;; ------------------
-;; This group contains all necessary for customizing the default fonts used for
-;; section title faces.
-;;
-;; The general idea for section title faces is to have a non-default background
-;; but do not change the background. The section level is shown by the
-;; lightness of the background color. If you like this general idea of
-;; generating faces for section titles but do not like the details this group
-;; is the point where you can customize the details. If you do not like the
-;; general idea, however, you should customize the faces used in
-;; rst-adornment-faces-alist.
-;;
-;; Note: If you are using a dark background please make sure the variable
-;; frame-background-mode is set to the symbol dark. This triggers
-;; some default values which are probably right for you.
-;;
-;; The group is contained in the rst-faces group.
-;;
-;; All customizable features have a comment explaining their meaning. Refer to
-;; the customization of your Emacs (try ``M-x customize``).
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Customization:
-
-(defcustom rst-mode-hook nil
-  "Hook run when Rst Mode is turned on. The hook for Text Mode is run before
-  this one."
-  :group 'rst
-  :type '(hook))
-
-(defcustom rst-mode-lazy t
-  "*If non-nil Rst Mode font-locks comment, literal blocks, and section titles
-correctly. Because this is really slow it switches on Lazy Lock Mode
-automatically. You may increase Lazy Lock Defer Time for reasonable results.
-
-If nil comments and literal blocks are font-locked only on the line they start.
-
-The value of this variable is used when Rst Mode is turned on."
-  :group 'rst
-  :type '(boolean))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (require 'font-lock)
@@ -2661,125 +2743,20 @@ details check the Rst Faces Defaults group."
 	  :value-type (face))
   :set-after '(rst-level-face-max))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; FIXME: Code from `restructuredtext.el' should be integrated
-
-(defvar rst-mode-syntax-table nil
-  "Syntax table used while in rst mode.")
-
-(unless rst-mode-syntax-table
-  (setq rst-mode-syntax-table (make-syntax-table text-mode-syntax-table))
-  (modify-syntax-entry ?$ "." rst-mode-syntax-table)
-  (modify-syntax-entry ?% "." rst-mode-syntax-table)
-  (modify-syntax-entry ?& "." rst-mode-syntax-table)
-  (modify-syntax-entry ?' "." rst-mode-syntax-table)
-  (modify-syntax-entry ?* "." rst-mode-syntax-table)
-  (modify-syntax-entry ?+ "." rst-mode-syntax-table)
-  (modify-syntax-entry ?. "_" rst-mode-syntax-table)
-  (modify-syntax-entry ?/ "." rst-mode-syntax-table)
-  (modify-syntax-entry ?< "." rst-mode-syntax-table)
-  (modify-syntax-entry ?= "." rst-mode-syntax-table)
-  (modify-syntax-entry ?> "." rst-mode-syntax-table)
-  (modify-syntax-entry ?\\ "\\" rst-mode-syntax-table)
-  (modify-syntax-entry ?| "." rst-mode-syntax-table)
-  (modify-syntax-entry ?_ "." rst-mode-syntax-table)
-  )
-
-(defvar rst-mode-abbrev-table nil
- "Abbrev table used while in rst mode.")
-(define-abbrev-table 'rst-mode-abbrev-table ())
-
-;; FIXME: Movement keys to skip forward / backward over or mark an indented
-;; block could be defined; keys to markup section titles based on
-;; `rst-adornment-level-alist' would be useful
-(defvar rst-mode-map nil
-  "Keymap for rst mode. This inherits from Text mode.")
-
-(unless rst-mode-map
-  (setq rst-mode-map (copy-keymap text-mode-map)))
-
-(defun rst-mode ()
-  "Major mode for editing reStructuredText documents.
-
-You may customize `rst-mode-lazy' to switch font-locking of blocks.
-
-\\{rst-mode-map}
-Turning on `rst-mode' calls the normal hooks `text-mode-hook' and
-`rst-mode-hook'."
-  (interactive)
-  (kill-all-local-variables)
-
-  ;; Maps and tables
-  (use-local-map rst-mode-map)
-  (setq local-abbrev-table rst-mode-abbrev-table)
-  (set-syntax-table rst-mode-syntax-table)
-
-  ;; For editing text
-  ;;
-  ;; FIXME: It would be better if this matches more exactly the start of a reST
-  ;; paragraph; however, this not always possible with a simple regex because
-  ;; paragraphs are determined by indentation of the following line
-  (set (make-local-variable 'paragraph-start)
-       (concat page-delimiter "\\|[ \t]*$"))
-  (if (eq ?^ (aref paragraph-start 0))
-      (setq paragraph-start (substring paragraph-start 1)))
-  (set (make-local-variable 'paragraph-separate) paragraph-start)
-  (set (make-local-variable 'indent-line-function) 'indent-relative-maybe)
-  (set (make-local-variable 'adaptive-fill-mode) t)
-  (set (make-local-variable 'comment-start) ".. ")
-
-  ;; Special variables
-  (make-local-variable 'rst-adornment-level-alist)
-
-  ;; Font lock
-  (set (make-local-variable 'font-lock-defaults)
-       '(rst-font-lock-keywords-function
-	 t nil nil nil
-	 (font-lock-multiline . t)
-	 (font-lock-mark-block-function . mark-paragraph)))
-  (when (boundp 'font-lock-support-mode)
-    ;; rst-mode has its own mind about font-lock-support-mode
-    (make-local-variable 'font-lock-support-mode)
-    ;; jit-lock-mode replaced lazy-lock-mode in GNU Emacs 22
-    (let ((jit-or-lazy-lock-mode
-           (cond
-            ((fboundp 'jit-lock-mode) 'jit-lock-mode)
-            ((fboundp 'lazy-lock-mode) 'lazy-lock-mode)
-            ;; if neither lazy-lock nor jit-lock is supported,
-            ;; tell user and disable rst-mode-lazy
-            (t (when rst-mode-lazy
-                 (message "Disabled lazy fontification, because no known support mode found.")
-                 (setq rst-mode-lazy nil))))))
-      (cond
-       ((and (not rst-mode-lazy) (not font-lock-support-mode)))
-       ;; No support mode set and none required - leave it alone
-       ((or (not font-lock-support-mode) ;; No support mode set (but required)
-	    (symbolp font-lock-support-mode)) ;; or a fixed mode for all
-	(setq font-lock-support-mode
-	      (list (cons 'rst-mode (and rst-mode-lazy 'jit-or-lazy-lock-mode))
-		    (cons t font-lock-support-mode))))
-       ((and (listp font-lock-support-mode)
-	     (not (assoc 'rst-mode font-lock-support-mode)))
-	;; A list of modes missing rst-mode
-	(setq font-lock-support-mode
-	      (append '((cons 'rst-mode (and rst-mode-lazy 'jit-or-lazy-lock-mode)))
-		      font-lock-support-mode))))))
-
-  ;; Names and hooks
-  (setq mode-name "reST")
-  (setq major-mode 'rst-mode)
-  (run-hooks 'text-mode-hook)
-  (run-hooks 'rst-mode-hook))
-
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font lock
 
-(defun rst-font-lock-keywords-function ()
-  "Returns keywords to highlight in rst mode according to current settings."
+(defconst rst-use-char-classes
+  (string-match "[[:alpha:]]" "b")
+  "Non-nil if we can use the character classes in our regexps.")
+
+(defvar rst-font-lock-keywords
   ;; The reST-links in the comments below all relate to sections in
   ;; http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
-  (let* ( ;; This gets big - so let's define some abbreviations
+  (let* ( ;; This gets big - so let's define some abbreviations; the trailing
+	  ;; numbers in the names give the number of regex groups contained
 	 ;; horizontal white space
 	 (re-hws "[\t ]")
 	 ;; beginning of line with possible indentation
@@ -2791,9 +2768,17 @@ Turning on `rst-mode' calls the normal hooks `text-mode-hook' and
 	 ;; explicit markup start
 	 (re-ems (concat re-emt re-hws "+"))
 	 ;; inline markup prefix
-	 (re-imp1 (concat "\\(^\\|" re-hws "\\|[-'\"([{</:]\\)"))
+	 (re-imp1 (concat "\\(^\\|" re-hws "\\|[-'\"([{<"
+			  (if rst-use-unicode
+			      "\u2018\u201c\u00ab\u2019"
+			    "")
+			  "/:]\\)"))
 	 ;; inline markup suffix
-	 (re-ims1 (concat "\\(" re-hws "\\|[]-'\")}>/:.,;!?\\]\\|$\\)"))
+	 (re-ims1 (concat "\\(" re-hws "\\|[]-'\")}>"
+			  (if rst-use-unicode
+			      "\u2019\u201d\u00bb"
+			    "")
+			  "/:.,;!?\\]\\|$\\)"))
 	 ;; symbol character
 	 (re-sym1 "\\(\\sw\\|\\s_\\)")
 	 ;; inline markup content begin
@@ -2820,12 +2805,9 @@ Turning on `rst-mode' calls the normal hooks `text-mode-hook' and
 	 ;; characters because otherwise explicit markup start would be
 	 ;; recognized
 	 (re-ado2 (concat "^\\(\\(["
-			  (if (or
-			       (< emacs-major-version 21)
-			       (save-match-data
-				 (string-match "XEmacs\\|Lucid" emacs-version)))
-			      "^\\w \t\x00-\x1F"
-			    "^[:word:][:space:][:cntrl:]")
+			  (if rst-use-char-classes
+			      "^[:word:][:space:][:cntrl:]"
+			    "^\\w \t\x00-\x1F")
 			  "]\\)\\2\\2+\\)" re-hws "*$"))
 	 )
     (list
@@ -2926,67 +2908,53 @@ Turning on `rst-mode' calls the normal hooks `text-mode-hook' and
      ;; Do all block fontification as late as possible so 'append works
 
      ;; Sections_ / Transitions_
-     (append
-      (list
-       re-ado2)
-      (if (not rst-mode-lazy)
-	  (list 1 rst-block-face)
-	(list
-	 (list 'rst-font-lock-handle-adornment
-	       '(progn
-		  (setq rst-font-lock-adornment-point (match-end 1))
-		  (point-max))
-	       nil
-	       (list 1 '(cdr (assoc nil rst-adornment-faces-alist))
-		     'append t)
-	       (list 2 '(cdr (assoc rst-font-lock-level
-				    rst-adornment-faces-alist))
-		     'append t)
-	       (list 3 '(cdr (assoc nil rst-adornment-faces-alist))
-		     'append t)))))
+     (list
+      re-ado2
+      (list 'rst-font-lock-handle-adornment-match
+	    '(rst-font-lock-handle-adornment-limit
+	      (match-string-no-properties 1) (match-end 1))
+	    nil
+	    (list 1 '(cdr (assoc nil rst-adornment-faces-alist))
+		  'append t)
+	    (list 2 '(cdr (assoc rst-font-lock-adornment-level
+				 rst-adornment-faces-alist))
+		  'append t)
+	    (list 3 '(cdr (assoc nil rst-adornment-faces-alist))
+		  'append t)))
 
      ;; `Comments`_
-     (append
-      (list
-       (concat re-bol "\\(" re-ems "\\)\[^[|_]\\([^:\n]\\|:\\([^:\n]\\|$\\)\\)*$")
-
-       (list 1 rst-comment-face))
-      (if rst-mode-lazy
-	  (list
-	   (list 'rst-font-lock-find-unindented-line
-		 '(progn
-		    (setq rst-font-lock-indentation-point (match-end 1))
-		    (point-max))
-		 nil
-		 (list 0 rst-comment-face 'append)))))
-     (append
-      (list
-       (concat re-bol "\\(" re-emt "\\)\\(\\s *\\)$")
-       (list 1 rst-comment-face)
-       (list 2 rst-comment-face))
-      (if rst-mode-lazy
-	  (list
-	   (list 'rst-font-lock-find-unindented-line
-		 '(progn
-		    (setq rst-font-lock-indentation-point 'next)
-		    (point-max))
-		 nil
-		 (list 0 rst-comment-face 'append)))))
+     (list
+      (concat re-bol "\\(" re-ems "\\)\[^[|_]\\([^:\n]\\|:\\([^:\n]\\|$\\)\\)*$")
+      (list 1 rst-comment-face)
+      (list 'rst-font-lock-find-unindented-line-match
+	    '(rst-font-lock-find-unindented-line-limit (match-end 1))
+	    nil
+	    (list 0 rst-comment-face 'append)))
+     (list
+      (concat re-bol "\\(" re-emt "\\)\\(\\s *\\)$")
+      (list 1 rst-comment-face)
+      (list 2 rst-comment-face)
+      (list 'rst-font-lock-find-unindented-line-match
+	    '(rst-font-lock-find-unindented-line-limit 'next)
+	    nil
+	    (list 0 rst-comment-face 'append)))
 
      ;; `Literal Blocks`_
-     (append
-      (list
-       (concat re-bol "\\(\\([^.\n]\\|\\.[^.\n]\\).*\\)?\\(::\\)$")
-       (list 3 rst-block-face))
-      (if rst-mode-lazy
-	  (list
-	   (list 'rst-font-lock-find-unindented-line
-		 '(progn
-		    (setq rst-font-lock-indentation-point t)
-		    (point-max))
-		 nil
-		 (list 0 rst-literal-face 'append)))))
-     )))
+     (list
+      (concat re-bol "\\(\\([^.\n]\\|\\.[^.\n]\\).*\\)?\\(::\\)$")
+      (list 3 rst-block-face)
+      (list 'rst-font-lock-find-unindented-line-match
+	    '(rst-font-lock-find-unindented-line-limit t)
+	    nil
+	    (list 0 rst-literal-face 'append)))
+
+     ;; `Doctest Blocks`_
+     (list
+      (concat re-bol "\\(>>>\\|\\.\\.\\.\\)\\(.+\\)")
+      (list 1 rst-block-face)
+      (list 2 rst-literal-face))
+     ))
+  "Returns keywords to highlight in rst mode according to current settings.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Indented blocks
@@ -3021,54 +2989,70 @@ point is not moved."
     (goto-char (or fnd start))
     fnd))
 
-;; Stores the point where the current indentation ends if a number. If `next'
-;; indicates `rst-font-lock-find-unindented-line' shall take the indentation
-;; from the next line if this is not empty. If non-nil indicates
-;; `rst-font-lock-find-unindented-line' shall take the indentation from the
-;; next non-empty line. Also used as a trigger for
-;; `rst-font-lock-find-unindented-line'.
-(defvar rst-font-lock-indentation-point nil)
+;; Beginning of the match if `rst-font-lock-find-unindented-line-end'.
+(defvar rst-font-lock-find-unindented-line-begin nil)
 
-(defun rst-font-lock-find-unindented-line (limit)
-  (let* ((ind-pnt rst-font-lock-indentation-point)
-	 (beg-pnt ind-pnt))
-    ;; May run only once - enforce this
-    (setq rst-font-lock-indentation-point nil)
-    (when (and ind-pnt (not (numberp ind-pnt)))
-      ;; Find indentation point in next line if any
-      (setq ind-pnt
-	    (save-excursion
-	      (save-match-data
-		(if (eq ind-pnt 'next)
-		    (when (and (zerop (forward-line 1)) (< (point) limit))
-		      (setq beg-pnt (point))
-		      (when (not (looking-at "\\s *$"))
+;; End of the match as determined by
+;; `rst-font-lock-find-unindented-line-limit'. Also used as a trigger for
+;; `rst-font-lock-find-unindented-line-match'.
+(defvar rst-font-lock-find-unindented-line-end nil)
+
+;; Finds the next unindented line relative to indenation at IND-PNT and returns
+;; this point, the end of the buffer or nil if nothing found. If IND-PNT is
+;; `next' takes the indentation from the next line if this is not empty. If
+;; IND-PNT is non-nil but not a number takes the indentation from the next
+;; non-empty line.
+(defun rst-font-lock-find-unindented-line-limit (ind-pnt)
+  (setq rst-font-lock-find-unindented-line-begin ind-pnt)
+  (setq rst-font-lock-find-unindented-line-end
+	(save-excursion
+	  (when (not (numberp ind-pnt))
+	    ;; Find indentation point in next line if any
+	    (setq ind-pnt
+		  ;; FIXME: Should be refactored to two different functions
+		  ;;        giving their result to this function, may be
+		  ;;        integrated in caller
+		  (save-match-data
+		    (if (eq ind-pnt 'next)
+			(when (and (zerop (forward-line 1))
+				   (< (point) (point-max)))
+			  ;; Not at EOF
+			  (setq rst-font-lock-find-unindented-line-begin (point))
+			  (when (not (looking-at "\\s *$"))
+			    ;; Use end of indentation if non-empty line
+			    (looking-at "\\s *")
+			    (match-end 0)))
+		      ;; Skip until non-empty line or EOF
+		      (while (and (zerop (forward-line 1))
+				  (< (point) (point-max))
+				  (looking-at "\\s *$")))
+		      (when (< (point) (point-max))
+			;; Not at EOF
+			(setq rst-font-lock-find-unindented-line-begin (point))
 			(looking-at "\\s *")
-			(match-end 0)))
-		  (while (and (zerop (forward-line 1)) (< (point) limit)
-			      (looking-at "\\s *$")))
-		  (when (< (point) limit)
-		    (setq beg-pnt (point))
-		    (looking-at "\\s *")
-		    (match-end 0)))))))
-    (when ind-pnt
-      (goto-char ind-pnt)
-      ;; Always succeeds because the limit set by PRE-MATCH-FORM is the
-      ;; ultimate point to find
-      (goto-char (or (rst-forward-indented-block nil limit) limit))
-      (set-match-data (list beg-pnt (point)))
-      t)))
+			(match-end 0))))))
+	  (when ind-pnt
+	    (goto-char ind-pnt)
+	    (or (rst-forward-indented-block nil (point-max))
+		(point-max))))))
+
+;; Sets the match found by `rst-font-lock-find-unindented-line-limit' the first
+;; time called or nil.
+(defun rst-font-lock-find-unindented-line-match (limit)
+  (when rst-font-lock-find-unindented-line-end
+    (set-match-data
+     (list rst-font-lock-find-unindented-line-begin
+	   rst-font-lock-find-unindented-line-end))
+    ;; Make sure this is called only once
+    (setq rst-font-lock-find-unindented-line-end nil)
+    t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Adornments
 
-;; Stores the point where the current adornment ends. Also used as a trigger
-;; for `rst-font-lock-handle-adornment'.
-(defvar rst-font-lock-adornment-point nil)
-
-;; Here `rst-font-lock-handle-adornment' stores the section level of the
+;; Here `rst-font-lock-handle-adornment-match' stores the section level of the
 ;; current adornment or t for a transition.
-(defvar rst-font-lock-level nil)
+(defvar rst-font-lock-adornment-level nil)
 
 ;; FIXME: It would be good if this could be used to markup section titles of
 ;; given level with a special key; it would be even better to be able to
@@ -3147,8 +3131,8 @@ entered.")
 	  (setq end-ovr end-pnt)
 	  (forward-line 1)
 	  (setq beg-txt (point))
-	  (while (and (< (point) limit) (not end-txt))
-	    (if (looking-at "\\s *$")
+	  (while (and (<= (point) limit) (not end-txt))
+	    (if (or (= (point) limit) (looking-at "\\s *$"))
 		;; No underline found
 		(setq end-txt (1- (point)))
 	      (when (looking-at (concat "\\(" ado-re "\\)\\s *$"))
@@ -3163,34 +3147,46 @@ entered.")
 	  (setq end-und end-pnt)
 	  (setq end-txt (1- beg-und))
 	  (setq beg-txt (progn
-			  (if (re-search-backward "^\\s *$" 1 'move)
-			      (forward-line 1))
-			  (point)))))
+			  (goto-char end-txt)
+			  (forward-line 0)
+			  (point)))
+	  (when (and (zerop (forward-line -1))
+		     (looking-at (concat "\\(" ado-re "\\)\\s *$")))
+	    ;; There is a matching overline
+	    (setq key (concat (list ado-ch) "o"))
+	    (setq beg-ovr (point))
+	    (setq end-ovr (match-end 1)))))
 	(list key
 	      (or beg-ovr beg-txt beg-und)
 	      (or end-und end-txt end-und)
 	      beg-ovr end-ovr beg-txt end-txt beg-und end-und)))))
 
-;; Handles adornments for font-locking section titles and transitions. Returns
-;; three match groups. First and last match group matched pure overline /
-;; underline adornment while second group matched section title text. Each
-;; group may not exist.
-(defun rst-font-lock-handle-adornment (limit)
-  (let ((ado-pnt rst-font-lock-adornment-point))
+;; Stores the result of `rst-classify-adornment'. Also used as a trigger
+;; for `rst-font-lock-handle-adornment-match'.
+(defvar rst-font-lock-adornment-data nil)
+
+;; Determines limit for adornments for font-locking section titles and
+;; transitions. In fact it determines all things necessary and puts the result
+;; to `rst-font-lock-adornment-data'. ADO is the complete adornment matched.
+;; ADO-END is the point where ADO ends. Returns the point where the whole
+;; adorned construct ends.
+(defun rst-font-lock-handle-adornment-limit (ado ado-end)
+  (let ((ado-data (rst-classify-adornment ado ado-end (point-max))))
+    (setq rst-font-lock-adornment-level (rst-adornment-level (car ado-data) t))
+    (setq rst-font-lock-adornment-data (cdr ado-data))
+    (goto-char (nth 1 ado-data))
+    (nth 2 ado-data)))
+
+;; Sets the match found by `rst-font-lock-handle-adornment-limit' the first
+;; time called or nil.
+(defun rst-font-lock-handle-adornment-match (limit)
+  (let ((ado-data rst-font-lock-adornment-data))
     ;; May run only once - enforce this
-    (setq rst-font-lock-adornment-point nil)
-    (if ado-pnt
-      (let* ((ado (rst-classify-adornment (match-string-no-properties 1)
-					  ado-pnt limit))
-	     (key (car ado))
-	     (mtc (cdr ado)))
-	(setq rst-font-lock-level (rst-adornment-level key t))
-	(goto-char (nth 1 mtc))
-	(set-match-data mtc)
-	t))))
-
-;;; rst-mode.el ends here
-
+    (setq rst-font-lock-adornment-data nil)
+    (when ado-data
+      (goto-char (nth 1 ado-data))
+      (set-match-data ado-data)
+      t)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3233,7 +3229,7 @@ string)) to be used for converting the document.")
     (let* ((dir (file-name-directory buffer-file))
 	   (prevdir nil))
       (while (and (or (not (string= dir prevdir))
-		      (setq dir nil) 
+		      (setq dir nil)
 		      nil)
                   (not (file-exists-p (concat dir file-name))))
         ;; Move up to the parent dir and try again.
@@ -3323,7 +3319,7 @@ of the entire buffer, if the region is not selected."
   "Convert the document to an S5 slide presentation and launch a preview program."
   (interactive)
   (let* ((tmp-filename "/tmp/slides.html")
-	 (command (format "rst2s5.py %s %s && %s %s" 
+	 (command (format "rst2s5.py %s %s && %s %s"
 			  buffer-file-name tmp-filename
 			  rst-slides-program tmp-filename)))
     (start-process-shell-command "rst-slides-preview" nil command)
@@ -3331,13 +3327,14 @@ of the entire buffer, if the region is not selected."
     ;; output.
     ))
 
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Generic text functions that are more convenient than the defaults.
 ;;
 
-(defun replace-lines (fromchar tochar)
+(defun rst-replace-lines (fromchar tochar)
   "Replace flush-left lines, consisting of multiple FROMCHAR characters,
 with equal-length lines of TOCHAR."
   (interactive "\
@@ -3355,30 +3352,29 @@ cand replace with char: ")
             (setq p (1+ (point)))
             (beginning-of-line)
             (setq l (- p (point)))
-            (rst-delete-line)
+            (rst-delete-entire-line)
             (insert-char tochar l))
         (search-failed
          (message (format "%d lines replaced." found)))))))
 
-(defun join-paragraph ()
+(defun rst-join-paragraph ()
   "Join lines in current paragraph into one line, removing end-of-lines."
   (interactive)
   (let ((fill-column 65000)) ; some big number
     (call-interactively 'fill-paragraph)))
 
-;; FIXME: can we remove this?
-(defun force-fill-paragraph ()
+(defun rst-force-fill-paragraph ()
   "Fill paragraph at point, first joining the paragraph's lines into one.
 This is useful for filling list item paragraphs."
   (interactive)
-  (join-paragraph)
+  (rst-join-paragraph)
   (fill-paragraph nil))
 
 
 ;; Generic character repeater function.
 ;; For sections, better to use the specialized function above, but this can
 ;; be useful for creating separators.
-(defun repeat-last-character (&optional tofill)
+(defun rst-repeat-last-character (&optional tofill)
   "Fills the current line up to the length of the preceding line (if not
 empty), using the last character on the current line.  If the preceding line is
 empty, we use the fill-column.
@@ -3406,7 +3402,7 @@ column is used (fill-column vs. end of previous/next line)."
                         (if (= cc 0) fill-column cc)))))
          (rightmost-column
           (cond (tofill fill-column)
-                ((equal last-command 'repeat-last-character)
+                ((equal last-command 'rst-repeat-last-character)
                  (if (= curcol fill-column) prevcol fill-column))
                 (t (save-excursion
                      (if (= prevcol 0) fill-column prevcol)))
@@ -3424,13 +3420,10 @@ column is used (fill-column vs. end of previous/next line)."
 
 
 (defun rst-portable-mark-active-p ()
-  "A portable (GNU, Xemacs) function that returns true if the
-mark is active."
-  (or
-   (and (fboundp 'region-active-p)
-	(region-active-p) (region-exists-p))
-   (and (boundp 'transient-mark-mode)
-	transient-mark-mode mark-active)))
+  "A portable function that returns non-nil if the mark is active."
+  (cond
+   ((fboundp 'region-active-p) (region-active-p))
+   ((boundp 'transient-mark-mode) transient-mark-mode mark-active)))
 
 
 

@@ -11,13 +11,28 @@
 .. contents::
 
 
+The ``docutils.core.Publisher`` class is the core of Docutils,
+managing all the processing and relationships between components.  See
+`PEP 258`_ for an overview of Docutils components.
+
+The ``docutils.core.publish_*`` convenience functions are the normal
+entry points for using Docutils as a library.
+
+See `Inside A Docutils Command-Line Front-End Tool`_ for an overview
+of a typical Docutils front-end tool, including how the Publisher
+class is used.
+
+.. _PEP 258: ../peps/pep-0258.html
+.. _Inside A Docutils Command-Line Front-End Tool: ./cmdline-tool.html
+
+
 Publisher Convenience Functions
 ===============================
 
 Each of these functions set up a ``docutils.core.Publisher`` object,
 then call its ``publish`` method.  ``docutils.core.Publisher.publish``
-handles everything else.  There are five convenience functions in the
-``docutils.core`` module:
+handles everything else.  There are several convenience functions in
+the ``docutils.core`` module:
 
 :_`publish_cmdline`: for command-line front-end tools, like
   ``rst2html.py``.  There are several examples in the ``tools/``
@@ -45,8 +60,8 @@ handles everything else.  There are five convenience functions in the
   `publish_from_doctree`_.
 
 :_`publish_from_doctree`: for programmatic use to render from an
-  existing document tree data structure (doctree); returns a pair of
-  encoded string output and document parts.
+  existing document tree data structure (doctree); returns the encoded
+  output as a string.
 
 :_`publish_programmatically`: for custom programmatic use.  This
   function implements common code and is used by ``publish_file``,
@@ -99,8 +114,7 @@ dictionary of document parts.  Dictionary keys are the names of parts,
 and values are Unicode strings.
 
 Each Writer component may publish a different set of document parts,
-described below.  Currently only the HTML Writer implements more than
-the "whole" part.
+described below.  Not all writers implement all parts.
 
 
 Parts Provided By All Writers
@@ -254,3 +268,26 @@ Parts Provided by the S5/HTML Writer
 ````````````````````````````````````
 
 The S5/HTML writer provides the same parts as the `HTML writer`_.
+
+Parts Provided by the LaTeX2e Writer
+````````````````````````````````````
+
+__`head_prefix`
+    ``parts['head_prefix']`` contains the LaTeX document class, package 
+    and stylesheet inclusion.
+
+__`head`
+    ``parts['head']`` currently is empty. 
+
+__`body_prefix`
+    ``parts['body_prefix']`` contains the LaTeX ``\begin{document}`` and
+    title page. 
+
+__`body`
+    ``parts['body']`` contains the LaTeX document content, less
+    the ``\begin{document}`` and ``\end{document}`` tags themselves.
+
+__`body_suffix`
+    ``parts['body_suffix']`` contains the LaTeX ``\end{document}``.
+    
+

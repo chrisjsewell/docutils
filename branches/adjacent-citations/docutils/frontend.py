@@ -193,7 +193,7 @@ def make_paths_absolute(pathdict, keys, base_path=None):
     if base_path is None:
         base_path = os.getcwd()
     for key in keys:
-        if pathdict.has_key(key):
+        if key in pathdict:
             value = pathdict[key]
             if isinstance(value, types.ListType):
                 value = [make_one_path_absolute(base_path, path)
@@ -225,7 +225,7 @@ class Values(optparse.Values):
             other_dict = other_dict.__dict__
         other_dict = other_dict.copy()
         for setting in option_parser.lists.keys():
-            if (hasattr(self, setting) and other_dict.has_key(setting)):
+            if (hasattr(self, setting) and setting in other_dict):
                 value = getattr(self, setting)
                 if value:
                     value += other_dict[setting]
@@ -359,12 +359,14 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
           ['--leave-comments'],
           {'action': 'store_false', 'dest': 'strip_comments'}),
          ('Remove all elements with classes="<class>" from the document tree. '
+          'Warning: potentially dangerous; use with caution. '
           '(Multiple-use option.)',
           ['--strip-elements-with-class'],
           {'action': 'append', 'dest': 'strip_elements_with_classes',
            'metavar': '<class>', 'validator': validate_strip_class}),
          ('Remove all classes="<class>" attributes from elements in the '
-          'document tree. (Multiple-use option.)',
+          'document tree. Warning: potentially dangerous; use with caution. '
+          '(Multiple-use option.)',
           ['--strip-class'],
           {'action': 'append', 'dest': 'strip_classes',
            'metavar': '<class>', 'validator': validate_strip_class}),
@@ -476,8 +478,9 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
 
     config_section = 'general'
 
-    version_template = ('%%prog (Docutils %s [%s])'
-                        % (docutils.__version__, docutils.__version_details__))
+    version_template = ('%%prog (Docutils %s [%s], Python %s, on %s)'
+                        % (docutils.__version__, docutils.__version_details__,
+                           sys.version.split()[0], sys.platform))
     """Default version message."""
 
     def __init__(self, components=(), defaults=None, read_config_files=None,
@@ -582,7 +585,7 @@ class OptionParser(optparse.OptionParser, docutils.SettingsSpec):
                 continue
             for section in (tuple(component.config_section_dependencies or ())
                             + (component.config_section,)):
-                if applied.has_key(section):
+                if section in applied:
                     continue
                 applied[section] = 1
                 settings.update(parser.get_section(section), self)
@@ -696,7 +699,7 @@ Skipping "%s" configuration file.
         if not self.has_section('general'):
             self.add_section('general')
         for key, value in options.items():
-            if self.old_settings.has_key(key):
+            if key in self.old_settings:
                 section, setting = self.old_settings[key]
                 if not self.has_section(section):
                     self.add_section(section)

@@ -1,5 +1,5 @@
 # $Id$
-# Author: Felix Wiemann <Felix.Wiemann@ososo.de>
+# Author: Lea Wiemann <LeWiemann@gmail.com>
 # Copyright: This module has been placed in the public domain.
 
 """
@@ -676,7 +676,7 @@ class LaTeXTranslator(nodes.SparseNodeVisitor):
         # Move IDs into TextElements.  This won't work for images.
         # Need to review this.
         for node in document.traverse(nodes.Element):
-            if node.has_key('ids') and not isinstance(node,
+            if 'ids' in node and not isinstance(node,
                                                       nodes.TextElement):
                 next_text_element = node.next_node(nodes.TextElement)
                 if next_text_element:

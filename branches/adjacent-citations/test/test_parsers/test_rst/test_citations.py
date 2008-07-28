@@ -129,6 +129,51 @@ No blank line.
     <comment xml:space="preserve">
         [*citationlabelwithmarkup*] this isn't a citation
 """],
+["""
+isolated internals : ``.-_``.
+
+.. [citation.withdot] one dot
+
+.. [citation-withdot] one hyphen
+
+.. [citation_withunderscore] one underscore
+
+.. [citation:with:colons] two colons
+
+.. [citation+withplus] one plus
+""",
+"""<document source="test data">
+    <paragraph>
+        isolated internals : \n\
+        <literal>
+            .-_
+        .
+    <citation ids="citation-withdot" names="citation.withdot">
+        <label>
+            citation.withdot
+        <paragraph>
+            one dot
+    <citation ids="id1" names="citation-withdot">
+        <label>
+            citation-withdot
+        <paragraph>
+            one hyphen
+    <citation ids="citation-withunderscore" names="citation_withunderscore">
+        <label>
+            citation_withunderscore
+        <paragraph>
+            one underscore
+    <citation ids="citation-with-colons" names="citation:with:colons">
+        <label>
+            citation:with:colons
+        <paragraph>
+            two colons
+    <citation ids="citation-withplus" names="citation+withplus">
+        <label>
+            citation+withplus
+        <paragraph>
+            one plus
+"""],
 ]
 
 

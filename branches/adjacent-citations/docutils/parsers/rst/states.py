@@ -512,8 +512,8 @@ class Inliner:
     non_whitespace_before = r'(?<![ \n])'
     non_whitespace_escape_before = r'(?<![ \n\x00])'
     non_whitespace_after = r'(?![ \n])'
-    # Alphanumerics with isolated internal [-._] chars (i.e. not 2 together):
-    simplename = r'(?:(?!_)\w)+(?:[-._](?:(?!_)\w)+)*'
+    # Alphanumerics with isolated internal [-._+:] chars (i.e. not 2 together):
+    simplename = r'(?:(?!_)\w)+(?:[-._+:](?:(?!_)\w)+)*'
     # Valid URI characters (see RFC 2396 & RFC 2732);
     # final \x00 allows backslash escapes in URIs:
     uric = r"""[-_.!~*'()[\];/:@&=+$,%a-zA-Z0-9\x00]"""
@@ -901,8 +901,8 @@ class Inliner:
         return self.reference(match, lineno, anonymous=1)
 
     def standalone_uri(self, match, lineno):
-        if not match.group('scheme') or urischemes.schemes.has_key(
-              match.group('scheme').lower()):
+        if (not match.group('scheme')
+                or match.group('scheme').lower() in urischemes.schemes):
             if match.group('email'):
                 addscheme = 'mailto:'
             else:
@@ -2249,7 +2249,8 @@ class Body(RSTState):
             if expmatch:
                 try:
                     return method(self, expmatch)
-                except MarkupError, (message, lineno): # never reached?
+                except MarkupError, error: # never reached?
+                    message, lineno = error.args
                     errors.append(self.reporter.warning(message, line=lineno))
                     break
         nodelist, blank_finish = self.comment(match)

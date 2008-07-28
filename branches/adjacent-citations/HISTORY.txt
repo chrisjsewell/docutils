@@ -14,8 +14,25 @@
 .. contents::
 
 
-Changes Since 0.4
+Changes Since 0.5
 =================
+
+* General:
+
+  - Backwards-compatible changes to remove python2.6 -3 deprecation warnings
+  - Text nodes now subclass unicode rather than UserString
+    (which is gone in python 3.0)
+
+* docutils/nodes.py:
+
+  - Added ``Element.__contains__`` method, for the in-operator.
+
+* docutils/writers/latex2e/__init__.py:
+
+  - Change: has_key for dictionaries (not Nodes) to in-operator.
+
+Release 0.5 (2008-06-25)
+========================
 
 * docutils/languages/he.py: Added to project: Hebrew mappings by
   Meir Kriheli.
@@ -46,6 +63,7 @@ Changes Since 0.4
 
 * docutils/parsers/rst/states.py:
 
+  - Allow ``+`` and ``:`` in reference names.
   - Unquoted targets beginning with an underscore (``.. __target:
     URI``) are no longer accepted.
   - Added support for multiple attributions in a physical block quote
@@ -99,6 +117,8 @@ Changes Since 0.4
     universally supported now).
   - ``template.txt`` is now opened in text mode instead of binary mode
     (to ensure Windows compatibility).
+  - ``a`` elements now have an "internal" or "external" class,
+    depending on reference type.
 
 * docutils/writers/html4css1/template.txt: Added to project.
 
@@ -114,6 +134,25 @@ Changes Since 0.4
 
 * docutils/writers/latex2e/__init__.py:
 
+  - Add ``--literal-block-env``
+  - Fix: escaping ``%`` in href urls.
+  - Move usepackage hyperref after stylesheet inclusion.
+  - Fix: scrartcl does not have chapter but scrreprt.
+  - Add newline after ``\end{verbatim}``.
+  - Merge smaller differences from latex2e_adaptive_preamble.
+  - Add ``use-part-section``.
+  - Put leavevmode before longtable to avoid having it moved before sub/pargraph.
+  - Using leavemode option_list no longer needs to check if parent
+    is a definition list.
+  - Append ``\leavemode`` to definition list terms.
+  - No longer write visit\_/depart_definition_list_item comments to
+    output.
+  - Table column width with 3 decimal places.
+  - Add table stubs support (boldfont).
+  - Add assemble_parts to writer.
+  - Add simply support for nested tables.
+  - Fix verbatim in tables if use-verbatim-when-possible.
+  - Use section commands down to subparagraph.
   - Put ensuremath around some latin1 chars.
   - Set ``usepackage[utf8x]{inputenc}`` for utf-8.
   - New option ``--use-bibtex=style,db1,db2``.
@@ -693,7 +732,7 @@ Release 0.3.7 (2004-12-24)
   - Converted the line-block directive to use the new structure.
   - Extracted the old line-block functionality to the ``block``
     function (still used).
-  - Added ``compound`` directive (thanks to Felix Wiemann).
+  - Added ``compound`` directive (thanks to Lea Wiemann).
 
 * docutils/parsers/rst/directives/misc.py:
 
@@ -849,7 +888,7 @@ General:
   - Added ``THANKS.txt`` from "Acknowledgements" in ``HISTORY.txt``.
   - Added "How To Report Bugs" to ``BUGS.txt``.
   - Went through all the sources and docs (including under web/) and
-    updated links.  Mostly done by Felix Wiemann; thanks Felix!
+    updated links.  Mostly done by Lea Wiemann; thanks Lea!
     (Still need to update links in the sandboxes.)
 
 Specific:

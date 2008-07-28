@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 # $Id$
-# Author: Felix Wiemann <Felix.Wiemann@ososo.de>
+# Author: Lea Wiemann <LeWiemann@gmail.com>
 # Copyright: This module has been placed in the public domain.
 
 """
@@ -28,7 +28,7 @@ class RecordDependenciesTests(unittest.TestCase):
         settings.setdefault('settings_overrides', {})
         settings['settings_overrides'] = settings['settings_overrides'].copy()
         settings['settings_overrides']['_disable_config'] = 1
-        if not settings['settings_overrides'].has_key('record_dependencies'):
+        if 'record_dependencies' not in settings['settings_overrides']:
             settings['settings_overrides']['record_dependencies'] = \
                 docutils.utils.DependencyList(recordfile)
         docutils.core.publish_file(destination=DocutilsTestSupport.DevNull(),
