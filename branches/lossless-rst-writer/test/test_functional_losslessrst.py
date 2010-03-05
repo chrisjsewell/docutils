@@ -25,7 +25,7 @@ import test_functional
 from test_functional import datadir, join_path
 
 ### use this to limit the tests run:
-testsubset = (0,2,3,4,5, ) # 1 == dangerous.txt
+testsubset = (0,)#2,3,4,5, ) # 1 == dangerous.txt
 #testsubset = (5, ) #(0,1,2,3,4,)
 
 
@@ -86,7 +86,7 @@ class FunctionalRst2RstTestCase(DocutilsTestSupport.CustomTestCase):
                 'docinfo_xform': 0,
                 }
         namespace['reader_name'] = "standalone"
-        namespace['parser_name'] = "rst"
+        namespace['parser_name'] = "losslessrst"
         namespace['writer_name'] = "rst"
         # Read the variables set in the default config file:
         execfile(join_path(datadir, 'tests', '_default.py'), namespace)
