@@ -1,3 +1,0 @@
-* First bullet
-
-* Second bullet
