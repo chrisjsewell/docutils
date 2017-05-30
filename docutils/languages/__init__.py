@@ -25,7 +25,7 @@ def get_language(language_code, reporter=None):
     `language_code` is a "BCP 47" language tag.
     If there is no matching module, warn and fall back to English.
     """
-    # TODO: use a dummy module returning emtpy strings?, configurable?
+    # TODO: use a dummy module returning empty strings?, configurable?
     for tag in normalize_language_tag(language_code):
         tag = tag.replace('-','_') # '-' not valid in module names
         if tag in _languages:
