@@ -109,7 +109,7 @@ Backwards compatibility:
 New configuration setting defaults
 ----------------------------------
 
-- font-encoding: "T1" (formerly implicitely set by 'ae').
+- font-encoding: "T1" (formerly implicitly set by 'ae').
 - use-latex-toc: true (ToC with page numbers).
 - use-latex-footnotes: true (no mixup with figures).
 
@@ -273,14 +273,14 @@ Font encoding
 
 New feature:
   Do not mix font-encoding and font settings: do not load the obsolete
-  `ae` and `aeguill` packages unless explicitely required via the
+  `ae` and `aeguill` packages unless explicitly required via the
   ``--stylesheet`` option.
 
   :font-encoding = "":  do not load `ae` and `aeguill`, i.e.
 
                         * do not change font settings,
                         * do not use the fontenc package
-                          (implicitely loaded via `ae`),
+                          (implicitly loaded via `ae`),
                         * use LaTeX default font encoding (OT1)
 
   :font-encoding = "OT1": load `fontenc` with ``\usepackage[OT1]{fontenc}``
@@ -492,7 +492,7 @@ Standard package for tables across several pages::
   \usepackage{longtable}
 
 Extra space between text in tables and the line above them
-('array' is implicitely loaded by 'tabularx', see below)::
+('array' is implicitly loaded by 'tabularx', see below)::
 
   \usepackage{array}
   \setlength{\extrarowheight}{2pt}
@@ -551,7 +551,7 @@ Removed definitions
 
 admonition width
 ^^^^^^^^^^^^^^^^
-The ``admonitionwith`` lenght is replaced by the more powerful
+The ``admonitionwith`` length is replaced by the more powerful
 ``\DUadmonition`` command (see admonitions_).
 
 Backwards compatibility:

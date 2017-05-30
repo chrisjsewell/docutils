@@ -513,7 +513,7 @@ used square brackets for phrase-links.  I changed my mind because:
    etc. names) into hyperlinks is a useful feature.  PyDoc recognizes
    identifiers heuristically, but it doesn't take much imagination to
    come up with counter-examples where PyDoc's heuristics would result
-   in embarassing failure.  I wanted to do it deterministically, and
+   in embarrassing failure.  I wanted to do it deterministically, and
    that called for syntax.  I called this construct "interpreted
    text".
 
@@ -996,7 +996,7 @@ A new type of "inline external hyperlink" has been proposed.
    (reference/target pairs must be proximate [refA trgA refB trgB],
    not interleaved [refA refB trgA trgB] or nested [refA refB trgB
    trgA]).  This variation is too problematic; references and inline
-   external targets will have to be kept imediately adjacent (see (3)
+   external targets will have to be kept immediately adjacent (see (3)
    below).
 
    The ``"reference__ __<target>"`` syntax is actually for "anonymous
@@ -1086,7 +1086,7 @@ maintainable web pages.  The arguments go something like this:
 
   To which I said, "So use anonymous hyperlinks."
 
-- Anonymous hyperlinks are difficult to maintain becuase the
+- Anonymous hyperlinks are difficult to maintain because the
   references and targets have to be kept in sync.
 
   "So keep the targets close to the references, grouped after each
@@ -2103,7 +2103,7 @@ From a reply by Tony Ibbs on 2002-03-01:
     - and thus both easier to skip, and also (paradoxically) easier to
     pick out so that I could follow them.
 
-    Thus, for the moment (and as always susceptable to argument), I'd
+    Thus, for the moment (and as always susceptible to argument), I'd
     say -1 on the new form of footnote reference (i.e., I much prefer
     the existing ``[1]_`` over the proposed ``1_``), and ambivalent
     over the proposed target change.
@@ -2339,7 +2339,7 @@ __ http://thread.gmane.org/gmane.text.docutils.devel/1386
 
 7. "I'd prefer to see double-dot-space / command / double-colon as the
    standard Docutils markup-marker.  It's unusual enough to avoid
-   being accidently used.  Everything that starts with a double-dot
+   being accidentally used.  Everything that starts with a double-dot
    should end with a double-colon."
 
    That would increase the punctuation verbosity of some constructs

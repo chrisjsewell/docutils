@@ -28,7 +28,7 @@ totest = {}
 totest['unicode'] = [
 ["""
 Insert an em-dash (|mdash|), a copyright symbol (|copy|), a non-breaking
-space (|nbsp|), a backwards-not-equals (|bne|), and a captial omega (|Omega|).
+space (|nbsp|), a backwards-not-equals (|bne|), and a capital omega (|Omega|).
 
 .. |mdash| unicode:: 0x02014
 .. |copy| unicode:: \\u00A9
@@ -52,7 +52,7 @@ u"""\
         ), a backwards-not-equals (
         <substitution_reference refname="bne">
             bne
-        ), and a captial omega (
+        ), and a capital omega (
         <substitution_reference refname="Omega">
             Omega
         ).
