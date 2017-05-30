@@ -232,7 +232,7 @@ Use |sub| and |indirect1| and |sub| again (and |sub| one more time).
 totest['unicode'] = ((Substitutions,), [
 ["""\
 Insert an em-dash (|mdash|), a copyright symbol (|copy|), a non-breaking
-space (|nbsp|), a backwards-not-equals (|bne|), and a captial omega (|Omega|).
+space (|nbsp|), a backwards-not-equals (|bne|), and a capital omega (|Omega|).
 
 .. |mdash| unicode:: 0x02014
 .. |copy| unicode:: \\u00A9
@@ -253,7 +253,7 @@ u"""\
         ), a backwards-not-equals (
         =
         \u20e5
-        ), and a captial omega (
+        ), and a capital omega (
         \u03a9
         ).
     <substitution_definition names="mdash">

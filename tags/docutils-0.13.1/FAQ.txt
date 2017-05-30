@@ -189,7 +189,7 @@ taken with capitalization, to avoid confusion with "REST__", an
 acronym for "Representational State Transfer".
 
 The abbreviations "reSTX" and "rSTX"/"rstx" should **not** be used;
-they overemphasize reStructuredText's precedessor, Zope's
+they overemphasize reStructuredText's predecessor, Zope's
 StructuredText.
 
 __ http://en.wikipedia.org/wiki/Representational_State_Transfer

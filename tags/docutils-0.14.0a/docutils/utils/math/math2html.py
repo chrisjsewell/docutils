@@ -4203,7 +4203,7 @@ class SpacedCommand(CommandBit):
     self.contents = [FormulaConstant(u' ' + self.translated + u' ')]
 
 class AlphaCommand(EmptyCommand):
-  "A command without paramters whose result is alphabetical"
+  "A command without parameters whose result is alphabetical"
 
   commandmap = FormulaConfig.alphacommands
 

@@ -159,7 +159,7 @@ class HTMLTranslator(nodes.NodeVisitor):
     # Template for the MathJax script in the header:
     mathjax_script = '<script type="text/javascript" src="%s"></script>\n'
     # The latest version of MathJax from the distributed server:
-    # avaliable to the public under the `MathJax CDN Terms of Service`__
+    # available to the public under the `MathJax CDN Terms of Service`__
     # __http://www.mathjax.org/download/mathjax-cdn-terms-of-service/
     # may be overwritten by custom URL appended to "mathjax"
     mathjax_url = ('https://cdn.mathjax.org/mathjax/latest/MathJax.js?'

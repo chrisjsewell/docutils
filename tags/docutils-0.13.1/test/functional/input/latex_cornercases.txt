@@ -58,7 +58,7 @@ Problem:
 
 In LaTeX, "overwritten" cells need to be defined as empty cells.
 
-Docutils (similarily to HTML) uses is the "Exchange Table Model" (also known
+Docutils (similarly to HTML) uses is the "Exchange Table Model" (also known
 as CALS tables, see docs/ref/soextblx.dtd) which defines only the remaining
 cells in a row "affected" by multirow cells.
 

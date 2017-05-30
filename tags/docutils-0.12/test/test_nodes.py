@@ -238,7 +238,7 @@ class ElementTests(unittest.TestCase):
         self.assertEquals(element1.get('source'), None)
 
         ## Test for List attribute merging
-        # Attribute Concatination
+        # Attribute Concatenation
         element1 = nodes.Element(ss='a', sl='1', ls=['I'], ll=['A'])
         element2 = nodes.Element(ss='b', sl=['2'], ls='II', ll=['B'])
         element1.update_all_atts_concatenating(element2)

@@ -436,7 +436,7 @@ Release 0.6 (2009-10-11)
 * LaTeX2e writer:
 
   - New defaults:
-    - font-encoding: "T1" (formerly implicitely set by 'ae').
+    - font-encoding: "T1" (formerly implicitly set by 'ae').
     - use-latex-toc: true (ToC with page numbers).
     - use-latex-footnotes: true (no mixup with figures).
     - Float placement defaults to "here definitely" (configurable).

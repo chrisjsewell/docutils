@@ -166,7 +166,7 @@ unicode_punctuation_categories = {
 def unicode_charlists(categories, cp_min=0, cp_max=None):
     """Return dictionary of Unicode character lists.
 
-    For each of the `catagories`, an item contains a list with all Unicode
+    For each of the `categories`, an item contains a list with all Unicode
     characters with `cp_min` <= code-point <= `cp_max` that belong to
     the category.
 

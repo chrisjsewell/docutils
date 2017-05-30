@@ -126,7 +126,7 @@ registered with the parser and language mappings added:
        roles.register_canonical_role(name, role_function)
 
    This code is normally placed immediately after the definition of
-   the role funtion.
+   the role function.
 
 2. Add an entry to the ``roles`` dictionary in
    ``docutils/parsers/rst/languages/en.py`` for the role, mapping the

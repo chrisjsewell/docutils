@@ -39,7 +39,7 @@ totest['enumerated_lists'] = [
                 Item three.
 """],
 ["""\
-No blank lines betwen items:
+No blank lines between items:
 
 1. Item one.
 2. Item two.
@@ -48,7 +48,7 @@ No blank lines betwen items:
 """\
 <document source="test data">
     <paragraph>
-        No blank lines betwen items:
+        No blank lines between items:
     <enumerated_list enumtype="arabic" prefix="" suffix=".">
         <list_item>
             <paragraph>

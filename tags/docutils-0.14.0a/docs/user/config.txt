@@ -83,7 +83,7 @@ read them.  From its documentation:
 
 Configuration file entry names correspond to internal runtime
 settings.  Underscores ("_") and hyphens ("-") can be used
-interchangably in entry names; hyphens are automatically converted to
+interchangeably in entry names; hyphens are automatically converted to
 underscores.
 
 For on/off switch settings (_`booleans`), the following values are
@@ -595,7 +595,7 @@ Experimental setting to relax the `inline markup recognition rules`_
 requiring whitespace or punctuation around inline markup.
 
 Allows character level inline markup without escaped whithespace and is
-especially suited for langauges that do not use whitespace to separate words
+especially suited for languages that do not use whitespace to separate words
 (e.g. Japanese, Chinese).
 
 .. WARNING:: Potentially dangerous; use with caution.
@@ -765,7 +765,7 @@ trim_footnote_reference_space
 
 Remove spaces before `footnote references`_.
 
-Default: don't (None); may be overriden by a writer-specific
+Default: don't (None); may be overridden by a writer-specific
 footnote_references__ default though.
 
 Options: ``--trim-footnote-reference-space, --leave-footnote-reference-space``.
@@ -1558,7 +1558,7 @@ Options: ``--compound-enumerators``, ``--no-compound-enumerators``.
 literal_block_env
 ~~~~~~~~~~~~~~~~~
 
-When possibile\ [#]_, use the specified environment for `literal blocks`_.
+When possible\ [#]_, use the specified environment for `literal blocks`_.
 
 Default: "" (quoting of whitespace and special chars).
 Option: ``--literal-block-env``.
