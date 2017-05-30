@@ -170,11 +170,11 @@ class Writer(writers.Writer):
           'for compound enumerated lists.  Default is "-".',
           ['--section-enumerator-separator'],
           {'default': '-', 'metavar': '<char>'}),
-         ('When possibile, use the specified environment for literal-blocks. '
+         ('When possible, use the specified environment for literal-blocks. '
           'Default is quoting of whitespace and special chars.',
           ['--literal-block-env'],
           {'default': ''}),
-         ('When possibile, use verbatim for literal-blocks. '
+         ('When possible, use verbatim for literal-blocks. '
           'Compatibility alias for "--literal-block-env=verbatim".',
           ['--use-verbatim-when-possible'],
           {'default': 0, 'action': 'store_true',
@@ -1303,7 +1303,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
 
         self._bibitems = []
 
-        # object for a table while proccessing.
+        # object for a table while processing.
         self.table_stack = []
         self.active_table = Table(self, 'longtable')
 
@@ -1580,7 +1580,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
     def append_hypertargets(self, node):
         """Append hypertargets for all ids of `node`"""
         # hypertarget places the anchor at the target's baseline,
-        # so we raise it explicitely
+        # so we raise it explicitly
         self.out.append('%\n'.join(['\\raisebox{1em}{\\hypertarget{%s}{}}' %
                                     id for id in node['ids']]))
 
@@ -2338,7 +2338,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
         self.pop_output_collector()
 
     def to_latex_length(self, length_str, pxunit=None):
-        """Convert `length_str` with rst lenght to LaTeX length
+        """Convert `length_str` with rst length to LaTeX length
         """
         if pxunit is not None:
             sys.stderr.write('deprecation warning: LaTeXTranslator.to_latex_length()'

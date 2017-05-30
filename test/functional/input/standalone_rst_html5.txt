@@ -67,7 +67,7 @@ Styling with class arguments
 ----------------------------
 
 The ``plain.css`` style sheet comes with some pre-defined style variants
-that can be choosen via a class argument.
+that can be chosen via a class argument.
 
 Description lists
 `````````````````

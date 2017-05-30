@@ -51,8 +51,8 @@ From `Feature Request #50`_
 
   The last released package of docutils was in 2014.
 
-  If you install the version from Source it will not be overriden by version
-  0.13 when it is eventaully released.
+  If you install the version from Source it will not be overridden by version
+  0.13 when it is eventually released.
 
   As folks have installed 0.13 from indeterminate source versions the current
   version should be incremented as to allow pip to overrite a 0.13 snapshot

@@ -192,7 +192,7 @@ General
     for language-dependent features.
 
     Make this the default for output (as opposed to input)?
-    Throw an error with a helpfull message, e.g.
+    Throw an error with a helpful message, e.g.
 
       Default "contents" title for language %s missing, please specify
       an explicit title.
@@ -521,7 +521,7 @@ General
   For example, top/bottom/side navigation bars for web pages.  Generic
   decorations?
 
-  Seems like a bad idea as long as it isn't independent from the ouput
+  Seems like a bad idea as long as it isn't independent from the output
   format (for example, navigation bars are only useful for web pages).
 
 * docutils_update: Check for a ``Makefile`` in a directory, and run
@@ -749,7 +749,7 @@ Miscellaneous ideas:
 
 * Should standalone strings also become (module/class) docstrings?
   Under what conditions?  We want to prevent arbitrary strings from
-  becomming docstrings of prior attribute assignments etc.  Assume
+  becoming docstrings of prior attribute assignments etc.  Assume
   that there must be no blank lines between attributes and attribute
   docstrings?  (Use lineno of NEWLINE token.)
 
@@ -1201,7 +1201,7 @@ Misc
 
     Currently, `document.reporter` uses a state machine instance to
     determine the "source" and "line" info from
-    `statemachine.input_lines` if not given explicitely. Except for
+    `statemachine.input_lines` if not given explicitly. Except for
     special cases, the "line" argument is not needed because,
     `document.statemachine` keeps record of the current line number.
 
@@ -1213,7 +1213,7 @@ Misc
     too?  Add a set_info method?  To what?)
 
     The "source" (and line number in the source) can either be added
-    explicitely to the elements or determined from the “raw” line
+    explicitly to the elements or determined from the “raw” line
     number by `document.statemachine.get_source_and_line`.
 
   - Some line numbers in elements are not being set properly
@@ -1297,7 +1297,7 @@ Use a directive option to specify an alternative input format, e.g. (but not
 limited to):
 
 MathML_
-  Not for hand-written code but maybe usefull when pasted in (or included
+  Not for hand-written code but maybe useful when pasted in (or included
   from a file)
 
   For an overview of MathML implementations and tests, see, e.g.,
