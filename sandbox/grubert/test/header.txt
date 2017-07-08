@@ -1,2 +1,0 @@
-
-To test options that change the LaTeX header.
