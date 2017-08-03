@@ -1,5 +1,0 @@
-This is some *emphasized* text.
-
-1. First list item.
-2. Second list item.
-3. Third list item.
