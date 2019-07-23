@@ -1,0 +1,34 @@
+Global TODO
+===========
+
+- write new Makefile
+  * automatic version info
+- equivalent to listmodules?
+- make comments per descitem possible
+- explore a "printable" builder (export to latex, most probably)
+- think about the default role
+- add search via Xapian?
+- lib-index: links to sections now in ref
+- think about database for comments
+- optionally have a contents tree view in the sidebar (AJAX based)
+
+done
+----
+
+- fixup index entries that only differ in "(in foo)" annotations
+- a way to map old URLs to new URLs
+- write a "traditional" stylesheet
+- add refcount functionality
+- modindex: one column; only toplevel, then expand
+- complete the "submit patch" functionality
+- write a HTML Help builder
+- indicate version at the top
+- modindex: most used at top
+- change the way how modules are added to "most viewed"
+- cleanup env (names!) and work out export format
+- check if nested method and attribute directives are handled correctly
+- build option to strip () from function roles
+- move label target to preceding heading if first element
+- rethink nav structure
+- x-ref C function arguments and return types
+- change "member" to "attribute"/"attr"

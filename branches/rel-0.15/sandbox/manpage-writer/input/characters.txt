@@ -1,0 +1,50 @@
+====================
+ special characters
+====================
+
+-----------------------
+test special characters
+-----------------------
+
+SEE ALSO
+========
+
+In mercurial the following substitutions are in use::
+
+  .. |hg(1)| replace:: **hg**\ (1)
+  .. |hgrc(5)| replace:: **hgrc**\ (5)
+  .. |hgignore(5)| replace:: **hgignore**\ (5)
+
+.. |hg(1)| replace:: **hg**\ (1)
+.. |hgrc(5)| replace:: **hgrc**\ (5)
+.. |hgignore(5)| replace:: **hgignore**\ (5)
+
+.. _hg(1): hg.1.html
+.. _hgrc(5): hgrc.5.html
+.. _hgignore(5): hgignore.5.html
+
+resulting in.
+
+|hgignore(5)|_, |hgrc(5)|_
+
+
+DESCRIPTION
+===========
+
+encodings are problematic as alway.
+
+* accents:
+
+  - right: ´
+  - left: `
+
+* quotes: 
+
+  - straight: ' 
+  - double: " 
+  - single: ‘ ’
+  - double: “ ”
+
+Some text afterwards, test.txt ended with quotes test.
+Unicode breaks the man processing chain. The display 
+ends with ``single:`` .

@@ -1,0 +1,2367 @@
+**************************************
+Date: Sat Jun 22 13:20:35 CEST 2013
+Author: stefan
+Tag: rst2graph_1_53
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory eskebo:/home/stefan/free/rst2graph
+
+Added Files:
+	README 
+
+--------------------------------------
+Log Message:
+Added README.
+**************************************
+Date: Sun Jun 16 15:52:33 CEST 2013
+Author: stefan
+Tag: rst2graph_1_52
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory eskebo:/home/stefan/free/rst2graph
+
+Modified Files:
+	Makefile 
+Added Files:
+	rst2graph.rst 
+Removed Files:
+	rst2graph.pod 
+
+--------------------------------------
+Log Message:
+Replaced `rst2graph.pod` by `rst2graph.rst`.
+**************************************
+Date: Sat Jun 15 21:23:01 CEST 2013
+Author: stefan
+Tag: rst2graph_1_51
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph/tests/xmllint/expected
+In directory theowa:/home/stefan/free/rst2graph/tests/xmllint/expected
+
+Added Files:
+	titlePath.err titlePath.ex titlePath.out 
+
+--------------------------------------
+Log Message:
+Added files for test.
+**************************************
+Date: Sat Jun 15 21:20:01 CEST 2013
+Author: stefan
+Tag: rst2graph_1_50
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph/tests/options/expected
+In directory theowa:/home/stefan/free/rst2graph/tests/options/expected
+
+Added Files:
+	titlePath.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph/tests/options/input
+In directory theowa:/home/stefan/free/rst2graph/tests/options/input
+
+Added Files:
+	titlePath.opt titlePath.rst 
+
+--------------------------------------
+Log Message:
+Added test.
+**************************************
+Date: Sat Jun 15 21:17:46 CEST 2013
+Author: stefan
+Tag: rst2graph_1_49
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Text gatherers are a subclass of `GenericTextGatherer`.
+**************************************
+Date: Sat Jun 15 21:11:07 CEST 2013
+Author: stefan
+Tag: rst2graph_1_48
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: `FirstTitleGatherer` uses exceptions to control
+traversal.
+**************************************
+Date: Sat Jun 15 21:07:43 CEST 2013
+Author: stefan
+Tag: rst2graph_1_47
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: `TextGatherer` uses exceptions to control traversal.
+**************************************
+Date: Sat Jun 15 21:06:25 CEST 2013
+Author: stefan
+Tag: rst2graph_1_46
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph/tests/variantsDot/expected
+In directory theowa:/home/stefan/free/rst2graph/tests/variantsDot/expected
+
+Modified Files:
+	titlePath.gv 
+
+--------------------------------------
+Log Message:
+Implemented `--title-path`.
+**************************************
+Date: Sat Jun 15 20:25:12 CEST 2013
+Author: stefan
+Tag: rst2graph_1_45
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph/tests/variantsDot/expected
+In directory theowa:/home/stefan/free/rst2graph/tests/variantsDot/expected
+
+Added Files:
+	titlePath.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph/tests/variantsDot/input
+In directory theowa:/home/stefan/free/rst2graph/tests/variantsDot/input
+
+Added Files:
+	titlePath.opt titlePath.rst 
+
+--------------------------------------
+Log Message:
+Added tests. Fail since implementation is still missing.
+**************************************
+Date: Sat Jun 15 20:11:48 CEST 2013
+Author: stefan
+Tag: rst2graph_1_44
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Made some fields protected.
+
+Introduced new option `--title-path` but no implementation yet.
+**************************************
+Date: Sat Jun 15 19:55:59 CEST 2013
+Author: stefan
+Tag: rst2graph_1_43
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Made some fields protected.
+**************************************
+Date: Sat Jun 15 19:53:10 CEST 2013
+Author: stefan
+Tag: rst2graph_1_42
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Made some fields protected.
+**************************************
+Date: Sat Jun 15 19:47:22 CEST 2013
+Author: stefan
+Tag: rst2graph_1_41
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph/tests/simpleDot/expected
+In directory theowa:/home/stefan/free/rst2graph/tests/simpleDot/expected
+
+Added Files:
+	multiAnchor.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph/tests/simpleDot/input
+In directory theowa:/home/stefan/free/rst2graph/tests/simpleDot/input
+
+Added Files:
+	multiAnchor.rst 
+
+--------------------------------------
+Log Message:
+Added a test.
+**************************************
+Date: Sat Jun 15 19:27:41 CEST 2013
+Author: stefan
+Tag: rst2graph_1_40
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph/tests/variantsDot/expected
+In directory theowa:/home/stefan/free/rst2graph/tests/variantsDot/expected
+
+Added Files:
+	connectedOnly.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph/tests/variantsDot/input
+In directory theowa:/home/stefan/free/rst2graph/tests/variantsDot/input
+
+Added Files:
+	connectedOnly.opt connectedOnly.rst 
+
+--------------------------------------
+Log Message:
+Added option `--connected-only`.
+**************************************
+Date: Sat Jun 15 17:36:25 CEST 2013
+Author: stefan
+Tag: rst2graph_1_39
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Cleaned up the options.
+**************************************
+Date: Sat Jun 15 17:16:49 CEST 2013
+Author: stefan
+Tag: rst2graph_1_38
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	Makefile rst2graph.pod 
+
+--------------------------------------
+Log Message:
+Adapted POD documentation to package `rst2graph`.
+**************************************
+Date: Sat Jun 15 16:56:00 CEST 2013
+Author: stefan
+Tag: rst2graph_1_37
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2graph
+In directory theowa:/home/stefan/free/rst2graph
+
+Modified Files:
+	tag.log 
+
+--------------------------------------
+Log Message:
+Renamed module to `rst2graph`. Tags `rst2gxl_1_53` .. `rst2gxl_1_88`
+are supplemented by `rst2graph_1_1` .. `rst2graph_1_36`. Tags in
+`global.log` are not changed.
+**************************************
+Date: Sat Jun 15 12:38:11 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_88
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Added todo.
+**************************************
+Date: Thu Jun 13 20:59:47 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_87
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	Makefile setup.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/input
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/input
+
+Modified Files:
+	dotAndIndents.opt implyDot.opt implyGv.opt noFormat.opt 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplexDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplexDot
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/variantsDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/variantsDot
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+All command variants are installed.
+**************************************
+Date: Thu Jun 13 20:22:36 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_86
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	sortDot.pl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplexDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplexDot/expected
+
+Modified Files:
+	Glossar.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot/expected
+
+Modified Files:
+	sections.gv table.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/variantsDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/variantsDot/expected
+
+Modified Files:
+	multiedgeSections.gv reverseTable.gv selectTable.gv 
+
+--------------------------------------
+Log Message:
+Reverted to plain sorting of dot files. Although this changes the
+semantic of a graph this is the only way to stabilize the file really.
+The reason is that the order of nodes in the original output seems at
+least somewhat random. I.e.: Depending on the exact calling context
+the order of nodes changes.
+**************************************
+Date: Thu Jun 13 17:33:02 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_85
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	sortDot.pl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplexDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplexDot/expected
+
+Modified Files:
+	Glossar.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot/expected
+
+Modified Files:
+	sections.gv table.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/variantsDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/variantsDot/expected
+
+Modified Files:
+	multiedgeSections.gv reverseTable.gv selectTable.gv 
+
+--------------------------------------
+Log Message:
+Sorting does not break semantic (hopefully).
+**************************************
+Date: Thu Jun 13 11:51:47 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_84
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Added Files:
+	sortDot.pl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplexDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplexDot
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplexDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplexDot/expected
+
+Modified Files:
+	Glossar.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot/expected
+
+Modified Files:
+	sections.gv table.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/variantsDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/variantsDot
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/variantsDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/variantsDot/expected
+
+Modified Files:
+	multiedgeSections.gv reverseTable.gv selectTable.gv 
+
+--------------------------------------
+Log Message:
+Added sorter for dot files (hopefully) not destroying the semantic of
+the dot file.
+**************************************
+Date: Wed Jun 12 19:27:16 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_83
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/expected
+
+Modified Files:
+	dotAndGv.out dotOnly.out implyDot.out implyGv.out 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplexDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplexDot/expected
+
+Modified Files:
+	Glossar.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot/expected
+
+Modified Files:
+	invalid.gv sections.gv table.gv textOnly.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/variantsDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/variantsDot/expected
+
+Modified Files:
+	multiedgeSections.gv reverseTable.gv selectTable.gv 
+
+--------------------------------------
+Log Message:
+Input file names are ids instead of labels.
+**************************************
+Date: Wed Jun 12 12:50:59 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_82
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplexDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplexDot
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplexDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplexDot/expected
+
+Modified Files:
+	Glossar.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot/expected
+
+Modified Files:
+	invalid.gv sections.gv table.gv textOnly.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/variantsDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/variantsDot
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/variantsDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/variantsDot/expected
+
+Modified Files:
+	multiedgeSections.gv reverseTable.gv selectTable.gv 
+
+--------------------------------------
+Log Message:
+Excpected dot output is stabilized by sorting.
+**************************************
+Date: Wed Jun 12 12:31:01 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_81
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/variantsDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/variantsDot
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/variantsDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/variantsDot/expected
+
+Added Files:
+	multiedgeSections.gv reverseTable.gv selectTable.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/variantsDot/input
+In directory theowa:/home/stefan/free/rst2gxl/tests/variantsDot/input
+
+Added Files:
+	multiedgeSections.opt multiedgeSections.rst reverseTable.opt 
+	reverseTable.rst selectTable.opt selectTable.rst 
+
+--------------------------------------
+Log Message:
+Added tests.
+**************************************
+Date: Wed Jun 12 12:18:22 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_80
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplexDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplexDot
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplexDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplexDot/expected
+
+Added Files:
+	Glossar.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplexDot/input
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplexDot/input
+
+Added Files:
+	Glossar.rst 
+
+--------------------------------------
+Log Message:
+Added tests.
+**************************************
+Date: Wed Jun 12 12:12:19 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_79
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot/expected
+
+Added Files:
+	sections.gv table.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot/input
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot/input
+
+Added Files:
+	sections.rst table.rst 
+
+--------------------------------------
+Log Message:
+Implemented rendering of dot graphs.
+**************************************
+Date: Wed Jun 12 11:52:01 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_78
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/expected
+
+Modified Files:
+	implyDot.out implyGv.out 
+Added Files:
+	dotAndGv.err dotAndGv.ex dotAndGv.out dotOnly.err dotOnly.ex 
+	dotOnly.out 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot/expected
+
+Added Files:
+	invalid.gv textOnly.gv 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simpleDot/input
+In directory theowa:/home/stefan/free/rst2gxl/tests/simpleDot/input
+
+Added Files:
+	invalid.rst textOnly.rst 
+
+--------------------------------------
+Log Message:
+Implemented code to produce empty dot output.
+
+Added forgotten tests.
+**************************************
+Date: Wed Jun 12 11:37:16 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_77
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/expected
+
+Modified Files:
+	implyDot.out implyGv.out 
+
+--------------------------------------
+Log Message:
+Minimal implementation of `DotRenderer` works. All tests succeed.
+**************************************
+Date: Wed Jun 12 11:15:52 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_76
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Started implementation of `DotRenderer`.
+**************************************
+Date: Wed Jun 12 11:01:13 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_75
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/expected
+
+Added Files:
+	dotAndIndents.err dotAndIndents.ex dotAndIndents.out 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/input
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/input
+
+Added Files:
+	dotAndIndents.opt 
+
+--------------------------------------
+Log Message:
+Added test.
+**************************************
+Date: Wed Jun 12 10:57:38 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_74
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/expected
+
+Added Files:
+	implyDot.err implyDot.ex implyDot.out implyGv.err implyGv.ex 
+	implyGv.out implyGxl.err implyGxl.ex implyGxl.out 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/input
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/input
+
+Added Files:
+	implyDot.opt implyGv.opt implyGxl.opt 
+
+--------------------------------------
+Log Message:
+Added tests. `dot` related tests fail since there is no implementation
+yet.
+**************************************
+Date: Wed Jun 12 10:46:57 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_73
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command
+In directory theowa:/home/stefan/free/rst2gxl/tests/command
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/expected
+
+Added Files:
+	noFormat.err noFormat.ex noFormat.out 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/input
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/input
+
+Modified Files:
+	dotAndGv.opt dotOnly.opt gxlAndDot.opt gxlAndGv.opt 
+	gxlOnly.opt 
+Added Files:
+	noFormat.opt 
+
+--------------------------------------
+Log Message:
+Added test.
+**************************************
+Date: Wed Jun 12 09:07:34 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_72
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command
+In directory theowa:/home/stefan/free/rst2gxl/tests/command
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/expected
+
+Added Files:
+	gxlAndDot.err gxlAndDot.ex gxlAndDot.out gxlAndGv.err 
+	gxlAndGv.ex gxlAndGv.out gxlOnly.err gxlOnly.ex gxlOnly.out 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/command/input
+In directory theowa:/home/stefan/free/rst2gxl/tests/command/input
+
+Added Files:
+	dotAndGv.opt dotOnly.opt gxlAndDot.opt gxlAndGv.opt 
+	gxlOnly.opt 
+
+--------------------------------------
+Log Message:
+Added tests for new options. `dot` related tests fail since there is
+no implementation yet.
+**************************************
+Date: Tue Jun 11 18:24:26 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_71
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Options for output format selection are implied and checked.
+**************************************
+Date: Tue Jun 11 12:41:44 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_70
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Minor refctorings.
+**************************************
+Date: Tue Jun 11 12:22:34 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_69
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Moved the main rendering loops to
+`GraphRenderer.render()`.
+**************************************
+Date: Tue Jun 11 11:10:40 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_68
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Resolving things is moved to `GraphTranslator`.
+**************************************
+Date: Tue Jun 11 11:07:41 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_67
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Minor refactoring.
+**************************************
+Date: Tue Jun 11 11:05:03 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_66
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Turned `gatherValids()` into `validReferences()`.
+**************************************
+Date: Tue Jun 11 10:49:51 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_65
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Moved `Reference.gatherValids()` to
+`GraphRenderer.gatherValids()`.
+**************************************
+Date: Tue Jun 11 10:44:21 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_64
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Fields are used instead of parameters in `GxlRenderer`.
+**************************************
+Date: Tue Jun 11 10:40:02 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_63
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Moved some parameters to fields in `GxlRenderer`.
+**************************************
+Date: Tue Jun 11 10:33:10 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_62
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Refactoring: Moved `Reference.renderGxl()` to
+`GxlRenderer.renderReference()`.
+**************************************
+Date: Tue Jun 11 10:30:41 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_61
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Moved `Anchor.renderGxl()` to
+`GxlRenderer.renderAnchor()`.
+**************************************
+Date: Tue Jun 11 10:25:57 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_60
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Settings are given separate to `GraphTranslator`.
+**************************************
+Date: Tue Jun 11 10:21:13 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_59
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Narrowed down the `render()` parameter list.
+**************************************
+Date: Tue Jun 11 10:08:46 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_58
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Rendering options are set in `GraphRenderer`.
+**************************************
+Date: Tue Jun 11 10:02:26 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_57
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Rearranged code so things close to each other logically
+are close to each other in the code.
+**************************************
+Date: Tue Jun 11 09:56:48 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_56
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Introduced `GraphRenderer`.
+**************************************
+Date: Mon Jun 10 18:56:33 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_55
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Improved comments.
+**************************************
+Date: Sun Jun  9 19:34:31 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_54
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory eskebo:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+First steps to support Graphviz output.
+**************************************
+Date: Fri Jun  7 19:37:35 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_53
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	Makefile 
+
+--------------------------------------
+Log Message:
+Debugging.
+**************************************
+Date: Fri Jun  7 19:27:46 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_52
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/options/expected
+
+Modified Files:
+	multiedgeSections.gxl reverseTable.gxl selectTable.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplex/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplex/expected
+
+Modified Files:
+	Glossar.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	sections.gxl table.gxl 
+
+--------------------------------------
+Log Message:
+`edge[@from]` and `edge[@to]` correctly refer to ids.
+
+Output is now valid against the DTD.
+**************************************
+Date: Fri Jun  7 19:13:57 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_51
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/options/expected
+
+Modified Files:
+	multiedgeSections.gxl reverseTable.gxl selectTable.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplex/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplex/expected
+
+Modified Files:
+	Glossar.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	invalid.gxl sections.gxl table.gxl textOnly.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/xmllint
+In directory theowa:/home/stefan/free/rst2gxl/tests/xmllint
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+`graph[@id]` is set correctly to an XML id.
+**************************************
+Date: Fri Jun  7 18:19:03 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_50
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/options/expected
+
+Modified Files:
+	multiedgeSections.gxl reverseTable.gxl selectTable.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplex/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplex/expected
+
+Modified Files:
+	Glossar.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	invalid.gxl sections.gxl table.gxl textOnly.gxl 
+
+--------------------------------------
+Log Message:
+GXL is output in V1.0 since this is what `gxl2gv` understands. Not
+complete yet.
+**************************************
+Date: Fri Jun  7 12:52:08 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_49
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/xmllint
+In directory theowa:/home/stefan/free/rst2gxl/tests/xmllint
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/xmllint/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/xmllint/expected
+
+Added Files:
+	invalid.err invalid.ex invalid.out multiedgeSections.err 
+	multiedgeSections.ex multiedgeSections.out reverseTable.err 
+	reverseTable.ex reverseTable.out sections.err sections.ex 
+	sections.out selectTable.err selectTable.ex selectTable.out 
+	table.err table.ex table.out textOnly.err textOnly.ex 
+	textOnly.out 
+
+--------------------------------------
+Log Message:
+Added `xmllint` tests. Do not work yet.
+**************************************
+Date: Fri Jun  7 12:42:32 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_48
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory theowa:/home/stefan/free/rst2gxl
+
+Modified Files:
+	Makefile 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests
+In directory theowa:/home/stefan/free/rst2gxl/tests
+
+Added Files:
+	Makefile 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/xmllint
+In directory theowa:/home/stefan/free/rst2gxl/tests/xmllint
+
+Added Files:
+	Makefile 
+
+--------------------------------------
+Log Message:
+Started support for using `xmllint` for tests.
+**************************************
+Date: Fri Jun  7 11:57:15 CEST 2013
+Author: stefan
+Tag: rst2gxl_1_47
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/options/expected
+
+Modified Files:
+	multiedgeSections.gxl reverseTable.gxl selectTable.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplex/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/secretComplex/expected
+
+Modified Files:
+	Glossar.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory theowa:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	sections.gxl table.gxl 
+
+--------------------------------------
+Log Message:
+Adapted tests to changed `xml.dom.minidom` implementation: Single text
+nodes no longer get a separate line.
+**************************************
+Date: Sun Nov  7 19:58:34 CET 2010
+Author: stefan
+Tag: rst2gxl_1_46
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/complex
+In directory rosalu:/home/stefan/free/rst2gxl/tests/complex
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options
+In directory rosalu:/home/stefan/free/rst2gxl/tests/options
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options/input
+In directory rosalu:/home/stefan/free/rst2gxl/tests/options/input
+
+Modified Files:
+	multiedgeSections.opt reverseTable.opt selectTable.opt 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/secretComplex
+In directory rosalu:/home/stefan/free/rst2gxl/tests/secretComplex
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple
+In directory rosalu:/home/stefan/free/rst2gxl/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Upgraded tests to filterunit V0.7.1.
+**************************************
+Date: Mon Nov  1 19:34:21 CET 2010
+Author: stefan
+Tag: rst2gxl_1_45
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.pod 
+
+--------------------------------------
+Log Message:
+Minor improvement.
+**************************************
+Date: Mon Nov  1 19:27:22 CET 2010
+Author: stefan
+Tag: rst2gxl_1_44
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	Makefile 
+Added Files:
+	rst2gxl.pod 
+
+--------------------------------------
+Log Message:
+Added man page.
+**************************************
+Date: Sun Oct 31 20:52:17 CET 2010
+Author: stefan
+Tag: rst2gxl_1_43
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Removed Files:
+	.cvsignore 
+
+--------------------------------------
+Log Message:
+Removed created `.cvsignore`.
+**************************************
+Date: Sun Oct 31 20:02:16 CET 2010
+Author: stefan
+Tag: rst2gxl_1_42
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	.cvsignore Makefile 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/complex
+In directory rosalu:/home/stefan/free/rst2gxl/tests/complex
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+`.cvsignore` is constructed.
+**************************************
+Date: Sun Oct 31 19:53:57 CET 2010
+Author: stefan
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/complex/expected
+In directory rosalu:/home/stefan/free/rst2gxl/tests/complex/expected
+
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/complex/input
+In directory rosalu:/home/stefan/free/rst2gxl/tests/complex/input
+
+
+--------------------------------------
+Log Message:
+Directory /home/stefan/vault/sm/rst2gxl/tests/complex/expected added to the repository
+
+Directory /home/stefan/vault/sm/rst2gxl/tests/complex/input added to the repository
+**************************************
+Date: Sun Oct 31 19:53:44 CET 2010
+Author: stefan
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/complex
+In directory rosalu:/home/stefan/free/rst2gxl/tests/complex
+
+
+--------------------------------------
+Log Message:
+Directory /home/stefan/vault/sm/rst2gxl/tests/complex added to the repository
+**************************************
+Date: Sun Oct 10 13:53:14 CEST 2010
+Author: stefan
+Tag: rst2gxl_1_41
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	Makefile 
+
+--------------------------------------
+Log Message:
+Switched to using `packageSupport`.
+**************************************
+Date: Sun Oct  3 10:47:21 CEST 2010
+Author: stefan
+Tag: rst2gxl_1_40
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	Makefile 
+
+--------------------------------------
+Log Message:
+Improved Makefile.
+**************************************
+Date: Sun Oct  3 10:43:21 CEST 2010
+Author: stefan
+Tag: rst2gxl_1_39
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	Makefile 
+
+--------------------------------------
+Log Message:
+Improved Makefile.
+**************************************
+Date: Sun Oct  3 10:25:44 CEST 2010
+Author: stefan
+Tag: rst2gxl_1_38
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	Makefile 
+
+--------------------------------------
+Log Message:
+Improved Makefile.
+**************************************
+Date: Sat Oct  2 14:53:49 CEST 2010
+Author: stefan
+Tag: rst2gxl_1_37
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	.cvsignore Makefile setup.py 
+
+--------------------------------------
+Log Message:
+Added version infrastructure.
+**************************************
+Date: Sat Oct  2 14:48:43 CEST 2010
+Author: stefan
+Tag: rst2gxl_1_36
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	Makefile 
+Added Files:
+	.cvsignore setup.py 
+
+--------------------------------------
+Log Message:
+Added setup.
+
+Added infrastructure for versioning.
+**************************************
+Date: Mon May 24 18:02:51 CEST 2010
+Author: stefan
+Tag: rst2gxl_1_35
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options/expected
+In directory rosalu:/home/stefan/free/rst2gxl/tests/options/expected
+
+Added Files:
+	selectTable.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options/input
+In directory rosalu:/home/stefan/free/rst2gxl/tests/options/input
+
+Added Files:
+	selectTable.opt selectTable.rst 
+
+--------------------------------------
+Log Message:
+Added tests.
+**************************************
+Date: Mon May 24 17:54:35 CEST 2010
+Author: stefan
+Tag: rst2gxl_1_34
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/complex/expected
+In directory rosalu:/home/stefan/free/rst2gxl/tests/complex/expected
+
+Modified Files:
+	Glossar.gxl 
+
+--------------------------------------
+Log Message:
+Corrected tests.
+**************************************
+Date: Mon May 24 17:43:29 CEST 2010
+Author: stefan
+Tag: rst2gxl_1_33
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Implemented `--select-table`.
+**************************************
+Date: Fri Mar 26 22:09:13 CET 2010
+Author: stefan
+Tag: rst2gxl_1_32
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/complex/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/complex/expected
+
+Modified Files:
+	Glossar.gxl 
+
+--------------------------------------
+Log Message:
+Footnotes and citations are no longer considered. Edges with missing
+anchors are sorted out.
+**************************************
+Date: Fri Mar 26 21:47:38 CET 2010
+Author: stefan
+Tag: rst2gxl_1_31
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/complex/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/complex/expected
+
+Modified Files:
+	Glossar.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/options/expected
+
+Added Files:
+	multiedgeSections.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options/input
+In directory paulla:/home/stefan/free/rst2gxl/tests/options/input
+
+Added Files:
+	multiedgeSections.opt multiedgeSections.rst 
+
+--------------------------------------
+Log Message:
+Added tests.
+**************************************
+Date: Fri Mar 26 21:40:13 CET 2010
+Author: stefan
+Tag: rst2gxl_1_30
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/complex/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/complex/expected
+
+Added Files:
+	Glossar.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	sections.gxl 
+
+--------------------------------------
+Log Message:
+Multiedges are removed by default.
+**************************************
+Date: Thu Mar 25 00:02:26 CET 2010
+Author: stefan
+Tag: rst2gxl_1_29
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Debugging.
+**************************************
+Date: Wed Mar 24 23:56:27 CET 2010
+Author: stefan
+Tag: rst2gxl_1_28
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Anchors in contents headers are recognized.
+**************************************
+Date: Wed Mar 24 23:40:40 CET 2010
+Author: stefan
+Tag: rst2gxl_1_27
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/input
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/input
+
+Modified Files:
+	sections.rst 
+
+--------------------------------------
+Log Message:
+Table of contents is ignored.
+**************************************
+Date: Wed Mar 24 22:49:08 CET 2010
+Author: stefan
+Tag: rst2gxl_1_26
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Added Files:
+	sections.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/input
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/input
+
+Added Files:
+	sections.rst 
+
+--------------------------------------
+Log Message:
+Added tests.
+**************************************
+Date: Wed Mar 24 22:40:29 CET 2010
+Author: stefan
+Tag: rst2gxl_1_25
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Added Files:
+	invalid.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/input
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/input
+
+Added Files:
+	invalid.rst 
+
+--------------------------------------
+Log Message:
+Added tests.
+**************************************
+Date: Wed Mar 24 22:39:24 CET 2010
+Author: stefan
+Tag: rst2gxl_1_24
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options
+In directory paulla:/home/stefan/free/rst2gxl/tests/options
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/options/expected
+
+Added Files:
+	reverseTable.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/options/input
+In directory paulla:/home/stefan/free/rst2gxl/tests/options/input
+
+Added Files:
+	reverseTable.opt reverseTable.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	table.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/input
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/input
+
+Modified Files:
+	table.rst 
+
+--------------------------------------
+Log Message:
+Added tests.
+**************************************
+Date: Wed Mar 24 22:29:59 CET 2010
+Author: stefan
+Tag: rst2gxl_1_23
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	table.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/input
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/input
+
+Modified Files:
+	table.rst 
+
+--------------------------------------
+Log Message:
+Added tests.
+**************************************
+Date: Wed Mar 24 22:26:34 CET 2010
+Author: stefan
+Tag: rst2gxl_1_22
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Added Files:
+	textOnly.gxl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/input
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/input
+
+Modified Files:
+	table.rst 
+Added Files:
+	textOnly.rst 
+
+--------------------------------------
+Log Message:
+Added tests.
+**************************************
+Date: Wed Mar 24 22:07:04 CET 2010
+Author: stefan
+Tag: rst2gxl_1_21
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/complex
+In directory paulla:/home/stefan/free/rst2gxl/tests/complex
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/complex/input
+In directory paulla:/home/stefan/free/rst2gxl/tests/complex/input
+
+Added Files:
+	Glossar.rst 
+
+--------------------------------------
+Log Message:
+Added test input.
+**************************************
+Date: Wed Mar 24 22:03:08 CET 2010
+Author: stefan
+Tag: rst2gxl_1_20
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+First steps towards including sections.
+**************************************
+Date: Sun Mar 21 23:37:34 CET 2010
+Author: stefan
+Tag: rst2gxl_1_19
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Added ``--reverse`` option.
+**************************************
+Date: Mon Mar 15 12:02:49 CET 2010
+Author: stefan
+Tag: rst2gxl_1_18
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	simple.gxl 
+
+--------------------------------------
+Log Message:
+Edgemode is given.
+**************************************
+Date: Mon Mar 15 11:57:53 CET 2010
+Author: stefan
+Tag: rst2gxl_1_17
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Targets of edges are named properly. Tests run.
+**************************************
+Date: Mon Mar 15 11:52:52 CET 2010
+Author: stefan
+Tag: rst2gxl_1_16
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	simple.gxl 
+
+--------------------------------------
+Log Message:
+Node names are rendered more properly.
+**************************************
+Date: Mon Mar 15 11:16:56 CET 2010
+Author: stefan
+Tag: rst2gxl_1_15
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	simple.gxl 
+
+--------------------------------------
+Log Message:
+`from` is generated. Tests run.
+**************************************
+Date: Mon Mar 15 11:07:15 CET 2010
+Author: stefan
+Tag: rst2gxl_1_14
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Introduces ``Anchor`` and ``Reference``.
+**************************************
+Date: Sun Mar 14 21:03:42 CET 2010
+Author: stefan
+Tag: rst2gxl_1_13
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Refactoring: DOM is built afterwards.
+**************************************
+Date: Sat Mar 13 18:30:04 CET 2010
+Author: stefan
+Tag: rst2gxl_1_12
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple
+In directory rosalu:/home/stefan/free/rst2gxl/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Added option to create readable output. Normal output is without
+indents to end up with valid names.
+**************************************
+Date: Sat Mar 13 18:11:23 CET 2010
+Author: stefan
+Tag: rst2gxl_1_11
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Removed Files:
+	rst2gxl.xsl 
+
+--------------------------------------
+Log Message:
+Removed XSLT.
+**************************************
+Date: Sat Mar 13 18:10:10 CET 2010
+Author: stefan
+Tag: rst2gxl_1_10
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple
+In directory rosalu:/home/stefan/free/rst2gxl/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory rosalu:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	simple.gxl 
+
+--------------------------------------
+Log Message:
+Script has same functionality as XSLT.
+**************************************
+Date: Sat Mar 13 15:43:37 CET 2010
+Author: stefan
+Tag: rst2gxl_1_9
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Log Message:
+Added first functionality.
+**************************************
+Date: Sat Mar 13 15:19:39 CET 2010
+Author: stefan
+Tag: rst2gxl_1_8
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple
+In directory rosalu:/home/stefan/free/rst2gxl/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+First script code runs. No functionality yet.
+**************************************
+Date: Sat Mar 13 14:22:26 CET 2010
+Author: stefan
+Tag: rst2gxl_1_7
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests
+In directory rosalu:/home/stefan/free/rst2gxl/tests
+
+Removed Files:
+	Makefile rules.gmk 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple
+In directory rosalu:/home/stefan/free/rst2gxl/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+Removed Files:
+	Makefile 
+
+--------------------------------------
+Log Message:
+Changed infrastucture to use script.
+**************************************
+Date: Sat Mar 13 14:14:31 CET 2010
+Author: stefan
+Tag: rst2gxl_1_6
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory rosalu:/home/stefan/free/rst2gxl
+
+Added Files:
+	rst2gxl.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory rosalu:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	simple.gxl 
+
+--------------------------------------
+Log Message:
+Added basic Python script.
+**************************************
+Date: Fri Mar 12 20:13:32 CET 2010
+Author: stefan
+Tag: rst2gxl_1_5
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.xsl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	simple.gxl 
+
+--------------------------------------
+Log Message:
+Fixed namespaces.
+
+Changed test to what is really expected.
+**************************************
+Date: Fri Mar 12 19:38:52 CET 2010
+Author: stefan
+Tag: rst2gxl_1_4
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Modified Files:
+	rst2gxl.xsl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Modified Files:
+	simple.gxl 
+
+--------------------------------------
+Log Message:
+Minor changes.
+**************************************
+Date: Fri Mar 12 19:28:36 CET 2010
+Author: stefan
+Tag: rst2gxl_1_3
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/expected
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/expected
+
+Added Files:
+	simple.gxl 
+
+--------------------------------------
+Log Message:
+Added infrastructure.
+**************************************
+Date: Fri Mar 12 19:27:21 CET 2010
+Author: stefan
+Tag: rst2gxl_1_2
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl
+In directory paulla:/home/stefan/free/rst2gxl
+
+Added Files:
+	Makefile rst2gxl.xsl 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests
+In directory paulla:/home/stefan/free/rst2gxl/tests
+
+Added Files:
+	Makefile rules.gmk 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple
+
+Added Files:
+	Makefile filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests/simple/original
+In directory paulla:/home/stefan/free/rst2gxl/tests/simple/original
+
+Added Files:
+	simple.rst 
+
+--------------------------------------
+Log Message:
+Added infrastructure.
+**************************************
+Date: Fri Mar 12 19:08:12 CET 2010
+Author: stefan
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rst2gxl/tests
+In directory paulla:/home/stefan/free/rst2gxl/tests
+
+
+--------------------------------------
+Log Message:
+Directory /home/stefan/vault/sm/rst2gxl/tests added to the repository
+

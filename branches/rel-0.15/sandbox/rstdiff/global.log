@@ -1,0 +1,2902 @@
+**************************************
+Date: Sat Apr  9 12:06:46 CEST 2011
+Author: stefan
+Tag: rstdiff_1_122
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/html/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/html/source
+
+Removed Files:
+	contents.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/htmlNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/htmlNoSource/expected
+
+Added Files:
+	contents.html 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/secret/expected
+
+Modified Files:
+	taxonomie.xml 
+
+--------------------------------------
+Log Message:
+Adapted tests.
+**************************************
+Date: Fri Apr  8 19:28:53 CEST 2011
+Author: stefan
+Tag: rstdiff_1_121
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/htmlNoSource
+In directory theowa:/home/stefan/free/rstdiff/tests/htmlNoSource
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/htmlNoSource/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/htmlNoSource/expected
+
+Modified Files:
+	generated.html 
+
+--------------------------------------
+Log Message:
+`generated` nodes are replaced by `inline` nodes so changed section
+numbers are marked up correctly. Tests are not adapted yet.
+**************************************
+Date: Thu Apr  7 22:31:13 CEST 2011
+Author: stefan
+Tag: rstdiff_1_120
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/htmlNoSource/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/htmlNoSource/expected
+
+Modified Files:
+	generated.html 
+
+--------------------------------------
+Log Message:
+Corrected test.
+**************************************
+Date: Thu Apr  7 22:29:51 CEST 2011
+Author: stefan
+Tag: rstdiff_1_119
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/htmlNoSource/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/htmlNoSource/expected
+
+Modified Files:
+	generated.html 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/htmlNoSource/input
+In directory theowa:/home/stefan/free/rstdiff/tests/htmlNoSource/input
+
+Modified Files:
+	generated.new.rst generated.old.rst 
+
+--------------------------------------
+Log Message:
+Added description of solution.
+**************************************
+Date: Thu Apr  7 21:50:55 CEST 2011
+Author: stefan
+Tag: rstdiff_1_118
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/htmlNoSource
+In directory theowa:/home/stefan/free/rstdiff/tests/htmlNoSource
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/htmlNoSource/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/htmlNoSource/expected
+
+Added Files:
+	generated.html 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/htmlNoSource/input
+In directory theowa:/home/stefan/free/rstdiff/tests/htmlNoSource/input
+
+Added Files:
+	generated.new.rst generated.old.rst 
+
+--------------------------------------
+Log Message:
+Added a failing test for generated parts in HTML.
+**************************************
+Date: Mon Apr  4 21:31:26 CEST 2011
+Author: stefan
+Tag: rstdiff_1_117
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Debugging.
+**************************************
+Date: Mon Apr  4 21:13:49 CEST 2011
+Author: stefan
+Tag: rstdiff_1_116
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret
+In directory theowa:/home/stefan/free/rstdiff/tests/secret
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml
+In directory theowa:/home/stefan/free/rstdiff/tests/secretHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Introduced `--dump-rstdiff` since normal `--debug` fails to often with
+non-ASCII input documents.
+**************************************
+Date: Mon Apr  4 10:20:51 CEST 2011
+Author: stefan
+Tag: rstdiff_1_115
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory theowa:/home/stefan/free/rstdiff/tests/simple/input
+
+Modified Files:
+	sectionSequence.new.rst sectionSequence.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory theowa:/home/stefan/free/rstdiff/tests/simple/source
+
+Modified Files:
+	sectionSequence.rst 
+
+--------------------------------------
+Log Message:
+Renamed option `--compare-sections-by-id` to
+`--compare-sections-by-name` and comparison is done by name. This
+works for duplicated section titles, too.
+**************************************
+Date: Sat Apr  2 11:42:34 CEST 2011
+Author: stefan
+Tag: rstdiff_1_114
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/optionCompareNormal
+In directory rosalu:/home/stefan/free/rstdiff/tests/optionCompareNormal
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Renamed `--compare-sections-id` / `--compare-sections-normal` to
+`--compare-sections-by-id` / `--compare-sections-normally`.
+**************************************
+Date: Fri Apr  1 19:36:45 CEST 2011
+Author: stefan
+Tag: rstdiff_1_113
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory theowa:/home/stefan/free/rstdiff/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleHtml
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Options `--compare-sections-id` and `--compare-sections-normal` are
+supported.
+**************************************
+Date: Fri Apr  1 19:22:28 CEST 2011
+Author: stefan
+Tag: rstdiff_1_112
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/optionCompareNormal
+In directory theowa:/home/stefan/free/rstdiff/tests/optionCompareNormal
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/optionCompareNormal/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/optionCompareNormal/expected
+
+Added Files:
+	section.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/optionCompareNormal/input
+In directory theowa:/home/stefan/free/rstdiff/tests/optionCompareNormal/input
+
+Added Files:
+	section.new.rst section.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/secret/expected
+
+Modified Files:
+	taxonomie.xml transaktionsbehandlung.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/secretHtml/expected
+
+Modified Files:
+	transaktionsbehandlung.html 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	onceOnly.xml section.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/input
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/input
+
+Modified Files:
+	onceOnly.new.rst 
+
+--------------------------------------
+Log Message:
+Sections are compared by their first id. This way sections with
+unchanged title always match and sections with changed titles never
+match.
+
+Option `--compare-sections-normal` for old behavior still missing but
+tests are there.
+**************************************
+Date: Fri Apr  1 17:11:19 CEST 2011
+Author: stefan
+Tag: rstdiff_1_111
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/html
+In directory theowa:/home/stefan/free/rstdiff/tests/html
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/optionOldNew
+In directory theowa:/home/stefan/free/rstdiff/tests/optionOldNew
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret
+In directory theowa:/home/stefan/free/rstdiff/tests/secret
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml
+In directory theowa:/home/stefan/free/rstdiff/tests/secretHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory theowa:/home/stefan/free/rstdiff/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleHtml
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Docutils debugging facilities are used.
+**************************************
+Date: Mon Mar 28 12:00:49 CEST 2011
+Author: stefan
+Tag: rstdiff_1_110
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleHtml
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Added Files:
+	footnoteSequence.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/input
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/input
+
+Added Files:
+	footnoteSequence.new.rst footnoteSequence.old.rst 
+
+--------------------------------------
+Log Message:
+Added a test exposing a problem when footnotes are added.
+
+Modification due to change in `top.gmk`.
+**************************************
+Date: Mon Mar 28 11:08:46 CEST 2011
+Author: stefan
+Tag: rstdiff_1_109
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory theowa:/home/stefan/free/rstdiff/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory theowa:/home/stefan/free/rstdiff/tests/simple/input
+
+Added Files:
+	sectionSequence.new.rst sectionSequence.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory theowa:/home/stefan/free/rstdiff/tests/simple/source
+
+Added Files:
+	sectionSequence.rst 
+
+--------------------------------------
+Log Message:
+Added a test exposing a problem in diffings sections in a sequence.
+**************************************
+Date: Sun Mar 27 11:52:11 CEST 2011
+Author: stefan
+Tag: rstdiff_1_108
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.rst 
+
+--------------------------------------
+Log Message:
+Options from command are included in documentation.
+**************************************
+Date: Sun Mar 27 11:34:24 CEST 2011
+Author: stefan
+Tag: rstdiff_1_107
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	Makefile 
+Added Files:
+	rstdiff.rst 
+Removed Files:
+	rstdiff.pod 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml
+In directory rosalu:/home/stefan/free/rstdiff/tests/secretHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Changed documentation to be in reStructuredText.
+
+Marked some tests as being `inProgress`.
+**************************************
+Date: Fri Mar 25 19:16:03 CET 2011
+Author: stefan
+Tag: rstdiff_1_106
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Multi options are handled correctly.
+**************************************
+Date: Fri Mar 25 18:58:54 CET 2011
+Author: stefan
+Tag: rstdiff_1_105
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/optionOldNew/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/optionOldNew/expected
+
+Added Files:
+	strip.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/optionOldNew/input
+In directory theowa:/home/stefan/free/rstdiff/tests/optionOldNew/input
+
+Added Files:
+	strip.opt strip.rst 
+
+--------------------------------------
+Log Message:
+Added tests. Some fail.
+**************************************
+Date: Fri Mar 25 17:29:09 CET 2011
+Author: stefan
+Tag: rstdiff_1_104
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/optionOldNew/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/optionOldNew/expected
+
+Modified Files:
+	generator.xml 
+
+--------------------------------------
+Log Message:
+Implemented using different options for old and new input file.
+**************************************
+Date: Fri Mar 25 16:14:17 CET 2011
+Author: stefan
+Tag: rstdiff_1_103
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/optionOldNew
+In directory theowa:/home/stefan/free/rstdiff/tests/optionOldNew
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/optionOldNew/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/optionOldNew/expected
+
+Added Files:
+	generator.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/optionOldNew/input
+In directory theowa:/home/stefan/free/rstdiff/tests/optionOldNew/input
+
+Added Files:
+	generator.opt generator.rst 
+
+--------------------------------------
+Log Message:
+Added tests for options `--new` / `--old`. Do not run yet.
+**************************************
+Date: Wed Mar 23 22:48:58 CET 2011
+Author: stefan
+Tag: rstdiff_1_102
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/secretHtml/expected
+
+Modified Files:
+	transaktionsbehandlung.html 
+Added Files:
+	taxonomie.html 
+
+--------------------------------------
+Log Message:
+Adapted tests to latest Docutils version.
+**************************************
+Date: Wed Mar 23 22:15:04 CET 2011
+Author: stefan
+Tag: rstdiff_1_101
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Added options `--old` and `--new`. Not really implemented yet.
+**************************************
+Date: Sat Mar  5 12:20:53 CET 2011
+Author: stefan
+Tag: rstdiff_1_100
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	Makefile 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	coloring.css 
+
+--------------------------------------
+Log Message:
+Adaptions to `packageSupport`.
+**************************************
+Date: Thu Dec  2 00:22:21 CET 2010
+Author: stefan
+Tag: rstdiff_1_99
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	table.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/input
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/input
+
+Modified Files:
+	table.new.rst table.old.rst 
+
+--------------------------------------
+Log Message:
+Modified test to expose a problem with modified tables.
+**************************************
+Date: Tue Nov 30 23:28:23 CET 2010
+Author: stefan
+Tag: rstdiff_1_98
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/secret/expected
+
+Modified Files:
+	taxonomie.xml 
+
+--------------------------------------
+Log Message:
+Adapted tests.
+**************************************
+Date: Tue Nov 30 23:21:00 CET 2010
+Author: stefan
+Tag: rstdiff_1_97
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Changing number of columns in tables are processed correctly.
+**************************************
+Date: Tue Nov 30 22:21:01 CET 2010
+Author: stefan
+Tag: rstdiff_1_96
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/secret/expected
+
+Modified Files:
+	taxonomie.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Added Files:
+	table.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/input
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/input
+
+Added Files:
+	table.new.rst table.old.rst 
+
+--------------------------------------
+Log Message:
+Added normal test exposing bug in changed tables.
+**************************************
+Date: Tue Nov 30 20:04:19 CET 2010
+Author: stefan
+Tag: rstdiff_1_95
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/secret/expected
+
+Added Files:
+	taxonomie.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret/input
+In directory theowa:/home/stefan/free/rstdiff/tests/secret/input
+
+Added Files:
+	taxonomie.new.rst taxonomie.old.rst taxonomie.opt 
+
+--------------------------------------
+Log Message:
+Added failing test for HTML writer.
+**************************************
+Date: Sun Nov 14 12:41:30 CET 2010
+Author: stefan
+Tag: rstdiff_1_94
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Added Files:
+	documentTitle.xml 
+
+--------------------------------------
+Log Message:
+Debugging.
+**************************************
+Date: Sun Nov 14 10:35:16 CET 2010
+Author: stefan
+Tag: rstdiff_1_93
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Removed Files:
+	documentTitle.xml 
+
+--------------------------------------
+Log Message:
+Debugging.
+**************************************
+Date: Sun Nov 14 10:20:30 CET 2010
+Author: stefan
+Tag: rstdiff_1_92
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Added todo.
+**************************************
+Date: Sun Nov 14 10:18:52 CET 2010
+Author: stefan
+Tag: rstdiff_1_91
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	README rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Added Files:
+	documentTitle.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/input
+
+Added Files:
+	documentTitle.new.rst documentTitle.old.rst 
+
+--------------------------------------
+Log Message:
+Parent classes are considered for up propagating candidates.
+**************************************
+Date: Sat Nov 13 16:08:34 CET 2010
+Author: stefan
+Tag: rstdiff_1_90
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Added Files:
+	README 
+
+--------------------------------------
+Log Message:
+Added README.
+**************************************
+Date: Sat Nov 13 16:03:42 CET 2010
+Author: stefan
+Tag: rstdiff_1_89
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/input
+
+Modified Files:
+	section.new.rst section.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Modified Files:
+	section.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleHtml
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	onceOnly.xml 
+Added Files:
+	section.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/input
+
+Modified Files:
+	onceOnly.new.rst onceOnly.old.rst 
+Added Files:
+	section.new.rst section.old.rst 
+
+--------------------------------------
+Log Message:
+Adapted tests to run again.
+**************************************
+Date: Sat Nov 13 15:17:18 CET 2010
+Author: stefan
+Tag: rstdiff_1_88
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Implemented up propagation for replacement of elements which may
+propagate up if their siblings also may propagate a replacement up.
+Tests need to be considered.
+**************************************
+Date: Sat Nov 13 14:13:48 CET 2010
+Author: stefan
+Tag: rstdiff_1_87
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/input
+
+Modified Files:
+	section.new.rst section.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Modified Files:
+	section.rst 
+
+--------------------------------------
+Log Message:
+One more step for proper replacement of complex elements. Expected
+tests fail.
+**************************************
+Date: Sat Nov 13 11:17:24 CET 2010
+Author: stefan
+Tag: rstdiff_1_86
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Refactoring: Prepared code for up-propagation for handling
+section/title.
+**************************************
+Date: Sun Nov  7 20:10:28 CET 2010
+Author: stefan
+Tag: rstdiff_1_85
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/html
+In directory rosalu:/home/stefan/free/rstdiff/tests/html
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret
+In directory rosalu:/home/stefan/free/rstdiff/tests/secret
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml
+In directory rosalu:/home/stefan/free/rstdiff/tests/secretHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleHtml
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Upgraded tests to filterunit V0.7.1.
+**************************************
+Date: Mon Nov  1 19:33:50 CET 2010
+Author: stefan
+Tag: rstdiff_1_84
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	Makefile 
+Added Files:
+	rstdiff.pod 
+
+--------------------------------------
+Log Message:
+Added man page.
+**************************************
+Date: Sun Oct 31 20:53:50 CET 2010
+Author: stefan
+Tag: rstdiff_1_83
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Added Files:
+	.cvsignore 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/html
+In directory rosalu:/home/stefan/free/rstdiff/tests/html
+
+Added Files:
+	.cvsignore 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple
+
+Added Files:
+	.cvsignore 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleHtml
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleHtml
+
+Added Files:
+	.cvsignore 
+
+--------------------------------------
+Log Message:
+Removed created `.cvsignore`.
+**************************************
+Date: Mon Oct 18 12:30:28 CEST 2010
+Author: stefan
+Tag: rstdiff_1_82
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Added Files:
+	setup.py 
+
+--------------------------------------
+Log Message:
+Added `setup.py`.
+**************************************
+Date: Mon Oct 18 12:14:54 CEST 2010
+Author: stefan
+Tag: rstdiff_1_81
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	Makefile 
+
+--------------------------------------
+Log Message:
+Added library sources.
+**************************************
+Date: Mon Oct 18 12:02:16 CEST 2010
+Author: stefan
+Tag: rstdiff_1_80
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	Makefile 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret
+In directory theowa:/home/stefan/free/rstdiff/tests/secret
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml
+In directory theowa:/home/stefan/free/rstdiff/tests/secretHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/secretHtml/expected
+
+Modified Files:
+	transaktionsbehandlung.html 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory theowa:/home/stefan/free/rstdiff/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleHtml
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Added tags to some tests.
+
+Adapted expected output to Docutils 0.8.
+**************************************
+Date: Mon Oct 11 10:48:34 CEST 2010
+Author: stefan
+Tag: rstdiff_1_79
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/secret/expected
+
+Modified Files:
+	transaktionsbehandlung.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	attributesNoSource.xml onceOnly.xml pcdataOnly.xml 
+	references.xml 
+
+--------------------------------------
+Log Message:
+Adapted comments in tests to newer docutils version.
+**************************************
+Date: Sun Oct 10 16:41:51 CEST 2010
+Author: stefan
+Tag: rstdiff_1_78
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	Makefile 
+
+--------------------------------------
+Log Message:
+Switched to using `packageSupport`.
+**************************************
+Date: Sun Aug 22 14:24:03 CEST 2010
+Author: stefan
+Tag: rstdiff_1_77
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret
+In directory rosalu:/home/stefan/free/rstdiff/tests/secret
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/secret/expected
+
+Modified Files:
+	transaktionsbehandlung.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/secret/input
+
+Added Files:
+	transaktionsbehandlung.opt 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml
+In directory rosalu:/home/stefan/free/rstdiff/tests/secretHtml
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/secretHtml/expected
+
+Modified Files:
+	transaktionsbehandlung.html 
+
+--------------------------------------
+Log Message:
+Corrected expected results.
+**************************************
+Date: Sun Aug 22 13:43:23 CEST 2010
+Author: stefan
+Tag: rstdiff_1_76
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Debugging.
+
+Moved debug flag to a parameter.
+
+Removed some debugging code again.
+**************************************
+Date: Fri Aug 13 10:43:23 CEST 2010
+Author: stefan
+Tag: rstdiff_1_75
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret
+In directory theowa:/home/stefan/free/rstdiff/tests/secret
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/secret/expected
+
+Added Files:
+	transaktionsbehandlung.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secret/input
+In directory theowa:/home/stefan/free/rstdiff/tests/secret/input
+
+Added Files:
+	transaktionsbehandlung.new.rst transaktionsbehandlung.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml
+In directory theowa:/home/stefan/free/rstdiff/tests/secretHtml
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/secretHtml/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/secretHtml/expected
+
+Added Files:
+	transaktionsbehandlung.html 
+
+--------------------------------------
+Log Message:
+Added directories for tests with secret input files. Added test for
+new bug.
+**************************************
+Date: Sun Aug  8 14:23:27 CEST 2010
+Author: stefan
+Tag: rstdiff_1_74
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	onceOnly.xml 
+
+--------------------------------------
+Log Message:
+Added todos. Corrected tests to pass for now.
+**************************************
+Date: Sun Aug  8 11:34:50 CEST 2010
+Author: stefan
+Tag: rstdiff_1_73
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Once only elements do not propagate their changes up. This leads to
+sections not being replaced any more. Needs checking.
+**************************************
+Date: Sat Aug  7 11:46:06 CEST 2010
+Author: stefan
+Tag: rstdiff_1_72
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	onceOnly.xml 
+
+--------------------------------------
+Log Message:
+Changes in label and option_string are pulled up.
+**************************************
+Date: Fri Aug  6 00:24:15 CEST 2010
+Author: stefan
+Tag: rstdiff_1_71
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Debugging.
+**************************************
+Date: Sun Aug  1 12:36:44 CEST 2010
+Author: stefan
+Tag: rstdiff_1_70
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	onceOnly.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/input
+
+Modified Files:
+	onceOnly.new.rst onceOnly.old.rst 
+
+--------------------------------------
+Log Message:
+Continued tests.
+**************************************
+Date: Sat Jul 31 14:14:15 CEST 2010
+Author: stefan
+Tag: rstdiff_1_69
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	onceOnly.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/input
+
+Modified Files:
+	onceOnly.new.rst onceOnly.old.rst 
+
+--------------------------------------
+Log Message:
+Continued test.
+**************************************
+Date: Sat Jul 31 12:06:36 CEST 2010
+Author: stefan
+Tag: rstdiff_1_68
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Debugging.
+**************************************
+Date: Mon Jul 26 20:03:18 CEST 2010
+Author: stefan
+Tag: rstdiff_1_67
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Added comments.
+**************************************
+Date: Mon Jul 26 10:49:49 CEST 2010
+Author: stefan
+Tag: rstdiff_1_66
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Added comments.
+**************************************
+Date: Mon Jul 26 10:47:22 CEST 2010
+Author: stefan
+Tag: rstdiff_1_65
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	pcdataOnly.xml 
+Added Files:
+	onceOnly.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/input
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/input
+
+Modified Files:
+	pcdataOnly.new.rst pcdataOnly.old.rst 
+Added Files:
+	onceOnly.new.rst onceOnly.old.rst 
+
+--------------------------------------
+Log Message:
+Moved conflicting parts of #PCDATA only test to the once only test.
+Former test runs.
+**************************************
+Date: Mon Jul 26 09:43:33 CEST 2010
+Author: stefan
+Tag: rstdiff_1_64
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory theowa:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	pcdataOnly.xml 
+
+--------------------------------------
+Log Message:
+Elements which may contain only #PCDATA propagate their inner changes
+up to the element itself. Existing tests don't run because they are
+mixed with another, still missing feature.
+**************************************
+Date: Sun Jul 25 14:59:35 CEST 2010
+Author: stefan
+Tag: rstdiff_1_63
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	references.xml 
+Added Files:
+	pcdataOnly.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/input
+
+Modified Files:
+	references.new.rst references.old.rst 
+Added Files:
+	pcdataOnly.new.rst pcdataOnly.old.rst 
+
+--------------------------------------
+Log Message:
+Moved failing test part to an own test.
+
+Added tests for changes in #PCDATA.
+**************************************
+Date: Sat Jul 24 20:09:00 CEST 2010
+Author: stefan
+Tag: rstdiff_1_62
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Code improvements.
+**************************************
+Date: Sat Jul 24 20:02:47 CEST 2010
+Author: stefan
+Tag: rstdiff_1_61
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/input
+
+Added Files:
+	attributes.new.rst attributes.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Added Files:
+	attributes.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Modified Files:
+	references.xml 
+Added Files:
+	attributesNoSource.xml 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/input
+
+Added Files:
+	attributesNoSource.new.rst attributesNoSource.old.rst 
+
+--------------------------------------
+Log Message:
+Added tests. Debugging.
+**************************************
+Date: Sat Jul 24 15:39:07 CEST 2010
+Author: stefan
+Tag: rstdiff_1_60
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests
+In directory rosalu:/home/stefan/free/rstdiff/tests
+
+Modified Files:
+	Makefile rules.gmk 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleHtml
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleHtml
+
+Added Files:
+	Makefile filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Reusing simple tests for HTML.
+**************************************
+Date: Sat Jul 24 15:38:08 CEST 2010
+Author: stefan
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleHtml/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleHtml/expected
+
+
+--------------------------------------
+Log Message:
+Directory /home/stefan/vault/sm/rstdiff/tests/simpleHtml/expected added to the repository
+**************************************
+Date: Sat Jul 24 15:37:54 CEST 2010
+Author: stefan
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleHtml
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleHtml
+
+
+--------------------------------------
+Log Message:
+Directory /home/stefan/vault/sm/rstdiff/tests/simpleHtml added to the repository
+**************************************
+Date: Sat Jul 24 15:03:06 CEST 2010
+Author: stefan
+Tag: rstdiff_1_59
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource
+
+Added Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simpleNoSource/expected
+In directory rosalu:/home/stefan/free/rstdiff/tests/simpleNoSource/expected
+
+Added Files:
+	references.xml 
+
+--------------------------------------
+Log Message:
+Necessary attributes are considered.
+**************************************
+Date: Sun Jul 18 10:47:00 CEST 2010
+Author: stefan
+Tag: rstdiff_1_58
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/input
+
+Added Files:
+	references.new.rst references.old.rst 
+
+--------------------------------------
+Log Message:
+Added tests and todos.
+**************************************
+Date: Sun Jul 11 19:40:46 CEST 2010
+Author: stefan
+Tag: rstdiff_1_57
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Empty inlines are not generated.
+**************************************
+Date: Sun Jul 11 11:02:22 CEST 2010
+Author: stefan
+Tag: rstdiff_1_56
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	coloring.css 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/input
+
+Added Files:
+	inlineStyles.new.rst inlineStyles.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Added Files:
+	inlineStyles.rst 
+
+--------------------------------------
+Log Message:
+Added tests. Fails.
+**************************************
+Date: Fri Jul  9 19:53:45 CEST 2010
+Author: stefan
+Tag: rstdiff_1_55
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests
+In directory theowa:/home/stefan/free/rstdiff/tests
+
+Modified Files:
+	Makefile rules.gmk 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/html
+In directory theowa:/home/stefan/free/rstdiff/tests/html
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Errors fixed by using proper options. All tests run.
+**************************************
+Date: Fri Jul  9 19:45:11 CEST 2010
+Author: stefan
+Tag: rstdiff_1_54
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Standard transformations are applied. Fixes footnote and contents
+problem in HTML.
+**************************************
+Date: Fri Jul  9 19:16:34 CEST 2010
+Author: stefan
+Tag: rstdiff_1_53
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory theowa:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Debugging. Classes attribute in <inline> is set correct.
+**************************************
+Date: Fri Jul  9 19:03:48 CEST 2010
+Author: stefan
+Tag: rstdiff_1_52
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests
+In directory theowa:/home/stefan/free/rstdiff/tests
+
+Modified Files:
+	rules.gmk 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/html
+In directory theowa:/home/stefan/free/rstdiff/tests/html
+
+Added Files:
+	Makefile filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/html/input
+In directory theowa:/home/stefan/free/rstdiff/tests/html/input
+
+Added Files:
+	contents.new.rst contents.old.rst footnote.new.rst 
+	footnote.old.rst reference.new.rst reference.old.rst 
+	textDifferent.new.rst textDifferent.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/html/source
+In directory theowa:/home/stefan/free/rstdiff/tests/html/source
+
+Added Files:
+	contents.rst footnote.rst reference.rst textDifferent.rst 
+
+--------------------------------------
+Log Message:
+Added tests for HTML writer decovering errors. All these tests fail.
+**************************************
+Date: Sat Jul  3 18:42:26 CEST 2010
+Author: stefan
+Tag: rstdiff_1_51
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Improvements.
+**************************************
+Date: Sat Jul  3 18:30:23 CEST 2010
+Author: stefan
+Tag: rstdiff_1_50
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Comparsion as child corrected. All unit tests run.
+**************************************
+Date: Sat Jul  3 18:09:59 CEST 2010
+Author: stefan
+Tag: rstdiff_1_49
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/input
+
+Modified Files:
+	section.new.rst section.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Modified Files:
+	section.rst 
+
+--------------------------------------
+Log Message:
+Improved debugging.
+**************************************
+Date: Sat Jul  3 13:24:31 CEST 2010
+Author: stefan
+Tag: rstdiff_1_48
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Added comments.
+**************************************
+Date: Sat Jul  3 13:16:29 CEST 2010
+Author: stefan
+Tag: rstdiff_1_47
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Mergeable ranges of opcodes are merged.
+**************************************
+Date: Sat Jul  3 12:59:26 CEST 2010
+Author: stefan
+Tag: rstdiff_1_46
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Unit tests run again.
+**************************************
+Date: Sat Jul  3 12:49:55 CEST 2010
+Author: stefan
+Tag: rstdiff_1_45
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Opcodes are propagated to parents if possible.
+**************************************
+Date: Sat Jul  3 12:00:42 CEST 2010
+Author: stefan
+Tag: rstdiff_1_44
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Modified Files:
+	section.rst textOnly.rst 
+
+--------------------------------------
+Log Message:
+Improved class names.
+**************************************
+Date: Sat Jul  3 11:54:18 CEST 2010
+Author: stefan
+Tag: rstdiff_1_43
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Modified Files:
+	textOnly.rst 
+
+--------------------------------------
+Log Message:
+Classes are set for changed nodes.
+**************************************
+Date: Sat Jun 26 13:43:08 CEST 2010
+Author: stefan
+Tag: rstdiff_1_42
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Modified Files:
+	textOnly.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/treediff
+In directory rosalu:/home/stefan/free/rstdiff/treediff
+
+Modified Files:
+	__init__.py 
+
+--------------------------------------
+Log Message:
+White is treated as junk so replacement sequences are recognized.
+**************************************
+Date: Sat Jun 26 10:35:24 CEST 2010
+Author: stefan
+Tag: rstdiff_1_41
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/input
+
+Modified Files:
+	textOnly.new.rst textOnly.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Modified Files:
+	textOnly.rst 
+
+--------------------------------------
+Log Message:
+Debugging.
+**************************************
+Date: Sun Jun 20 11:34:24 CEST 2010
+Author: stefan
+Tag: rstdiff_1_40
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Modified Files:
+	textDifferent.rst 
+
+--------------------------------------
+Log Message:
+Refactoring: `Word`/`White` sequences are converted back to `Text` in
+the result.
+
+Unit tests run again.
+**************************************
+Date: Sat Jun 19 16:32:34 CEST 2010
+Author: stefan
+Tag: rstdiff_1_39
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Refactoring: `Text`, `Word` and `White` are merged correctly.
+**************************************
+Date: Sat Jun 19 16:10:05 CEST 2010
+Author: stefan
+Tag: rstdiff_1_38
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Refactoring: `Text` is replaced by `Word` and `White`.
+**************************************
+Date: Sat Jun 19 12:58:00 CEST 2010
+Author: stefan
+Tag: rstdiff_1_37
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Refactoring: First step towards replacing `Text` by `Word` and
+`White`.
+**************************************
+Date: Sun Jun 13 12:29:16 CEST 2010
+Author: stefan
+Tag: rstdiff_1_36
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Continued merging of text.
+**************************************
+Date: Sat Jun 12 14:53:33 CEST 2010
+Author: stefan
+Tag: rstdiff_1_35
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Continued merging of children.
+**************************************
+Date: Sat Jun 12 13:18:49 CEST 2010
+Author: stefan
+Tag: rstdiff_1_34
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Refactoring: New class `Opcode`.
+
+Continued merging of children.
+**************************************
+Date: Sat Jun  5 23:14:48 CEST 2010
+Author: stefan
+Tag: rstdiff_1_33
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests
+In directory rosalu:/home/stefan/free/rstdiff/tests
+
+Modified Files:
+	rules.gmk 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Completed first step to tree generation. Added writer. First unit test
+runs.
+**************************************
+Date: Sat Jun  5 22:31:39 CEST 2010
+Author: stefan
+Tag: rstdiff_1_32
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Log Message:
+Debugging.
+**************************************
+Date: Sat Jun  5 14:19:52 CEST 2010
+Author: stefan
+Tag: rstdiff_1_31
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Continued generation of output tree.
+**************************************
+Date: Sat Jun  5 11:59:39 CEST 2010
+Author: stefan
+Tag: rstdiff_1_30
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/treediff
+In directory rosalu:/home/stefan/free/rstdiff/treediff
+
+Modified Files:
+	__init__.py 
+
+--------------------------------------
+Log Message:
+Started implementation of building a result tree.
+**************************************
+Date: Thu Jun  3 13:04:41 CEST 2010
+Author: stefan
+Tag: rstdiff_1_29
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Started creation of result document.
+**************************************
+Date: Sun May 30 13:01:23 CEST 2010
+Author: stefan
+Tag: rstdiff_1_28
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Preparations for constructing.
+**************************************
+Date: Sun May 30 12:30:54 CEST 2010
+Author: stefan
+Tag: rstdiff_1_27
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Text is considered as sequence of words.
+**************************************
+Date: Sat May 29 15:28:43 CEST 2010
+Author: stefan
+Tag: rstdiff_1_26
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/input
+
+Added Files:
+	textDifferent.new.rst textDifferent.old.rst textEqual.new.rst 
+	textEqual.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Added Files:
+	textDifferent.rst textEqual.rst 
+
+--------------------------------------
+Log Message:
+Improvements and debugging.
+**************************************
+Date: Mon May 24 12:52:09 CEST 2010
+Author: stefan
+Tag: rstdiff_1_25
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Completed infrastructure.
+**************************************
+Date: Sun May 23 13:55:05 CEST 2010
+Author: stefan
+Tag: rstdiff_1_24
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/treediff
+In directory rosalu:/home/stefan/free/rstdiff/treediff
+
+Modified Files:
+	__init__.py 
+
+--------------------------------------
+Log Message:
+First steps towards a hashable implementation for Docutils nodes.
+**************************************
+Date: Sun May 16 14:45:35 CEST 2010
+Author: stefan
+Tag: rstdiff_1_23
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py hashable.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/treediff
+In directory rosalu:/home/stefan/free/rstdiff/treediff
+
+Added Files:
+	__init__.py 
+
+--------------------------------------
+Log Message:
+Moved core of the studies to real package.
+**************************************
+Date: Sun May 16 14:44:48 CEST 2010
+Author: stefan
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/treediff
+In directory rosalu:/home/stefan/free/rstdiff/treediff
+
+
+--------------------------------------
+Log Message:
+Directory /home/stefan/vault/sm/rstdiff/treediff added to the repository
+**************************************
+Date: Thu May 13 14:32:49 CEST 2010
+Author: stefan
+Tag: rstdiff_1_22
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Writer is configured properly.
+**************************************
+Date: Sun May  9 14:38:14 CEST 2010
+Author: stefan
+Tag: rstdiff_1_21
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Input files are parsed.
+**************************************
+Date: Sun May  9 14:22:11 CEST 2010
+Author: stefan
+Tag: rstdiff_1_20
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Modified Files:
+	rstdiff.py 
+
+--------------------------------------
+Log Message:
+Command line processing ok.
+**************************************
+Date: Sun May  9 10:25:10 CEST 2010
+Author: stefan
+Tag: rstdiff_1_19
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Added Files:
+	rstdiff.py 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py 
+
+--------------------------------------
+Log Message:
+Added `rstdiff.py`.
+**************************************
+Date: Sat May  8 12:56:02 CEST 2010
+Author: stefan
+Tag: rstdiff_1_18
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py 
+
+--------------------------------------
+Log Message:
+Continued studies. There is a class `TreeMatcher` similar to
+`SequenceMatcher`.
+**************************************
+Date: Sun Apr 25 12:14:20 CEST 2010
+Author: stefan
+Tag: rstdiff_1_17
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Added Files:
+	coloring.css 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple
+
+Modified Files:
+	filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/input
+
+Modified Files:
+	textOnly.new.rst textOnly.old.rst 
+Added Files:
+	section.new.rst section.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Modified Files:
+	textOnly.rst 
+Added Files:
+	section.rst 
+
+--------------------------------------
+Log Message:
+Added tests.
+**************************************
+Date: Sat Apr 24 15:19:06 CEST 2010
+Author: stefan
+Tag: rstdiff_1_16
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests
+In directory rosalu:/home/stefan/free/rstdiff/tests
+
+Modified Files:
+	rules.gmk 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Modified Files:
+	textOnly.rst 
+
+--------------------------------------
+Log Message:
+Corrected tests.
+**************************************
+Date: Sat Apr 24 12:40:06 CEST 2010
+Author: stefan
+Tag: rstdiff_1_15
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff
+In directory rosalu:/home/stefan/free/rstdiff
+
+Added Files:
+	Makefile 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Added Files:
+	rstdiff.sh 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests
+In directory rosalu:/home/stefan/free/rstdiff/tests
+
+Added Files:
+	Makefile rules.gmk 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple
+
+Added Files:
+	Makefile filterunit.cfg 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/input
+
+Added Files:
+	textOnly.new.rst textOnly.old.rst 
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+Added Files:
+	textOnly.rst 
+
+--------------------------------------
+Log Message:
+Added tests.
+**************************************
+Date: Sat Apr 24 12:31:27 CEST 2010
+Author: stefan
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/input
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/input
+
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple/source
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple/source
+
+
+--------------------------------------
+Log Message:
+Directory /home/stefan/vault/sm/rstdiff/tests/simple/input added to the repository
+
+Directory /home/stefan/vault/sm/rstdiff/tests/simple/source added to the repository
+**************************************
+Date: Sat Apr 24 12:30:37 CEST 2010
+Author: stefan
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests/simple
+In directory rosalu:/home/stefan/free/rstdiff/tests/simple
+
+
+--------------------------------------
+Log Message:
+Directory /home/stefan/vault/sm/rstdiff/tests/simple added to the repository
+**************************************
+Date: Sat Apr 24 12:30:21 CEST 2010
+Author: stefan
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/tests
+In directory rosalu:/home/stefan/free/rstdiff/tests
+
+
+--------------------------------------
+Log Message:
+Directory /home/stefan/vault/sm/rstdiff/tests added to the repository
+**************************************
+Date: Sun Apr 18 12:45:06 CEST 2010
+Author: stefan
+Tag: rstdiff_1_14
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py hashable.py 
+
+--------------------------------------
+Log Message:
+Refactoring.
+**************************************
+Date: Sat Apr 17 13:47:23 CEST 2010
+Author: stefan
+Tag: rstdiff_1_13
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py 
+
+--------------------------------------
+Log Message:
+Continued studies.
+**************************************
+Date: Sat Apr 17 13:10:51 CEST 2010
+Author: stefan
+Tag: rstdiff_1_12
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py 
+
+--------------------------------------
+Log Message:
+Continued studies.
+**************************************
+Date: Sun Apr 11 15:27:42 CEST 2010
+Author: stefan
+Tag: rstdiff_1_11
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py 
+
+--------------------------------------
+Log Message:
+Continued studies. Basic algorithm seems to work.
+**************************************
+Date: Sun Apr 11 12:02:24 CEST 2010
+Author: stefan
+Tag: rstdiff_1_10
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py 
+
+--------------------------------------
+Log Message:
+Continued studies.
+**************************************
+Date: Sun Apr 11 11:52:23 CEST 2010
+Author: stefan
+Tag: rstdiff_1_9
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py 
+
+--------------------------------------
+Log Message:
+Continued studies.
+**************************************
+Date: Sat Apr 10 11:29:51 CEST 2010
+Author: stefan
+Tag: rstdiff_1_8
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py hashable.py 
+
+--------------------------------------
+Log Message:
+Continued studies.
+**************************************
+Date: Mon Apr  5 10:54:58 CEST 2010
+Author: stefan
+Tag: rstdiff_1_7
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	hashable.py 
+
+--------------------------------------
+Log Message:
+Continued studies.
+**************************************
+Date: Sun Apr  4 13:19:22 CEST 2010
+Author: stefan
+Tag: rstdiff_1_6
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	hashable.py 
+
+--------------------------------------
+Log Message:
+Continued studies now using descriptor objects.
+**************************************
+Date: Sun Apr  4 12:12:10 CEST 2010
+Author: stefan
+Tag: rstdiff_1_5
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py hashable.py 
+
+--------------------------------------
+Log Message:
+More studies.
+**************************************
+Date: Fri Apr  2 16:49:26 CEST 2010
+Author: stefan
+Tag: rstdiff_1_4
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py 
+
+--------------------------------------
+Log Message:
+More studies.
+**************************************
+Date: Fri Apr  2 16:17:01 CEST 2010
+Author: stefan
+Tag: rstdiff_1_3
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Modified Files:
+	diff.py 
+
+--------------------------------------
+Log Message:
+Continued studies.
+**************************************
+Date: Fri Apr  2 13:47:44 CEST 2010
+Author: stefan
+Tag: rstdiff_1_2
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+Added Files:
+	diff.py hashable.py 
+
+--------------------------------------
+Log Message:
+Added studies.
+**************************************
+Date: Fri Apr  2 12:42:44 CEST 2010
+Author: stefan
+
+--------------------------------------
+Update of /home/stefan/vault/sm/rstdiff/studies
+In directory rosalu:/home/stefan/free/rstdiff/studies
+
+
+--------------------------------------
+Log Message:
+Directory /home/stefan/vault/sm/rstdiff/studies added to the repository
+

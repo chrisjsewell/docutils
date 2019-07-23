@@ -1,0 +1,47 @@
+.. -*- mode: rst -*-
+
+======================
+Odtwriter for Docutils
+======================
+
+:Author: Dave Kuhlman
+:address: dkuhlman (at) davekuhlman (dot) org
+    http://www.davekuhlman.org
+
+:revision: 1.3d
+:date: |date|
+
+.. |date| date:: %B %d, %Y
+
+
+:copyright: Copyright (c) 2006 Dave Kuhlman.  All Rights Reserved.
+    This software is subject to the provisions of the MIT License
+    http://www.opensource.org/licenses/mit-license.php, an Open
+    Source license.
+
+:abstract: This document describes the Docutils ODT writer.
+
+.. sectnum::
+
+.. contents::
+
+
+ODT writer has moved
+====================
+
+The ODT writer is now part of the main branch of the
+``docutils`` distribution and repository.  You can find ``docutils``
+here: http://docutils.sourceforge.net/
+
+You can find the documentation for the ``docutils`` ODT writer here:
+http://docutils.sourceforge.net/docs/user/odt.html
+
+
+What is odtwriter?
+==================
+
+ODT writer is a back-end, writer for Docutils.  ODT writer generates
+a .odt file that obeys the standards for ODF (Open Document Format).
+The generated files are usable in LibreOffice Writer.
+
+.. vim:ft=rst:

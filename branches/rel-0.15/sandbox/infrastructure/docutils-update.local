@@ -1,0 +1,339 @@
+#! /bin/bash
+# $Id$
+#
+# This script updates the Docutils web site.
+#
+# The web-root contains 
+#
+# * files and directories from ``trunk/web``:
+#   
+# * files and directories from ``trunk/docutils``:
+#   All files for easy referencing in mails.
+#
+# * and ``trunk/sandbox``.
+#
+# TODO
+# 
+# * sourceforge does not offer cron, but shell or web instead:
+#   maybe use cgi-bin script to rebuild the website now and then,
+#   e.g. if accessed and more than one day old and svn is newer.
+# * this file might become easier if cleanest cron task handling is
+#   cut out, as it is not run by cron.
+#
+# ATTENTION
+#
+# Any .html document with a corresponding .txt file is regenerated 
+# if the .txt has changed, but no new .html files will be generated.
+#
+# * Funny thing: sf hides README.txt files.
+#
+# ATTENTION
+#
+# Directories might contain Makefile.docutils-update files with
+# special instructions. Used in docs/user to call rst2s5
+# add --smartquotes=true to convert smartquotes.
+# Maybe add special treatment and remove this general solution.
+#
+# Options:
+#   -f    Do not give feedback.
+#   -t    Run the script in trace mode ("set -o xtrace").
+#   -u    Regenerate .html unconditionally.
+#   -v    Run verbosely.
+#   -q    Run quiet.
+#
+# Prerequisites: 
+#
+
+# exit on error
+set -e
+
+# make all newly created files group writeable
+umask 002
+
+# URL for SVN project checkout:
+svnurl=http://svn.code.sf.net/p/docutils/code/trunk
+
+htmlfilelist=`pwd`/htmlfiles.lst
+basedir=`pwd`/update-dir
+if [ ! -e $basedir ] ; then
+    test -d $basedir || mkdir $basedir
+fi
+project=docutils
+# $auxdir is non-public.
+auxdir=$basedir/aux
+test -d $auxdir || mkdir $auxdir
+# $htdocsdest is the destination for htdocs and will be moved to
+# another server later; so we keep it non-public (under $auxdir).
+htdocsdest=$auxdir/htdocs
+test -d $htdocsdest || mkdir $htdocsdest
+# Where to create the snapshots (non-public).
+snapshotdir=$auxdir/snapshots
+test -d $snapshotdir || mkdir $snapshotdir
+
+# htdocs directory on SF.net
+remoteproject=/home/project-web/docutils
+remotehtdocs=$remoteproject/htdocs
+
+# local checkout
+pylib=$auxdir/lib/python
+lib=$pylib/$project
+# Lock directory.
+lockdir=$auxdir/lock
+
+# Project base URL (for sitemap) without trailing slash.
+baseurl="http://docutils.sourceforge.net"
+
+export PYTHONPATH=$pylib:$lib:$lib/extras
+export PATH=$lib/tools:$PATH
+
+trace=0
+unconditional=0
+verbose=0
+feedback=1
+
+while getopts ftuv opt
+do
+    case $opt in
+        f)  feedback=;;
+        t)  trace=1;;
+        u)  unconditional=1;;
+        v)  verbose=1;;
+        q)  verbose=0;;
+        \?) exit 2;;
+    esac
+done
+shift `expr $OPTIND - 1`
+
+function print_feedback () {
+    test $feedback && echo "$1" || true
+}
+
+print_feedback 'Starting docutils-update run...'
+
+if [ $trace -eq 1 -o $verbose -eq 1 ] ; then
+    set -o xtrace
+fi
+
+# Acquire lock.
+if ! mkdir $lockdir; then
+    echo
+    echo Could not create lock directory at
+    echo $lockdir
+    echo
+    echo Please ensure no other user is running this script
+    echo and delete the directory.
+    exit 1
+fi
+# Always clean up on exit.
+trap "rm -rf $lockdir; trap - 0; exit 1" 0 1 2 3 15
+# Make sure the lock directory is deletable (i.e. rwx) by other group
+# members (in case this script crashes after copying files into the
+# directory)
+chmod 0770 $lockdir
+
+# update library area
+if [ -e $lib ] ; then
+    cd $lib
+    svn up --quiet
+else
+    test -d $pylib || mkdir -p $pylib
+    cd $pylib
+    svn checkout $svnurl/docutils
+fi
+
+# -------------------- Snapshots: --------------------
+
+# gather the materials
+cd $snapshotdir
+for DIR in docutils sandbox web ; do
+    test -d $DIR || svn checkout $svnurl/$DIR
+done
+# BUG if checked out for the first time, it has changes.
+haschanges="`svn up docutils sandbox web | grep -v '^At revision '; true`"
+
+# Ensure proper directory permissions are set so that the files can be
+# modified by several users.  Changing permissions of files is
+# probably not necessary because files can be deleted and re-created.
+# Do not change permissions of aux directory to keep it non-public
+# (but change permissions for all subdirectories).
+find $basedir -name aux -o -type d -print0 | xargs -0 chmod ug+rwxs 2> /dev/null || true
+
+# create the snapshots
+exclude='--exclude=.svn'
+tar -cz $exclude -f $project-snapshot.tgz $project
+tar -cz $exclude -f $project-sandbox-snapshot.tgz sandbox
+
+# -------------------- htdocs: --------------------
+
+cd $snapshotdir
+
+# TODO this does not work on macosx
+function copy_to_htdocsdest() {
+    find "$@" -type d -name .svn -prune -o \( -type f -o -type l \) -print0 | \
+        xargs -0 cp --no-dereference --update --parents \
+            --target-directory=$htdocsdest
+}
+
+# update htdocs
+copy_to_htdocsdest sandbox
+(cd $project; copy_to_htdocsdest *)
+(cd web; copy_to_htdocsdest * .[^.]*)
+
+# update HTML docs
+cd $htdocsdest/tools
+
+if [ $trace -eq 0 ] ; then
+    set +o xtrace
+fi
+
+# 1. local Makefiles
+for makefile in `find .. -name Makefile.docutils-update` ; do
+    dir=`dirname $makefile`
+    ( cd $dir ; make -f Makefile.docutils-update -s )
+done
+
+cd $htdocsdest
+
+# 2. generate empty and old html files to force generation
+#    for any txt under docs ?
+find docs -type f -and -name \*.txt -print | ( \
+while read -r txtfile ; do
+    dir=`dirname $txtfile`
+    base=`basename $txtfile .txt`
+    htmlfile=$dir/$base.html
+    if [ ! -e $htmlfile ] ; then
+        print_feedback "touch $htmlfile"
+        touch -t 200001010101 $htmlfile
+    fi
+done
+)
+
+#   for any README.txt under sandbox
+find sandbox -type f -and \( -name README.txt -o -name README \) -print | ( \
+while read -r txtfile ; do
+    dir=`dirname $txtfile`
+    base=`basename $txtfile .txt`
+    htmlfile=$dir/$base.html
+    if [ ! -e $htmlfile ] ; then
+        print_feedback "touch $htmlfile"
+        touch -t 200001010101 $htmlfile
+    fi
+done
+)
+
+#    for any file in htmlfilelist
+while read -r htmlfile ; do
+    if [ ! -d `dirname $htmlfile` ] ; then
+        print_feedback "Old htmlfile entry: $htmlfile"
+    elif [ ! -e $htmlfile ] ; then
+        print_feedback "touch $htmlfile"
+        touch -t 200001010101 $htmlfile
+    fi
+done < $htmlfilelist
+
+# 3. re/generate html from txt
+cd $htdocsdest/tools
+
+for htmlfile in `find .. -name '*.html'` ; do
+    dir=`dirname $htmlfile`
+    base=`basename $htmlfile .html`
+    if [ "$base" == "standalone_rst_html4strict" ] ; then
+        # breaks web update
+        print_feedback "skipped: $dir $base"
+    else
+        txtfile=$dir/$base.txt
+        if [ ! -e $txtfile  ] ; then
+            txtfile=$dir/$base.rst
+        fi
+        if [ ! -e $txtfile  ] ; then
+            txtfile=$dir/$base
+        fi
+        if [ $unconditional -eq 1 -o $txtfile -nt $htmlfile ] ; then
+            if [ "${base:0:4}" == "pep-" ] ; then
+                print_feedback "$txtfile (PEP)"
+                python $lib/tools/rstpep2html.py --config=$dir/docutils.conf $txtfile $htmlfile
+                haschanges=1
+            else
+                print_feedback "$txtfile"
+                python $lib/tools/rst2html.py --config=$dir/docutils.conf $txtfile $htmlfile
+                haschanges=1
+            fi
+        fi
+    fi
+done
+
+if [ $trace -eq 1 -o $verbose -eq 1 ] ; then
+    set -o xtrace
+fi
+
+# -------------------- XML sitemap for search engines: --------------------
+
+cd $htdocsdest
+
+# Update the sitemap only if something has changed because it takes
+# very much CPU time.
+if test -n "$haschanges"; then
+    (
+        echo '<?xml version="1.0" encoding="UTF-8"?>'
+        echo '<urlset xmlns="http://www.google.com/schemas/sitemap/0.84">'
+        if [ $trace -eq 0 ] ; then
+            set +o xtrace
+        fi
+        find . -name '.[^.]*' -prune -o -type d -printf '%p/\n' \
+                -o \( -type f -o -type l \) -print | \
+            while read i; do
+                # i is the file name.
+                if test "$i" == ./; then
+                    # Homepage.
+                    i=index.html
+                    url="$baseurl/"
+                elif test "$i" == ./sitemap -o "${i: -1}" == / -a -f "${i}index.html"; then
+                    # This is a directory and it has an index.html, so we
+                    # don't need to include it.
+                    continue
+                else
+                    url="$baseurl${i:1}"
+                    url="${url// /%20}"
+                fi
+                lastmod="`date --iso-8601=seconds -u -r "$i"`"
+                # Google wants a colon in front of the last two digits.
+                lastmod="${lastmod::22}:00"
+                if test "${i: -5}" == .html; then
+                    # HTML files (including the home page) have highest priority.
+                    priority=1.0
+                elif test "${i: -4}" == .txt; then
+                    # Text files have medium priority.
+                    priority=0.5
+                else
+                    # Everything else (source files etc.) has low priority.
+                    priority=0.2
+                fi
+                echo "<url><loc>$url</loc><lastmod>$lastmod</lastmod><priority>$priority</priority></url>"
+            done
+        if [ $trace -eq 1 -o $verbose -eq 1 ] ; then
+            set -o xtrace
+        fi
+        echo '</urlset>'
+    ) > sitemap
+    gzip -f sitemap
+fi
+
+# -------------------- Push changes to remote server. --------------------
+
+# sourceforge no longer allows shell access, use rsync via ssh
+# specify your user in your .ssh/config
+
+cd $htdocsdest
+
+print_feedback "rsync TO sf"
+# do not use -a to avoid "failed to set permissions"
+# -t preserve modification times. But a new svn checkout has new modtime.
+rsync -e ssh -r -t ./ web.sourceforge.net:$remotehtdocs
+
+trap - 0 1 2 3 15
+rm -rf $lockdir
+print_feedback '...docutils-update done.'
+
+# Local Variables:
+# indent-tabs-mode: nil
+# End:

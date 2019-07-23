@@ -1,0 +1,149 @@
+.. -*- rst-mode -*-
+
+Syntax Highlight
+================
+
+:Author:    Günter Milde
+:Contact:   milde@users.berlios.de
+:Date:      $Date$
+:Copyright: © 2007, 2009, 2012 G. Milde,
+:License: Released under the terms of the `2-Clause BSD license`_, in short:
+
+   Copying and distribution of this file, with or without modification,
+   are permitted in any medium without royalty provided the copyright
+   notice and this notice are preserved.
+   This file is offered as-is, without any warranty.
+
+.. _2-Clause BSD license: http://www.spdx.org/licenses/BSD-2-Clause
+
+:Abstract:  Proposal to add syntax highlight of code blocks to the
+            capabilities of Docutils_.
+
+.. sectnum::
+.. contents::
+
+Syntax highlighting significantly enhances the readability of code.
+Since version 0.9, docutils supports this with a `code` directive and role
+as well as a `code` option to the `include` directive using the Pygments_
+syntax highlighter.
+
+Example::
+  The content of the following directive ::
+
+   .. code:: python
+
+    def my_function():
+        "just a test"
+        print 8/2
+
+  is parsed and marked up as Python source code. The actual rendering
+  depends on the style-sheet.
+
+TODO
+====
+
+* TODO: Pygments_ provides filters like VisibleWhitespaceFilter
+  add options to use them?
+
+
+* Use syntax-highlight=long as default and add basic highlight rules
+  (keyword, comment, string?) to the default CSS stylesheet to get syntax
+  highlight out-of-the-box?
+  
+  Let the latex2e writer write basic rules in the document preamble if
+  "code" is used in the document?
+  
+* The latex writer should pass the original content and options to a
+  ``lstlistings`` environment. with ``--literal-block-env=lstlistings``.
+
+* Check the `odtwriter`, use common syntax and implementation.
+
+* Provide more sample stylesheets in an official stylesheet library.
+
+
+Configurable literal block directive
+------------------------------------
+
+Goal
+""""
+
+A clean and simple syntax for highlighted code blocks -- preserving the
+space saving feature of the "minimised" literal block marker (``::`` at the
+end of a text paragraph). This is especially desirable in documents with
+many code blocks like tutorials or literate programs.
+
+Inline analogon
+"""""""""""""""
+
+The *role* of inline `interpreted text` can be customised with the
+"default-role" directive. This allows the use of the concise "backtick"
+syntax for the most often used role, e.g. in a chemical paper, one could
+use::
+
+  .. default-role:: subscript
+
+  The triple point of H\ `2`\O is at 0°C.
+
+.. default-role:: subscript
+
+to produce
+
+  The triple point of H\ `2`\O is at 0°C.
+
+This customisation is currently not possible for block markup.
+
+Proposal
+""""""""
+
+* Define a new "literal-block" directive syntax for an ordinary literal
+  block. This would simply insert the block content into the document
+  tree as "literal-block" element.
+
+* Define a "default-literal-block" setting that controls which
+  directive is called on a block following ``::``. Default would be the
+  "literal-block" directive (backwards compatible).
+
+Motivation
+""""""""""
+
+Analogue to customising the default role of "interpreted text" with the
+"default-role" directive, the concise ``::`` literal-block markup could be
+used for e.g.
+
+* a "code-block" directive for syntax highight
+
+* the "line-block" directive for poems or addresses
+
+* the "parsed-literal" directive
+
+Example::
+
+  ordinary literal block::
+
+     some text typeset in monospace
+
+  .. default-literal-block::  code-block python
+
+  this is colourful Python code::
+
+     def hello():
+         print "hello world"
+
+
+In the same line, a "default-block-quote" setting or directive could be
+considered to configure the role of a block quote.
+
+
+
+.. External links
+.. _odtwriter: http://www.rexx.com/~dkuhlman/odtwriter.html
+.. _Sphinx: http://sphinx.pocoo.org
+.. _listings:
+    http://www.ctan.org/tex-archive/help/Catalogue/entries/listings.html
+.. _Pygments: http://pygments.org/
+.. _Docutils: http://docutils.sourceforge.net/
+.. _Docutils Document Tree:
+    http://docutils.sf.net/docs/ref/doctree.html#classes
+
+.. Internal links
+.. _stylesheets:       ../../stylesheets/

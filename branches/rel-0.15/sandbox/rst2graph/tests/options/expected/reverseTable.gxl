@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<!DOCTYPE gxl
+  SYSTEM 'http://www.gupro.de/GXL/gxl-1.0.dtd'>
+<gxl>
+  <graph edgemode="directed" id="input_reverseTable.rst">
+    <node id="foo">
+      <attr name="name">
+        <string>Foo</string>
+      </attr>
+    </node>
+    <node id="bar">
+      <attr name="name">
+        <string>Bar</string>
+      </attr>
+    </node>
+    <node id="ding">
+      <attr name="name">
+        <string>Ding</string>
+      </attr>
+    </node>
+    <node id="foo1">
+      <attr name="name">
+        <string>Foo1</string>
+      </attr>
+    </node>
+    <node id="bar1">
+      <attr name="name">
+        <string>Bar1</string>
+      </attr>
+    </node>
+    <node id="ding1">
+      <attr name="name">
+        <string>Ding1</string>
+      </attr>
+    </node>
+    <edge from="bar" to="foo"/>
+    <edge from="foo" to="bar"/>
+    <edge from="foo" to="ding"/>
+    <edge from="bar" to="ding"/>
+    <edge from="foo" to="foo1"/>
+    <edge from="bar" to="bar1"/>
+    <edge from="ding" to="ding1"/>
+  </graph>
+</gxl>

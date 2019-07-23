@@ -1,0 +1,140 @@
+=======
+xml2rst
+=======
+
+.. contents::
+
+What is xml2rst?
+================
+
+`xml2rst` is a tool to generate reStructuredText_ syntax back from
+`Docutils XML`_ input. This way you can create an XML files using
+`Docutils XML`_ from some other format (such as ODF_) and then
+transform the result to reStructuredText_.
+
+How to use xml2rst
+==================
+
+``xml2rst.py`` is a normal Docutils converter program. Try
+``xml2rst.py --help`` for options.
+
+Dependencies
+============
+
+``xml2rst.py`` depends on the ``docutils_xml`` in the Docutils sandbox
+(http://svn.code.sf.net/p/docutils/code/trunk/sandbox/docutils_xml/).
+This in turn depends on the lxml_ package [#deb-lxml]_.
+
+.. [#deb-lxml] Under Debian based operating systems try ``apt-get
+   install python-lxml``.
+
+Run ``xml2rst --help`` for information on how to run it.
+
+.. _flavor:
+
+Other ways to use xml2rst
+=========================
+
+`xml2rst` is currently implemented as an XSLT_ stylesheet usable in
+two other flavors. However, these flavors are no longer actively
+maintained and may lack some features.
+
+1. ``xml2rstlib/xml2rst-nopy.xsl``
+
+   This is the core XSLT_ script without using Python. It uses EXSLT_
+   and therefore needs an EXSLT_ capable XSLT_ processors such as
+   xsltproc_ [#deb-xsltproc]_.
+
+   If you can't use ``xml2rst.py`` because you don't have lxml_ you
+   may try this flavor. This version is no longer actively maintained,
+   though.
+
+   .. [#deb-xsltproc] Under Debian based operating systems try
+      ``apt-get install xsltproc``.
+
+   Run ``perldoc xml2rstlib/xml2rst-nopy.xsl`` for information on how to
+   run it.
+
+2. ``xml2rstlib/xml2rst-noexslt.xsl``
+
+   This version can be processed with every XSLT_ processor like
+   Xalan_ [#deb-xalan]_.
+
+   If you can use neither ``xml2rst.py`` nor ``xml2rst-nopy.xsl`` you
+   may try this flavor. This version is no longer actively maintained,
+   though.
+
+   .. [#deb-xalan] Under Debian based operating systems try ``apt-get
+      install xalan``.
+
+   Run ``perldoc xml2rstlib/xml2rst-noexslt.xsl`` for information on how
+   to run it.
+
+Availability
+============
+
+`xml2rst` is available through the `Docutils Subversion repository`_
+as part of the Docutils sandbox in ``sandbox/xml2rst``.
+
+Moreover you can fetch it directly from the current maintainer at
+http://www.merten-home.de/FreeSoftware/xml2rst/
+
+Installation
+============
+
+After you obtained the package run ``python setup.py install``.
+
+Depending on the flavor_ you choose you need to install certain
+packages to run `xml2rst`.
+
+Copyright and license
+=====================
+
+Copyright (C) 2005, 2006 by Stefan Merten and David Priest
+Copyright (C) 2009, 2010, 2011 by Stefan Merten
+
+License is GPL_ v2 or later.
+
+Development
+===========
+
+Tests
+-----
+
+There are test suites in ``tests*``. Use filterunit_ to run tests.
+
+ToDos
+-----
+
+``xml2rst.xsl`` and ``xml2rst.py`` contain a couple of comments marked
+with ``TODO`` which contain things which should be done.
+
+Plans
+-----
+
+``xml2rst`` should become a normal reStructuredText writer. Starting
+with V1.0 functionality is moved to a Python based implementation.
+
+.. ############################################################################
+
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+
+.. _Docutils XML: http://docutils.sourceforge.net/docs/ref/doctree.html
+
+.. _XSLT: http://www.w3.org/TR/1999/REC-xslt-19991116
+
+.. _Docutils Subversion repository: http://docutils.sourceforge.net/docs/dev/repository.html
+
+.. _xalan: http://xalan.apache.org/
+
+.. _GPL: http://www.gnu.org/copyleft/gpl.html
+
+.. _ODF: http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=office
+
+.. _EXSLT: http://www.exslt.org/
+
+.. _xsltproc: http://xmlsoft.org/XSLT/xsltproc2.html
+
+.. _lxml: http://codespeak.net/lxml/
+
+.. _filterunit: http://www.merten-home.de/FreeSoftware/filterunit/

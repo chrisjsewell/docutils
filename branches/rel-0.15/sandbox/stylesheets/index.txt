@@ -1,0 +1,103 @@
+=======================
+ Docutils_ Stylesheets
+=======================
+
+:Author: Lea Wiemann and others
+:Contact: LeWiemann@gmail.com
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This document has been placed in the public domain.
+
+
+This is a list of stylesheets, which can be used to customize the look
+of the documents created by Docutils, contributed by various users and
+developers.
+
+If you have a stylesheet to contribute, please send it to the
+Docutils-users_ mailing list.  (If you have write-access to the
+repository, you can also upload it to the ``sandbox/stylesheets/`` and
+add it in the list below.)
+
+.. TODO: Add previews of the stylesheets.  Either using PHP or with
+   screenshots.
+
+
+HTML (CSS) Stylesheets
+======================
+
+Please see "`Writing HTML (CSS) Stylesheets for Docutils`__" on how to
+write your own CSS stylesheet for use with Docutils' HTML writer.
+
+__ ../../docutils/docs/howto/html-stylesheets.html
+
+* `<voidspace.css>`_: Blue boxes around section headings, more
+  borders, and somewhat more colorful than the default stylesheet.
+
+* `<transition-stars.css>`_:
+  Example/Template for customising the transition_ element.
+
+  Replaces the horizontal line with three stars as often seen in novels.
+
+
+* `<pygments-default.css>`_, `<pygments-long.css>`_:
+  Examples/templates for syntax highlight of code_ snippets.
+
+
+LaTeX Style Sheets
+==================
+
+See "`Generating LaTeX with Docutils`_" for details on usage and writing of
+LaTeX style sheets for the Docutils' "latex2e" writer.
+
+Hint: usage is simpler, if you copy (or link) the stye files into a
+directory in the LaTeX INPUT PATH, e.g., (on a modern TeX installation)
+``/usr/local/share/texmf/tex/latex/`` or ``~/texmf/tex/latex/`` und run
+``texhash``.
+
+* `<times-helvetica-courier.sty>`_ and `<palatino-helvetica-courier.sty>`_:
+  Use Standard Postscript fonts with recommended settings.
+
+* `<listings-python-options.sty>`_:
+  Highlight literal blocks as python code. Use with the
+  ``--literal-block-env=lstlistings`` option.
+
+* `<listings-tex-options.sty>`_:
+  Highlight literal blocks as (La)TeX code. Use with the
+  ``--literal-block-env=lstlistings`` option.
+
+* `<transition-stars.sty>`_:
+  Example/Template for customising the transition_ element.
+
+  Replaces the horizontal line with three stars as often seen in novels.
+
+* `<pygments-default.sty>`_, `<pygments-long.sty>`_:
+  Examples/templates for syntax highlight of code_ snippets.
+
+Tools
+=====
+
+* `<pygments_css2sty.py>`_:
+  Convert a CSS stylesheet for syntax highlight in a HTML document
+  into one for Docutils' LaTeX output.
+
+.. References
+   ==========
+
+.. _Docutils: http://docutils.sourceforge.net/
+.. _Docutils-users:
+   http://docutils.sf.net/docs/user/mailing-lists.html#docutils-users
+.. _Generating LaTeX with Docutils:
+   ../../docutils/docs/user/latex.html
+
+.. _transition: ../../docutils/docs/ref/rst/restructuredtext.html#transitions
+.. _code: ../../docutils/docs/ref/rst/directives.html#code
+
+
+
+..
+   Local Variables:
+   mode: indented-text
+   indent-tabs-mode: nil
+   sentence-end-double-space: t
+   fill-column: 70
+   End:

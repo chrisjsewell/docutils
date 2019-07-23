@@ -1,0 +1,326 @@
+=========
+ rst2man
+=========
+
+---------------------------------------------
+generate unix manpages from reStructured text
+---------------------------------------------
+
+:Author: grubert@users.sourceforge.net
+:organization: humankind
+:Address: 123 Example Street
+          Example, EX  Canada
+          A1B 2C3
+:Date:   2009-06-22
+:Copyright: public domain
+            Behave responsible.
+:Version: 0.0.1
+:Manual section: 1
+:Manual group: text processing
+
+.. TODO: authors and author with name <email>
+
+SYNOPSIS
+========
+
+``rst2man`` ``--help``
+
+``rst2man`` [ OPTIONS ] [ SOURCE [ *destination* ] ]
+
+
+DESCRIPTION
+===========
+
+Run it and examine output.
+
+OPTIONS
+=======
+
+-o x   an option
+-b     another
+-f, --force
+       really do it
+
+For all other options see ``--help``.
+
+
+EXAMPLES
+===========
+
+:rst2man.py xml-schema-catalog.rst xml-schema-catalog.man:
+    create a manpage from xml-schema-catalog.rst
+
+.. comments : lorem ipsum lorem ipsum
+   lorem ipsum lorem ipsum
+
+Character formatting
+--------------------
+
+*BUG* The section title should be separated from the title above.
+
+Test **bold** or **strong** formatting.
+
+Special characters: 
+
+* backslash: \\
+* hyphen: -
+* accents: ´ `
+* quotes: ' " 
+
+.period ad line start.
+
+Lists
+-----
+
+* bullet list
+* and a longer entry, and a longer entry, and a longer entry, and a longer entry,
+  and a longer entry, and a longer entry, and a longer entry, and a longer entry,
+
+  1. and a nested 
+  2. enumeration
+
+     - some line 
+     - bullets
+
+  3. a third
+  4. a third
+  5. a third
+
+     a. alphabetically list
+     b. betacarotin
+     c. grammar
+
+  6. a third
+
+     Y. the end
+     Z. yellow
+
+  7. a third
+  8. a third
+  9. a third
+  10. bigger indentation if there are more than nine
+      enumerated items (or there are larger numbers)
+
+      a second paragraph that should be separated from the previous
+      one and not flowing into.
+
+7. dont start with 1
+
+9. dont increment by 1
+
+13. Problematic: indentation does not match for nonconsecutive entries.
+
+This paragraph must not be indented with the text the last list-item,
+but start at the left margin of the numbers.
+
+a second paragraph that should be separated from the previous
+one and not flowing into.
+
+Definition Lists
+----------------
+
+Term
+    Definition
+Term : classifier
+    Definition paragraph 1.
+
+    Definition paragraph 2.
+.ini-files
+    Term starting with period.
+Term
+    Definition
+
+
+Field lists
+-----------
+
+:first: a short label and a short text
+:secondly a longer label: and some more text and some more text
+  and some more text   and some more text
+
+definition lists
+  are also a valuable option and simple nonintrusive formatting
+definition too :
+  with the colon.
+
+Doctest Blocks
+--------------
+
+>>> print 'Python-specific usage examples; begun with ">>>"'
+Python-specific usage examples; begun with ">>>"
+>>> print '(cut and pasted from interactive Python sessions)'
+(cut and pasted from interactive Python sessions)
+
+
+Tables
+------
+
++----------+--------+
+| single   | frame  |
++----------+--------+
+| no table |        |
+| header   |        |
++----------+--------+
+
+lineblock
+---------
+
+| paul
+| tel. 12345
+| LA
+
+A paragraph following the line block. 
+lorem ipsum lorem ipsum
+lorem ipsum lorem ipsum
+lorem ipsum lorem ipsum
+lorem ipsum lorem ipsum
+
+
+Literal
+-------
+
+some literal text ::
+
+  here now it starts 
+  and continues
+    indented
+  and back
+
+and a paragraph after the literal.
+
+some special characters and roff formatting in literal::
+
+  .SS "." at line start
+  backslash "\"
+
+Line blocks
+-----------
+
+| This is a line block.  It ends with a blank line.
+|     Each new line begins with a vertical bar ("|").
+|     Line breaks and initial indents are preserved.
+| Continuation lines are wrapped portions of long lines;
+  they begin with a space in place of the vertical bar.
+|     The left edge of a continuation line need not be aligned with
+  the left edge of the text above it.
+
+| This is a second line block.
+|
+| Blank lines are permitted internally, but they must begin with a "|".
+
+Take it away, Eric the Orchestra Leader!
+
+    | A one, two, a one two three four
+    |
+    | Half a bee, philosophically,
+    |     must, *ipso facto*, half not be.
+    | But half the bee has got to be,
+    |     *vis a vis* its entity.  D'you see?
+    |
+    | But can a bee be said to be
+    |     or not to be an entire bee,
+    |         when half the bee is not a bee,
+    |             due to some ancient injury?
+    |
+    | Singing...
+
+
+
+raw
+---
+
+.. raw :: manpage
+
+   raw input to man
+
+.. raw :: latex
+   
+   never seen
+
+Admonitions
+-----------
+
+.. Attention:: Directives at large.
+
+.. Caution::
+
+   Don't take any wooden nickels.
+
+.. DANGER:: Mad scientist at work!
+
+.. Error:: Does not compute.
+
+.. Hint:: It's bigger than a bread box.
+
+.. Important::
+   - Wash behind your ears.
+   - Clean up your room.
+   - Call your mother.
+   - Back up your data.
+
+.. Note:: This is a note.
+
+.. Tip:: 15% if the service is good.
+
+.. WARNING:: Strong prose may provoke extreme mental exertion.
+   Reader discretion is strongly advised.
+
+.. admonition:: And, by the way...
+
+   You can make up your own admonition too.
+
+   With more than one paragraph.
+
+Text after the admonition.
+
+other
+-----
+
+inline references `ref something` .
+
+.. container:: verbose
+
+   Contained verbose. Nothing special.
+
+Top Section
+===========
+
+With mixed case
+
+Top section `b` c *d* e **f** g
+===============================
+
+with character formatting.
+
+FILES
+=====
+
+This is a file.
+
+SEE ALSO
+========
+
+`docutils <http://docutils.sourceforge.net>`__
+
+``rst2xml``\(dummy)
+
+More information can be found about 
+
+* xml-schema-catalog at
+  http://xml-schema-catalog.origo.ethz.ch/
+
+And see the stars at the sky!
+
+
+BUGS
+====
+
+Numerous mapping problems.
+
+1. Where do we get the manual section number from ? Commandline ?
+2. docutils authors should be filled into section "AUTHORS".
+3. be carefull with linebreaks in generated code.
+4. list items. 
+   bullets and enumerators.
+
+

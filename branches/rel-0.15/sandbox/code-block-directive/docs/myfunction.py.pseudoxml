@@ -1,0 +1,132 @@
+<document source="/home/milde/Code/Python/docutils-svn/sandbox/code-block-directive/docs/myfunction.py.txt">
+    <paragraph>
+        This is a test of the new "code" directive:
+    <comment xml:space="preserve">
+        Translate this document with a pygments enhanced frontend, e.g.
+        
+         ../rst2html-highlight.py --stylesheet=../data/pygments-default.css
+         ../rst2latex-highlight.py --stylesheet=../data/pygments-docutilsroles.sty
+        
+        or via the test case in
+        
+         ../pygments_code_block_directive.py --traceback
+    <paragraph>
+        The example from Docutils TODO list:
+    <literal_block classes="code python" xml:space="preserve">
+        <inline classes="k">
+            print
+         
+        <inline classes="s">
+            'This is Python code.'
+        
+        <inline classes="k">
+            for
+         
+        <inline classes="n">
+            i
+         
+        <inline classes="ow">
+            in
+         
+        <inline classes="nb">
+            range
+        <inline classes="p">
+            (
+        <inline classes="mi">
+            10
+        <inline classes="p">
+            ):
+        
+            
+        <inline classes="k">
+            print
+         
+        <inline classes="n">
+            i
+    <paragraph>
+        Numbered lines:
+    <literal_block classes="code python" xml:space="preserve">
+        <inline classes="ln">
+            1 
+        <inline classes="c">
+            # This is Python code,
+        
+        <inline classes="ln">
+            2 
+        <inline classes="c">
+            # that prints the integers from 0 to 9
+        
+        <inline classes="ln">
+            3 
+        <inline classes="k">
+            for
+         
+        <inline classes="n">
+            i
+         
+        <inline classes="ow">
+            in
+         
+        <inline classes="nb">
+            range
+        <inline classes="p">
+            (
+        <inline classes="mi">
+            10
+        <inline classes="p">
+            ):
+        
+        <inline classes="ln">
+            4 
+            
+        <inline classes="k">
+            print
+         
+        <inline classes="n">
+            i
+    <paragraph>
+        Another example:
+    <literal_block classes="code python silly" ids="my-function" names="my_function" xml:space="preserve">
+        <inline classes="ln">
+             7 
+        <inline classes="k">
+            def
+         
+        <inline classes="nf">
+            my_function
+        <inline classes="p">
+            ():
+        
+        <inline classes="ln">
+             8 
+            
+        <inline classes="sd">
+            """Test the lexer.
+        <inline classes="ln">
+             9 
+        <inline classes="sd">
+                """
+        
+        <inline classes="ln">
+            10 
+        
+        <inline classes="ln">
+            11 
+            
+        <inline classes="c">
+            # and now for something completely different
+        
+        <inline classes="ln">
+            12 
+            
+        <inline classes="k">
+            print
+         
+        <inline classes="mi">
+            8
+        <inline classes="o">
+            /
+        <inline classes="mi">
+            2
+    <paragraph>
+        The end.
