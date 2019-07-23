@@ -1,6 +1,6 @@
-============================
- README: Docutils 0.16b.dev
-============================
+=======================
+ README: Docutils 0.15
+=======================
 
 :Author: David Goodger
 :Contact: goodger@python.org
@@ -103,8 +103,8 @@ Requirements
 ============
 
 To run the code, Python_ must be installed.
-Docutils is compatible with Python versions 2.7, and
-versions 3.3 to 3.7 (cf. `Python 3 compatibility`_).
+Docutils is compatible with Python versions 2.6, 2.7, and
+versions 3.3 to 3.5 (cf. `Python 3 compatibility`_).
 
 Docutils uses the following packages for enhanced functionality, if they are
 installed:

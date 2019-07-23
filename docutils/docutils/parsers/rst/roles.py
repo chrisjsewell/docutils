@@ -195,7 +195,7 @@ class GenericRole:
     def __call__(self, role, rawtext, text, lineno, inliner,
                  options={}, content=[]):
         set_classes(options)
-        return [self.node_class(rawtext, text, **options)], []
+        return [self.node_class(rawtext, utils.unescape(text), **options)], []
 
 
 class CustomRole:
@@ -234,7 +234,7 @@ def generic_custom_role(role, rawtext, text, lineno, inliner,
     # Once nested inline markup is implemented, this and other methods should
     # recursively call inliner.nested_parse().
     set_classes(options)
-    return [nodes.inline(rawtext, text, **options)], []
+    return [nodes.inline(rawtext, utils.unescape(text), **options)], []
 
 generic_custom_role.options = {'class': directives.class_option}
 
@@ -255,7 +255,7 @@ register_generic_role('title-reference', nodes.title_reference)
 def pep_reference_role(role, rawtext, text, lineno, inliner,
                        options={}, content=[]):
     try:
-        pepnum = int(utils.unescape(text))
+        pepnum = int(text)
         if pepnum < 0 or pepnum > 9999:
             raise ValueError
     except ValueError:
@@ -268,7 +268,7 @@ def pep_reference_role(role, rawtext, text, lineno, inliner,
     ref = (inliner.document.settings.pep_base_url
            + inliner.document.settings.pep_file_url_template % pepnum)
     set_classes(options)
-    return [nodes.reference(rawtext, 'PEP ' + text, refuri=ref,
+    return [nodes.reference(rawtext, 'PEP ' + utils.unescape(text), refuri=ref,
                             **options)], []
 
 register_canonical_role('pep-reference', pep_reference_role)
@@ -277,11 +277,11 @@ def rfc_reference_role(role, rawtext, text, lineno, inliner,
                        options={}, content=[]):
     try:
         if "#" in text:
-            rfcnum, section = utils.unescape(text).split("#", 1)
+            rfcnum, section = text.split("#", 1)
         else:
-            rfcnum, section  = utils.unescape(text), None
+            rfcnum, section  = text, None
         rfcnum = int(rfcnum)
-        if rfcnum < 1:
+        if rfcnum <= 0:
             raise ValueError
     except ValueError:
         msg = inliner.reporter.error(
@@ -294,7 +294,7 @@ def rfc_reference_role(role, rawtext, text, lineno, inliner,
     if section is not None:
         ref += "#"+section
     set_classes(options)
-    node = nodes.reference(rawtext, 'RFC ' + str(rfcnum), refuri=ref,
+    node = nodes.reference(rawtext, 'RFC ' + utils.unescape(str(rfcnum)), refuri=ref,
                            **options)
     return [node], []
 

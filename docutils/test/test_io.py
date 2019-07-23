@@ -134,9 +134,6 @@ print "hello world"
         self.assertRaises(AssertionError, uniinput.decode, b'ja')
 
     def test_deprecation_warning(self):
-        # Test deprecation warning of 'U' universal newlines mode.
-        # TODO remove with 3.4 support end
-
         # Arrange
         import warnings
         with warnings.catch_warnings(record=True) as w:
@@ -145,7 +142,7 @@ print "hello world"
 
             # Act
             # Trigger a warning?
-            io.FileInput(source_path='data/include.txt').close()
+            io.FileInput(source_path='data/include.txt')
 
             # Assert
             self.assertEqual(len(w), 0, "Expected no warnings, got %s" %
