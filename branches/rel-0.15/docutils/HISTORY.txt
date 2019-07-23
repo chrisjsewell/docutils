@@ -16,6 +16,13 @@
 Changes Since 0.15
 ==================
 
+branches/rel-0.15
+-----------------
+
+* docutils/nodes.py
+
+  - Fix 366: circular import when docutils nodes is iported before docutils.utils
+    by putting ``import docutils.utils`` into astext.
 
 Release 0.15 (2019-07-20)
 =========================
