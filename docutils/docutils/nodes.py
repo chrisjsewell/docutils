@@ -29,7 +29,8 @@ import warnings
 import types
 import unicodedata
 
-import docutils.utils
+# 2019-07-23  Fix bugs#366 move import docutils.utils into function astext
+# import docutils.utils
 
 # ==============================
 #  Functional Node Base Classes
@@ -364,6 +365,7 @@ class Text(Node, reprunicode):
         return domroot.createTextNode(unicode(self))
 
     def astext(self):
+        import docutils.utils
         return reprunicode(docutils.utils.unescape(self))
 
     # Note about __unicode__: The implementation of __unicode__ here,
