@@ -24,6 +24,8 @@ branches/rel-0.15
   - Fix 366: circular import when docutils nodes is iported before docutils.utils
     by putting ``import docutils.utils`` into astext.
 
+  - Fix 366: as it is done in trunk Commit [r8294], moving the function.
+
 Release 0.15 (2019-07-20)
 =========================
 
