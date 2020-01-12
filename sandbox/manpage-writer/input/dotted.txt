@@ -1,8 +1,0 @@
-Welcome to test's documentation!
-================================
-
-Hello world
-.pot file is good at translation.
-
-.dot starting a line
-
