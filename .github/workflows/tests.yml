@@ -51,6 +51,7 @@ jobs:
 
     - name: Coverage report
       run: |
+        cd docutils
         coverage report
         coverage xml
 
