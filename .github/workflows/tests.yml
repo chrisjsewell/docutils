@@ -42,9 +42,23 @@ jobs:
         cd docutils
         python -m pip install --upgrade pip
         pip install -e .
-        pip install pygments==2.6.1
+        pip install pygments==2.6.1 coverage==5.2.1
     # cd tests/test_commonmark && ./spec.sh
     - name: Run test suite
       run: |
-        cd docutils/test
-        ./alltests.py
+        cd docutils
+        coverage run --source docutils test/alltests.py
+
+    - name: Coverage report
+      run: |
+        coverage report
+        coverage xml
+
+    - name: Upload to Codecov
+      if: matrix.python-version == 3.7 && github.repository == 'chrisjsewell/docutils'
+      uses: codecov/codecov-action@v1
+      with:
+        name: docutils-py3.7
+        flags: unittests
+        file: ./docutils/coverage.xml
+        # fail_ci_if_error: true
