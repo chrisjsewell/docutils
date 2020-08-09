@@ -21,6 +21,7 @@ jobs:
         pip install flake8==3.7.0
     - name: Run flake8
       run: |
+        cd docutils
         flake8 .
 
   tests:
@@ -44,5 +45,5 @@ jobs:
     # cd tests/test_commonmark && ./spec.sh
     - name: Run test suite
       run: |
-        cd test
+        cd docutils/test
         ./alltests.py
