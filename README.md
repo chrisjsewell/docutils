@@ -10,7 +10,8 @@ It originates as a response to discussion in:
 
 One of the reasons that appeared to come up is that it is too difficult and/or time consuming to migrate.
 This package therefore shows how this can be done in a very simple, autonomous manner:
-migrating code, commit history (with authors) and branches using the [GitHub Importer](https://docs.github.com/en/github/importing-your-projects-to-github/about-github-importer) (this takes about 10 minutes),
-then migrating tickets to issues using a python script that interfaces with the SourceForge and GitHub REST APIs (this is both autonomous and idempotent and takes about 10 minutes).
+
+- migrating code, commit history (with authors) and branches using the [GitHub Importer](https://docs.github.com/en/github/importing-your-projects-to-github/about-github-importer) (this takes about 10 minutes),
+- migrating tickets to issues using a python script that interfaces with the SourceForge and GitHub REST APIs (this is both autonomous and idempotent and takes about 10 minutes).
 
 The `main` branch derives from the svn trunk, then here on the `develop` branch this README has been added and a GitHub workflow for Continuous Integration.
