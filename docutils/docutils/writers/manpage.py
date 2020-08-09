@@ -48,7 +48,7 @@ import re
 import sys
 
 if sys.version_info < (3, 0):
-    range = xrange
+    range = xrange  # noqa: F821
 
 import docutils
 from docutils import nodes, writers, languages
