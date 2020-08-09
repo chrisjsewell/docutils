@@ -1,5 +1,7 @@
 # docutils migration
 
+[![codecov](https://codecov.io/gh/chrisjsewell/docutils/branch/develop/graph/badge.svg)](https://codecov.io/gh/chrisjsewell/docutils)
+
 This package is a migration of docutils from <https://sourceforge.net/projects/docutils/> to GitHub.
 
 It originates as a response to discussion in:
