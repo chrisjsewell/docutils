@@ -15,3 +15,8 @@ This package therefore shows how this can be done in a very simple, autonomous m
 - migrating tickets to issues using a python script that interfaces with the SourceForge and GitHub REST APIs (this is both autonomous and idempotent and takes about 10 minutes).
 
 The `main` branch derives from the svn trunk, then here on the `develop` branch this README has been added and a GitHub workflow for Continuous Integration.
+
+Note, two other migrations exist:
+
+- https://github.com/docutils-mirror/docutils: this migration is only from 2015 and does not include branches or ticket migration.
+- https://github.com/live-clones/docutils/tree/master/docutils: this is a continually updated clone, but does not include branches, links to commit authors, or the ticket migration.
