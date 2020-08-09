@@ -1,6 +1,6 @@
 # docutils migration
 
-This package is a migration of docutils from <https://sourceforge.net/projects/docutils/> ti GitHub.
+This package is a migration of docutils from <https://sourceforge.net/projects/docutils/> to GitHub.
 
 It originates as a response to discussion in:
 
