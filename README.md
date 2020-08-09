@@ -18,5 +18,5 @@ The `main` branch derives from the svn trunk, then here on the `develop` branch 
 
 Note, two other migrations exist:
 
-- https://github.com/docutils-mirror/docutils: this migration is only from 2015 and does not include branches or ticket migration.
+- https://github.com/docutils/docutils and https://github.com/docutils-mirror/docutils: these migrations are both from 2015 and do not include branches or ticket migration.
 - https://github.com/live-clones/docutils/tree/master/docutils: this is a continually updated clone, but does not include branches, links to commit authors, or the ticket migration.
